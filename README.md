@@ -29,15 +29,17 @@ El proyecto está en fase inicial. A medida que se avanza se agregarán:
 
 ## 📂 Estructura del Proyecto
 
+```bash
 public/
-│ ├─ assets/ → Imágenes, íconos, animaciones
-├─ styles/ → Estilos CSS
-└─ index.html → Entrada principal
+│  ├─ assets/         → Imágenes, íconos, animaciones
+│  ├─ styles/         → Estilos CSS
+│  └─ index.html      → Entrada principal
 
 src/
-├─ core/ → Lógica del juego (mapa, movimiento, combates)
-├─ components/ → Elementos reutilizables (personaje, enemigos, UI)
-└─ main.js → Orquestador principal
+│  ├─ core/           → Lógica del juego (mapa, movimiento, combates)
+│  ├─ components/     → Elementos reutilizables (personaje, enemigos, UI)
+│  └─ main.js         → Orquestador principal
+```
 
 ## 💡 Filosofía
 
