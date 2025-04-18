@@ -1,0 +1,85 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(160deg, #0b0c1a 0%, #1a1b2f 100%);
+  color: #f0f0f0;
+}
+
+main {
+  display: grid;
+  grid-template: repeat(3, 128px) / repeat(3, 128px);
+  gap: 1em;
+  padding: 1em;
+  border-radius: 12px;
+  background-color: #1f1f1f;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+main > div {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background-color: #968989;
+  display: grid;
+  place-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #456be9a1;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #ff9100;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.verde {
+  background-color: rgba(172, 255, 47, 0.486);
+}
+
+.azul {
+  background-color: #646cff;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background: linear-gradient(160deg, #f0f0f0, #dcdcdc);
+    color: #213547;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+}

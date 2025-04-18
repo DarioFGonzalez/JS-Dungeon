@@ -1,0 +1,115 @@
+.general {
+    background: linear-gradient(to bottom right, #1a1a1a, #4d4d4d, #cccccc);
+    opacity: 1;
+}
+
+.columna
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.fila
+{
+    background-color: #ffffff00;
+    display: flex;
+    flex-direction: row;
+}
+
+.celda
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: .1px transparent rgba(5, 9, 238, 0);
+    border-radius: 2px;
+    padding: .5px;
+    width: 25px;
+    height: 25px;
+}
+
+.titilar
+{
+    animation: titilar 1s infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px transparent rgba(65, 65, 141, 0.322);
+    border-radius: 2px;
+    padding: .5px;
+    width: 25px;
+    height: 25px;
+}
+
+@keyframes fadeOut
+{
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes titilar
+{
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.1; }
+}
+
+@keyframes logo
+{
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+  
+.message
+{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  color: white;
+  animation: fadeOut 3s forwards;
+}
+
+.ready
+{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  color: rgb(31, 16, 238);
+  animation: fadeOut 3s forwards;
+  text-shadow:
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px 1px 0 #fff;
+}
+
+.go
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    color: rgb(31, 16, 238);
+    animation: fadeOut 1s forwards;
+    text-shadow:
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px 1px 0 #fff;
+}
+
+.logo
+{
+    animation: logo 4s infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
