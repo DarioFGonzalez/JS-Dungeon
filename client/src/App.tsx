@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 
 const ship_up = '^';
@@ -13,6 +13,8 @@ const App = () =>
 {
     const [ game, setGame ] = useState<boolean>(false);
     const [ mapa, setMapa ] = useState( Array.from( {length: 18}, ()=> Array.from( Array(18), ()=> '') ) );
+    const gridRef = useRef<HTMLDivElement>(null);
+
 
     // const [ dead, setDead ] = useState( false );
     const [ player, setPlayer ] = useState<playerData>( [ 0, 0, '^' ] );
@@ -28,35 +30,89 @@ const App = () =>
         setPlayer( [ here[0], here[1], symbol ] );
     }
 
+    const checkCollision = ( x: number, y: number ) =>
+    {
+        if( x<0 || x >= mapa.length || y<0 || y >= mapa[0].length ) return 'oob';
+        
+        const tile = mapa[x][y];
+        switch(tile)
+        {
+            case '': return 'empty';
+            case 'x': return 'wall';
+            case '~': return 'water';
+            case 'e': return 'enemy';
+            case '*': return 'fire';
+            case 'D': return 'door';
+            case 'B': return 'box';
+            case 'T': return 'teleport';
+            default: return 'unknown';
+        };
+    }
+
+    const inconsecuente = ( symbol: string ) =>
+    {
+        const auxiliar = mapa.map(fila => [...fila]);
+        const [ pX, pY ] = player;
+        auxiliar[pX][pY] = symbol;
+        setPlayer( [ pX, pY, symbol ] );
+        setMapa(auxiliar);
+    }
+
+    const pushBox = ( x: number, y: number, symbol: string ) =>
+    {
+        const newX = player[0]+x;
+        const newY = player[1]+y;
+        const nextX = newX + x;
+        const nextY = newY + y;
+
+        const tileAfterBox = checkCollision( nextX, nextY );
+
+        if(tileAfterBox==='empty')
+        {
+            const [pX, pY] = player;
+            const auxiliar = mapa.map(fila => [...fila]);
+            auxiliar[pX][pY] = '';
+            auxiliar[newX][newY] = symbol;
+            auxiliar[nextX][nextY] = 'B';
+            setPlayer( [ newX, newY, symbol ] );
+            setMapa( auxiliar );
+        }
+        else
+        {
+            inconsecuente( symbol );
+        }
+    }
+
     const movePlayer = ( x: number, y: number, symbol: string ) =>
     {
         const newX = player[0]+x;
         const newY = player[1]+y;
-        if( newX>=0 && newX < mapa.length && newY>=0 && newY < mapa[0].length ) //Dentro del mapa
+        const tile = checkCollision(newX, newY);
+
+        switch(tile)
         {
-            const auxiliar = mapa.map(fila => [...fila]);
-            const [ pX, pY ] = player;
-            if(mapa[newX][newY] == '')  //Hacia 'VACÍO'.
-            {
-                auxiliar[pX][pY] = '';
-                auxiliar[newX][newY] = symbol;
-                setPlayer( [ newX, newY, symbol ] );
-                setMapa(auxiliar);
-            }
-            else    //Ninguna de las anteriores. "No caminable".
-            {
-                auxiliar[pX][pY] = symbol;
-                setPlayer( [ pX, pY, symbol ] );
-                setMapa(auxiliar);
-            }
-        }
-        else
-        {
-            const auxiliar = mapa.map(fila => [...fila]);
-            const [ pX, pY ] = player;
-            auxiliar[pX][pY] = symbol;
-            setPlayer( [ pX, pY, symbol ] );
-            setMapa(auxiliar);
+            case 'empty':
+                {
+                    const auxiliar = mapa.map(fila => [...fila]);
+                    const [ pX, pY ] = player;
+                    auxiliar[pX][pY] = '';
+                    auxiliar[newX][newY] = symbol;
+                    setPlayer( [ newX, newY, symbol ] );
+                    setMapa(auxiliar);
+                    break;
+                }
+            case 'box':
+                {
+                    pushBox(x, y, symbol);
+                    break;
+                }
+            case 'wall':
+            case 'water':
+            case 'oob':
+                {
+                    inconsecuente( symbol );
+                    break;
+                }
         }
     }
 
@@ -93,10 +149,15 @@ const App = () =>
     const loadGame = () =>
     {
         const auxiliar = Array.from( {length: 18}, ()=> Array.from( Array(18), ()=> '') );  //Vacía el mapa
-        // for(let i=0; i<18; i++)
-        // {
-        //     auxiliar[i][0]='x';
-        // }
+        for(let i=0; i<18; i++)
+        {
+            auxiliar[i][0] = 'x';
+            auxiliar[0][i] = 'x';
+            // auxiliar[i][4] = 'x';
+            auxiliar[i][10] = '~';
+        }
+        // auxiliar[6][4] = '';
+        auxiliar[3][3] = 'B';
         auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
         setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
         setMapa(auxiliar);
@@ -106,6 +167,7 @@ const App = () =>
     {
         loadGame();
         setGame(true);
+        setTimeout(() => gridRef.current?.focus(), 0);
     }
 
     const stopGame = () =>
@@ -121,7 +183,7 @@ const App = () =>
   return(
     <div>
         <div className='general'>
-            <div className='columna' onKeyDown={handleMovement} tabIndex={0}>
+            <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
 
                 {mapa.map( ( fila, x ) =>
                 <div key={x} className='fila'>
