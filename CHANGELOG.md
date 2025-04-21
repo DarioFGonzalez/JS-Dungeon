@@ -6,6 +6,20 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.0.5] - 2025-04-21
+
+### Added
+- Soporte para **teleportación de cajas**: ahora las cajas (`'B'`) también pueden usar teleportadores si el destino está libre.
+- Implementado el concepto de **teleportador bloqueado**: si el punto de salida está ocupado (por una caja, jugador, muro, etc.), el TP se considera no disponible.
+- Ampliado el uso de `residual` para conservar el contenido anterior en celdas con teleportadores y cajas.
+- Lógica para que el jugador no pueda tpear si la salida está bloqueada (mensajes de feedback incluidos).
+
+### Changed
+- Reorganizada la función `handleTp()` para contemplar objetos distintos al jugador y validar condiciones de uso.
+- Separadas responsabilidades entre detección de colisiones, control de movimiento y efectos colaterales (como TP, empuje, etc.).
+
+---
+
 ## [v0.0.4] - 2025-04-20
 
 ### Added

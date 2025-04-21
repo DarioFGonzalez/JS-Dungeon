@@ -5,7 +5,9 @@ const ship_up = '^';
 const ship_down = 'v';
 const ship_left = '<';
 const ship_right = '>';
+const anyPlayer = ship_down || ship_left || ship_right || ship_up;
 const asteroid = 'e';
+const box = 'B';
 
 type playerData = [ number, number, string ];
 type Coords = [ number, number ];
@@ -63,7 +65,20 @@ const App = () =>
         setMapa(auxiliar);
     }
 
-    const handleTp = ( x: number, y: number, symbol: string ) =>
+    const isAtSpecialTile = ( x: number, y: number ) =>
+    {
+        let flag = [];
+        tps.forEach( coord => (coord[0]==x && coord[1]==y) && flag.push(true) );
+        if(flag.length!=0)
+        {
+            console.log('true');
+            return true;
+        }
+        console.log('false');
+        return false;
+    }
+
+    const handleTp = ( x: number, y: number, symbol: string, other: string ) =>
     {
         const auxiliar = mapa.map(fila => [...fila]);
 
@@ -71,21 +86,53 @@ const App = () =>
         const newY = player[1]+y;
         const [ pX, pY ] = player;
         const [ tp1X, tp1Y ] = tps[0];
-        setResidual( { active: true, symbol: 'T' } );
-        if( tp1X==newX && tp1Y==newY )
+        const [ tp2X, tp2Y ] = tps[1];
+
+        if(auxiliar[tp1X][tp1Y] == 'T' && auxiliar[tp2X][tp2Y] == 'T')
         {
-            const [ tp2X, tp2Y ] = tps[1];
-            auxiliar[pX][pY] = '';
-            auxiliar[tp2X][tp2Y] = symbol;
-            setPlayer( [ tp2X, tp2Y, symbol ] );
-            setMapa(auxiliar);
+            setResidual( { active: true, symbol: 'T' } );
+    
+            switch(other)
+            {
+                case box:
+                {
+                    auxiliar[pX][pY] = '';
+                    auxiliar[newX][newY] = symbol;
+                    setPlayer( [ newX, newY, symbol ] );
+                    if( tp1X==newX+x && tp1Y==newY+y )
+                    {
+                        auxiliar[tp2X][tp2Y] = box;
+                    }
+                    else
+                    {
+                        auxiliar[tp1X][tp1Y] = box;
+                    }
+                    setMapa(auxiliar);
+                    break;
+                }
+                case '':
+                {
+                    if( tp1X==newX && tp1Y==newY )
+                    {
+                        auxiliar[pX][pY] = '';
+                        auxiliar[tp2X][tp2Y] = symbol;
+                        setPlayer( [ tp2X, tp2Y, symbol ] );
+                        setMapa(auxiliar);
+                    }
+                    else
+                    {
+                        auxiliar[pX][pY] = '';
+                        auxiliar[tp1X][tp1Y] = symbol;
+                        setPlayer( [ tp1X, tp1Y, symbol ] );
+                        setMapa(auxiliar);
+                    }
+                    break;
+                }
+            }
         }
         else
         {
-            auxiliar[pX][pY] = '';
-            auxiliar[tp1X][tp1Y] = symbol;
-            setPlayer( [ tp1X, tp1Y, symbol ] );
-            setMapa(auxiliar);
+            inconsecuente(symbol);
         }
     }
 
@@ -98,19 +145,27 @@ const App = () =>
 
         const tileAfterBox = checkCollision( nextX, nextY );
 
-        if(tileAfterBox==='empty')
+        switch(tileAfterBox)
         {
-            const [pX, pY] = player;
-            const auxiliar = mapa.map(fila => [...fila]);
-            auxiliar[pX][pY] = '';
-            auxiliar[newX][newY] = symbol;
-            auxiliar[nextX][nextY] = 'B';
-            setPlayer( [ newX, newY, symbol ] );
-            setMapa( auxiliar );
-        }
-        else
-        {
-            inconsecuente( symbol );
+            case 'empty':
+            {
+                const [pX, pY] = player;
+                const auxiliar = mapa.map(fila => [...fila]);
+                auxiliar[pX][pY] = '';
+                auxiliar[newX][newY] = symbol;
+                auxiliar[nextX][nextY] = box;
+                setPlayer( [ newX, newY, symbol ] );
+                setMapa( auxiliar );
+                break;
+            }
+            case 'teleport':
+            {
+                handleTp(x, y, symbol, box);
+                break;
+            }
+            default:
+                inconsecuente( symbol );
+                break;
         }
     }
 
@@ -118,7 +173,9 @@ const App = () =>
     {
         const newX = player[0]+x;
         const newY = player[1]+y;
+        const [ pX, pY ] = player;
         const tile = checkCollision(newX, newY);
+        isAtSpecialTile(pX, pY);
 
         switch(tile)
         {
@@ -126,7 +183,7 @@ const App = () =>
                 {
                     const auxiliar = mapa.map(fila => [...fila]);
                     const [ pX, pY ] = player;
-                    if(residual.active)
+                    if(residual.active && isAtSpecialTile(pX, pY) )
                     {
                         auxiliar[pX][pY] = residual.symbol;
                         setResidual( { active: false, symbol: '' } );
@@ -147,7 +204,7 @@ const App = () =>
                 }
             case 'teleport':
                 {
-                    handleTp(x, y, symbol);
+                    handleTp(x, y, symbol, '');
                     break;
                 }
             case 'wall':
