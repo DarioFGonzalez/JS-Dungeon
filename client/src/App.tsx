@@ -8,12 +8,17 @@ const ship_right = '>';
 const asteroid = 'e';
 
 type playerData = [ number, number, string ];
+type Coords = [ number, number ];
+type ArrayOfCoords = Coords[];
+type Residual = { active: boolean, symbol: string };
 
 const App = () =>
 {
     const [ game, setGame ] = useState<boolean>(false);
     const [ mapa, setMapa ] = useState( Array.from( {length: 18}, ()=> Array.from( Array(18), ()=> '') ) );
     const gridRef = useRef<HTMLDivElement>(null);
+    const [ tps, setTps ] = useState<ArrayOfCoords>([]) // ESTO a Mapas();
+    const [ residual, setResidual ] = useState<Residual>( { active: false, symbol: '' } );
 
 
     // const [ dead, setDead ] = useState( false );
@@ -58,6 +63,32 @@ const App = () =>
         setMapa(auxiliar);
     }
 
+    const handleTp = ( x: number, y: number, symbol: string ) =>
+    {
+        const auxiliar = mapa.map(fila => [...fila]);
+
+        const newX = player[0]+x;
+        const newY = player[1]+y;
+        const [ pX, pY ] = player;
+        const [ tp1X, tp1Y ] = tps[0];
+        setResidual( { active: true, symbol: 'T' } );
+        if( tp1X==newX && tp1Y==newY )
+        {
+            const [ tp2X, tp2Y ] = tps[1];
+            auxiliar[pX][pY] = '';
+            auxiliar[tp2X][tp2Y] = symbol;
+            setPlayer( [ tp2X, tp2Y, symbol ] );
+            setMapa(auxiliar);
+        }
+        else
+        {
+            auxiliar[pX][pY] = '';
+            auxiliar[tp1X][tp1Y] = symbol;
+            setPlayer( [ tp1X, tp1Y, symbol ] );
+            setMapa(auxiliar);
+        }
+    }
+
     const pushBox = ( x: number, y: number, symbol: string ) =>
     {
         const newX = player[0]+x;
@@ -95,7 +126,15 @@ const App = () =>
                 {
                     const auxiliar = mapa.map(fila => [...fila]);
                     const [ pX, pY ] = player;
-                    auxiliar[pX][pY] = '';
+                    if(residual.active)
+                    {
+                        auxiliar[pX][pY] = residual.symbol;
+                        setResidual( { active: false, symbol: '' } );
+                    }
+                    else
+                    {
+                        auxiliar[pX][pY] = '';
+                    }
                     auxiliar[newX][newY] = symbol;
                     setPlayer( [ newX, newY, symbol ] );
                     setMapa(auxiliar);
@@ -104,6 +143,11 @@ const App = () =>
             case 'box':
                 {
                     pushBox(x, y, symbol);
+                    break;
+                }
+            case 'teleport':
+                {
+                    handleTp(x, y, symbol);
                     break;
                 }
             case 'wall':
@@ -153,11 +197,11 @@ const App = () =>
         {
             auxiliar[i][0] = 'x';
             auxiliar[0][i] = 'x';
-            // auxiliar[i][4] = 'x';
-            auxiliar[i][10] = '~';
         }
-        // auxiliar[6][4] = '';
         auxiliar[3][3] = 'B';
+        auxiliar[2][16] = 'T';
+        auxiliar[16][2] = 'T';
+        setTps( [ [2,16], [16,2] ] );
         auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
         setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
         setMapa(auxiliar);
