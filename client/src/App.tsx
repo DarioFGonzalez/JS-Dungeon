@@ -6,24 +6,24 @@ const ship_down = 'v';
 const ship_left = '<';
 const ship_right = '>';
 const anyPlayer = ship_down || ship_left || ship_right || ship_up;
-const asteroid = 'e';
 const box = 'B';
+const mapSize = 18;
+const maxHp = 5;
 
 type playerData = [ number, number, string ];
 type Coords = [ number, number ];
 type ArrayOfCoords = Coords[];
-type Residual = { active: boolean, symbol: string };
+type Residual = { active: boolean, symbol: string, coords: number[] };
 
 const App = () =>
 {
-    const [ game, setGame ] = useState<boolean>(false);
-    const [ mapa, setMapa ] = useState( Array.from( {length: 18}, ()=> Array.from( Array(18), ()=> '') ) );
     const gridRef = useRef<HTMLDivElement>(null);
-    const [ tps, setTps ] = useState<ArrayOfCoords>([]) // ESTO a Mapas();
-    const [ residual, setResidual ] = useState<Residual>( { active: false, symbol: '' } );
+    const [ game, setGame ] = useState<boolean>(false);
+    const [ hp, setHp ] = useState<number>(maxHp);
+    const [ mapa, setMapa ] = useState( Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') ) );
+    const [ tps, setTps ] = useState<ArrayOfCoords>([]);
+    const [ residual, setResidual ] = useState<Residual>( { active: false, symbol: '', coords: [] } );
 
-
-    // const [ dead, setDead ] = useState( false );
     const [ player, setPlayer ] = useState<playerData>( [ 0, 0, '^' ] );
 
     const findPlayer = () =>
@@ -52,6 +52,7 @@ const App = () =>
             case 'D': return 'door';
             case 'B': return 'box';
             case 'T': return 'teleport';
+            case 't': return 'trap';
             default: return 'unknown';
         };
     }
@@ -65,17 +66,26 @@ const App = () =>
         setMapa(auxiliar);
     }
 
-    const isAtSpecialTile = ( x: number, y: number ) =>
+    const moveHere = ( x: number, y: number, symbol: string, complete: boolean ) =>
     {
-        let flag = [];
-        tps.forEach( coord => (coord[0]==x && coord[1]==y) && flag.push(true) );
-        if(flag.length!=0)
+        const auxiliar = mapa.map(fila => [...fila]);
+        const [ pX, pY ] = player;
+        if( (residual.active && residual.coords.length > 0) && (residual.coords[0] === pX && residual.coords[1] === pY) )
         {
-            console.log('true');
-            return true;
+            auxiliar[pX][pY] = residual.symbol;
+            setResidual( { active: false, symbol: '', coords: [] } );
         }
-        console.log('false');
-        return false;
+        else
+        {
+            auxiliar[pX][pY] = '';
+        }
+        auxiliar[x][y] = symbol;
+        if(complete==true)
+        {
+            setPlayer( [ x, y, symbol ] );
+            setMapa(auxiliar);
+        }
+        return auxiliar
     }
 
     const handleTp = ( x: number, y: number, symbol: string, other: string ) =>
@@ -90,7 +100,6 @@ const App = () =>
 
         if(auxiliar[tp1X][tp1Y] == 'T' && auxiliar[tp2X][tp2Y] == 'T')
         {
-            setResidual( { active: true, symbol: 'T' } );
     
             switch(other)
             {
@@ -101,10 +110,12 @@ const App = () =>
                     setPlayer( [ newX, newY, symbol ] );
                     if( tp1X==newX+x && tp1Y==newY+y )
                     {
+                        setResidual( { active: true, symbol: 'T', coords: [ tp2X, tp2Y ] } );
                         auxiliar[tp2X][tp2Y] = box;
                     }
                     else
                     {
+                        setResidual( { active: true, symbol: 'T', coords: [ tp1X, tp1Y ] } );
                         auxiliar[tp1X][tp1Y] = box;
                     }
                     setMapa(auxiliar);
@@ -114,6 +125,7 @@ const App = () =>
                 {
                     if( tp1X==newX && tp1Y==newY )
                     {
+                        setResidual( { active: true, symbol: 'T', coords: [ tp2X, tp2Y ] } );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp2X][tp2Y] = symbol;
                         setPlayer( [ tp2X, tp2Y, symbol ] );
@@ -121,6 +133,7 @@ const App = () =>
                     }
                     else
                     {
+                        setResidual( { active: true, symbol: 'T', coords: [ tp1X, tp1Y ] } );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp1X][tp1Y] = symbol;
                         setPlayer( [ tp1X, tp1Y, symbol ] );
@@ -149,10 +162,7 @@ const App = () =>
         {
             case 'empty':
             {
-                const [pX, pY] = player;
-                const auxiliar = mapa.map(fila => [...fila]);
-                auxiliar[pX][pY] = '';
-                auxiliar[newX][newY] = symbol;
+                const auxiliar = moveHere( newX, newY, symbol, false );
                 auxiliar[nextX][nextY] = box;
                 setPlayer( [ newX, newY, symbol ] );
                 setMapa( auxiliar );
@@ -169,44 +179,59 @@ const App = () =>
         }
     }
 
+    const hurtPlayer = (dmg: number) =>
+    {
+        setHp( prev => prev - dmg );
+        hp-dmg<=0 && stopGame();
+    }
+    
+    const touchEnemy = (symbol: string) =>
+    {
+        inconsecuente(symbol);
+        hurtPlayer(1);
+    }
+
+    const stepOnTrap = ( x: number, y: number, symbol: string ) =>
+    {
+        setResidual( { active: true, symbol: 't', coords: [ x, y ] } );
+        moveHere( x, y, symbol, true );
+        hurtPlayer(1);
+    }
+
     const movePlayer = ( x: number, y: number, symbol: string ) =>
     {
         const newX = player[0]+x;
         const newY = player[1]+y;
-        const [ pX, pY ] = player;
         const tile = checkCollision(newX, newY);
-        isAtSpecialTile(pX, pY);
 
         switch(tile)
         {
             case 'empty':
                 {
-                    const auxiliar = mapa.map(fila => [...fila]);
-                    const [ pX, pY ] = player;
-                    if(residual.active && isAtSpecialTile(pX, pY) )
-                    {
-                        auxiliar[pX][pY] = residual.symbol;
-                        setResidual( { active: false, symbol: '' } );
-                    }
-                    else
-                    {
-                        auxiliar[pX][pY] = '';
-                    }
-                    auxiliar[newX][newY] = symbol;
-                    setPlayer( [ newX, newY, symbol ] );
-                    setMapa(auxiliar);
+                    moveHere( newX, newY, symbol, true );
                     break;
                 }
             case 'box':
                 {
-                    pushBox(x, y, symbol);
+                    pushBox( x, y, symbol );
                     break;
                 }
             case 'teleport':
                 {
-                    handleTp(x, y, symbol, '');
+                    handleTp( x, y, symbol, '' );
                     break;
                 }
+            case 'enemy':
+                {
+                    touchEnemy( symbol );
+                    break;
+                }
+            case 'trap':
+                {
+                    stepOnTrap( newX, newY, symbol );
+                    break;
+                }
+            case 'unknown':
             case 'wall':
             case 'water':
             case 'oob':
@@ -249,13 +274,17 @@ const App = () =>
 
     const loadGame = () =>
     {
-        const auxiliar = Array.from( {length: 18}, ()=> Array.from( Array(18), ()=> '') );  //Vacía el mapa
-        for(let i=0; i<18; i++)
+        const auxiliar = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
+        for(let i=0; i<mapSize; i++)
         {
             auxiliar[i][0] = 'x';
             auxiliar[0][i] = 'x';
+            auxiliar[i][17] = 'x';
+            auxiliar[17][i] = 'x';
         }
+        auxiliar[13][13] = 'e';
         auxiliar[3][3] = 'B';
+        auxiliar[15][5] = 't';
         auxiliar[2][16] = 'T';
         auxiliar[16][2] = 'T';
         setTps( [ [2,16], [16,2] ] );
@@ -267,6 +296,7 @@ const App = () =>
     const startGame = () =>
     {
         loadGame();
+        setHp(maxHp);
         setGame(true);
         setTimeout(() => gridRef.current?.focus(), 0);
     }
@@ -281,8 +311,17 @@ const App = () =>
         setGame(false);
     }
 
+    const renderHp = () =>
+    {
+        const heartsLeft = '💖'.repeat( hp );
+        const heartsLost = '🖤'.repeat( maxHp - hp );
+
+        return heartsLeft + heartsLost;
+    }
+
   return(
     <div>
+        <span> HP: { renderHp() } </span>
         <div className='general'>
             <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
 

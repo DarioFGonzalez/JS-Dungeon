@@ -6,6 +6,20 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.0.6] - 2025-04-22
+
+### Added
+- Sistema de **enemigos básicos**: aparecen en el mapa y pueden bloquear el movimiento del jugador.
+- Implementadas **placas trampa** (`'t'`): activan efectos al ser pisadas, como pérdida de vida.
+- Mecánica de **vida y muerte del jugador**: si la vida llega a cero, se reinicia el juego (placeholder actual).
+
+### Changed
+- Refactorizada la función `isAtSpecialTile()`: fue eliminada y reemplazada por una validación directa más eficiente.
+- Limpieza de funciones innecesarias y llamadas sin propósito detectadas durante revisión de código.
+- Reemplazo de valores hardcodeados para el tamaño del mapa (`18`) por una variable global `mapSize` para mejorar la escalabilidad.
+
+---
+
 ## [v0.0.5] - 2025-04-21
 
 ### Added

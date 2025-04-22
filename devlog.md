@@ -2,6 +2,39 @@
 
 ---
 
+### 🔹 Paso 4: "Enemigos", placas trampa y lógica vidas/muerte. 💖💖🖤🖤
+
+🗓️ *2025-04-22*
+
+Mundo estático, quieto, vacío, ``sin peligros``. Eso es lo que estuve creando hasta ahora. Podría haber seguido para el lado temático o de interacciones con el mundo per-sé, pero preferí darle peligro- empezar a pensar antes de mandarse corriendo... darle `CONSECUENCIAS` 💀🗡.
+
+**Enemigos**: Por más que sean un 'totem' mirandote feo- **ESTÁN AHÍ**, bloqueandote, *pegándote*, forzándote a cambiar de ruta.
+
+**¡Placas trampa!**: Ahora mismo, se ven, porque -obvio- estilo ASCII 💽 Pero cuando el mapa evolucione podría, no se, hacerlas invisibles- o 'deducibles', tipo: en esta parte del camino no hay vegetación, normalmente aparecen trampas random en zonas así- mejor evito. ¡Lore! ¡Preparación! ¡Conocimiento! ¿Y si no? `¡Consecuencias!`.
+
+Básicamente eso es este paso, como todo lo anterior y todo lo que va a venir es el primer pincelazo apuntando hacia-algo. Hacia→ mas mecánicas. Hacia→ nuevas interacciones. Hacia→ un mundo que reaccione, cambie y cobre vida con cada línea que agrego.
+
+---
+
+**🛠️ A nivel técnico:**
+- Funciones `touchEnemy()`, `stepOnTrap()` y `hurtPlayer()` agregadas.
+- Refactorización del sistema `residual`, haciendolo mas legible y escalable.
+- Eliminé `isAtSpecialTile()`: Al buscar siempre la manera más eficiente de escribir mi código, me dí cuenta que podía quitar toda esta función y reemplazarla por un &&. Lo bello de vivir tratando de romper tu propio código. ♪ ♫
+
+---
+
+**👾 Futuro próximo / Ideas sueltas 🎯:**
+
+🤔 Mhmmh... ya sé, ahora que tengo **placas trampa** y **enemigos** que hacen daño **`DIRECTO`**... 😈
+
+- 🔥 Fuego (Daño por quemadura), 💚 Trampas venenosas (Daño por veneno), 🩸 Enemigos con armas cortantes (Daño por sangrado).
+
+*Agregar los primeros `DOT` (Damage Over Time) y su lógica suena al próximo paso lógico- y **lógico** me emociona porque suena divertido. 🐱‍💻👾*
+
+- Quizá incursionar en un enemigo que... ¡¿se **MUEVA**?! 😨⚡.
+
+---
+
 ### 🔹 Paso 3: TPEAR CAJAS, BLOQUEAR PORTALES.
 
 1. 👉📦🌀 ~~~~~~ 🌀 [habilitado]
@@ -28,7 +61,7 @@ Divertido, satisfactorio. El progreso se siente placentero ♪
 
 **👾 Futuro próximo / Ideas sueltas 🎯:**
 - Debería... **debería** empezar a optimizar mi código, o en unos 6–7 parches va a ser un cableado injunable y poco disfrutable de trabajar.
-- TP de cajas y bloqueo: LISTO ✅  
+- TP de cajas y bloqueo: LISTO ✅
   ¿Siguiente? Si agrego fuego, enemigos o trampas, voy a tener que meter el factor `HP`. Mhmmh... Ya sé.
 - Sistema de **vidas**: 3 hits. ¿Cae a 0? GAME OVER → Se bloquea el juego, se resetea el mapa y arranca la partida de nuevo.
 - Pulirlo bonito y crear un enemigo estático que al tocarlo quite una vida y empuje un casillero para atrás—algo simple por ahora.
@@ -44,7 +77,7 @@ Tras mi primera victoria en forma de cajas, sentí la necesidad de implementar a
 
 (Traducción: voy a testear/romper todo hasta que quede algo copado, o tenga que volver a esta versión en plan "retirada estratégica").
 
-**A nivel técnico**:
+**🛠️ A nivel técnico**:
 - Se creó la función `handleTp` con la lógica principal de teletransportación.
 - Se introdujo el estado `residual` para recordar qué tile había bajo el jugador antes de moverse, y restaurarlo al abandonar la casilla.
 - Se refactorizó `movePlayer` para integrar esta nueva lógica sin romper otras colisiones.
@@ -63,7 +96,7 @@ Terminé con la lógica para que el personaje se mueva, que no pueda caminar má
 
 Con el patio de juegos limpio y muchas ideas alborotándose en mi cabeza, decidí arrancar por algo simple: colisionar con un objeto movible y sus posibles consecuencias (bloquear salidas, pisar cosas, apretar botones, tapar pozos — *UFF, ideas, ¡IDEAS!*).
 
-**A nivel técnico**:
+**🛠️ A nivel técnico**:
 - Se creó la función `checkCollision()` para determinar con qué tile se encuentra el jugador al intentar moverse.
 - Se implementó `pushBox()` con la lógica de empuje condicional (requiere espacio libre).
 - Se introdujo la función `inconsecuente()` para movimientos sin efecto, evitando duplicar lógica innecesaria en múltiples ramas condicionales.
