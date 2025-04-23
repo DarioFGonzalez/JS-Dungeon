@@ -5,10 +5,22 @@ const ship_up = '^';
 const ship_down = 'v';
 const ship_left = '<';
 const ship_right = '>';
-const anyPlayer = ship_down || ship_left || ship_right || ship_up;
+const anyPlayer = [ship_down, ship_left, ship_right, ship_up];
 const box = 'B';
+const wall = 'x';
+const teleport = 'T';
 const mapSize = 18;
 const maxHp = 5;
+
+const enemy = 'e';
+const heavyEnemy = 'E';
+const trap = 't';
+const poisonTrap = 'p';
+const fire = 'f';
+
+const residuals = [fire, trap, poisonTrap, teleport];
+const immovable = [enemy, heavyEnemy, box, wall];
+const movable = [box];
 
 type playerData = [ number, number, string ];
 type Coords = [ number, number ];
@@ -19,6 +31,7 @@ const App = () =>
 {
     const gridRef = useRef<HTMLDivElement>(null);
     const [ game, setGame ] = useState<boolean>(false);
+    const [ stun, setStun ] = useState<boolean>(false);
     const [ hp, setHp ] = useState<number>(maxHp);
     const [ mapa, setMapa ] = useState( Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') ) );
     const [ tps, setTps ] = useState<ArrayOfCoords>([]);
@@ -45,14 +58,16 @@ const App = () =>
         switch(tile)
         {
             case '': return 'empty';
-            case 'x': return 'wall';
+            case 'x': return wall;
             case '~': return 'water';
-            case 'e': return 'enemy';
-            case '*': return 'fire';
+            case 'e': return enemy;
+            case 'E': return heavyEnemy;
+            case 'f': return fire;
             case 'D': return 'door';
-            case 'B': return 'box';
-            case 'T': return 'teleport';
-            case 't': return 'trap';
+            case 'B': return box;
+            case 'T': return teleport;
+            case 't': return trap;
+            case 'p': return poisonTrap;
             default: return 'unknown';
         };
     }
@@ -98,7 +113,7 @@ const App = () =>
         const [ tp1X, tp1Y ] = tps[0];
         const [ tp2X, tp2Y ] = tps[1];
 
-        if(auxiliar[tp1X][tp1Y] == 'T' && auxiliar[tp2X][tp2Y] == 'T')
+        if(auxiliar[tp1X][tp1Y] == teleport && auxiliar[tp2X][tp2Y] == teleport)
         {
     
             switch(other)
@@ -110,12 +125,12 @@ const App = () =>
                     setPlayer( [ newX, newY, symbol ] );
                     if( tp1X==newX+x && tp1Y==newY+y )
                     {
-                        setResidual( { active: true, symbol: 'T', coords: [ tp2X, tp2Y ] } );
+                        setResidual( { active: true, symbol: teleport, coords: [ tp2X, tp2Y ] } );
                         auxiliar[tp2X][tp2Y] = box;
                     }
                     else
                     {
-                        setResidual( { active: true, symbol: 'T', coords: [ tp1X, tp1Y ] } );
+                        setResidual( { active: true, symbol: teleport, coords: [ tp1X, tp1Y ] } );
                         auxiliar[tp1X][tp1Y] = box;
                     }
                     setMapa(auxiliar);
@@ -125,7 +140,7 @@ const App = () =>
                 {
                     if( tp1X==newX && tp1Y==newY )
                     {
-                        setResidual( { active: true, symbol: 'T', coords: [ tp2X, tp2Y ] } );
+                        setResidual( { active: true, symbol: teleport, coords: [ tp2X, tp2Y ] } );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp2X][tp2Y] = symbol;
                         setPlayer( [ tp2X, tp2Y, symbol ] );
@@ -133,7 +148,7 @@ const App = () =>
                     }
                     else
                     {
-                        setResidual( { active: true, symbol: 'T', coords: [ tp1X, tp1Y ] } );
+                        setResidual( { active: true, symbol: teleport, coords: [ tp1X, tp1Y ] } );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp1X][tp1Y] = symbol;
                         setPlayer( [ tp1X, tp1Y, symbol ] );
@@ -168,7 +183,7 @@ const App = () =>
                 setMapa( auxiliar );
                 break;
             }
-            case 'teleport':
+            case teleport:
             {
                 handleTp(x, y, symbol, box);
                 break;
@@ -179,66 +194,148 @@ const App = () =>
         }
     }
 
-    const hurtPlayer = (dmg: number) =>
+    const hurtPlayer = ( dmg: number, dot: number, times: number ) =>
     {
-        setHp( prev => prev - dmg );
+        setHp( prev =>
+        {
+            if(prev-dmg<=0)
+            {
+                stopGame();
+            }
+            return prev - dmg;
+        });
+
+        if(dot!=0)
+        {
+            let dmgId = setInterval( () =>
+            {
+                setHp( (prev) =>
+                {
+                    if(prev - dot <= 0)
+                    {
+                        clearInterval(dmgId);
+                        clearTimeout(timeId);
+                        stopGame();
+                    }
+                    return prev - dot;
+                } );
+            }, 1000);
+
+            let timeId = setTimeout( () =>
+            {
+                clearInterval( dmgId );
+            }, times*1000)
+        }
         hp-dmg<=0 && stopGame();
     }
     
-    const touchEnemy = (symbol: string) =>
+    const touchEnemy = ( symbol: string, type: string ) =>
     {
-        inconsecuente(symbol);
-        hurtPlayer(1);
+        switch(type)
+        {
+            case enemy:
+                {
+                    inconsecuente(symbol);
+                    hurtPlayer(1, 0, 0);
+                    break;
+                }
+            case heavyEnemy:
+                {
+                    inconsecuente(symbol);
+                    hurtPlayer(1, 2, 2);
+                    break;
+                }
+        }
     }
 
-    const stepOnTrap = ( x: number, y: number, symbol: string ) =>
+    const stepOnTrap = ( x: number, y: number, symbol: string, type: string ) =>
     {
-        setResidual( { active: true, symbol: 't', coords: [ x, y ] } );
+        setResidual( { active: true, symbol: type, coords: [ x, y ] } );
         moveHere( x, y, symbol, true );
-        hurtPlayer(1);
+
+        switch(type)
+        {
+            case trap:
+                {
+                    hurtPlayer(1, 0, 0);
+                    break;
+                }
+            case poisonTrap:
+                {
+                    hurtPlayer(1, 1, 2);
+                    break;
+                }
+        }
     }
 
+    const walkOntoFire = ( x: number, y: number, symbol: string, newX: number, newY: number ) =>
+    {
+        const auxiliar = mapa.map(fila => [...fila]);
+        auxiliar[newX-x][newY-y] = '';
+        auxiliar[newX][newY] = symbol
+        setMapa(auxiliar);
+        hurtPlayer(1, 1, 3,);
+        setTimeout( ()=>
+        {
+            const auxiliar = mapa.map(fila => [...fila]);
+            auxiliar[newX][newY] = fire;
+            auxiliar[newX-x][newY-y] = symbol;
+            setMapa(auxiliar);
+            setPlayer( [newX-x,newY-y,symbol] );
+        }, 45);
+    };
+        
     const movePlayer = ( x: number, y: number, symbol: string ) =>
     {
         const newX = player[0]+x;
         const newY = player[1]+y;
         const tile = checkCollision(newX, newY);
 
-        switch(tile)
+        if(!stun)
         {
-            case 'empty':
-                {
-                    moveHere( newX, newY, symbol, true );
-                    break;
-                }
-            case 'box':
-                {
-                    pushBox( x, y, symbol );
-                    break;
-                }
-            case 'teleport':
-                {
-                    handleTp( x, y, symbol, '' );
-                    break;
-                }
-            case 'enemy':
-                {
-                    touchEnemy( symbol );
-                    break;
-                }
-            case 'trap':
-                {
-                    stepOnTrap( newX, newY, symbol );
-                    break;
-                }
-            case 'unknown':
-            case 'wall':
-            case 'water':
-            case 'oob':
-                {
-                    inconsecuente( symbol );
-                    break;
-                }
+            switch(tile)
+            {
+                case 'empty':
+                    {
+                        moveHere( newX, newY, symbol, true );
+                        break;
+                    }
+                case box:
+                    {
+                        pushBox( x, y, symbol );
+                        break;
+                    }
+                case teleport:
+                    {
+                        handleTp( x, y, symbol, '' );
+                        break;
+                    }
+                case enemy:
+                case heavyEnemy:
+                    {
+                        touchEnemy( symbol, tile );
+                        break;
+                    }
+                case trap:
+                case poisonTrap:
+                    {
+                        stepOnTrap( newX, newY, symbol, tile );
+                        break;
+                    }
+                case fire:
+                    {
+                        walkOntoFire( x, y, symbol, newX, newY );
+                        break;
+                    }
+                case 'unknown':
+                case wall:
+                case 'water':
+                case 'oob':
+                    {
+                        inconsecuente( symbol );
+                        break;
+                    }
+            }
         }
     }
 
@@ -277,16 +374,21 @@ const App = () =>
         const auxiliar = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)
         {
-            auxiliar[i][0] = 'x';
-            auxiliar[0][i] = 'x';
+            auxiliar[i][0] = 'z';
+            auxiliar[0][i] = 'y';
             auxiliar[i][17] = 'x';
             auxiliar[17][i] = 'x';
         }
-        auxiliar[13][13] = 'e';
+
         auxiliar[3][3] = 'B';
-        auxiliar[15][5] = 't';
+        auxiliar[13][14] = heavyEnemy;
+        auxiliar[13][13] = poisonTrap;
+        auxiliar[15][2] = enemy;
+        auxiliar[15][5] = trap;
+        auxiliar[10][10] = fire;
         auxiliar[2][16] = 'T';
         auxiliar[16][2] = 'T';
+
         setTps( [ [2,16], [16,2] ] );
         auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
         setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
@@ -313,10 +415,17 @@ const App = () =>
 
     const renderHp = () =>
     {
-        const heartsLeft = '💖'.repeat( hp );
-        const heartsLost = '🖤'.repeat( maxHp - hp );
-
-        return heartsLeft + heartsLost;
+        if(hp>=0)
+        {
+            const heartsLeft = '💖'.repeat( hp );
+            const heartsLost = '🖤'.repeat( maxHp - hp );
+            return heartsLeft + heartsLost;
+        }
+        else
+        {
+            const heartsLost = '🖤'.repeat( maxHp );
+            return heartsLost;
+        }
     }
 
   return(
@@ -325,10 +434,15 @@ const App = () =>
         <div className='general'>
             <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
 
-                {mapa.map( ( fila, x ) =>
-                <div key={x} className='fila'>
-                    { fila.map( ( celda, y ) => { return( <label key={y} className='celda'> {celda} </label> ) } ) }
-                </div> )}
+            {mapa.map((fila, x) => (
+  <div key={x} className='fila'>
+    {fila.map((celda, y) => (
+      <label key={y} className='celda'>
+        {celda === '.' ? '' : celda}
+      </label>
+    ))}
+  </div>
+))}
 
             </div>
         </div>
