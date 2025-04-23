@@ -6,6 +6,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.0.7] - 2025-04-23
+### Added
+- Implemented Damage Over Time (DoT) mechanics: fire, poison, and bleed.
+- Added visual effects and logic for traps (fire, poison) and enemies causing bleed damage.
+
+---
+
 ## [v0.0.6] - 2025-04-22
 
 ### Added
