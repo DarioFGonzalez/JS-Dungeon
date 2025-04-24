@@ -1,5 +1,56 @@
 # DevLog - Diario de Combate
 
+### 🔹 Paso 5: Sistema de Daño por Tiempo (DoT)
+_Tantas maneras de causar DOLOR_ 😈🔥
+
+🗓️ *2025-04-23*
+
+***¡Ahhhhh!...*** Al fin llegó el primer golpazo de dopamina real jajaj. Ver cómo el HP seguía bajando después del golpe fue... `perfecto 👨‍💻💕`.
+
+Con las funciones de DoT ahora refactorizadas y pensadas para escalar me siento como un nene al que le dieron un balde, una palita y lo dejaron en la playa 🧨✨.
+
+```¡Tanto RAW MATERIAL con el que Jugar!```
+
+---
+
+**🛠️ A nivel técnico:**
+
+- Refactorizada la función de daño `hurtPlayer()` para aplicar DoT al jugador. 🩸💀
+- Agregada función `stepOntoFire()`: El fuego ahora daña, empuja y bloquea el paso. 🔥🚫
+- Refactorizado `touchEnemy()` y `stepOnTrap()` para diferenciar tipos de enemigos y tipos de daño. ⚔🗡
+
+---
+
+**👾 Futuro próximo / Ideas sueltas 🎯:**
+
+Quiero frenar un poco para pulir detalles visuales antes de seguir avanzando.
+
+### 📌  Indicadores visuales en los corazones según el tipo de daño pendiente (DoT):
+
+- 💖 [ Sano ]
+- 💚 [ Envenenado ]
+- 💔 [ Sangrando ] 
+- 🖤 [ Vida perdida ]
+
+Ejemplo: si tenés 5 corazones y te aplican 2 de veneno:
+
+- 💖💖💖💚💚
+- 💖💖💖💚🖤
+- 💖💖💖🖤🖤
+
+Y si se combinan distintos estados:
+
+- 💖💔💔💚💚
+- 💖💔💚🖤🖤
+- 💖🖤🖤🖤🖤
+
+Esto suma **claridad visual**, **urgencia estratégica** y un plus de **inmersión** 🧠💡. Si ves [💔💚💚💚💚], sabés que curar el veneno es prioridad máxima.
+
+### 🎨 Junto con otros update visuales que vaya encontrando. ✨
+- Enemigos ( F por 🔥 );
+- Trampas ( 't' por 🔳, 'p' por 🔲 );
+- Ambiente ( T por 🌀, B por 🟦)
+
 ---
 
 ### 🔹 Paso 4: "Enemigos", placas trampa y lógica vidas/muerte. 💖💖🖤🖤
