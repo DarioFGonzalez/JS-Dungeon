@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
 const ship_up = '^';
@@ -9,8 +9,9 @@ const anyPlayer = [ship_down, ship_left, ship_right, ship_up];
 const box = 'B';
 const wall = 'x';
 const teleport = 'T';
+
 const mapSize = 18;
-const maxHp = 5;
+const maxHp = 15;
 
 const enemy = 'e';
 const heavyEnemy = 'E';
@@ -38,6 +39,29 @@ const App = () =>
     const [ residual, setResidual ] = useState<Residual>( { active: false, symbol: '', coords: [] } );
 
     const [ player, setPlayer ] = useState<playerData>( [ 0, 0, '^' ] );
+    const [ poisoned, setPoisoned ] = useState<boolean>( false );
+    const [ poisonTicks, setPoisonTicks ] = useState<string[]>( [] );
+    const [ bleeding, setBleeding ] = useState<boolean>( false );
+    const [ bleedTicks, setBleedTicks ] = useState<string[]>( [] );
+    const [ burning, setBurning ] = useState<boolean>( false );
+    const [ burnTicks, setBurnTicks ] = useState<string[]>( [] );
+
+
+    useEffect( () =>
+    {
+        if(poisonTicks.length==0)
+        {
+            setPoisoned(false);
+        }
+        if(bleedTicks.length==0)
+        {
+            setBleeding(false);
+        }
+        if(burnTicks.length==0)
+        {
+            setBurning(false);
+        }
+    }, [poisonTicks, bleedTicks, burnTicks]);
 
     const findPlayer = () =>
     {
@@ -194,7 +218,7 @@ const App = () =>
         }
     }
 
-    const hurtPlayer = ( dmg: number, dot: number, times: number ) =>
+    const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ) =>
     {
         setHp( prev =>
         {
@@ -207,6 +231,30 @@ const App = () =>
 
         if(dot!=0)
         {
+            switch(aliment)
+            {
+                case 'poison':
+                    {
+                        setPoisoned(true);
+                        setPoisonTicks( prev => [ ...prev, 'x' ] );
+                        break;
+                    }
+                case 'bleed':
+                    {
+                        setBleeding(true);
+                        setBleedTicks( prev => [ ...prev, 'x' ] );
+                        break;
+                    }
+                case 'burn':
+                    {
+                        setBurning(true);
+                        setBurnTicks( prev => [ ...prev, 'x' ] );
+                        break;
+                    }
+                default:
+                    break;
+            }
+
             let dmgId = setInterval( () =>
             {
                 setHp( (prev) =>
@@ -223,6 +271,26 @@ const App = () =>
 
             let timeId = setTimeout( () =>
             {
+                switch(aliment)
+                {
+                    case 'poison':
+                        {
+                            setPoisonTicks( prev => [ ...prev.slice(1) ] );
+                            break;
+                        }
+                    case 'bleed':
+                        {
+                            setBleedTicks( prev => [ ...prev.slice(1) ] );
+                            break;
+                        }
+                    case 'burn':
+                        {
+                            setBurnTicks( prev => [ ...prev.slice(1) ] );
+                            break;
+                        }
+                    default:
+                        break;
+                }
                 clearInterval( dmgId );
             }, times*1000)
         }
@@ -236,13 +304,13 @@ const App = () =>
             case enemy:
                 {
                     inconsecuente(symbol);
-                    hurtPlayer(1, 0, 0);
+                    hurtPlayer(1, 0, 0, 'none');
                     break;
                 }
             case heavyEnemy:
                 {
                     inconsecuente(symbol);
-                    hurtPlayer(1, 2, 2);
+                    hurtPlayer(1, 2, 2, 'bleed');
                     break;
                 }
         }
@@ -257,12 +325,12 @@ const App = () =>
         {
             case trap:
                 {
-                    hurtPlayer(1, 0, 0);
+                    hurtPlayer(1, 0, 0, 'none');
                     break;
                 }
             case poisonTrap:
                 {
-                    hurtPlayer(1, 1, 2);
+                    hurtPlayer(1, 1, 2, 'poison');
                     break;
                 }
         }
@@ -274,7 +342,7 @@ const App = () =>
         auxiliar[newX-x][newY-y] = '';
         auxiliar[newX][newY] = symbol
         setMapa(auxiliar);
-        hurtPlayer(1, 1, 3,);
+        hurtPlayer(1, 1, 3, 'burn');
         setTimeout( ()=>
         {
             const auxiliar = mapa.map(fila => [...fila]);
@@ -369,6 +437,13 @@ const App = () =>
         }
     }
 
+    const cleanDebuffs = () =>
+    {
+        setPoisonTicks( [] );
+        setBleedTicks( [] );
+        setBurnTicks( [] );
+    }
+
     const loadGame = () =>
     {
         const auxiliar = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
@@ -406,6 +481,7 @@ const App = () =>
     const stopGame = () =>
     {
         findPlayer();
+        cleanDebuffs();
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player[0]][player[1]] = '';
         setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
@@ -430,6 +506,8 @@ const App = () =>
 
   return(
     <div>
+        <span> StatusEffect: { poisoned?'poisoned💚':'' } { bleeding?'bleeding🩸':'' } { burning?'burning🔥':'' } </span>
+        <br />
         <span> HP: { renderHp() } </span>
         <div className='general'>
             <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>

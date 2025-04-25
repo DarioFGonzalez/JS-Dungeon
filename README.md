@@ -53,6 +53,15 @@ Todo gran proyecto empieza desde lo pequeño, feo o ineficiente. La idea es cons
 
 ¡Gracias por pasar! Si te interesa este tipo de desarrollo retro/vanilla, podés seguir el progreso o proponer ideas. 🎮
 
+---
+
+### 📚 Documentación complementaria
+
+- [📄 CHANGELOG.md](./CHANGELOG.md) – Registro técnico de cambios, con foco profesional: versiones, fixes, y mejoras.
+- [🧠 devlog.md](./devlog.md) – Bitácora personal del desarrollo: decisiones, frustraciones, ideas y momentos de euforia.
+
+---
+
 ## 📝 Licencia
 Este proyecto está licenciado bajo los términos de la licencia MIT.
 Podés leer los detalles completos en el archivo [LICENSE](./LICENSE).
