@@ -27,20 +27,6 @@ El proyecto está en fase inicial. A medida que se avanza se agregarán:
 - Guardado de progreso
 - Interacción con otros jugadores (sistema experimental)
 
-## 📂 Estructura del Proyecto
-
-```bash
-public/
-│  ├─ assets/         → Imágenes, íconos, animaciones
-│  ├─ styles/         → Estilos CSS
-│  └─ index.html      → Entrada principal
-
-src/
-│  ├─ core/           → Lógica del juego (mapa, movimiento, combates)
-│  ├─ components/     → Elementos reutilizables (personaje, enemigos, UI)
-│  └─ main.js         → Orquestador principal
-```
-
 ## 💡 Filosofía
 
 Todo gran proyecto empieza desde lo pequeño, feo o ineficiente. La idea es construir desde lo básico hasta un juego con sistemas profundos, aprendiendo y adaptando en cada etapa.
@@ -49,9 +35,12 @@ Todo gran proyecto empieza desde lo pequeño, feo o ineficiente. La idea es cons
 
 *Próximamente*
 
----
+### 📚 Documentación complementaria
 
-¡Gracias por pasar! Si te interesa este tipo de desarrollo retro/vanilla, podés seguir el progreso o proponer ideas. 🎮
+- [📄 CHANGELOG.md](./CHANGELOG.md) – Registro técnico de cambios, con foco profesional: versiones, fixes, y mejoras.
+- [🧠 devlog.md](./devlog.md) – Bitácora personal del desarrollo: decisiones, frustraciones, ideas y momentos de euforia.
+
+---
 
 ---
 
