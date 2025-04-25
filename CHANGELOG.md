@@ -6,6 +6,24 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased] - 2025-04-25
+
+### Added
+- Función `cleanse()` creada: permite purgar efectos negativos activos (`bleeding`, `burning`, `poisoned`) de forma selectiva o total. Al remover un estado, detiene inmediatamente el daño asociado.
+- Implementado sistema de *totems*: objetos del mundo con efectos sobre el jugador. El primer prototipo ejecuta `cleanse()` al ser tocado.
+- Nuevas *hotkeys* para interacción rápida: tecla `K` activa `cleanse('bleed')`, tecla `O` activa `heal(3)`.
+- Primer prototipo de `heal()` implementado: restaura vida sin superar el máximo (`maxHp`). Diseñada para escalar en futuras versiones (curación en el tiempo, condiciones, etc.).
+
+### Changed
+- Refactorizadas las funciones `hurtPlayer()` y `handleMovement()` para integrar lógica de purga (`cleanse`) y curación (`heal`) sin interferir con el sistema de DoT existente.
+- Ajustes menores en el sistema de `useEffect` para reflejar correctamente el estado del jugador tras interacciones con totems o teclas.
+
+### Notes
+- Este parche es **incompleto pero funcional**. Se recomienda considerarlo *WIP (work in progress)*: faltan integrar buffs, balance de curación, y documentar el universo de totems de forma modular.
+- A futuro se contempla la extensión de `heal()` para incluir efectos en el tiempo y escalado según condiciones (ej: Lux, equipo, estado).
+
+---
+
 ## [v0.0.8] - 2025-04-24
 
 ### Added

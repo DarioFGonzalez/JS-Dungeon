@@ -25,6 +25,7 @@ const immovable = [enemy, heavyEnemy, box, wall];
 const movable = [box];
 
 type playerData = [ number, number, string ];
+type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
 type Coords = [ number, number ];
 type ArrayOfCoords = Coords[];
 type Residual = { active: boolean, symbol: string, coords: number[] };
@@ -41,26 +42,29 @@ const App = () =>
 
     const [ player, setPlayer ] = useState<playerData>( [ 0, 0, '^' ] );
     const [ poisoned, setPoisoned ] = useState<boolean>( false );
-    const [ poisonTicks, setPoisonTicks ] = useState<string[]>( [] );
+    const [ poisonTicks, setPoisonTicks ] = useState<alimentIds[]>( [] );
     const [ bleeding, setBleeding ] = useState<boolean>( false );
-    const [ bleedTicks, setBleedTicks ] = useState<string[]>( [] );
+    const [ bleedTicks, setBleedTicks ] = useState<alimentIds[]>( [] );
     const [ burning, setBurning ] = useState<boolean>( false );
-    const [ burnTicks, setBurnTicks ] = useState<string[]>( [] );
+    const [ burnTicks, setBurnTicks ] = useState<alimentIds[]>( [] );
 
 
     useEffect( () =>
     {
-        if(poisonTicks.length==0)
+        if(poisonTicks.length==0 && poisoned)
         {
             setPoisoned(false);
+            cleanse('poison');
         }
-        if(bleedTicks.length==0)
+        if(bleedTicks.length==0 && bleeding)
         {
             setBleeding(false);
+            cleanse('bleed');
         }
-        if(burnTicks.length==0)
+        if(burnTicks.length==0 && burning)
         {
             setBurning(false);
+            cleanse('burn');
         }
     }, [poisonTicks, bleedTicks, burnTicks]);
 
@@ -238,19 +242,19 @@ const App = () =>
                 case 'poison':
                     {
                         setPoisoned(true);
-                        setPoisonTicks( prev => [ ...prev, 'x' ] );
+                        setPoisonTicks( prev => [ ...prev, {dmgId, timerId} ] );
                         break;
                     }
                 case 'bleed':
                     {
                         setBleeding(true);
-                        setBleedTicks( prev => [ ...prev, 'x' ] );
+                        setBleedTicks( prev => [ ...prev, {dmgId, timerId} ] );
                         break;
                     }
                 case 'burn':
                     {
                         setBurning(true);
-                        setBurnTicks( prev => [ ...prev, 'x' ] );
+                        setBurnTicks( prev => [ ...prev, {dmgId, timerId} ] );
                         break;
                     }
                 default:
@@ -259,37 +263,36 @@ const App = () =>
 
             let dmgId = setInterval( () =>
             {
-
                 setHp( (prev) =>
                 {
                     if(prev - dot <= 0)
                     {
                         clearInterval(dmgId);
-                        clearTimeout(timeId);
+                        clearTimeout(timerId);
                         stopGame();
-                        return prev;
+                        return 0;
                     }
                     return prev - dot;
                 } );
             }, 1000);
 
-            let timeId = setTimeout( () =>
+            let timerId = setTimeout( () =>
             {
                 switch(aliment)
                 {
                     case 'poison':
                         {
-                            setPoisonTicks( prev => [ ...prev.slice(1) ] );
+                            setPoisonTicks( prev => prev.filter( x => x.timerId!==timerId ) );
                             break;
                         }
                     case 'bleed':
                         {
-                            setBleedTicks( prev => [ ...prev.slice(1) ] );
+                            setBleedTicks( prev => prev.filter( x => x.timerId!==timerId ) );
                             break;
                         }
                     case 'burn':
                         {
-                            setBurnTicks( prev => [ ...prev.slice(1) ] );
+                            setBurnTicks( prev => prev.filter( x => x.timerId!==timerId ) );
                             break;
                         }
                     default:
@@ -297,8 +300,8 @@ const App = () =>
                 }
                 clearInterval( dmgId );
             }, times*1000)
+
         }
-        hp-dmg<=0 && stopGame();
     }
     
     const touchEnemy = ( symbol: string, type: string ) =>
@@ -314,7 +317,7 @@ const App = () =>
             case heavyEnemy:
                 {
                     inconsecuente(symbol);
-                    hurtPlayer(1, 2, 2, 'bleed');
+                    hurtPlayer(1, 2, 10, 'bleed');
                     break;
                 }
         }
@@ -351,6 +354,10 @@ const App = () =>
         {
             const auxiliar = mapa.map(fila => [...fila]);
             auxiliar[newX][newY] = fire;
+            if(hp<=0)
+            {
+                return ;
+            }
             auxiliar[newX-x][newY-y] = symbol;
             setMapa(auxiliar);
             setPlayer( [newX-x,newY-y,symbol] );
@@ -402,7 +409,7 @@ const App = () =>
                 case totem:
                     {
                         inconsecuente( symbol );
-                        cleanDebuffs();
+                        cleanse('all');
                         break;
                     }
                 case 'unknown':
@@ -441,17 +448,82 @@ const App = () =>
                 case 'd':
                 movePlayer(0,+1,ship_right);
                 break;
+                case 'k':
+                case 'K':
+                cleanse('bleed');
+                break;
+                case 'o':
+                case 'O':
+                heal(3)
+                break;
                 default:
                     break;
             }
         }
     }
 
-    const cleanDebuffs = () =>
+    const cleanse = ( aliment: string ) =>
     {
-        setPoisonTicks( [] );
-        setBleedTicks( [] );
-        setBurnTicks( [] );
+        switch( aliment )
+        {
+            case 'bleed':
+            {
+                bleedTicks.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+                setBleedTicks( [] );
+                break;
+            }
+            case 'poison':
+            {
+                poisonTicks.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+                setPoisonTicks( [] );
+                break;
+            }
+            case 'burn':
+            {
+                burnTicks.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+                setBurnTicks( [] );
+                break;
+            }
+            case 'all':
+            {
+                burnTicks.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+                setBurnTicks( [] );
+                poisonTicks.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+                setPoisonTicks( [] );
+                bleedTicks.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+                setBleedTicks( [] );
+                break;
+            }
+        }
+    }
+
+    const heal = ( healing: number ) =>
+    {
+        setHp( prev => prev + healing < maxHp ? prev + healing : maxHp );
     }
 
     const loadGame = () =>
@@ -492,7 +564,7 @@ const App = () =>
     const stopGame = () =>
     {
         findPlayer();
-        cleanDebuffs();
+        cleanse('all');
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player[0]][player[1]] = '';
         setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
@@ -522,17 +594,14 @@ const App = () =>
         <span> HP: { renderHp() } </span>
         <div className='general'>
             <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
-
-            {mapa.map((fila, x) => (
-  <div key={x} className='fila'>
-    {fila.map((celda, y) => (
-      <label key={y} className='celda'>
-        {celda === '.' ? '' : celda}
-      </label>
-    ))}
-  </div>
-))}
-
+                {mapa.map((fila, x) => (
+                <div key={x} className='fila'>
+                    {fila.map((celda, y) =>
+                    <label key={y} className='celda'>
+                        { celda }
+                    </label>
+                    )}
+                </div> ))}
             </div>
         </div>
         {!game && <button onClick={startGame}> START </button>}
