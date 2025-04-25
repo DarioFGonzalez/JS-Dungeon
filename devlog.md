@@ -1,21 +1,35 @@
 # DevLog - Diario de Combate
 
-### 🔹 Paso 6: StatusEffect, el inicio de los buff/debuffs. ✨ 
+### 🔹 Paso 6: StatusEffect, el inicio de los buff/debuffs. 😷✨💪 
 
 🗓️ *2025-04-24*
 
+Después de estancarme un poco con el tema de los corazones, la visual, lo responsive, asincronías de useState(); y dos o tres shutdowns porque *no soy exactamente *FANÁTICO* de crear detalles visuales* (👀🔪) me encontré escapando a un poco de **lógica pura y dura**. `StatusEffect` 👌💕
 
+Cada nuevo DoT agrega un tick a la cola de estados alterados- pueden stackear todo lo que quieran y los metí en un label para darle mas estilo (barra de buffos) clásica de RPG.
+```
+StatusEffect: [Burning 🔥] [Bleeding🩸] [Poisoned💚]
+HP: 💖💖💖💖💖🖤
+```
+Un paso en la dirección que originalmente apunté en el anterior devlog.md, pero que no es **exactamente** a lo que apunté en el anterior devlog.md por razones técnicas y de eficiencia. 
+
+``Nota al pie:`` Intenté rushear un sistema de `cleanse()` pero aunque no me da el tiempo jajaja ya tengo una idea de como implementarlo en el siguiente parche. 🐱‍💻👾
 
 ---
 
 **🛠️ A nivel técnico:**
 
-- 
+- Refactorizado `hurtPlayer()` para seguir los ticks de DoT y sus finalizaciones.
+- Agregado label que refleje los estados alterados actuales (acumulados) activos.
+- Implementado sistema de ticks (cola) y estados (boolean) para saber que estado está activo y por cuanto tiempo más.
+
 ---
 
 **👾 Futuro próximo / Ideas sueltas 🎯:**
 
--
+- `Cleanse();` Obviamente 😎🐱‍💻´
+- `Healing();` Alguna manera super [BETA] de curar al personaje.
+- `Buffs`: Quizá meter un escudito, bufito de algún tipo- para aprovechar el statusEffect.
 
 ---
 

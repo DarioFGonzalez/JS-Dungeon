@@ -9,6 +9,7 @@ const anyPlayer = [ship_down, ship_left, ship_right, ship_up];
 const box = 'B';
 const wall = 'x';
 const teleport = 'T';
+const totem = 'u';
 
 const mapSize = 18;
 const maxHp = 15;
@@ -83,6 +84,7 @@ const App = () =>
         {
             case '': return 'empty';
             case 'x': return wall;
+            case 'u': return totem;
             case '~': return 'water';
             case 'e': return enemy;
             case 'E': return heavyEnemy;
@@ -257,6 +259,7 @@ const App = () =>
 
             let dmgId = setInterval( () =>
             {
+
                 setHp( (prev) =>
                 {
                     if(prev - dot <= 0)
@@ -264,6 +267,7 @@ const App = () =>
                         clearInterval(dmgId);
                         clearTimeout(timeId);
                         stopGame();
+                        return prev;
                     }
                     return prev - dot;
                 } );
@@ -395,6 +399,12 @@ const App = () =>
                         walkOntoFire( x, y, symbol, newX, newY );
                         break;
                     }
+                case totem:
+                    {
+                        inconsecuente( symbol );
+                        cleanDebuffs();
+                        break;
+                    }
                 case 'unknown':
                 case wall:
                 case 'water':
@@ -458,6 +468,7 @@ const App = () =>
         auxiliar[3][3] = 'B';
         auxiliar[13][14] = heavyEnemy;
         auxiliar[13][13] = poisonTrap;
+        auxiliar[13][12] = totem;
         auxiliar[15][2] = enemy;
         auxiliar[15][5] = trap;
         auxiliar[10][10] = fire;
@@ -506,7 +517,7 @@ const App = () =>
 
   return(
     <div>
-        <span> StatusEffect: { poisoned?'poisoned💚':'' } { bleeding?'bleeding🩸':'' } { burning?'burning🔥':'' } </span>
+        <span> StatusEffect: { poisoned?'[Poisoned💚]':'' } { bleeding?'[Bleeding🩸]':'' } { burning?'[Burning🔥]':'' } </span>
         <br />
         <span> HP: { renderHp() } </span>
         <div className='general'>
