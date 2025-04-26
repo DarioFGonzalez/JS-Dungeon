@@ -4,9 +4,7 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
----
-
-## [Unreleased] - 2025-04-25
+## [v0.0.9] - 2025-04-25
 
 ### Added
 - Función `cleanse()` creada: permite purgar efectos negativos activos (`bleeding`, `burning`, `poisoned`) de forma selectiva o total. Al remover un estado, detiene inmediatamente el daño asociado.
@@ -19,8 +17,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Ajustes menores en el sistema de `useEffect` para reflejar correctamente el estado del jugador tras interacciones con totems o teclas.
 
 ### Notes
-- Este parche es **incompleto pero funcional**. Se recomienda considerarlo *WIP (work in progress)*: faltan integrar buffs, balance de curación, y documentar el universo de totems de forma modular.
-- A futuro se contempla la extensión de `heal()` para incluir efectos en el tiempo y escalado según condiciones (ej: Lux, equipo, estado).
+- Este parche sienta las bases del sistema de curación y purificación, piezas clave para el futuro balance de combate.
+- `heal()` y `cleanse()` están en estado **funcional pero no definitivo**, listos para ser iterados según el diseño del sistema de Lux y las condiciones mágicas del entorno.
+- Se recomienda testear intensivamente la interacción entre DoT stackeados y curación rápida para evitar exploits o loops desequilibrados.
 
 ---
 

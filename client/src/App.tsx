@@ -454,7 +454,11 @@ const App = () =>
                 break;
                 case 'o':
                 case 'O':
-                heal(3)
+                heal(3, 0, 0);
+                break;
+                case 'i':
+                case 'I':
+                heal(1, 1, 4);
                 break;
                 default:
                     break;
@@ -521,9 +525,21 @@ const App = () =>
         }
     }
 
-    const heal = ( healing: number ) =>
+    const heal = ( healing: number, HoT: number, times: number ) =>
     {
         setHp( prev => prev + healing < maxHp ? prev + healing : maxHp );
+        if(HoT!==0)
+        {
+            let healId = setInterval( () =>
+            {
+                setHp( prev => prev+HoT > maxHp ? maxHp : prev + HoT );
+            }, 1000);
+
+            let timerId = setTimeout( () =>
+            {
+                clearInterval(healId);
+            }, times*1000)
+        }
     }
 
     const loadGame = () =>
