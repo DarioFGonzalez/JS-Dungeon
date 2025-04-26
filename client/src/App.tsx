@@ -21,8 +21,8 @@ const trap = 't';
 const poisonTrap = 'p';
 const fire = 'f';
 
-const bandages = { name: 'Bandages', id: 1, desc: 'Deals with bleeding.' };
-const potion = { name: 'Potion', id: 2, desc: 'Basic healing item (+3HP).' };
+const bandages = { name: 'Bandages', id: 1, desc: 'Deals with bleeding.', cd: 5000 };
+const potion = { name: 'Potion', id: 2, desc: 'Basic healing item (+3HP).', cd: 3000 };
 
 const residuals = [fire, trap, poisonTrap, teleport];
 const immovable = [enemy, heavyEnemy, box, wall];
@@ -33,8 +33,8 @@ type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<t
 type Coords = [ number, number ];
 type ArrayOfCoords = Coords[];
 type Residual = { active: boolean, symbol: string, coords: number[] };
-type Item = { name: string, id: number, desc: string };
-type InventoryItem = { item: Item, quantity: number };
+type Item = { name: string, id: number, desc: string, cd: number };
+type InventoryItem = { item: Item, quantity: number, onCd: boolean };
 type Inventory = InventoryItem[];
 
 const App = () =>
@@ -49,6 +49,7 @@ const App = () =>
 
     const [ player, setPlayer ] = useState<playerData>( [ 0, 0, '^' ] );
     const [ inventory, setInventory ] = useState<Inventory>( [] );
+    const [ showInventory, setShowInventory ] = useState<boolean>( false );
 
     const [ poisoned, setPoisoned ] = useState<boolean>( false );
     const [ poisonTicks, setPoisonTicks ] = useState<alimentIds[]>( [] );
@@ -406,7 +407,7 @@ const App = () =>
         const thisItem = inventory.find( x => x.item.name === item.name )
         if(!thisItem)
         {
-            setInventory( prev => [ ...prev, { item, quantity: quantity } ] );
+            setInventory( prev => [ ...prev, { item, quantity: quantity, onCd: false } ] );
             return
         }
         setInventory( prev => prev.map( x => x.item.name===item.name ? { ...x, quantity: x.quantity + quantity } : x ) );
@@ -416,7 +417,7 @@ const App = () =>
     {
         const thisItem = inventory.find( x => x.item.name===item.name );
 
-        if(!thisItem || thisItem.quantity < quantity ) return ;
+        if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return console.log( !thisItem?'item no encontrado':thisItem.quantity < quantity?'sin suficientes unidades':thisItem.onCd?'item en cooldown':'error' );
 
         switch(item.name)
         {
@@ -431,10 +432,15 @@ const App = () =>
                 break;
             }
         }
+
         
         if(thisItem.quantity - quantity > 0)
         {
-            setInventory( prev => prev.map( z => z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity } : z ) );
+            setTimeout( () =>
+            {
+                setInventory( prev => prev.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) );
+            }, thisItem.item.cd)
+            setInventory( prev => prev.map( z => z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) );
         }
         else
         {
@@ -541,8 +547,9 @@ const App = () =>
                 case 'o':
                 consumeItem(potion, 1);
                 break;
-                case 'i ':
+                case 'i':
                 console.log(inventory);
+                setShowInventory(prev => !prev);
                 break;
                 default:
                     break;
@@ -671,6 +678,7 @@ const App = () =>
         findPlayer();
         cleanse('all');
         setInventory( [] );
+        setShowInventory(false);
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player[0]][player[1]] = '';
         setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
@@ -709,6 +717,12 @@ const App = () =>
                     )}
                 </div> ))}
             </div>
+           { showInventory &&
+           <div> Inventario:
+                <div>
+                    {inventory.map( (x, y) => <label key={y}> {x.item.name} Cantidad: {x.quantity} </label>)}
+                </div>
+            </div>}
         </div>
         {!game && <button onClick={startGame}> START </button>}
         {game && <button onClick={stopGame}> STOP </button>}
