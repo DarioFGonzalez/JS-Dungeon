@@ -3,7 +3,7 @@
 ### 🔹 Paso 7: Cleanse, curación, "totems".
 _🩺 ¡Ayudas! 💉_
 
-🗓️ *2025-04-24*
+🗓️ *2025-04-25*
 
 Habiendo implementado el DoT en el parche pasado, lo más equilibrado para cerrar el ciclo es implementar lo opuesto. Curas, limpieza de estados alterados, Healing Over Time (**HoT**). Y eso es justamente lo que hice.
 

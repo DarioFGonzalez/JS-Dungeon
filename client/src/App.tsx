@@ -10,6 +10,7 @@ const box = 'B';
 const wall = 'x';
 const teleport = 'T';
 const totem = 'u';
+const fountain = 'F';
 
 const mapSize = 18;
 const maxHp = 15;
@@ -20,6 +21,9 @@ const trap = 't';
 const poisonTrap = 'p';
 const fire = 'f';
 
+const bandages = { name: 'Bandages', id: 1, desc: 'Deals with bleeding.' };
+const potion = { name: 'Potion', id: 2, desc: 'Basic healing item (+3HP).' };
+
 const residuals = [fire, trap, poisonTrap, teleport];
 const immovable = [enemy, heavyEnemy, box, wall];
 const movable = [box];
@@ -29,6 +33,9 @@ type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<t
 type Coords = [ number, number ];
 type ArrayOfCoords = Coords[];
 type Residual = { active: boolean, symbol: string, coords: number[] };
+type Item = { name: string, id: number, desc: string };
+type InventoryItem = { item: Item, quantity: number };
+type Inventory = InventoryItem[];
 
 const App = () =>
 {
@@ -36,11 +43,13 @@ const App = () =>
     const [ game, setGame ] = useState<boolean>(false);
     const [ stun, setStun ] = useState<boolean>(false);
     const [ hp, setHp ] = useState<number>(maxHp);
-    const [ mapa, setMapa ] = useState( Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') ) );
+    const [ mapa, setMapa ] = useState<string[][]>( Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') ) );
     const [ tps, setTps ] = useState<ArrayOfCoords>([]);
     const [ residual, setResidual ] = useState<Residual>( { active: false, symbol: '', coords: [] } );
 
     const [ player, setPlayer ] = useState<playerData>( [ 0, 0, '^' ] );
+    const [ inventory, setInventory ] = useState<Inventory>( [] );
+
     const [ poisoned, setPoisoned ] = useState<boolean>( false );
     const [ poisonTicks, setPoisonTicks ] = useState<alimentIds[]>( [] );
     const [ bleeding, setBleeding ] = useState<boolean>( false );
@@ -90,6 +99,7 @@ const App = () =>
             case 'x': return wall;
             case 'u': return totem;
             case '~': return 'water';
+            case 'F': return fountain;
             case 'e': return enemy;
             case 'E': return heavyEnemy;
             case 'f': return fire;
@@ -98,6 +108,8 @@ const App = () =>
             case 'T': return teleport;
             case 't': return trap;
             case 'p': return poisonTrap;
+            case '+': return '+'
+            case 'b': return 'b';
             default: return 'unknown';
         };
     }
@@ -349,7 +361,7 @@ const App = () =>
         auxiliar[newX-x][newY-y] = '';
         auxiliar[newX][newY] = symbol
         setMapa(auxiliar);
-        hurtPlayer(1, 1, 3, 'burn');
+        hurtPlayer(1, 1, 8, 'burn');
         setTimeout( ()=>
         {
             const auxiliar = mapa.map(fila => [...fila]);
@@ -363,6 +375,72 @@ const App = () =>
             setPlayer( [newX-x,newY-y,symbol] );
         }, 45);
     };
+
+    const stepOnItem = ( x: number, y: number, symbol: string, tile: string ) =>
+    {
+        if( inventory.length >= 20 )
+        {
+            setResidual( { active: true, symbol: tile, coords: [ x, y ] } );
+            moveHere( x, y, symbol, true );
+            return ;
+        }
+        moveHere( x, y, symbol, true );
+
+        switch(tile)
+        {
+            case '+':
+            {
+                addToInventory( potion, 1 );
+                break;
+            }
+            case 'b':
+            {
+                addToInventory( bandages, 1 );
+                break;
+            }
+        }
+    }
+
+    const addToInventory = ( item: Item, quantity: number ) =>
+    {
+        const thisItem = inventory.find( x => x.item.name === item.name )
+        if(!thisItem)
+        {
+            setInventory( prev => [ ...prev, { item, quantity: quantity } ] );
+            return
+        }
+        setInventory( prev => prev.map( x => x.item.name===item.name ? { ...x, quantity: x.quantity + quantity } : x ) );
+    }
+
+    const consumeItem = ( item: Item, quantity: number ) =>
+    {
+        const thisItem = inventory.find( x => x.item.name===item.name );
+
+        if(!thisItem || thisItem.quantity < quantity ) return ;
+
+        switch(item.name)
+        {
+            case 'Potion':
+            {
+                heal(3, 0, 0);
+                break;
+            }
+            case 'Bandages':
+            {
+                cleanse('bleed');
+                break;
+            }
+        }
+        
+        if(thisItem.quantity - quantity > 0)
+        {
+            setInventory( prev => prev.map( z => z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity } : z ) );
+        }
+        else
+        {
+            setInventory( prev => prev.filter( y => y.item.name!==thisItem.item.name ) );
+        }
+    }
         
     const movePlayer = ( x: number, y: number, symbol: string ) =>
     {
@@ -412,6 +490,18 @@ const App = () =>
                         cleanse('all');
                         break;
                     }
+                case fountain:
+                    {
+                        inconsecuente( symbol );
+                        cleanse('burn');
+                        break;
+                    }
+                case '+':
+                case 'b':
+                    {
+                        stepOnItem( newX, newY, symbol, tile )
+                        break;
+                    }
                 case 'unknown':
                 case wall:
                 case 'water':
@@ -424,41 +514,35 @@ const App = () =>
         }
     }
 
-    const handleMovement = (event: React.KeyboardEvent) =>
+    const handleMovement = (event: React.KeyboardEvent): void =>
     {
         if(game)
         {
             findPlayer();
+            const key = event.key.toLowerCase();
 
-            switch(event.key)
+            switch(key)
             {
-                case 'W':
                 case 'w':
                 movePlayer(-1,0,ship_up);
                 break;
-                case 'A':
                 case 'a':
                 movePlayer(0,-1,ship_left);
                 break;
-                case 'S':
                 case 's':
                 movePlayer(+1,0,ship_down);
                 break;
-                case 'D':
                 case 'd':
                 movePlayer(0,+1,ship_right);
                 break;
                 case 'k':
-                case 'K':
-                cleanse('bleed');
+                consumeItem(bandages, 2);
                 break;
                 case 'o':
-                case 'O':
-                heal(3, 0, 0);
+                consumeItem(potion, 1);
                 break;
-                case 'i':
-                case 'I':
-                heal(1, 1, 4);
+                case 'i ':
+                console.log(inventory);
                 break;
                 default:
                     break;
@@ -559,7 +643,12 @@ const App = () =>
         auxiliar[13][12] = totem;
         auxiliar[15][2] = enemy;
         auxiliar[15][5] = trap;
+        auxiliar[2][5] = '+';
+        auxiliar[2][6] = 'b';
+        auxiliar[2][7] = '+';
+        auxiliar[2][8] = 'b';
         auxiliar[10][10] = fire;
+        auxiliar[10][12] = fountain;
         auxiliar[2][16] = 'T';
         auxiliar[16][2] = 'T';
 
@@ -581,6 +670,7 @@ const App = () =>
     {
         findPlayer();
         cleanse('all');
+        setInventory( [] );
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player[0]][player[1]] = '';
         setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
