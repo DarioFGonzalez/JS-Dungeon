@@ -1,5 +1,37 @@
 # DevLog - Diario de Combate
 
+### 🔹 Paso 7: Cleanse, curación, "totems".
+_🩺 ¡Ayudas! 💉_
+
+🗓️ *2025-04-24*
+
+Habiendo implementado el DoT en el parche pasado, lo más equilibrado para cerrar el ciclo es implementar lo opuesto. Curas, limpieza de estados alterados, Healing Over Time (**HoT**). Y eso es justamente lo que hice.
+
+La `curación` y el **HoT** fueron mas sencillos de crear- tuve que refactorizar la función opuesta (hurtPlayer) para DAR vida en lugar de quitarla, mismo que el HoT- refactorizar DoT pero al revez.
+
+Ahora el `Cleanse();`, fue un desafío un poco mas rebuscado. Tuve que guardar los.. bueno, detalles técnicos aparte- tuve que repensar como guardaba, aplicaba y seguía todos los daños para poder cancelar eficientemente todo. **Hermoso**, amo los desafíos lógicos.
+
+Ahora tengo un mundo que puede equilibrarse solo: Dañar y curar- afectar y limpiar, poder tomar riesgos calculados sabiendo tomar contramedidas. *Complejidad*, ahhh- Herramientas para mañana.
+
+---
+
+**🛠️ A nivel técnico:**
+
+- Creación de `cleanse()`: Recibe que estado, sino todos, deseas quitar- cancelando todo el daño que te faltaba recibir.
+- useEffects y funciones relevantes refactorizadas para adaptarse al cambio.
+- 'Totems' y hotKeys para limpiarse efectos negativos y curarse implementados.
+
+---
+
+**👾 Futuro próximo / Ideas sueltas 🎯:**
+
+Mhmmh... Ahora que tengo Curaciones y Cleanse, podría incursionar en como equilibrar esto.
+- Corta-Curaciones: Enemigos, totems, areas, trampas, algo que haga que el `heal();` activo se **DETENGA**.
+- CD para curaciones: No poder darle al botón como metralleta para curarse infinitamente. Tampoco tirarse clean cada dos segundos, etc.
+- IN-VEN-TA-RIO: ¿Curarse? ¿Parar sangrado?... ¿Quitar veneno? Suena a que solo podrías hacer eso con... ***el item correspondiente en el inventario***. 😈
+
+---
+
 ### 🔹 Paso 6: StatusEffect, el inicio de los buff/debuffs. 😷✨💪 
 
 🗓️ *2025-04-24*
