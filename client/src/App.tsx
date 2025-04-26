@@ -417,7 +417,7 @@ const App = () =>
     {
         const thisItem = inventory.find( x => x.item.name===item.name );
 
-        if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return console.log( !thisItem?'item no encontrado':thisItem.quantity < quantity?'sin suficientes unidades':thisItem.onCd?'item en cooldown':'error' );
+        if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return ;
 
         switch(item.name)
         {
