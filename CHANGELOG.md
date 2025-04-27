@@ -4,6 +4,25 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.0.91] - 2025-04-26
+
+### Added
+- Implementado `stepOnItem()`: sistema de interacción al caminar sobre un ítem, recogiendo objetos si hay espacio en el inventario.
+- Implementado `addToInventory()`: gestión de almacenamiento de objetos recogidos, con control de cantidad y nuevos slots automáticos.
+- Implementado `consumeItem()`: sistema de consumo de ítems, chequeando disponibilidad en inventario, cantidad suficiente y cooldown individual.
+- Sistema de cooldown para ítems: los consumibles no pueden ser utilizados repetidamente hasta que su temporizador interno expire.
+- Tipado explícito de objetos `Item`, `InventoryItem` y `Inventory` para asegurar consistencia y escalabilidad futura.
+- Introducción de hotkeys `O` y `K` para consumo rápido de ítems (`Potion` para curación y `Bandages` para detener sangrado), con validaciones de inventario y cooldown.
+
+### Changed
+- Modificada la gestión de `handleMovement` para integrar eventos de consumo de ítems mediante teclado de manera fluida.
+- Ajustes menores en el renderizado: agregado sistema de visualización precario del inventario (`showInventory`) para debug y control rápido.
+
+### Notes
+- Este parche sienta las bases para el sistema de administración de recursos del jugador (inventario, cooldowns, consumo estratégico).
+- Se prevé que en futuras versiones se incorporen mejoras visuales en el inventario, ordenación de ítems y diferenciación de tipos de objetos (consumibles, equipables, utilizables en mundo).
+- El sistema actual es funcional y estable para testeo inicial, pero no representa aún la versión final de interacción jugador-ítems.
+
 ## [v0.0.9] - 2025-04-25
 
 ### Added

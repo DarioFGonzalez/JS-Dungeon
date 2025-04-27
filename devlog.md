@@ -1,5 +1,42 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 8: Bases del inventario, consumir y recoger ítems 🎁💰✨
+
+🗓️ *2025-04-26*
+
+El paso anterior siempre me deja una ruta clara para el siguiente feature. Como ya creé sistemas de Curación y Cleanse de estados (sangrados y efectos), el siguiente paso lógico era permitir una interacción más estratégica con estos recursos: **inventario y hotkeys**. 💰✨
+
+Ahora `el jugador puede encontrar ítems tirados en el piso` y, al pisarlos (si tiene espacio en el inventario), `los recoge` automáticamente, apilándolos. También puede `consumirlos`, respetando el conteo de existencias y un sistema de *cooldown* que evita el uso indiscriminado (¡nada de "cura, cura, cura" como estrategia! 😄).
+
+Refactoricé toda la lógica pertinente para asegurar que los cambios sean **escalables y estables** a futuro. El mundo ahora puede dañarnos, y tenemos formas de contrarrestarlo: manejo de recursos, farmeo de ítems, enemigos que podrán dropear loot... **¡Se abren muchas posibilidades!**
+
+---
+
+### 🛠️ A nivel técnico:
+
+A nivel de implementación, los principales métodos nuevos son:
+
+- `stepOnItem()`: Verifica si hay espacio en el inventario y, de ser así, llama a `addToInventory()` para gestionar la recolección.
+- `addToInventory()`: Maneja el almacenamiento de objetos, stacking de ítems y control de cantidades.
+- `consumeItem()`: Se encarga de consumir ítems, validando requisitos de consumo y gestionando el cooldown posterior.
+- Sistema de **Cooldown** agregado.
+- Tipado explícito de objetos y funciones para garantizar consistencia y claridad futura.
+- Introducción de hotkeys para consumo rápido.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯:
+
+Antes de seguir sumando nuevas funcionalidades, priorizaré una **etapa de refactorización profunda**. Aunque me encantaría seguir creando features sin freno, es importante ser mi propio Team Leader y garantizar que la base de código sea sólida, limpia y escalable.
+
+Si me llegara a sobrar tiempo después de refactorizar, planeo avanzar en:
+
+- Crear enemigos que patrullen áreas, con lógica de colisión con el entorno.
+- Integrar sistemas de interacción entre patrullas, jugadores, obstáculos y objetos del mundo.
+- Implementar **Drop Rates** para ítems, abriendo la puerta al loot farming.
+
+---
+
 ### 🔹 Paso 7: Cleanse, curación, "totems".
 _🩺 ¡Ayudas! 💉_
 
