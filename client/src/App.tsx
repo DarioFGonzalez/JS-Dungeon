@@ -35,7 +35,7 @@ type Residual = { symbol: string, coords: number[] };
 type Item = { name: string, id: number, desc: string, cd: number };
 type InventoryItem = { item: Item, quantity: number, onCd: boolean };
 type Inventory = InventoryItem[];
-type Aliments = { PoisonInstnaces: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] };
+type Aliments = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] };
 type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
 
 interface Player
@@ -53,7 +53,7 @@ const emptyPlayer: Player =
     MaxHP: maxHp,
     Data: { x: 0, y: 0, symbol: '^' },
     Inventory: [],
-    Aliments: { PoisonInstnaces: [], BleedInstances: [], BurnInstances: [] }
+    Aliments: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
 }
 
 const App = () =>
@@ -68,31 +68,29 @@ const App = () =>
     const [ player, setPlayer ] = useState<Player>( emptyPlayer );
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
 
-    const [ poisoned, setPoisoned ] = useState<boolean>( false );
-    const [ poisonTicks, setPoisonTicks ] = useState<alimentIds[]>( [] );
-    const [ bleeding, setBleeding ] = useState<boolean>( false );
-    const [ bleedTicks, setBleedTicks ] = useState<alimentIds[]>( [] );
-    const [ burning, setBurning ] = useState<boolean>( false );
-    const [ burnTicks, setBurnTicks ] = useState<alimentIds[]>( [] );
+    // const [ poisoned, setPoisoned ] = useState<boolean>( false );
+    // const [ poisonTicks, setPoisonTicks ] = useState<alimentIds[]>( [] );
+    // const [ bleeding, setBleeding ] = useState<boolean>( false );
+    // const [ bleedTicks, setBleedTicks ] = useState<alimentIds[]>( [] );
+    // const [ burning, setBurning ] = useState<boolean>( false );
+    // const [ burnTicks, setBurnTicks ] = useState<alimentIds[]>( [] );
 
-    useEffect( (): void =>
-    {
-        if(poisonTicks.length==0 && poisoned)
-        {
-            setPoisoned(false);
-            cleanse('poison');
-        }
-        if(bleedTicks.length==0 && bleeding)
-        {
-            setBleeding(false);
-            cleanse('bleed');
-        }
-        if(burnTicks.length==0 && burning)
-        {
-            setBurning(false);
-            cleanse('burn');
-        }
-    }, [poisonTicks, bleedTicks, burnTicks]);
+    // useEffect( (): void =>
+    // {
+    //     const {PoisonInstances, BleedInstances, BurnInstances} = player.Aliments;
+    //     if(PoisonInstances.length===0)
+    //     {
+    //         cleanse('poison');
+    //     }
+    //     if(BleedInstances.length===0)
+    //     {
+    //         cleanse('bleed');
+    //     }
+    //     if(BurnInstances.length===0)
+    //     {
+    //         cleanse('burn');
+    //     }
+    // }, [player.Aliments]);
 
     const findPlayer = (): void =>
     {
@@ -254,6 +252,16 @@ const App = () =>
         }
     }
 
+    const manageDotInstance = ( instance: keyof Aliments, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' ) : Player =>
+    {
+        switch(action)
+        {
+            case 'add': return { ...prev, Aliments: { ...prev.Aliments, [instance]: [ ...prev.Aliments[instance], newInstance ] } };
+            case 'remove': return { ...prev, Aliments: { ...prev.Aliments, [instance]: prev.Aliments[instance].filter( x => x.dmgId!==newInstance?.dmgId ) } };
+            case 'clean': return { ...prev, Aliments: { ...prev.Aliments, [instance]: [] } };
+        }
+    }
+
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
         setPlayer( prev =>
@@ -271,20 +279,17 @@ const App = () =>
             {
                 case 'poison':
                     {
-                        setPoisoned(true);
-                        setPoisonTicks( prev => [ ...prev, {dmgId, timerId} ] );
+                        setPlayer( prev => manageDotInstance("PoisonInstances", {dmgId, timerId}, prev, 'add') );
                         break;
                     }
                 case 'bleed':
                     {
-                        setBleeding(true);
-                        setBleedTicks( prev => [ ...prev, {dmgId, timerId} ] );
+                        setPlayer( prev => manageDotInstance("BleedInstances", {dmgId, timerId}, prev, 'add') );
                         break;
                     }
                 case 'burn':
                     {
-                        setBurning(true);
-                        setBurnTicks( prev => [ ...prev, {dmgId, timerId} ] );
+                        setPlayer( prev => manageDotInstance("BurnInstances", {dmgId, timerId}, prev, 'add') );
                         break;
                     }
                 default:
@@ -312,17 +317,17 @@ const App = () =>
                 {
                     case 'poison':
                         {
-                            setPoisonTicks( prev => prev.filter( x => x.timerId!==timerId ) );
+                            setPlayer( prev => manageDotInstance("PoisonInstances", {dmgId, timerId}, prev, 'remove') );
                             break;
                         }
                     case 'bleed':
                         {
-                            setBleedTicks( prev => prev.filter( x => x.timerId!==timerId ) );
+                            setPlayer( prev => manageDotInstance("BleedInstances", {dmgId, timerId}, prev, 'remove') );
                             break;
                         }
                     case 'burn':
                         {
-                            setBurnTicks( prev => prev.filter( x => x.timerId!==timerId ) );
+                            setPlayer( prev => manageDotInstance("BurnInstances", {dmgId, timerId}, prev, 'remove') );
                             break;
                         }
                     default:
@@ -580,54 +585,54 @@ const App = () =>
         {
             case 'bleed':
             {
-                bleedTicks.forEach( ids =>
+                player.Aliments.BleedInstances.forEach( ids =>
                 {
                     clearInterval(ids.dmgId);
                     clearTimeout(ids.timerId);
                 } );
-                setBleedTicks( [] );
+                setPlayer( prev => manageDotInstance('BleedInstances', undefined, prev, 'clean') )
                 break;
             }
             case 'poison':
             {
-                poisonTicks.forEach( ids =>
+                player.Aliments.PoisonInstances.forEach( ids =>
                 {
                     clearInterval(ids.dmgId);
                     clearTimeout(ids.timerId);
                 } );
-                setPoisonTicks( [] );
+                setPlayer( prev => manageDotInstance('PoisonInstances', undefined, prev, 'clean') )
                 break;
             }
             case 'burn':
             {
-                burnTicks.forEach( ids =>
+                player.Aliments.BurnInstances.forEach( ids =>
                 {
                     clearInterval(ids.dmgId);
                     clearTimeout(ids.timerId);
                 } );
-                setBurnTicks( [] );
+                setPlayer( prev => manageDotInstance('BurnInstances', undefined, prev, 'clean') )
                 break;
             }
             case 'all':
             {
-                burnTicks.forEach( ids =>
+                player.Aliments.BurnInstances.forEach( ids =>
                 {
                     clearInterval(ids.dmgId);
                     clearTimeout(ids.timerId);
                 } );
-                setBurnTicks( [] );
-                poisonTicks.forEach( ids =>
+                setPlayer( prev => manageDotInstance('BurnInstances', undefined, prev, 'clean') )
+                player.Aliments.PoisonInstances.forEach( ids =>
                 {
                     clearInterval(ids.dmgId);
                     clearTimeout(ids.timerId);
                 } );
-                setPoisonTicks( [] );
-                bleedTicks.forEach( ids =>
+                setPlayer( prev => manageDotInstance('PoisonInstances', undefined, prev, 'clean') )
+                player.Aliments.BleedInstances.forEach( ids =>
                 {
                     clearInterval(ids.dmgId);
                     clearTimeout(ids.timerId);
                 } );
-                setBleedTicks( [] );
+                setPlayer( prev => manageDotInstance('BleedInstances', undefined, prev, 'clean') )
                 break;
             }
         }
@@ -719,7 +724,7 @@ const App = () =>
 
   return(
     <div>
-        <span> StatusEffect: { poisoned?'[Poisoned💚]':'' } { bleeding?'[Bleeding🩸]':'' } { burning?'[Burning🔥]':'' } </span>
+        <span> StatusEffect: { player.Aliments.PoisonInstances.length>0?'[Poisoned💚]':'' } { player.Aliments.BleedInstances.length>0?'[Bleeding🩸]':'' } { player.Aliments.BurnInstances.length>0?'[Burning🔥]':'' } </span>
         <br />
         <span> HP: { renderHp() } </span>
         <div className='general'>
