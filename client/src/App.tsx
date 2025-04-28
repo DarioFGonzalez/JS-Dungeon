@@ -28,27 +28,44 @@ const residuals = [fire, trap, poisonTrap, teleport];
 const immovable = [enemy, heavyEnemy, box, wall];
 const movable = [box];
 
-type playerData = [ number, number, string ];
-type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
+type playerData = { x: number, y: number, symbol: string };
 type Coords = [ number, number ];
 type ArrayOfCoords = Coords[];
-type Residual = { active: boolean, symbol: string, coords: number[] };
+type Residual = { symbol: string, coords: number[] };
 type Item = { name: string, id: number, desc: string, cd: number };
 type InventoryItem = { item: Item, quantity: number, onCd: boolean };
 type Inventory = InventoryItem[];
+type Aliments = { PoisonInstnaces: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] };
+type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
+
+interface Player
+{
+    HP: number,
+    MaxHP: number,
+    Data: playerData,
+    Inventory: Inventory,
+    Aliments: Aliments
+}
+
+const emptyPlayer: Player =
+{
+    HP: maxHp,
+    MaxHP: maxHp,
+    Data: { x: 0, y: 0, symbol: '^' },
+    Inventory: [],
+    Aliments: { PoisonInstnaces: [], BleedInstances: [], BurnInstances: [] }
+}
 
 const App = () =>
 {
     const gridRef = useRef<HTMLDivElement>(null);
     const [ game, setGame ] = useState<boolean>(false);
     const [ stun, setStun ] = useState<boolean>(false);
-    const [ hp, setHp ] = useState<number>(maxHp);
     const [ mapa, setMapa ] = useState<string[][]>( Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') ) );
     const [ tps, setTps ] = useState<ArrayOfCoords>([]);
-    const [ residual, setResidual ] = useState<Residual>( { active: false, symbol: '', coords: [] } );
+    const [ residual, setResidual ] = useState<Residual[]>( [] );
 
-    const [ player, setPlayer ] = useState<playerData>( [ 0, 0, '^' ] );
-    const [ inventory, setInventory ] = useState<Inventory>( [] );
+    const [ player, setPlayer ] = useState<Player>( emptyPlayer );
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
 
     const [ poisoned, setPoisoned ] = useState<boolean>( false );
@@ -58,8 +75,7 @@ const App = () =>
     const [ burning, setBurning ] = useState<boolean>( false );
     const [ burnTicks, setBurnTicks ] = useState<alimentIds[]>( [] );
 
-
-    useEffect( () =>
+    useEffect( (): void =>
     {
         if(poisonTicks.length==0 && poisoned)
         {
@@ -78,7 +94,7 @@ const App = () =>
         }
     }, [poisonTicks, bleedTicks, burnTicks]);
 
-    const findPlayer = () =>
+    const findPlayer = (): void =>
     {
         let here = [ 0, 0 ];
         let symbol = '';
@@ -86,10 +102,10 @@ const App = () =>
         {
             if(celda==ship_down || celda==ship_up || celda==ship_left || celda==ship_right ) { here=[ y, z ]; symbol=celda; }
         } ));
-        setPlayer( [ here[0], here[1], symbol ] );
+        setPlayer( prev => ({ ...prev, Data: { x: here[0], y: here[1], symbol } }) );
     }
 
-    const checkCollision = ( x: number, y: number ) =>
+    const checkCollision = ( x: number, y: number ): string =>
     {
         if( x<0 || x >= mapa.length || y<0 || y >= mapa[0].length ) return 'oob';
         
@@ -115,23 +131,24 @@ const App = () =>
         };
     }
 
-    const inconsecuente = ( symbol: string ) =>
+    const inconsecuente = ( symbol: string ): void =>
     {
         const auxiliar = mapa.map(fila => [...fila]);
-        const [ pX, pY ] = player;
-        auxiliar[pX][pY] = symbol;
-        setPlayer( [ pX, pY, symbol ] );
+        const {x, y} = player.Data;
+        auxiliar[x][y] = symbol;
+        setPlayer( prev => ({ ...prev, Data: { x, y, symbol } }) );
         setMapa(auxiliar);
     }
 
-    const moveHere = ( x: number, y: number, symbol: string, complete: boolean ) =>
+    const moveHere = ( x: number, y: number, symbol: string, complete: boolean ): string[][] =>
     {
         const auxiliar = mapa.map(fila => [...fila]);
-        const [ pX, pY ] = player;
-        if( (residual.active && residual.coords.length > 0) && (residual.coords[0] === pX && residual.coords[1] === pY) )
+        const  { x: pX, y: pY } = player.Data;
+        const thisResidual = residual.find( ({coords}) => coords[0]===pX && coords[1]===pY );
+        if( thisResidual )
         {
-            auxiliar[pX][pY] = residual.symbol;
-            setResidual( { active: false, symbol: '', coords: [] } );
+            auxiliar[pX][pY] = thisResidual.symbol;
+            setResidual( prev => prev.filter( ({coords}) => coords[0]!==pX || coords[1]!==pY ) );
         }
         else
         {
@@ -140,19 +157,19 @@ const App = () =>
         auxiliar[x][y] = symbol;
         if(complete==true)
         {
-            setPlayer( [ x, y, symbol ] );
+            setPlayer( prev => ({ ...prev, Data: { x, y, symbol } }) );
             setMapa(auxiliar);
         }
         return auxiliar
     }
 
-    const handleTp = ( x: number, y: number, symbol: string, other: string ) =>
+    const handleTp = ( x: number, y: number, symbol: string, other: string ): void =>
     {
         const auxiliar = mapa.map(fila => [...fila]);
-
-        const newX = player[0]+x;
-        const newY = player[1]+y;
-        const [ pX, pY ] = player;
+        
+        const { x: pX, y: pY } = player.Data;
+        const newX = pX+x;
+        const newY = pY+y;
         const [ tp1X, tp1Y ] = tps[0];
         const [ tp2X, tp2Y ] = tps[1];
 
@@ -165,15 +182,15 @@ const App = () =>
                 {
                     auxiliar[pX][pY] = '';
                     auxiliar[newX][newY] = symbol;
-                    setPlayer( [ newX, newY, symbol ] );
+                    setPlayer( prev => ({ ...prev, Data: { x: newX, y: newY, symbol } }) );
                     if( tp1X==newX+x && tp1Y==newY+y )
                     {
-                        setResidual( { active: true, symbol: teleport, coords: [ tp2X, tp2Y ] } );
+                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp2X, tp2Y ] } ] );
                         auxiliar[tp2X][tp2Y] = box;
                     }
                     else
                     {
-                        setResidual( { active: true, symbol: teleport, coords: [ tp1X, tp1Y ] } );
+                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp1X, tp1Y ] } ] );
                         auxiliar[tp1X][tp1Y] = box;
                     }
                     setMapa(auxiliar);
@@ -183,18 +200,18 @@ const App = () =>
                 {
                     if( tp1X==newX && tp1Y==newY )
                     {
-                        setResidual( { active: true, symbol: teleport, coords: [ tp2X, tp2Y ] } );
+                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp2X, tp2Y ] } ] );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp2X][tp2Y] = symbol;
-                        setPlayer( [ tp2X, tp2Y, symbol ] );
+                        setPlayer( prev => ({ ...prev, Data: { x: tp2X, y: tp2Y, symbol } }) );
                         setMapa(auxiliar);
                     }
                     else
                     {
-                        setResidual( { active: true, symbol: teleport, coords: [ tp1X, tp1Y ] } );
+                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp1X, tp1Y ] } ] );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp1X][tp1Y] = symbol;
-                        setPlayer( [ tp1X, tp1Y, symbol ] );
+                        setPlayer( prev => ({ ...prev, Data: { x: tp1X, y: tp1Y, symbol } }) );
                         setMapa(auxiliar);
                     }
                     break;
@@ -207,10 +224,10 @@ const App = () =>
         }
     }
 
-    const pushBox = ( x: number, y: number, symbol: string ) =>
+    const pushBox = ( x: number, y: number, symbol: string ): void =>
     {
-        const newX = player[0]+x;
-        const newY = player[1]+y;
+        const newX = player.Data.x+x;
+        const newY = player.Data.y+y;
         const nextX = newX + x;
         const nextY = newY + y;
 
@@ -222,7 +239,7 @@ const App = () =>
             {
                 const auxiliar = moveHere( newX, newY, symbol, false );
                 auxiliar[nextX][nextY] = box;
-                setPlayer( [ newX, newY, symbol ] );
+                setPlayer( prev => ( { ...prev, Data: { x: newX, y: newY, symbol } } ) );
                 setMapa( auxiliar );
                 break;
             }
@@ -237,15 +254,15 @@ const App = () =>
         }
     }
 
-    const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ) =>
+    const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
-        setHp( prev =>
+        setPlayer( prev =>
         {
-            if(prev-dmg<=0)
+            if(prev.HP-dmg<=0)
             {
                 stopGame();
             }
-            return prev - dmg;
+            return { ...prev, HP: prev.HP - dmg };
         });
 
         if(dot!=0)
@@ -276,16 +293,16 @@ const App = () =>
 
             let dmgId = setInterval( () =>
             {
-                setHp( (prev) =>
+                setPlayer( prev =>
                 {
-                    if(prev - dot <= 0)
+                    if( prev.HP - dot <= 0 )
                     {
                         clearInterval(dmgId);
                         clearTimeout(timerId);
                         stopGame();
-                        return 0;
+                        return {...prev, HP: 0 };
                     }
-                    return prev - dot;
+                    return {...prev, HP: prev.HP - dot };
                 } );
             }, 1000);
 
@@ -317,7 +334,7 @@ const App = () =>
         }
     }
     
-    const touchEnemy = ( symbol: string, type: string ) =>
+    const touchEnemy = ( symbol: string, type: string ): void =>
     {
         switch(type)
         {
@@ -336,9 +353,9 @@ const App = () =>
         }
     }
 
-    const stepOnTrap = ( x: number, y: number, symbol: string, type: string ) =>
+    const stepOnTrap = ( x: number, y: number, symbol: string, type: string ): void =>
     {
-        setResidual( { active: true, symbol: type, coords: [ x, y ] } );
+        setResidual( prev => [ ...prev, { symbol: type, coords: [ x, y ] } ] );
         moveHere( x, y, symbol, true );
 
         switch(type)
@@ -356,7 +373,7 @@ const App = () =>
         }
     }
 
-    const walkOntoFire = ( x: number, y: number, symbol: string, newX: number, newY: number ) =>
+    const walkOntoFire = ( x: number, y: number, symbol: string, newX: number, newY: number ): void =>
     {
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[newX-x][newY-y] = '';
@@ -367,21 +384,21 @@ const App = () =>
         {
             const auxiliar = mapa.map(fila => [...fila]);
             auxiliar[newX][newY] = fire;
-            if(hp<=0)
+            if(player.HP<=0)
             {
                 return ;
             }
             auxiliar[newX-x][newY-y] = symbol;
             setMapa(auxiliar);
-            setPlayer( [newX-x,newY-y,symbol] );
+            setPlayer( prev => ( { ...prev, Data: { x: newX-x, y: newY-y, symbol } } ) );
         }, 45);
     };
 
-    const stepOnItem = ( x: number, y: number, symbol: string, tile: string ) =>
+    const stepOnItem = ( x: number, y: number, symbol: string, tile: string ): void =>
     {
-        if( inventory.length >= 20 )
+        if( player.Inventory.length >= 20 )
         {
-            setResidual( { active: true, symbol: tile, coords: [ x, y ] } );
+            setResidual( prev => [ ...prev, { symbol: tile, coords: [ x, y ] } ] );
             moveHere( x, y, symbol, true );
             return ;
         }
@@ -402,20 +419,20 @@ const App = () =>
         }
     }
 
-    const addToInventory = ( item: Item, quantity: number ) =>
+    const addToInventory = ( item: Item, quantity: number ): void =>
     {
-        const thisItem = inventory.find( x => x.item.name === item.name )
+        const thisItem = player.Inventory.find( x => x.item.name === item.name )
         if(!thisItem)
         {
-            setInventory( prev => [ ...prev, { item, quantity: quantity, onCd: false } ] );
+            setPlayer( prev => ( { ...prev, Inventory: [ ...prev.Inventory, { item, quantity: quantity, onCd: false } ] } ) );
             return
         }
-        setInventory( prev => prev.map( x => x.item.name===item.name ? { ...x, quantity: x.quantity + quantity } : x ) );
+        setPlayer( prev => ( { ...prev, Inventory: prev.Inventory.map( x => x.item.name===item.name ? { ...x, quantity: x.quantity + quantity } : x ) } ) );
     }
 
-    const consumeItem = ( item: Item, quantity: number ) =>
+    const consumeItem = ( item: Item, quantity: number ): void =>
     {
-        const thisItem = inventory.find( x => x.item.name===item.name );
+        const thisItem = player.Inventory.find( x => x.item.name===item.name );
 
         if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return ;
 
@@ -438,20 +455,20 @@ const App = () =>
         {
             setTimeout( () =>
             {
-                setInventory( prev => prev.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) );
+                setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) } ) );
             }, thisItem.item.cd)
-            setInventory( prev => prev.map( z => z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) );
+            setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z => z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) } ) );
         }
         else
         {
-            setInventory( prev => prev.filter( y => y.item.name!==thisItem.item.name ) );
+            setPlayer( prev => ( {...prev, Inventory: prev.Inventory.filter( y => y.item.name!==thisItem.item.name ) } ) );
         }
     }
         
-    const movePlayer = ( x: number, y: number, symbol: string ) =>
+    const movePlayer = ( x: number, y: number, symbol: string ): void =>
     {
-        const newX = player[0]+x;
-        const newY = player[1]+y;
+        const newX = player.Data.x+x;
+        const newY = player.Data.y+y;
         const tile = checkCollision(newX, newY);
 
         if(!stun)
@@ -548,7 +565,7 @@ const App = () =>
                 consumeItem(potion, 1);
                 break;
                 case 'i':
-                console.log(inventory);
+                console.log(player.Inventory);
                 setShowInventory(prev => !prev);
                 break;
                 default:
@@ -557,7 +574,7 @@ const App = () =>
         }
     }
 
-    const cleanse = ( aliment: string ) =>
+    const cleanse = ( aliment: string ): void =>
     {
         switch( aliment )
         {
@@ -616,14 +633,14 @@ const App = () =>
         }
     }
 
-    const heal = ( healing: number, HoT: number, times: number ) =>
+    const heal = ( healing: number, HoT: number, times: number ): void =>
     {
-        setHp( prev => prev + healing < maxHp ? prev + healing : maxHp );
+        setPlayer( prev => ( { ...prev, HP: prev.HP + healing < player.MaxHP ? prev.HP + healing : player.MaxHP } ) );
         if(HoT!==0)
         {
             let healId = setInterval( () =>
             {
-                setHp( prev => prev+HoT > maxHp ? maxHp : prev + HoT );
+                setPlayer( prev => ( { ...prev, HP: prev.HP+HoT > player.MaxHP ? player.MaxHP : prev.HP + HoT } ) );
             }, 1000);
 
             let timerId = setTimeout( () =>
@@ -633,7 +650,7 @@ const App = () =>
         }
     }
 
-    const loadGame = () =>
+    const loadGame = (): void =>
     {
         const auxiliar = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)
@@ -661,37 +678,36 @@ const App = () =>
 
         setTps( [ [2,16], [16,2] ] );
         auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
-        setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
+        setPlayer( prev => ( { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } ) );
         setMapa(auxiliar);
     }
 
-    const startGame = () =>
+    const startGame = (): void =>
     {
         loadGame();
-        setHp(maxHp);
+        setPlayer( prev => ({ ...prev, HP: player.MaxHP }) );
         setGame(true);
         setTimeout(() => gridRef.current?.focus(), 0);
     }
 
-    const stopGame = () =>
+    const stopGame = (): void =>
     {
         findPlayer();
         cleanse('all');
-        setInventory( [] );
         setShowInventory(false);
         const auxiliar = mapa.map(fila => [...fila]);
-        auxiliar[player[0]][player[1]] = '';
-        setPlayer( [ Math.floor(mapa.length/2), Math.floor(mapa[0].length/2), ship_up ] );
+        auxiliar[player.Data.x][player.Data.y] = '';
         setMapa(auxiliar);
+        setPlayer( {...emptyPlayer, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } );
         setGame(false);
     }
 
-    const renderHp = () =>
+    const renderHp = (): string =>
     {
-        if(hp>=0)
+        if(player.HP>=0)
         {
-            const heartsLeft = '💖'.repeat( hp );
-            const heartsLost = '🖤'.repeat( maxHp - hp );
+            const heartsLeft = '💖'.repeat( player.HP );
+            const heartsLost = '🖤'.repeat( maxHp - player.HP );
             return heartsLeft + heartsLost;
         }
         else
@@ -720,7 +736,7 @@ const App = () =>
            { showInventory &&
            <div> Inventario:
                 <div>
-                    {inventory.map( (x, y) => <label key={y}> {x.item.name} Cantidad: {x.quantity} </label>)}
+                    {player.Inventory.map( (x, y) => <label key={y}> {x.item.name} Cantidad: {x.quantity} </label>)}
                 </div>
             </div>}
         </div>
