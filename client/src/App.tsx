@@ -35,7 +35,14 @@ type Residual = { symbol: string, coords: number[] };
 type Item = { name: string, id: number, desc: string, cd: number };
 type InventoryItem = { item: Item, quantity: number, onCd: boolean };
 type Inventory = InventoryItem[];
-type Aliments = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] };
+type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
+type AlimentInstances = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] }; 
+type Aliments = 
+{
+    Flags: AlimentFlags,
+    Instances: AlimentInstances
+};
+
 type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
 
 interface Player
@@ -53,7 +60,11 @@ const emptyPlayer: Player =
     MaxHP: maxHp,
     Data: { x: 0, y: 0, symbol: '^' },
     Inventory: [],
-    Aliments: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    Aliments:
+    {
+        Flags: { Poisoned: false, Bleeding: false, Burning: false },
+        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    }
 }
 
 const App = () =>
@@ -77,20 +88,21 @@ const App = () =>
 
     // useEffect( (): void =>
     // {
-    //     const {PoisonInstances, BleedInstances, BurnInstances} = player.Aliments;
-    //     if(PoisonInstances.length===0)
+    //     const {PoisonInstances, BleedInstances, BurnInstances} = player.Aliments.Instances;
+    //     const {Poisoned, Bleeding, Burning} = player.Aliments.Flags;
+    //     if(PoisonInstances.length===0 && Poisoned)
     //     {
     //         cleanse('poison');
     //     }
-    //     if(BleedInstances.length===0)
+    //     if(BleedInstances.length===0 && Bleeding)
     //     {
     //         cleanse('bleed');
     //     }
-    //     if(BurnInstances.length===0)
+    //     if(BurnInstances.length===0 && Burning)
     //     {
     //         cleanse('burn');
     //     }
-    // }, [player.Aliments]);
+    // }, [player.Aliments.Instances]);
 
     const findPlayer = (): void =>
     {
@@ -252,13 +264,47 @@ const App = () =>
         }
     }
 
-    const manageDotInstance = ( instance: keyof Aliments, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' ) : Player =>
+    const manageDotInstance = ( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
     {
+        let flag = '';
+        switch(instance)
+        {
+            case 'BleedInstances':
+                flag = 'Bleeding';
+                break;
+            case 'BurnInstances':
+                flag = 'Burning';
+                break;
+            case 'PoisonInstances':
+                flag = 'Poisoned';
+                break;
+            default:
+                break;
+        }
+
         switch(action)
         {
-            case 'add': return { ...prev, Aliments: { ...prev.Aliments, [instance]: [ ...prev.Aliments[instance], newInstance ] } };
-            case 'remove': return { ...prev, Aliments: { ...prev.Aliments, [instance]: prev.Aliments[instance].filter( x => x.dmgId!==newInstance?.dmgId ) } };
-            case 'clean': return { ...prev, Aliments: { ...prev.Aliments, [instance]: [] } };
+            case 'add':
+                return { ...prev, Aliments:
+                        { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: true }, Instances:
+                            { ...prev.Aliments.Instances, [instance]: [ ...prev.Aliments.Instances[instance], newInstance ] } } };
+            case 'remove':
+                const updatedInstance = prev.Aliments.Instances[instance].filter( x =>
+                    x.dmgId!==newInstance?.dmgId && x.timerId!==newInstance?.timerId );
+                const isInstanceEmpty = updatedInstance.length == 0;
+                return { ...prev, Aliments:
+                    { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: !isInstanceEmpty }, Instances:
+                        { ...prev.Aliments.Instances, [instance]: updatedInstance } } };
+            case 'clean':
+                // finishDoT(instance);
+                return { ...prev, Aliments:
+                    { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: false }, Instances:
+                        { ...prev.Aliments.Instances, [instance]: [] } } };
+            case 'restart':
+                return { ...prev, Aliments:
+                    { ...prev.Aliments, Flags: { Poisoned: false, Burning: false, Bleeding: false }, Instances:{ BurnInstances: [], BleedInstances: [], PoisonInstances: [] } } };
+            default:
+                return prev;
         }
     }
 
@@ -579,60 +625,43 @@ const App = () =>
         }
     }
 
+    const finishDoT = ( aliment: keyof AlimentInstances ): void =>
+    {
+        player.Aliments.Instances[aliment?aliment:'BleedInstances'].forEach( ids =>
+        {
+            clearInterval(ids.dmgId);
+            clearTimeout(ids.timerId);
+        } );
+    }
+
     const cleanse = ( aliment: string ): void =>
     {
         switch( aliment )
         {
             case 'bleed':
             {
-                player.Aliments.BleedInstances.forEach( ids =>
-                {
-                    clearInterval(ids.dmgId);
-                    clearTimeout(ids.timerId);
-                } );
+                finishDoT('BleedInstances');
                 setPlayer( prev => manageDotInstance('BleedInstances', undefined, prev, 'clean') )
                 break;
             }
             case 'poison':
             {
-                player.Aliments.PoisonInstances.forEach( ids =>
-                {
-                    clearInterval(ids.dmgId);
-                    clearTimeout(ids.timerId);
-                } );
+                finishDoT('PoisonInstances');
                 setPlayer( prev => manageDotInstance('PoisonInstances', undefined, prev, 'clean') )
                 break;
             }
             case 'burn':
             {
-                player.Aliments.BurnInstances.forEach( ids =>
-                {
-                    clearInterval(ids.dmgId);
-                    clearTimeout(ids.timerId);
-                } );
+                finishDoT('BurnInstances');
                 setPlayer( prev => manageDotInstance('BurnInstances', undefined, prev, 'clean') )
                 break;
             }
             case 'all':
             {
-                player.Aliments.BurnInstances.forEach( ids =>
-                {
-                    clearInterval(ids.dmgId);
-                    clearTimeout(ids.timerId);
-                } );
-                setPlayer( prev => manageDotInstance('BurnInstances', undefined, prev, 'clean') )
-                player.Aliments.PoisonInstances.forEach( ids =>
-                {
-                    clearInterval(ids.dmgId);
-                    clearTimeout(ids.timerId);
-                } );
-                setPlayer( prev => manageDotInstance('PoisonInstances', undefined, prev, 'clean') )
-                player.Aliments.BleedInstances.forEach( ids =>
-                {
-                    clearInterval(ids.dmgId);
-                    clearTimeout(ids.timerId);
-                } );
-                setPlayer( prev => manageDotInstance('BleedInstances', undefined, prev, 'clean') )
+                finishDoT('BleedInstances');
+                finishDoT('BurnInstances');
+                finishDoT('PoisonInstances');
+                setPlayer( prev => manageDotInstance('BleedInstances', undefined, prev, 'restart') )
                 break;
             }
         }
@@ -724,7 +753,8 @@ const App = () =>
 
   return(
     <div>
-        <span> StatusEffect: { player.Aliments.PoisonInstances.length>0?'[Poisoned💚]':'' } { player.Aliments.BleedInstances.length>0?'[Bleeding🩸]':'' } { player.Aliments.BurnInstances.length>0?'[Burning🔥]':'' } </span>
+    <button onClick={()=>console.log(player.Aliments)}> PLAYER </button>
+        <span> StatusEffect: { player.Aliments.Flags.Poisoned?'[Poisoned💚]':'' } { player.Aliments.Flags.Bleeding?'[Bleeding🩸]':'' } { player.Aliments.Flags.Burning?'[Burning🔥]':'' } </span>
         <br />
         <span> HP: { renderHp() } </span>
         <div className='general'>
