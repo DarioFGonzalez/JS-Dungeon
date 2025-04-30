@@ -79,31 +79,6 @@ const App = () =>
     const [ player, setPlayer ] = useState<Player>( emptyPlayer );
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
 
-    // const [ poisoned, setPoisoned ] = useState<boolean>( false );
-    // const [ poisonTicks, setPoisonTicks ] = useState<alimentIds[]>( [] );
-    // const [ bleeding, setBleeding ] = useState<boolean>( false );
-    // const [ bleedTicks, setBleedTicks ] = useState<alimentIds[]>( [] );
-    // const [ burning, setBurning ] = useState<boolean>( false );
-    // const [ burnTicks, setBurnTicks ] = useState<alimentIds[]>( [] );
-
-    // useEffect( (): void =>
-    // {
-    //     const {PoisonInstances, BleedInstances, BurnInstances} = player.Aliments.Instances;
-    //     const {Poisoned, Bleeding, Burning} = player.Aliments.Flags;
-    //     if(PoisonInstances.length===0 && Poisoned)
-    //     {
-    //         cleanse('poison');
-    //     }
-    //     if(BleedInstances.length===0 && Bleeding)
-    //     {
-    //         cleanse('bleed');
-    //     }
-    //     if(BurnInstances.length===0 && Burning)
-    //     {
-    //         cleanse('burn');
-    //     }
-    // }, [player.Aliments.Instances]);
-
     const findPlayer = (): void =>
     {
         let here = [ 0, 0 ];
@@ -296,7 +271,6 @@ const App = () =>
                     { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: !isInstanceEmpty }, Instances:
                         { ...prev.Aliments.Instances, [instance]: updatedInstance } } };
             case 'clean':
-                // finishDoT(instance);
                 return { ...prev, Aliments:
                     { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: false }, Instances:
                         { ...prev.Aliments.Instances, [instance]: [] } } };
@@ -751,10 +725,18 @@ const App = () =>
         }
     }
 
+    const renderAliments = () : string =>
+    {
+        const poison = player.Aliments.Flags.Poisoned?'[Poisoned💚]':'';
+        const bleed = player.Aliments.Flags.Bleeding?'[Bleeding🩸]':'';
+        const burn = player.Aliments.Flags.Burning?'[Burning🔥]':'';
+        return poison + bleed + burn;
+    }
+
   return(
     <div>
     <button onClick={()=>console.log(player.Aliments)}> PLAYER </button>
-        <span> StatusEffect: { player.Aliments.Flags.Poisoned?'[Poisoned💚]':'' } { player.Aliments.Flags.Bleeding?'[Bleeding🩸]':'' } { player.Aliments.Flags.Burning?'[Burning🔥]':'' } </span>
+        <span> StatusEffect: { renderAliments() } </span>
         <br />
         <span> HP: { renderHp() } </span>
         <div className='general'>

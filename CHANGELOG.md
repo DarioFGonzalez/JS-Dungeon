@@ -4,6 +4,29 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+# Changelog
+
+Todas las modificaciones importantes a este proyecto serán documentadas en este archivo.
+
+Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [v0.0.92] - 2025-04-28
+
+### Changed
+- Refactor completo del estado `player`: ahora incluye `HP`, `MaxHP`, `Coords`, `Inventory` y `Aliments`, permitiendo una gestión centralizada, consistente y escalable de la información del jugador.
+- Rediseñado el sistema de daño en el tiempo (DoT): encapsulado en la función `manageDotInstance()`, con soporte para agregar, remover y limpiar efectos individuales como `bleed`, `poison` y `burn`.
+- Separación clara entre flags (`Poisoned`, `Bleeding`, `Burning`) y sus instancias (`PoisonInstances`, etc.), manteniendo sincronía automática según el estado de cada efecto.
+- Eliminación de estructuras crudas (`number[]`) para representar posiciones residuales: reemplazadas por objetos estructurados con propiedades explícitas (`x`, `y`, `symbol`).
+- Refactor de las funciones `hurtPlayer()` y `cleanse()` para integrarse al nuevo sistema de `Aliments`, utilizando lógica unificada y helpers reutilizables.
+
+### Fixed
+- Eliminados `guard clauses` innecesarios que prevenían la ejecución esperada de funciones cuando se pasaban parámetros válidos en tiempo de uso lógico correcto.
+- Eliminado problema de residuales limitados al refactorizar `residual`.
+
+### Notes
+- Este parche representa un punto clave en la estandarización del código base: unificación de estados, encapsulamiento de lógica compartida y mayor claridad semántica.
+- Aunque funcional, el sistema de estados alterados y DoT sigue en fase de iteración. Se planea aplicar el mismo enfoque modular a nuevas mecánicas como curaciones progresivas (HoT), buffs temporales y otras alteraciones.
+
 ## [v0.0.91] - 2025-04-26
 
 ### Added

@@ -1,5 +1,39 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 9: Refactorización, centralización, orden y coherencia. ☝🤓✨
+
+🗓️ *2025-04-30*
+
+Refactoricé GRAN parte de la lógica `CORE` del proyecto. Habían demasiados estados locales independientes uno del otro pero a la vez compartiendo la misma función: **Modificar valores correspondientes al jugador.** Eso decía "REFACTORIZAME POR FAVOR" por todos lados, así que accedí a sus demandas. 
+
+Residual, ticks de daño DoT, inventario, flags, **TODO** refactorizado línea por línea, como desarmando un reloj para ver por qué gira... y rearmándolo para que gire aún mejor. Fue un lindo baile, ahora siento que puedo caminar en el código sin tropezarme con un ejercito de estados independientes quizá rompiendose por **acá**- quizá rompiendose por **allá**.
+
+Además de tratar de romperlo a cada rato a ver si aguantaba, cosa que hace, en medio de la inspiración refactorizadora (?) me encontré teniendo varias ideas para implementar -PERO NO- Resistí la tentación de mezclar objetivos y meter cambios que no entraban en el objetivo general de este sprint: Refactorizar y ordenar. Así que ahí vá- todo refactorizado para encajar en el estado local player (.Aliments, .HP, .HpMax, .Data, etc.). 
+
+---
+
+### 🛠️ A nivel técnico:
+
+- `residual()` refactorizado para poder albergar muchos símbolos a la cola de espera para reaparecer.
+- Lógica detras de `DoT` y `cleanse()` re-pensados para encajar con el nuevo modelo mas escalable girando entorno a Player.
+- Inventario, HP, coordenadas de usuario- todo lo que tenga que ver con la instancia "jugador" fue centralizado en un solo objeto (estado local).
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯:
+
+- Tengo que meter el concepto de corta-curas urgente o me va a estallar una vena creativa jajaja 😂✨
+- Enemigos que se muevan, primeramente.
+- Enemigos que lastimen al jugador al chocarlo.
+- Enemigos que reciban daño y puedan morir.
+
+Si me sobra tiempo:
+
+- Que el jugador tenga alguna clase de ataque.
+- DROP RATES [¿ALPHA?]
+
+---
+
 ## 🔹 Paso 8: Bases del inventario, consumir y recoger ítems 🎁💰✨
 
 🗓️ *2025-04-26*
