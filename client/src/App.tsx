@@ -11,37 +11,53 @@ const wall = 'x';
 const teleport = 'T';
 const totem = 'u';
 const fountain = 'F';
+const cursedTotem = '🧿';
 
 const mapSize = 18;
 const maxHp = 15;
 
-const enemy = 'e';
-const heavyEnemy = 'E';
-const trap = 't';
-const poisonTrap = 'p';
 const fire = 'f';
 
-const bandages = { name: 'Bandages', id: 1, desc: 'Deals with bleeding.', cd: 5000 };
-const potion = { name: 'Potion', id: 2, desc: 'Basic healing item (+3HP).', cd: 3000 };
-
-const residuals = [fire, trap, poisonTrap, teleport];
-const immovable = [enemy, heavyEnemy, box, wall];
-const movable = [box];
-
-type playerData = { x: number, y: number, symbol: string };
+type locationData = { x: number, y: number, symbol: string };
 type Coords = [ number, number ];
 type ArrayOfCoords = Coords[];
 type Residual = { symbol: string, coords: number[] };
-type Item = { name: string, id: number, desc: string, cd: number };
+type Item = { name: string, symbol: string, id: number, desc: string, cd: number };
+
+const Potion: Item =
+{
+    name: 'Potion',
+    symbol: '+',
+    id: 2,
+    desc: '+3 HP',
+    cd: 3000
+} 
+
+const Bandages: Item =
+{
+    name: 'Bandages',
+    symbol: 'b',
+    id: 1,
+    desc: 'Stops bleeding.',
+    cd: 5000
+}
+
 type InventoryItem = { item: Item, quantity: number, onCd: boolean };
 type Inventory = InventoryItem[];
 type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
+type BuffFlags = { HoT: boolean };
 type AlimentInstances = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] }; 
+type BuffInstances = { HotInstances: alimentIds[] };
 type Aliments = 
 {
     Flags: AlimentFlags,
     Instances: AlimentInstances
 };
+type Buffs =
+{
+    Flags: BuffFlags,
+    Instances: BuffInstances
+}
 
 type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
 
@@ -49,9 +65,10 @@ interface Player
 {
     HP: number,
     MaxHP: number,
-    Data: playerData,
+    Data: locationData,
     Inventory: Inventory,
-    Aliments: Aliments
+    Aliments: Aliments,
+    Buffs: Buffs
 }
 
 const emptyPlayer: Player =
@@ -64,7 +81,68 @@ const emptyPlayer: Player =
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
         Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
+    Buffs:
+    {
+        Flags: { HoT: false },
+        Instances: { HotInstances: [] } 
     }
+}
+
+type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string };
+type dropInfo = { item: Item, chance: number };
+
+interface Trap
+{
+    Active: boolean,
+    Data: locationData,
+    Attack: attackInfo,
+    toDisarm?: Item[]
+}
+
+const trap: Trap =
+{
+    Active: true,
+    Data: { x: 0, y: 0, symbol: 't' },
+    Attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
+}
+
+const poisonTrap: Trap =
+{
+    Active: true,
+    Data: { x: 0, y: 0, symbol: 'p' },
+    Attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'poison' },
+}
+
+interface Enemy
+{
+    HP: number,
+    MaxHP: number,
+    Data: locationData,
+    Attack: attackInfo,
+    Pattern: string,
+    PatrolId?: ReturnType<typeof setTimeout>,
+    Drops: dropInfo[]
+}
+
+const enemy: Enemy =
+{
+    HP: 5,
+    MaxHP: 5,
+    Data: { x: 0, y: 0, symbol: 'e' },
+    Attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
+    Pattern: 'none',
+    Drops: []
+}
+
+const heavyEnemy: Enemy =
+{
+    HP: 10,
+    MaxHP: 10,
+    Data: { x: 0, y: 0, symbol: 'E' },
+    Attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
+    Pattern: 'none',
+    Drops: [ { item: Potion, chance: 75 } ]
 }
 
 const App = () =>
@@ -78,6 +156,8 @@ const App = () =>
 
     const [ player, setPlayer ] = useState<Player>( emptyPlayer );
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
+    const [ enemies, setEnemies ] = useState<Enemy[]>( [] );
+    const [ traps, setTraps ] = useState<Trap[]>( [] );
 
     const findPlayer = (): void =>
     {
@@ -88,9 +168,9 @@ const App = () =>
             if(celda==ship_down || celda==ship_up || celda==ship_left || celda==ship_right ) { here=[ y, z ]; symbol=celda; }
         } ));
         setPlayer( prev => ({ ...prev, Data: { x: here[0], y: here[1], symbol } }) );
-    }
+    };
 
-    const checkCollision = ( x: number, y: number ): string =>
+    const checkCollision = ( x: number, y: number ) =>
     {
         if( x<0 || x >= mapa.length || y<0 || y >= mapa[0].length ) return 'oob';
         
@@ -100,6 +180,7 @@ const App = () =>
             case '': return 'empty';
             case 'x': return wall;
             case 'u': return totem;
+            case '🧿': return cursedTotem;
             case '~': return 'water';
             case 'F': return fountain;
             case 'e': return enemy;
@@ -114,7 +195,7 @@ const App = () =>
             case 'b': return 'b';
             default: return 'unknown';
         };
-    }
+    };
 
     const inconsecuente = ( symbol: string ): void =>
     {
@@ -123,7 +204,17 @@ const App = () =>
         auxiliar[x][y] = symbol;
         setPlayer( prev => ({ ...prev, Data: { x, y, symbol } }) );
         setMapa(auxiliar);
-    }
+    };
+
+    const mobInconsecuente = ( x: number, y: number, symbol: string ): void =>
+    {
+        const auxiliar = mapa.map(fila => [...fila]);
+        auxiliar[x][y] = symbol;
+        setEnemies( list => list.map( mob => mob.Data.x===x && mob.Data.y===y
+            ? {...mob, Data: { ...mob.Data, symbol: symbol } }
+            : mob ) );
+        setMapa(auxiliar);
+    };
 
     const moveHere = ( x: number, y: number, symbol: string, complete: boolean ): string[][] =>
     {
@@ -146,7 +237,7 @@ const App = () =>
             setMapa(auxiliar);
         }
         return auxiliar
-    }
+    };
 
     const handleTp = ( x: number, y: number, symbol: string, other: string ): void =>
     {
@@ -207,7 +298,7 @@ const App = () =>
         {
             inconsecuente(symbol);
         }
-    }
+    };
 
     const pushBox = ( x: number, y: number, symbol: string ): void =>
     {
@@ -237,9 +328,9 @@ const App = () =>
                 inconsecuente( symbol );
                 break;
         }
-    }
+    };
 
-    const manageDotInstance = ( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
+    const manageDotInstance =( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
     {
         let flag = '';
         switch(instance)
@@ -280,7 +371,46 @@ const App = () =>
             default:
                 return prev;
         }
-    }
+    };
+
+    const manageBuffInstance =( instance: keyof BuffInstances, thisInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
+    {
+        let flag = '';
+        switch(instance)
+        {
+            case 'HotInstances':
+                flag = 'HoT';
+                break;
+            default:
+                break;
+        }
+
+        switch(action)
+        {
+            case 'add':
+                if(!thisInstance) return prev;
+                return { ...prev, Buffs:
+                        { ...prev.Buffs, Flags: { ...prev.Buffs.Flags, [flag]: true }, Instances:
+                            { ...prev.Buffs.Instances, [instance]: [ ...prev.Buffs.Instances[instance], thisInstance ] } } };
+            case 'remove':
+                const updatedInstance = prev.Buffs.Instances[instance].filter( x =>
+                    x.dmgId!==thisInstance?.dmgId && x.timerId!==thisInstance?.timerId );
+                const isInstanceEmpty = updatedInstance.length == 0;
+                return { ...prev, Buffs:
+                    { ...prev.Buffs, Flags: { ...prev.Buffs.Flags, [flag]: !isInstanceEmpty },
+                    Instances: { ...prev.Buffs.Instances, [instance]: updatedInstance } } };
+            case 'clean':
+                finishBuff(instance);
+                return { ...prev, Buffs:
+                    { ...prev.Buffs, Flags: { ...prev.Buffs.Flags, [flag]: false },
+                    Instances: { ...prev.Buffs.Instances, [instance]: [] } } };
+            case 'restart':
+                return { ...prev, Buffs:
+                    { ...prev.Buffs, Flags: { HoT: false }, Instances:{ HotInstances: [] } } };
+            default:
+                return prev;
+        }
+    };
 
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
@@ -357,46 +487,26 @@ const App = () =>
             }, times*1000)
 
         }
-    }
+    };
     
-    const touchEnemy = ( symbol: string, type: string ): void =>
+    const touchEnemy = ( symbol: string, x: number, y: number ): void =>
     {
-        switch(type)
-        {
-            case enemy:
-                {
-                    inconsecuente(symbol);
-                    hurtPlayer(1, 0, 0, 'none');
-                    break;
-                }
-            case heavyEnemy:
-                {
-                    inconsecuente(symbol);
-                    hurtPlayer(1, 2, 10, 'bleed');
-                    break;
-                }
-        }
-    }
+        const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy;
+        const { Attack } = thisEnemy;
+        hurtPlayer( Attack.Instant, Attack.DoT, Attack.Times, Attack.Aliment );
+        inconsecuente(symbol);
+    };
 
-    const stepOnTrap = ( x: number, y: number, symbol: string, type: string ): void =>
+    const stepOnTrap = ( x: number, y: number, symbol: string ): void =>
     {
-        setResidual( prev => [ ...prev, { symbol: type, coords: [ x, y ] } ] );
+        const thisTrap = traps.find( trap => trap.Data.x===x && trap.Data.y===y ) || trap ;
+
+        setResidual( prev => [ ...prev, { symbol: thisTrap.Data.symbol, coords: [ x, y ] } ] );
         moveHere( x, y, symbol, true );
 
-        switch(type)
-        {
-            case trap:
-                {
-                    hurtPlayer(1, 0, 0, 'none');
-                    break;
-                }
-            case poisonTrap:
-                {
-                    hurtPlayer(1, 1, 2, 'poison');
-                    break;
-                }
-        }
-    }
+        const {Attack} = thisTrap;
+        hurtPlayer( Attack.Instant, Attack.DoT, Attack.Times, Attack.Aliment );
+    };
 
     const walkOntoFire = ( x: number, y: number, symbol: string, newX: number, newY: number ): void =>
     {
@@ -433,12 +543,12 @@ const App = () =>
         {
             case '+':
             {
-                addToInventory( potion, 1 );
+                addToInventory( Potion, 1 );
                 break;
             }
             case 'b':
             {
-                addToInventory( bandages, 1 );
+                addToInventory( Bandages, 1 );
                 break;
             }
         }
@@ -518,13 +628,13 @@ const App = () =>
                 case enemy:
                 case heavyEnemy:
                     {
-                        touchEnemy( symbol, tile );
+                        touchEnemy( symbol, newX, newY );
                         break;
                     }
                 case trap:
                 case poisonTrap:
                     {
-                        stepOnTrap( newX, newY, symbol, tile );
+                        stepOnTrap( newX, newY, symbol );
                         break;
                     }
                 case fire:
@@ -532,16 +642,22 @@ const App = () =>
                         walkOntoFire( x, y, symbol, newX, newY );
                         break;
                     }
-                case totem:
+                case totem: //Cleanse('all')
                     {
                         inconsecuente( symbol );
                         cleanse('all');
                         break;
                     }
-                case fountain:
+                case fountain:  //Cleanse('burn')
                     {
                         inconsecuente( symbol );
                         cleanse('burn');
+                        break;
+                    }
+                case cursedTotem:
+                    {
+                        inconsecuente( symbol );
+                        setPlayer( prev => manageBuffInstance( 'HotInstances', undefined, prev, 'clean' ) );
                         break;
                     }
                 case '+':
@@ -559,6 +675,76 @@ const App = () =>
                         break;
                     }
             }
+        }
+    }
+
+    const rollDrop = ( chance: number ) : boolean =>
+    {
+        const random = Math.floor( Math.random() * 100 ) + 1;
+        if( random <= chance )
+        {
+            return true;
+        }
+        return false;
+    }
+
+    const damageEnemy = ( x: number, y: number, dmg: number ): void =>
+    {
+        const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy ;
+        if(thisEnemy.HP-dmg<=0)
+        {
+            setMapa( prev =>
+            {
+                let aux = prev.map( x => [...x] );
+                if(thisEnemy.Drops.length>0)
+                {
+                    if( rollDrop(thisEnemy.Drops[0].chance) )
+                    {
+                        aux[x][y]=thisEnemy.Drops[0].item.symbol;
+                        return aux
+                    }
+                }
+                aux[x][y]='';
+                return aux;
+            } );
+            setEnemies( mobs => mobs.filter( mob => mob.Data.x!==x && mob.Data.y!==y ) );
+        }
+        else
+        {
+            setEnemies( mobs => mobs.map( mob => mob.Data.x===x && mob.Data.y===y ? { ...mob, HP: mob.HP - dmg } : mob ) );
+        }
+    }
+
+    const playerVectors: Record<string, [number, number]> =
+    {
+        '^': [-1, 0],
+        'v': [1, 0],
+        '<': [0, -1],
+        '>': [0, 1]
+    }
+
+    const directionFromVector = ( symbol: string ): [number, number] =>
+    {
+        return playerVectors[symbol] || [0, 0];
+    }
+
+    const handleInteraction = ( ): void =>
+    {
+        const [dx, dy] = directionFromVector(player.Data.symbol);
+        let x = player.Data.x + dx;
+        let y = player.Data.y + dy;
+
+        const objective = checkCollision( x, y );
+        switch(objective)
+        {
+            case enemy:
+            case heavyEnemy:
+                {
+                    damageEnemy( x, y, 2 );
+                    break;
+                }
+            default:
+                return;
         }
     }
 
@@ -583,15 +769,21 @@ const App = () =>
                 case 'd':
                 movePlayer(0,+1,ship_right);
                 break;
-                case 'k':
-                consumeItem(bandages, 2);
+                case 'k':   //bandages
+                consumeItem(Bandages, 2);
                 break;
-                case 'o':
-                consumeItem(potion, 1);
+                case 'o':   //poción
+                consumeItem(Potion, 1);
                 break;
-                case 'i':
+                case 'p':   //renew (HoT)
+                heal(0,1,5);
+                break;
+                case 'i':   //abrir inventario
                 console.log(player.Inventory);
                 setShowInventory(prev => !prev);
+                break;
+                case 'enter':
+                handleInteraction();
                 break;
                 default:
                     break;
@@ -599,9 +791,87 @@ const App = () =>
         }
     }
 
+    const beginPatrol = ( x: number, y: number, symbol: string, patrol: string ) => //non
+    {
+        const thisEnemy = enemies.find( mob => mob.Data.x === x && mob.Data.y === y );
+
+        if( thisEnemy?.Pattern !== 'none' )
+        {
+            switch(patrol)
+            {
+                case 'straight':
+                {
+                    straightPatrol( x, y, symbol );
+                    break;
+                }
+                default: return;
+            }
+        }
+    }
+
+    const straightPatrol = ( x: number, y: number, symbol: string ): void => //non
+    {
+        let direction = -1;
+        let currentX = x;
+
+        const thisEnemy = enemies?.find( mob => mob.Data.x===x && mob.Data.y===y );
+        !thisEnemy && console.log('No se encontró un mob en las coordenadas iniciales.');
+
+        if(thisEnemy?.PatrolId)
+        {
+            clearInterval(thisEnemy.PatrolId);
+        }
+
+        let id = setInterval( () =>
+        {
+            let change = [];
+            let nextX = currentX + direction;
+
+            setMapa( prev =>
+            {
+                const aux = prev.map( x => [...x] );
+
+                if(checkCollision(nextX,y)!=='empty')
+                {
+                    change.push(true);
+                    return aux;
+                }
+
+                aux[nextX][y] = thisEnemy?.Data.symbol || '❌';
+                aux[currentX][y] = '';
+                return aux;
+            });
+            
+            setEnemies( prev => prev.map( mob => mob.Data.x===x && mob.Data.y===y ?
+            { ...mob, Data: { ...mob.Data, x: nextX } } : mob ) );
+            
+            if(change.length>0)
+            {
+                direction*=-1;
+            }
+            else
+            {
+                currentX = nextX;
+            }
+            console.log("---------------------------------------- fin de una vuelta");
+        },1000);
+
+        setEnemies( prev => prev.map( mob => mob.Data.x===x && mob.Data.y===y ?
+            { ...mob, Data: { ...mob.Data, PatrolId: id  } } : mob ) );
+    }
+
     const finishDoT = ( aliment: keyof AlimentInstances ): void =>
     {
         player.Aliments.Instances[aliment?aliment:'BleedInstances'].forEach( ids =>
+        {
+            clearInterval(ids.dmgId);
+            clearTimeout(ids.timerId);
+        } );
+    }
+
+    const finishBuff = ( buff: keyof BuffInstances ): void =>
+    {
+        player.Buffs.Instances[buff].forEach( ids =>
         {
             clearInterval(ids.dmgId);
             clearTimeout(ids.timerId);
@@ -644,17 +914,19 @@ const App = () =>
     const heal = ( healing: number, HoT: number, times: number ): void =>
     {
         setPlayer( prev => ( { ...prev, HP: prev.HP + healing < player.MaxHP ? prev.HP + healing : player.MaxHP } ) );
+
         if(HoT!==0)
         {
-            let healId = setInterval( () =>
+            let dmgId = setInterval( () =>
             {
                 setPlayer( prev => ( { ...prev, HP: prev.HP+HoT > player.MaxHP ? player.MaxHP : prev.HP + HoT } ) );
             }, 1000);
 
             let timerId = setTimeout( () =>
             {
-                clearInterval(healId);
+                clearInterval(dmgId);
             }, times*1000)
+            setPlayer( prev => manageBuffInstance( 'HotInstances', {dmgId, timerId}, prev, 'add' ) );
         }
     }
 
@@ -670,21 +942,29 @@ const App = () =>
         }
 
         auxiliar[3][3] = 'B';
-        auxiliar[13][14] = heavyEnemy;
-        auxiliar[13][13] = poisonTrap;
+        auxiliar[13][14] = 'E';
         auxiliar[13][12] = totem;
-        auxiliar[15][2] = enemy;
-        auxiliar[15][5] = trap;
+        auxiliar[15][2] = 'e';
+        auxiliar[13][13] = 'p';
+        auxiliar[15][5] = 't';
         auxiliar[2][5] = '+';
         auxiliar[2][6] = 'b';
         auxiliar[2][7] = '+';
         auxiliar[2][8] = 'b';
+        auxiliar[2][10] = cursedTotem;
         auxiliar[10][10] = fire;
         auxiliar[10][12] = fountain;
         auxiliar[2][16] = 'T';
         auxiliar[16][2] = 'T';
 
         setTps( [ [2,16], [16,2] ] );
+        setEnemies( [
+        { ...enemy, Data: { x: 15, y: 2, symbol: 'e' } },
+        { ...heavyEnemy, Data: { x: 13, y: 14, symbol: 'E' } } ] );
+        setTraps( [
+        { ...trap, Data: { x: 15, y: 5, symbol: 't' } },
+        { ...poisonTrap, Data: { x: 13, y: 13, symbol: 'p' } }
+        ])
         auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
         setPlayer( prev => ( { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } ) );
         setMapa(auxiliar);
@@ -735,7 +1015,7 @@ const App = () =>
 
   return(
     <div>
-    <button onClick={()=>console.log(player.Aliments)}> PLAYER </button>
+    <button onClick={()=>console.log(enemies)}> Enemies </button>
         <span> StatusEffect: { renderAliments() } </span>
         <br />
         <span> HP: { renderHp() } </span>
