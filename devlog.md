@@ -1,5 +1,35 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 10: Sistema de farmeo y drops implementado 🌾🪓🧱
+
+🗓️ *2025-05-07*
+
+Con este parche queda implementada la versión inicial del sistema de farmeo. Los enemigos ahora pueden morir y dropear ítems, y esta misma lógica se generaliza para otras entidades interactivas del juego.
+
+Cualquier entidad destruible —como vetas de mineral, árboles, puertas, cajas, puentes o paredes ocultas— puede activar un evento de drop al ser "destruida". Esta estructura permite escalar fácilmente hacia nuevas mecánicas de recolección y exploración.
+
+El sistema de movimiento y patrullaje de enemigos fue pospuesto para una futura iteración, una vez que el prototipo jugable alcance un estado más presentable.
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- **`finishBuff()`**: Finaliza un efecto activo del jugador, eliminando todos los intervalos asociados (HoT, buffs, escudos, etc.).
+- **`handleInteraction()`**: Gestiona la acción de interacción. Al presionar `[ENTER]`, ejecuta la acción contextual sobre la entidad frente al jugador.
+- **`damageEnemy()`**: Recibe las coordenadas del enemigo y el daño infligido. Aplica daño considerando defensas y escudos, y en caso de muerte, ejecuta la lógica de drop según su `dropTable`.
+- **Interfaces y tipos personalizados**: Se definieron estructuras específicas para enemigos, trampas e ítems. Esto permite que al detectar una entidad en el mapa, el sistema devuelva el objeto completo correspondiente (con stats, comportamiento y propiedades), facilitando el flujo general del juego.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯:
+
+- Algo que tenga que ver con equipo en sí. Ahora mismo, [ENTER] "ataca" lo que tenga el jugador delante suyo por `2` de daño. ¿Por qué 2 de daño? ¿Le está pegando con las manos?. Fácil, agregar armas con daño- durabilidad- eh- quizá efectos de estado.
+- Lo de efectos de estado también abre la ventana a aplicarle estos a enemigos, no solo que el jugador se pueda envenenar y demás.
+- Equipar item, perder durabilidad de las armas, al llegar a cero romperlas (No que quede en 0/100 como en otros juegos. Que se ROMPA.)
+- Lo cual *(jejejejeje)* me da otra idea, mejorar items- +1, +2, joyas- 'encantamientos' aaah- **tantas ideas locas**. 
+
+---
+
 ## 🔹 Paso 9: Refactorización, centralización, orden y coherencia. ☝🤓✨
 
 🗓️ *2025-04-30*

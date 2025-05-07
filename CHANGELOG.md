@@ -4,11 +4,18 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-# Changelog
+## [v0.0.93] - 2025-05-07
 
-Todas las modificaciones importantes a este proyecto serán documentadas en este archivo.
+### Added
+- **finishBuff**: Implementada la función `finishBuff` que recibe una instancia de un "buff", busca sus intervalos y los elimina. Esta función también maneja la lógica de "combate", causando que el enemigo pierda vida hasta morir. En caso de que el enemigo tenga una `dropTable`, se tira un item según las probabilidades de su tabla de drops, en lugar de simplemente vaciar su espacio al morir.
+  
+- **Inventario y Efectos de Items**: Se implementó la mecánica de **agarrar un item**, **guardarlo en el inventario**, **transportarlo** por el mapa, **consumirlo** y **restarlo del inventario**. El efecto del item se aplica al consumirlo, utilizando la escalabilidad y flexibilidad del sistema de inventario y efectos ya establecido.
 
-Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+### Changed
+- **Refactorización de lógica de combate y drops**: La refactorización de la lógica de combate ahora incluye la implementación de un sistema de drops en el que se generan ítems según las probabilidades definidas en la `dropTable` del enemigo al morir. Los ítems caídos se gestionan e interactúan directamente con el sistema de inventario.
+
+### Fixed
+- **Errores menores**: Se corrigieron algunos errores menores relacionados con la manipulación de objetos dentro del sistema de inventario y su integración con la mecánica de drops de enemigos.
 
 ## [v0.0.92] - 2025-04-28
 
