@@ -113,3 +113,70 @@
     height: 250px;
     object-fit: cover;
 }
+
+/*inventory*/
+.game-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.general {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.inventory-window {
+  position: absolute;
+  bottom: 20px;
+  background-color: #000;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  border: 2px solid #fff;
+  padding: 1rem;
+  width: 300px;
+  box-shadow: 0 0 10px #ffffff44;
+  z-index: 1000;
+}
+
+.inventory-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.inventory-list li {
+  padding: 0.3rem 0.5rem;
+  background-color: #111;
+  border-left: 3px solid #fff;
+}
+
+.layout-flex {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  /* Ahora el inventario NO es absoluto */
+  .inventory-window {
+    position: relative;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    border: 2px solid #fff;
+    padding: 1rem;
+    width: 260px;
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 0 10px #ffffff44;
+    z-index: 1;
+  }
+  

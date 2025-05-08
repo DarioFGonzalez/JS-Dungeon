@@ -22,10 +22,20 @@ type locationData = { x: number, y: number, symbol: string };
 type Coords = [ number, number ];
 type ArrayOfCoords = Coords[];
 type Residual = { symbol: string, coords: number[] };
-type Item = { name: string, symbol: string, id: number, desc: string, cd: number };
+
+interface Item
+{
+    type: 'Item',
+    name: string,
+    symbol: string,
+    id: number,
+    desc: string,
+    cd: number
+};
 
 const Potion: Item =
 {
+    type: 'Item',
     name: 'Potion',
     symbol: '+',
     id: 2,
@@ -35,6 +45,7 @@ const Potion: Item =
 
 const Bandages: Item =
 {
+    type: 'Item',
     name: 'Bandages',
     symbol: 'b',
     id: 1,
@@ -42,12 +53,70 @@ const Bandages: Item =
     cd: 5000
 }
 
+interface Gear
+{
+    type: 'Gear',
+    name: string,
+    symbol: string,
+    id: number,
+    slot: string,
+    desc: string,
+    attackStats?: attackStats,
+    defenseStats?: deffenseStats,
+    durability: number,
+    Equippeable: boolean
+};
+
+type attackStats = { dmg: number, DoT?: number, times?: number, cd: number };
+type deffenseStats = { def: number, immunity?: string };
+
+const Fists: Gear =
+{
+    type: 'Gear',
+    name: 'Fists',
+    symbol: '🤜',
+    id: 0,
+    slot: 'two_handed',
+    desc: '+1 DMG',
+    attackStats: { dmg: 1, cd: 2500 },
+    durability: 999,
+    Equippeable: true
+}
+
+const Sword1: Gear =
+{
+    type: 'Gear',
+    name: 'Sword_1',
+    symbol: '🗡',
+    id: 3,
+    slot: 'main_hand',
+    desc: '+2 DMG',
+    attackStats: { dmg: 2, DoT: 0, times: 0, cd: 1000 },
+    durability: 10,
+    Equippeable: true
+}
+
+const Shield1: Gear =
+{
+    type: 'Gear',
+    name: 'Shield_1',
+    symbol: '🛡',
+    id: 4,
+    slot: 'off_hand',
+    desc: '+1 DEF',
+    defenseStats: { def: 1 },
+    durability: 5,
+    Equippeable: false
+}
+
 type InventoryItem = { item: Item, quantity: number, onCd: boolean };
+type InventoryGear = { item: Gear, durability: number, onCd: boolean, equiped?: boolean };
 type Inventory = InventoryItem[];
 type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
 type BuffFlags = { HoT: boolean };
 type AlimentInstances = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] }; 
 type BuffInstances = { HotInstances: alimentIds[] };
+
 type Aliments = 
 {
     Flags: AlimentFlags,
@@ -58,8 +127,9 @@ type Buffs =
     Flags: BuffFlags,
     Instances: BuffInstances
 }
-
 type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
+
+type HotBarItems = { Equipped: Gear, Equippeable: InventoryGear[] }
 
 interface Player
 {
@@ -67,6 +137,7 @@ interface Player
     MaxHP: number,
     Data: locationData,
     Inventory: Inventory,
+    HotBar: HotBarItems,
     Aliments: Aliments,
     Buffs: Buffs
 }
@@ -77,6 +148,7 @@ const emptyPlayer: Player =
     MaxHP: maxHp,
     Data: { x: 0, y: 0, symbol: '^' },
     Inventory: [],
+    HotBar: { Equipped: Fists, Equippeable: [ { item: Fists, durability: 999, onCd: false, equiped: true } ] },
     Aliments:
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
@@ -89,7 +161,10 @@ const emptyPlayer: Player =
     }
 }
 
+const basicWeapon = { item: Fists, durability: 999, onCd: false, equiped: true };
+
 type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string };
+type deffenseInfo = { Armor: number, Toughness: number, Immunity?: string };
 type dropInfo = { item: Item, chance: number };
 
 interface Trap
@@ -120,6 +195,7 @@ interface Enemy
     MaxHP: number,
     Data: locationData,
     Attack: attackInfo,
+    Defense: deffenseInfo,
     Pattern: string,
     PatrolId?: ReturnType<typeof setTimeout>,
     Drops: dropInfo[]
@@ -131,16 +207,18 @@ const enemy: Enemy =
     MaxHP: 5,
     Data: { x: 0, y: 0, symbol: 'e' },
     Attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
+    Defense: { Armor: 0, Toughness: 1 },
     Pattern: 'none',
     Drops: []
 }
 
 const heavyEnemy: Enemy =
 {
-    HP: 10,
+    HP: 20,
     MaxHP: 10,
     Data: { x: 0, y: 0, symbol: 'E' },
     Attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
+    Defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
     Pattern: 'none',
     Drops: [ { item: Potion, chance: 75 } ]
 }
@@ -156,6 +234,7 @@ const App = () =>
 
     const [ player, setPlayer ] = useState<Player>( emptyPlayer );
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
+    const [ showGear, setShowGear ] = useState<boolean>( false );
     const [ enemies, setEnemies ] = useState<Enemy[]>( [] );
     const [ traps, setTraps ] = useState<Trap[]>( [] );
 
@@ -191,8 +270,9 @@ const App = () =>
             case 'T': return teleport;
             case 't': return trap;
             case 'p': return poisonTrap;
-            case '+': return '+'
-            case 'b': return 'b';
+            case '+': return Potion;
+            case 'b': return Bandages;
+            case '🗡': return Sword1;
             default: return 'unknown';
         };
     };
@@ -529,29 +609,41 @@ const App = () =>
         }, 45);
     };
 
-    const stepOnItem = ( x: number, y: number, symbol: string, tile: string ): void =>
+    const stepOnItem = ( x: number, y: number, symbol: string, tile: Item, quantity: number ): void =>
     {
         if( player.Inventory.length >= 20 )
         {
-            setResidual( prev => [ ...prev, { symbol: tile, coords: [ x, y ] } ] );
+            setResidual( prev => [ ...prev, { symbol: tile.symbol, coords: [ x, y ] } ] );
             moveHere( x, y, symbol, true );
             return ;
         }
         moveHere( x, y, symbol, true );
 
-        switch(tile)
+        addToInventory( tile, quantity );
+    }
+
+    const stepOnGear = ( x: number, y: number, symbol: string, tile: Gear ): void =>
+    {
+        if( player.HotBar.Equippeable.length >= 6 )
         {
-            case '+':
-            {
-                addToInventory( Potion, 1 );
-                break;
-            }
-            case 'b':
-            {
-                addToInventory( Bandages, 1 );
-                break;
-            }
+            setResidual( prev => [ ...prev, { symbol: tile.symbol, coords: [ x, y ] } ] );
+            moveHere( x, y, symbol, true );
+            return ;
         }
+        moveHere( x, y, symbol, true );
+
+        addToEquippeable( tile );
+    }
+
+    const turnToInventoryGear = ( gear: Gear ): InventoryGear =>
+    {
+        return { item: gear, durability: gear.durability, onCd: false, equiped: false };
+    }
+
+    const addToEquippeable = ( gear: Gear ) =>
+    {
+        setPlayer( playerInfo => ( { ...playerInfo, HotBar: { ...playerInfo.HotBar,
+            Equippeable: [ ...playerInfo.HotBar.Equippeable, turnToInventoryGear(gear) ] } } ) );
     }
 
     const addToInventory = ( item: Item, quantity: number ): void =>
@@ -559,15 +651,19 @@ const App = () =>
         const thisItem = player.Inventory.find( x => x.item.name === item.name )
         if(!thisItem)
         {
-            setPlayer( prev => ( { ...prev, Inventory: [ ...prev.Inventory, { item, quantity: quantity, onCd: false } ] } ) );
-            return
+            setPlayer( prev => ( { ...prev, Inventory: [ ...prev.Inventory, { item: item, quantity: quantity, onCd: false } ] } ) );
         }
-        setPlayer( prev => ( { ...prev, Inventory: prev.Inventory.map( x => x.item.name===item.name ? { ...x, quantity: x.quantity + quantity } : x ) } ) );
+        else
+        {
+            setPlayer( prev => ( { ...prev, Inventory: prev.Inventory.map( object =>
+                object.item.name===item.name
+                ? { ...object, quantity: object.quantity + quantity } : object ) } ) );
+        }
     }
 
     const consumeItem = ( item: Item, quantity: number ): void =>
     {
-        const thisItem = player.Inventory.find( x => x.item.name===item.name );
+        const thisItem = player.Inventory.find( x => x.item.name===item.name ) as InventoryItem;
 
         if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return ;
 
@@ -592,7 +688,8 @@ const App = () =>
             {
                 setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) } ) );
             }, thisItem.item.cd)
-            setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z => z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) } ) );
+            setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z =>
+                'quantity' in z && z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) } ) );
         }
         else
         {
@@ -660,10 +757,15 @@ const App = () =>
                         setPlayer( prev => manageBuffInstance( 'HotInstances', undefined, prev, 'clean' ) );
                         break;
                     }
-                case '+':
-                case 'b':
+                case Potion:
+                case Bandages:
                     {
-                        stepOnItem( newX, newY, symbol, tile )
+                        stepOnItem( newX, newY, symbol, tile, 1 );
+                        break;
+                    }
+                case Sword1:
+                    {
+                        stepOnGear( newX, newY, symbol, tile );
                         break;
                     }
                 case 'unknown':
@@ -688,9 +790,34 @@ const App = () =>
         return false;
     }
 
+    const strikeEnemy = ( x: number, y: number ): void =>
+    {
+        const equippedWeapon = player.HotBar.Equippeable.find( item => item.equiped ) || basicWeapon;
+        const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy;
+
+        const damage = (equippedWeapon?.item.attackStats?.dmg || 0) - thisEnemy.Defense.Armor;
+
+        damageEnemy( x, y, damage );
+        setPlayer( playerInfo =>
+        {
+            const thisWeapon = playerInfo.HotBar.Equippeable.find( item => item.equiped ) || Sword1 ;
+
+            if(thisWeapon.durability - thisEnemy.Defense.Toughness <= 0)
+            {
+                let Equipeables = [ ...playerInfo.HotBar.Equippeable ];
+                Equipeables = Equipeables.filter( x => x.equiped === false  );
+                Equipeables = Equipeables.map( x => x.item.name === 'Fists' ? { ...x, equiped: true } : x );
+                return { ...playerInfo, HotBar: { ...playerInfo.HotBar, Equippeable: Equipeables } }
+            }
+            return { ...playerInfo, HotBar: { ...playerInfo.HotBar,
+                Equippeable: playerInfo.HotBar.Equippeable.map( x => x.equiped ? { ...x, durability: x.durability - thisEnemy.Defense.Toughness } : x ) } }
+        } );
+    }
+
     const damageEnemy = ( x: number, y: number, dmg: number ): void =>
     {
         const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy ;
+
         if(thisEnemy.HP-dmg<=0)
         {
             setMapa( prev =>
@@ -707,10 +834,12 @@ const App = () =>
                 aux[x][y]='';
                 return aux;
             } );
+            console.log("Se murió");
             setEnemies( mobs => mobs.filter( mob => mob.Data.x!==x && mob.Data.y!==y ) );
         }
         else
         {
+            console.log(`Le quedan ${ thisEnemy.HP-dmg } puntos de vida.`);
             setEnemies( mobs => mobs.map( mob => mob.Data.x===x && mob.Data.y===y ? { ...mob, HP: mob.HP - dmg } : mob ) );
         }
     }
@@ -740,12 +869,32 @@ const App = () =>
             case enemy:
             case heavyEnemy:
                 {
-                    damageEnemy( x, y, 2 );
+                    const thisWeapon = player.HotBar.Equippeable.find( item => item.equiped );
+                    console.log("Daño infligido: ", thisWeapon?.item.attackStats?.dmg);
+                    strikeEnemy( x, y );
                     break;
                 }
             default:
                 return;
         }
+    }
+
+    const swapGear = ( key: string ): void =>
+    {
+        const to = key==='arrowleft' ? -1 : +1 ;
+        const oldIndex = player.HotBar.Equippeable.findIndex( item => item.equiped );
+        const max = player.HotBar.Equippeable.length - 1;
+        const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
+
+        if(oldIndex===newIndex) return;
+        
+        setPlayer( playerInfo =>
+        {
+            const aux = [ ...playerInfo.HotBar.Equippeable];
+            aux[oldIndex] = { ...aux[oldIndex], equiped: false };
+            aux[newIndex] = { ...aux[newIndex], equiped: true };
+            return { ...playerInfo, HotBar: { ...playerInfo.HotBar, Equippeable: aux } };
+        } );
     }
 
     const handleMovement = (event: React.KeyboardEvent): void =>
@@ -769,6 +918,12 @@ const App = () =>
                 case 'd':
                 movePlayer(0,+1,ship_right);
                 break;
+
+                case 'arrowleft':
+                case 'arrowright':
+                swapGear(key);
+                break;
+
                 case 'k':   //bandages
                 consumeItem(Bandages, 2);
                 break;
@@ -779,8 +934,10 @@ const App = () =>
                 heal(0,1,5);
                 break;
                 case 'i':   //abrir inventario
-                console.log(player.Inventory);
                 setShowInventory(prev => !prev);
+                break;
+                case 'g':   //mostrar Gear equipable
+                setShowGear(prev=> !prev);
                 break;
                 case 'enter':
                 handleInteraction();
@@ -951,6 +1108,7 @@ const App = () =>
         auxiliar[2][6] = 'b';
         auxiliar[2][7] = '+';
         auxiliar[2][8] = 'b';
+        auxiliar[3][5] = '🗡';
         auxiliar[2][10] = cursedTotem;
         auxiliar[10][10] = fire;
         auxiliar[10][12] = fountain;
@@ -958,15 +1116,15 @@ const App = () =>
         auxiliar[16][2] = 'T';
 
         setTps( [ [2,16], [16,2] ] );
+        auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
+        setPlayer( prev => (
+        { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } ) );
         setEnemies( [
         { ...enemy, Data: { x: 15, y: 2, symbol: 'e' } },
         { ...heavyEnemy, Data: { x: 13, y: 14, symbol: 'E' } } ] );
         setTraps( [
         { ...trap, Data: { x: 15, y: 5, symbol: 't' } },
-        { ...poisonTrap, Data: { x: 13, y: 13, symbol: 'p' } }
-        ])
-        auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
-        setPlayer( prev => ( { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } ) );
+        { ...poisonTrap, Data: { x: 13, y: 13, symbol: 'p' } } ] );
         setMapa(auxiliar);
     }
 
@@ -1012,35 +1170,57 @@ const App = () =>
         const burn = player.Aliments.Flags.Burning?'[Burning🔥]':'';
         return poison + bleed + burn;
     }
-
-  return(
-    <div>
-    <button onClick={()=>console.log(enemies)}> Enemies </button>
-        <span> StatusEffect: { renderAliments() } </span>
-        <br />
-        <span> HP: { renderHp() } </span>
-        <div className='general'>
-            <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
+    
+    return (
+        <div className='game-container'>
+          <button onClick={() => console.log(player)}> Player </button>
+          <span>StatusEffect: {renderAliments()}</span>
+          <br />
+          <span>HP: {renderHp()}</span>
+      
+          <div className="layout-flex"> {/* NUEVO contenedor horizontal */}
+            <div className='general'> {/* Esto mantiene el fondo y centrado */}
+              <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
                 {mapa.map((fila, x) => (
-                <div key={x} className='fila'>
+                  <div key={x} className='fila'>
                     {fila.map((celda, y) =>
-                    <label key={y} className='celda'>
-                        { celda }
-                    </label>
+                      <label key={y} className='celda'>
+                        {celda}
+                      </label>
                     )}
-                </div> ))}
+                  </div>
+                ))}
+              </div>
             </div>
-           { showInventory &&
-           <div> Inventario:
-                <div>
-                    {player.Inventory.map( (x, y) => <label key={y}> {x.item.name} Cantidad: {x.quantity} </label>)}
-                </div>
-            </div>}
+      
+            {showInventory && (
+              <div className="inventory-window">
+                <p>Inventario:</p>
+                <ul className="inventory-list">
+                  {player.Inventory.map((x, y) =>
+                    <li key={y}>
+                      {x.item.name} — { `Cantidad: ${x.quantity}` }
+                    </li>)}
+                </ul>
+              </div>
+            )}
+            {showGear && (
+              <div className="inventory-window">
+                <p>GEAR:</p>
+                <ul className="inventory-list">
+                  {player.HotBar.Equippeable.map((x, y) =>
+                    <li key={y}>
+                      {x.item.name} — { `Durabilidad: ${x.durability}` } - { x.equiped && '✔'}
+                    </li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+      
+          {!game && <button onClick={startGame}>START</button>}
+          {game && <button onClick={stopGame}>STOP</button>}
         </div>
-        {!game && <button onClick={startGame}> START </button>}
-        {game && <button onClick={stopGame}> STOP </button>}
-    </div>
-  );
+      );
 }
 
 export default App;
