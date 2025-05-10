@@ -129,7 +129,7 @@ type Buffs =
 }
 type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
 
-type HotBarItems = { Equipped: Gear, Equippeable: InventoryGear[] }
+type HotBarItems = { Equippeable: InventoryGear[] }
 
 interface Player
 {
@@ -148,7 +148,7 @@ const emptyPlayer: Player =
     MaxHP: maxHp,
     Data: { x: 0, y: 0, symbol: '^' },
     Inventory: [],
-    HotBar: { Equipped: Fists, Equippeable: [ { item: Fists, durability: 999, onCd: false, equiped: true } ] },
+    HotBar: { Equippeable: [ { item: Fists, durability: 999, onCd: false, equiped: true } ] },
     Aliments:
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
@@ -169,6 +169,7 @@ type dropInfo = { item: Item, chance: number };
 
 interface Trap
 {
+    Name: string,
     Active: boolean,
     Data: locationData,
     Attack: attackInfo,
@@ -177,6 +178,7 @@ interface Trap
 
 const trap: Trap =
 {
+    Name: 'Trampa simple',
     Active: true,
     Data: { x: 0, y: 0, symbol: 't' },
     Attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
@@ -184,6 +186,7 @@ const trap: Trap =
 
 const poisonTrap: Trap =
 {
+    Name: 'Trampa venenosa',
     Active: true,
     Data: { x: 0, y: 0, symbol: 'p' },
     Attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'poison' },
@@ -191,6 +194,7 @@ const poisonTrap: Trap =
 
 interface Enemy
 {
+    Name: string,
     HP: number,
     MaxHP: number,
     Data: locationData,
@@ -203,6 +207,7 @@ interface Enemy
 
 const enemy: Enemy =
 {
+    Name: 'Goblin',
     HP: 5,
     MaxHP: 5,
     Data: { x: 0, y: 0, symbol: 'e' },
@@ -214,6 +219,7 @@ const enemy: Enemy =
 
 const heavyEnemy: Enemy =
 {
+    Name: 'Troll',
     HP: 20,
     MaxHP: 10,
     Data: { x: 0, y: 0, symbol: 'E' },
@@ -223,20 +229,38 @@ const heavyEnemy: Enemy =
     Drops: [ { item: Potion, chance: 75 } ]
 }
 
+type eventLog = { message: string, color: string };
+const emptyDelayedLog = { status: false, message: '', color: 'white' };
+
 const App = () =>
 {
     const gridRef = useRef<HTMLDivElement>(null);
+    const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
     const [ stun, setStun ] = useState<boolean>(false);
     const [ mapa, setMapa ] = useState<string[][]>( Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') ) );
     const [ tps, setTps ] = useState<ArrayOfCoords>([]);
     const [ residual, setResidual ] = useState<Residual[]>( [] );
 
-    const [ player, setPlayer ] = useState<Player>( emptyPlayer );
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
     const [ showGear, setShowGear ] = useState<boolean>( false );
+    const [ events, setEvents ] = useState<eventLog[]>( [] );
+    const [ delayedLog, setDelayedLog ] = useState<eventLog[]>( [] );
+
+    const [ player, setPlayer ] = useState<Player>( emptyPlayer );
     const [ enemies, setEnemies ] = useState<Enemy[]>( [] );
     const [ traps, setTraps ] = useState<Trap[]>( [] );
+
+    useEffect( () =>
+    {
+        if(delayedLog.length===0) return;
+
+        const [ actual, ...rest ] = delayedLog;
+        handleEventLogs( actual.message, actual.color );
+        const timeId = setTimeout( () => { setDelayedLog( rest ); }, 50 );
+
+        return () => clearTimeout( timeId );
+    }, [ delayedLog ] );
 
     const findPlayer = (): void =>
     {
@@ -410,49 +434,6 @@ const App = () =>
         }
     };
 
-    const manageDotInstance =( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
-    {
-        let flag = '';
-        switch(instance)
-        {
-            case 'BleedInstances':
-                flag = 'Bleeding';
-                break;
-            case 'BurnInstances':
-                flag = 'Burning';
-                break;
-            case 'PoisonInstances':
-                flag = 'Poisoned';
-                break;
-            default:
-                break;
-        }
-
-        switch(action)
-        {
-            case 'add':
-                return { ...prev, Aliments:
-                        { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: true }, Instances:
-                            { ...prev.Aliments.Instances, [instance]: [ ...prev.Aliments.Instances[instance], newInstance ] } } };
-            case 'remove':
-                const updatedInstance = prev.Aliments.Instances[instance].filter( x =>
-                    x.dmgId!==newInstance?.dmgId && x.timerId!==newInstance?.timerId );
-                const isInstanceEmpty = updatedInstance.length == 0;
-                return { ...prev, Aliments:
-                    { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: !isInstanceEmpty }, Instances:
-                        { ...prev.Aliments.Instances, [instance]: updatedInstance } } };
-            case 'clean':
-                return { ...prev, Aliments:
-                    { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: false }, Instances:
-                        { ...prev.Aliments.Instances, [instance]: [] } } };
-            case 'restart':
-                return { ...prev, Aliments:
-                    { ...prev.Aliments, Flags: { Poisoned: false, Burning: false, Bleeding: false }, Instances:{ BurnInstances: [], BleedInstances: [], PoisonInstances: [] } } };
-            default:
-                return prev;
-        }
-    };
-
     const manageBuffInstance =( instance: keyof BuffInstances, thisInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
     {
         let flag = '';
@@ -480,7 +461,7 @@ const App = () =>
                     { ...prev.Buffs, Flags: { ...prev.Buffs.Flags, [flag]: !isInstanceEmpty },
                     Instances: { ...prev.Buffs.Instances, [instance]: updatedInstance } } };
             case 'clean':
-                finishBuff(instance);
+                finishBuff(instance, prev);
                 return { ...prev, Buffs:
                     { ...prev.Buffs, Flags: { ...prev.Buffs.Flags, [flag]: false },
                     Instances: { ...prev.Buffs.Instances, [instance]: [] } } };
@@ -499,27 +480,65 @@ const App = () =>
             if(prev.HP-dmg<=0)
             {
                 stopGame();
+                return { ...prev, HP: 0 };
             }
             return { ...prev, HP: prev.HP - dmg };
         });
 
+        let estado = '';
+        let color = '';
+
         if(dot!=0)
         {
+            let flag=true;
             switch(aliment)
             {
                 case 'poison':
                     {
-                        setPlayer( prev => manageDotInstance("PoisonInstances", {dmgId, timerId}, prev, 'add') );
+                        setPlayer( prev =>
+                            {
+                                let aux = {...prev};
+                                estado = "veneno";
+                                color = 'lime';
+                                if(flag)
+                                {
+                                    queueLog('[ENVENENADO]', 'lime');
+                                    flag=false;
+                                }
+                                return manageDotInstance("PoisonInstances", {dmgId, timerId}, aux, 'add')
+                            });
                         break;
                     }
                 case 'bleed':
                     {
-                        setPlayer( prev => manageDotInstance("BleedInstances", {dmgId, timerId}, prev, 'add') );
+                        setPlayer( prev =>
+                        {
+                            const aux = {...prev };
+                            estado = 'sangrado';
+                            color = 'red';
+                            if(flag)
+                            {
+                                queueLog('[SANGRANDO]', 'red');
+                                flag=false;
+                            }
+                            return manageDotInstance("BleedInstances", {dmgId, timerId}, aux, 'add')
+                        } );
                         break;
                     }
                 case 'burn':
                     {
-                        setPlayer( prev => manageDotInstance("BurnInstances", {dmgId, timerId}, prev, 'add') );
+                        setPlayer( prev =>
+                        {
+                            const aux = {...prev};
+                            estado = 'quemadura';
+                            color = 'orange';
+                            if(flag)
+                            {
+                                queueLog('[EN LLAMAS]', 'orange');
+                                flag=false;
+                            }
+                            return manageDotInstance("BurnInstances", {dmgId, timerId}, aux, 'add')
+                        } );
                         break;
                     }
                 default:
@@ -528,16 +547,29 @@ const App = () =>
 
             let dmgId = setInterval( () =>
             {
+                let flag = true;
                 setPlayer( prev =>
                 {
-                    if( prev.HP - dot <= 0 )
+                    const aux = { ...prev};
+                    if(flag)
+                    {
+                        queueLog(`Daño por ${estado}: ${dot}`, color);
+                    }
+                    
+                    if( aux.HP - dot <= 0 || !game)
                     {
                         clearInterval(dmgId);
                         clearTimeout(timerId);
-                        stopGame();
-                        return {...prev, HP: 0 };
+                        if(flag)
+                        {
+                            console.log("Dije explícitamente que termine el juego.");
+                            stopGame();
+                        }
+                        flag=false;
+                        return {...aux, HP: 0 };
                     }
-                    return {...prev, HP: prev.HP - dot };
+                    flag=false;
+                    return {...aux, HP: aux.HP - dot };
                 } );
             }, 1000);
 
@@ -547,17 +579,29 @@ const App = () =>
                 {
                     case 'poison':
                         {
-                            setPlayer( prev => manageDotInstance("PoisonInstances", {dmgId, timerId}, prev, 'remove') );
+                            setPlayer( prev =>
+                                {
+                                    const aux = { ...prev };
+                                    return manageDotInstance("PoisonInstances", {dmgId, timerId}, aux, 'remove')
+                                } );
                             break;
                         }
                     case 'bleed':
                         {
-                            setPlayer( prev => manageDotInstance("BleedInstances", {dmgId, timerId}, prev, 'remove') );
+                            setPlayer( prev =>
+                                {
+                                    const aux = { ...prev };
+                                    return manageDotInstance("BleedInstances", {dmgId, timerId}, aux, 'remove')
+                                } );
                             break;
                         }
                     case 'burn':
                         {
-                            setPlayer( prev => manageDotInstance("BurnInstances", {dmgId, timerId}, prev, 'remove') );
+                            setPlayer( prev =>
+                                {
+                                    const aux = { ...prev };
+                                    return manageDotInstance("BurnInstances", {dmgId, timerId}, aux, 'remove')
+                                } );
                             break;
                         }
                     default:
@@ -573,6 +617,7 @@ const App = () =>
     {
         const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy;
         const { Attack } = thisEnemy;
+        queueLog( `${thisEnemy.Name} te golpeó por ${Attack.Instant} de daño.`, 'red');
         hurtPlayer( Attack.Instant, Attack.DoT, Attack.Times, Attack.Aliment );
         inconsecuente(symbol);
     };
@@ -585,6 +630,8 @@ const App = () =>
         moveHere( x, y, symbol, true );
 
         const {Attack} = thisTrap;
+        queueLog(`${thisTrap.Name} te causó ${Attack.Instant} de daño.`, 'crimson');
+
         hurtPlayer( Attack.Instant, Attack.DoT, Attack.Times, Attack.Aliment );
     };
 
@@ -642,6 +689,7 @@ const App = () =>
 
     const addToEquippeable = ( gear: Gear ) =>
     {
+        queueLog(`${gear.name} agregado a la mochila.`, 'orange');
         setPlayer( playerInfo => ( { ...playerInfo, HotBar: { ...playerInfo.HotBar,
             Equippeable: [ ...playerInfo.HotBar.Equippeable, turnToInventoryGear(gear) ] } } ) );
     }
@@ -649,6 +697,7 @@ const App = () =>
     const addToInventory = ( item: Item, quantity: number ): void =>
     {
         const thisItem = player.Inventory.find( x => x.item.name === item.name )
+        queueLog(`Recogiste ${quantity} ${item.name}.`, 'lime');
         if(!thisItem)
         {
             setPlayer( prev => ( { ...prev, Inventory: [ ...prev.Inventory, { item: item, quantity: quantity, onCd: false } ] } ) );
@@ -790,6 +839,25 @@ const App = () =>
         return false;
     }
 
+    const handleEventLogs = ( event: string, color: string ): void =>
+    {
+        setEvents( eventos =>
+        {
+            const aux = [ ...eventos ];
+            if(aux.length>=6)
+            {
+                aux.pop();
+            }
+            aux.unshift( {message: event, color: color} );
+            return aux;
+        } );
+    }
+
+    const queueLog = ( message: string, color: string ): void =>
+    {
+        setDelayedLog( list => [ ...list, { message, color } ] );
+    }
+
     const strikeEnemy = ( x: number, y: number ): void =>
     {
         const equippedWeapon = player.HotBar.Equippeable.find( item => item.equiped ) || basicWeapon;
@@ -797,16 +865,21 @@ const App = () =>
 
         const damage = (equippedWeapon?.item.attackStats?.dmg || 0) - thisEnemy.Defense.Armor;
 
+        lan=='es'
+        ? queueLog(`Golpeaste a ${thisEnemy.Name} por ${damage} de daño.`, 'khaki')
+        : queueLog(`You HIT ${thisEnemy.Name} by ${damage} damage.`, 'khaki');
+
         damageEnemy( x, y, damage );
         setPlayer( playerInfo =>
         {
-            const thisWeapon = playerInfo.HotBar.Equippeable.find( item => item.equiped ) || Sword1 ;
+            const thisWeapon = playerInfo.HotBar.Equippeable.find( item => item.equiped ) || basicWeapon ;
 
             if(thisWeapon.durability - thisEnemy.Defense.Toughness <= 0)
             {
                 let Equipeables = [ ...playerInfo.HotBar.Equippeable ];
                 Equipeables = Equipeables.filter( x => x.equiped === false  );
                 Equipeables = Equipeables.map( x => x.item.name === 'Fists' ? { ...x, equiped: true } : x );
+                queueLog( `[${thisWeapon.item.symbol}] ${thisWeapon.item.name} ${lan=='es'?'se rompió':'broke'}.`, 'orangered');
                 return { ...playerInfo, HotBar: { ...playerInfo.HotBar, Equippeable: Equipeables } }
             }
             return { ...playerInfo, HotBar: { ...playerInfo.HotBar,
@@ -834,7 +907,11 @@ const App = () =>
                 aux[x][y]='';
                 return aux;
             } );
-            console.log("Se murió");
+
+            lan==='es'
+            ? queueLog( `${thisEnemy.Name} murió.`, 'crimson' )
+            : queueLog( `${thisEnemy.Name} died.`, 'crimson' );
+
             setEnemies( mobs => mobs.filter( mob => mob.Data.x!==x && mob.Data.y!==y ) );
         }
         else
@@ -870,7 +947,6 @@ const App = () =>
             case heavyEnemy:
                 {
                     const thisWeapon = player.HotBar.Equippeable.find( item => item.equiped );
-                    console.log("Daño infligido: ", thisWeapon?.item.attackStats?.dmg);
                     strikeEnemy( x, y );
                     break;
                 }
@@ -1017,23 +1093,98 @@ const App = () =>
             { ...mob, Data: { ...mob.Data, PatrolId: id  } } : mob ) );
     }
 
-    const finishDoT = ( aliment: keyof AlimentInstances ): void =>
+    const finishDoT = ( aliment: keyof AlimentInstances, info: Player, all?: boolean ): void =>
     {
-        player.Aliments.Instances[aliment?aliment:'BleedInstances'].forEach( ids =>
+        if(all)
         {
-            clearInterval(ids.dmgId);
-            clearTimeout(ids.timerId);
-        } );
+            for( const key in info.Aliments.Instances )
+            {
+                const instances = info.Aliments.Instances[key as keyof typeof info.Aliments.Instances];
+
+                instances.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+            }
+        }
+        else
+        {
+            info.Aliments.Instances[aliment?aliment:'BleedInstances'].forEach( ids =>
+            {
+                clearInterval(ids.dmgId);
+                clearTimeout(ids.timerId);
+            } );
+        }
     }
 
-    const finishBuff = ( buff: keyof BuffInstances ): void =>
+    const finishBuff = ( buff: keyof BuffInstances, info: Player, cleanse?: boolean ): void =>
     {
-        player.Buffs.Instances[buff].forEach( ids =>
+        if(cleanse)
         {
-            clearInterval(ids.dmgId);
-            clearTimeout(ids.timerId);
-        } );
+            for( const key in info.Buffs.Instances )
+            {
+                const instances = info.Buffs.Instances[key as keyof typeof info.Buffs.Instances];
+
+                instances.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+            }
+        }
+        else
+        {
+            info.Buffs.Instances[buff].forEach( ids =>
+            {
+                clearInterval(ids.dmgId);
+                clearTimeout(ids.timerId);
+            } );
+        }
     }
+
+    const manageDotInstance =( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
+    {
+        let flag = '';
+        switch(instance)
+        {
+            case 'BleedInstances':
+                flag = 'Bleeding';
+                break;
+            case 'BurnInstances':
+                flag = 'Burning';
+                break;
+            case 'PoisonInstances':
+                flag = 'Poisoned';
+                break;
+            default:
+                break;
+        }
+
+        switch(action)
+        {
+            case 'add':
+                return { ...prev, Aliments:
+                        { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: true }, Instances:
+                            { ...prev.Aliments.Instances, [instance]: [ ...prev.Aliments.Instances[instance], newInstance ] } } };
+            case 'remove':
+                const updatedInstance = prev.Aliments.Instances[instance].filter( x =>
+                    x.dmgId!==newInstance?.dmgId && x.timerId!==newInstance?.timerId );
+                const isInstanceEmpty = updatedInstance.length == 0;
+                return { ...prev, Aliments:
+                    { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: !isInstanceEmpty }, Instances:
+                        { ...prev.Aliments.Instances, [instance]: updatedInstance } } };
+            case 'clean':
+                return { ...prev, Aliments:
+                    { ...prev.Aliments, Flags: { ...prev.Aliments.Flags, [flag]: false }, Instances:
+                        { ...prev.Aliments.Instances, [instance]: [] } } };
+            case 'restart':
+                return { ...prev, Aliments:
+                    { ...prev.Aliments, Flags: { Poisoned: false, Burning: false, Bleeding: false }, Instances:{ BurnInstances: [], BleedInstances: [], PoisonInstances: [] } } };
+            default:
+                return prev;
+        }
+    };
 
     const cleanse = ( aliment: string ): void =>
     {
@@ -1041,28 +1192,42 @@ const App = () =>
         {
             case 'bleed':
             {
-                finishDoT('BleedInstances');
-                setPlayer( prev => manageDotInstance('BleedInstances', undefined, prev, 'clean') )
+                setPlayer( playerInfo =>
+                {
+                    const aux = { ...playerInfo };
+                    finishDoT( 'BleedInstances', aux );
+                    return manageDotInstance('BleedInstances', undefined, aux, 'clean')
+                } );
                 break;
             }
             case 'poison':
             {
-                finishDoT('PoisonInstances');
-                setPlayer( prev => manageDotInstance('PoisonInstances', undefined, prev, 'clean') )
+                setPlayer( playerInfo =>
+                {
+                    const aux = { ...playerInfo };
+                    finishDoT( 'PoisonInstances', aux );
+                    return manageDotInstance('PoisonInstances', undefined, aux, 'clean')
+                } );
                 break;
             }
             case 'burn':
             {
-                finishDoT('BurnInstances');
-                setPlayer( prev => manageDotInstance('BurnInstances', undefined, prev, 'clean') )
+                setPlayer( playerInfo =>
+                {
+                    const aux = { ...playerInfo };
+                    finishDoT( 'BurnInstances', aux );
+                    return manageDotInstance('BurnInstances', undefined, aux, 'clean')
+                } );
                 break;
             }
             case 'all':
             {
-                finishDoT('BleedInstances');
-                finishDoT('BurnInstances');
-                finishDoT('PoisonInstances');
-                setPlayer( prev => manageDotInstance('BleedInstances', undefined, prev, 'restart') )
+                setPlayer( playerInfo =>
+                {
+                    const aux = { ...playerInfo };
+                    finishDoT( 'BleedInstances', aux,  true );
+                    return manageDotInstance( 'BleedInstances', undefined, aux, 'restart' );
+                } );
                 break;
             }
         }
@@ -1070,6 +1235,7 @@ const App = () =>
 
     const heal = ( healing: number, HoT: number, times: number ): void =>
     {
+        queueLog(`+${healing} HP`, 'green');
         setPlayer( prev => ( { ...prev, HP: prev.HP + healing < player.MaxHP ? prev.HP + healing : player.MaxHP } ) );
 
         if(HoT!==0)
@@ -1077,6 +1243,7 @@ const App = () =>
             let dmgId = setInterval( () =>
             {
                 setPlayer( prev => ( { ...prev, HP: prev.HP+HoT > player.MaxHP ? player.MaxHP : prev.HP + HoT } ) );
+                queueLog(`+${HoT} HP [regen]`, 'seagreen');
             }, 1000);
 
             let timerId = setTimeout( () =>
@@ -1130,6 +1297,7 @@ const App = () =>
 
     const startGame = (): void =>
     {
+        setEvents( [] );
         loadGame();
         setPlayer( prev => ({ ...prev, HP: player.MaxHP }) );
         setGame(true);
@@ -1140,11 +1308,13 @@ const App = () =>
     {
         findPlayer();
         cleanse('all');
+        setTimeout( () => { cleanse('all') }, 50 );
         setShowInventory(false);
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player.Data.x][player.Data.y] = '';
         setMapa(auxiliar);
         setPlayer( {...emptyPlayer, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } );
+        queueLog(`Moriste a causa de tus heridas.`, 'white');
         setGame(false);
     }
 
@@ -1174,12 +1344,14 @@ const App = () =>
     return (
         <div className='game-container'>
           <button onClick={() => console.log(player)}> Player </button>
+          <button onClick={() => setLan('en')}> Inglés </button>
+          <button onClick={() => setLan('es')}> Español </button>
           <span>StatusEffect: {renderAliments()}</span>
           <br />
           <span>HP: {renderHp()}</span>
       
-          <div className="layout-flex"> {/* NUEVO contenedor horizontal */}
-            <div className='general'> {/* Esto mantiene el fondo y centrado */}
+          <div className="layout-flex">
+            <div className='general'>
               <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
                 {mapa.map((fila, x) => (
                   <div key={x} className='fila'>
@@ -1216,6 +1388,12 @@ const App = () =>
               </div>
             )}
           </div>
+
+         <div style={{ background: "#111", color: "#0f0", fontFamily: "monospace", padding: "0.01rem", height: "118px", overflowY: "auto" }}>
+            <ul style={{ margin: 0, padding: 0 }}>
+                {events.map((log, i) => <li key={i} style={{ color: log.color || 'inherit' }}>{log.message}</li>)}
+            </ul>
+        </div>
       
           {!game && <button onClick={startGame}>START</button>}
           {game && <button onClick={stopGame}>STOP</button>}
