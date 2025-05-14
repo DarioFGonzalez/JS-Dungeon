@@ -67,7 +67,7 @@ interface Gear
     Equippeable: boolean
 };
 
-type attackStats = { dmg: number, DoT?: number, times?: number, cd: number };
+type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, cd: number };
 type deffenseStats = { def: number, immunity?: string };
 
 const Fists: Gear =
@@ -96,12 +96,25 @@ const Sword1: Gear =
     Equippeable: true
 }
 
+const Dagger1: Gear =
+{
+    type: 'Gear',
+    name: 'Slicing Knife',
+    symbol: '🔪',
+    id: 4,
+    slot: 'main_hand',
+    desc: '+1 DMG (5 🩸)',
+    attackStats: { dmg: 1, DoT: 1, times: 5, aliment: 'bleed', cd: 1000 },
+    durability: 20,
+    Equippeable: true
+}
+
 const Shield1: Gear =
 {
     type: 'Gear',
     name: 'Shield_1',
     symbol: '🛡',
-    id: 4,
+    id: 5,
     slot: 'off_hand',
     desc: '+1 DEF',
     defenseStats: { def: 1 },
@@ -116,6 +129,11 @@ type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
 type BuffFlags = { HoT: boolean };
 type AlimentInstances = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] }; 
 type BuffInstances = { HotInstances: alimentIds[] };
+
+interface WithAliments 
+{
+    Aliments: Aliments;
+}
 
 type Aliments = 
 {
@@ -169,6 +187,7 @@ type dropInfo = { item: Item, chance: number };
 
 interface Trap
 {
+    ID: string,
     Name: string,
     Active: boolean,
     Data: locationData,
@@ -178,6 +197,7 @@ interface Trap
 
 const trap: Trap =
 {
+    ID: '0',
     Name: 'Trampa simple',
     Active: true,
     Data: { x: 0, y: 0, symbol: 't' },
@@ -186,6 +206,7 @@ const trap: Trap =
 
 const poisonTrap: Trap =
 {
+    ID: '0',
     Name: 'Trampa venenosa',
     Active: true,
     Data: { x: 0, y: 0, symbol: 'p' },
@@ -194,10 +215,12 @@ const poisonTrap: Trap =
 
 interface Enemy
 {
+    ID: string,
     Name: string,
     HP: number,
     MaxHP: number,
     Data: locationData,
+    Aliments: Aliments,
     Attack: attackInfo,
     Defense: deffenseInfo,
     Pattern: string,
@@ -207,10 +230,16 @@ interface Enemy
 
 const enemy: Enemy =
 {
+    ID: '0',
     Name: 'Goblin',
     HP: 5,
     MaxHP: 5,
     Data: { x: 0, y: 0, symbol: 'e' },
+    Aliments:
+    {
+        Flags: { Poisoned: false, Bleeding: false, Burning: false },
+        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
     Attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
     Defense: { Armor: 0, Toughness: 1 },
     Pattern: 'none',
@@ -219,10 +248,16 @@ const enemy: Enemy =
 
 const heavyEnemy: Enemy =
 {
+    ID: '0',
     Name: 'Troll',
     HP: 20,
-    MaxHP: 10,
+    MaxHP: 20,
     Data: { x: 0, y: 0, symbol: 'E' },
+    Aliments:
+    {
+        Flags: { Poisoned: false, Bleeding: false, Burning: false },
+        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
     Attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
     Defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
     Pattern: 'none',
@@ -297,6 +332,7 @@ const App = () =>
             case '+': return Potion;
             case 'b': return Bandages;
             case '🗡': return Sword1;
+            case '🔪': return Dagger1;
             default: return 'unknown';
         };
     };
@@ -473,6 +509,240 @@ const App = () =>
         }
     };
 
+    const damageWeapon = ( enemyToughness: number ) =>
+    {
+        let flag = true;
+
+        setPlayer( playerInfo =>
+        {
+            const aux = { ...playerInfo };
+            const equippedWeapon = aux.HotBar.Equippeable.find( w => w.equiped );
+            if(!equippedWeapon) return aux;
+
+            if( equippedWeapon.durability - enemyToughness <= 0 )
+            {
+                const newEquippeables = aux.HotBar.Equippeable
+                .filter( wpn => !wpn.equiped || wpn.item.name === 'Fists' )
+                .map( wpn => wpn.item.name === 'Fists' ? { ...wpn, equiped: true } : wpn );
+
+                if(flag)
+                {
+                    queueLog( `[${equippedWeapon.item.symbol}] ¡${equippedWeapon.item.name} se rompió! 💥`, 'orange');
+                    flag = false;
+                }
+
+                return { ...aux, HotBar: { ...playerInfo.HotBar, Equippeable: newEquippeables }  };
+            }
+
+            return { ...aux, HotBar: { ...aux.HotBar, Equippeable: aux.HotBar.Equippeable.map( w => w.equiped ? { ...w, durability: w.durability - enemyToughness } : w )}}    
+        } );
+    }
+
+    const strikeEnemy = ( x: number, y: number ): void =>
+    {
+        let flag = true;
+        setPlayer( playerInfo =>
+        {
+            const aux = { ...playerInfo };
+            const thisWeapon = aux.HotBar.Equippeable.find( item => item.equiped );
+            if(!thisWeapon) return aux;
+
+            setEnemies( mobs =>
+            {
+                const thisEnemy = mobs.find( mob => mob.Data.x===x && mob.Data.y===y );
+                if(!thisEnemy) return mobs;
+
+                const attk = thisWeapon.item.attackStats;
+
+                const damage = ( thisWeapon?.item.attackStats?.dmg || 1 )- thisEnemy.Defense.Armor;
+                console.log(`${thisEnemy.Name} tiene ${thisEnemy.Defense.Armor} de armadura y le pegaste por ${thisWeapon.item.attackStats?.dmg}, osea que recibe ${damage}.`);
+
+                if(flag)
+                {
+                    damageEnemy( thisEnemy.Data.x, thisEnemy.Data.y, damage, attk?.DoT, attk?.times, attk?.aliment );
+                    damageWeapon( thisEnemy.Defense.Toughness );
+                    flag = false;
+                }
+
+                return mobs;
+            } );
+
+            return aux;
+        } );
+    }
+
+    const enemyDeath = ( x: number, y: number, enemy: Enemy, allEnemies: Enemy[] ): Enemy[] =>
+    {
+        setMapa( prev =>
+        {
+            let mapAux = prev.map( x => [...x] );
+            if(enemy.Drops.length>0)
+            {
+                if( rollDrop(enemy.Drops[0].chance) )
+                {
+                    mapAux[x][y] = enemy.Drops[0].item.symbol;
+                    return mapAux;
+                }
+            }
+            mapAux[x][y]='';
+            return mapAux;
+        } );
+        
+        lan==='es'
+        ? queueLog( `${enemy.Name} murió.`, 'crimson' )
+        : queueLog( `${enemy.Name} died.`, 'crimson' );
+
+        return allEnemies.filter( mob => mob.Data.x!==x && mob.Data.y!==y );
+    }
+
+    const damageEnemy = ( x: number, y: number, dmg: number, dot: number = 0, times: number = 0, aliment: string = '' ): void =>
+    {
+        setEnemies( allEnemies =>
+        {
+            const aux = [ ...allEnemies ];
+            let tag = { aliment: '', color: 'khaki'};
+            const thisEnemy = aux.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy;
+            console.log( '------- Daño al enemigo -------');
+            
+            if(thisEnemy.HP-dmg<=0)
+            {
+                return enemyDeath( x, y, thisEnemy, aux );
+            }
+            else
+            {
+                if(dot!=0)
+                {
+                    switch(aliment)
+                    {
+                        case 'poison':
+                        {
+                            tag.aliment = '[Envenenado]';
+                            tag.color = 'lime';
+                            setEnemies( allEnemies =>
+                            {
+                                const aux = [ ...allEnemies ];
+                                return aux.map( mob => mob.ID===thisEnemy.ID
+                                    ? manageDotInstance("PoisonInstances", {dmgId, timerId}, thisEnemy, 'add')
+                                    : mob );
+                            });
+                            break;
+                        }
+                        case 'bleed':
+                        {
+                            tag.aliment = '[Sangrando]';
+                            tag.color = 'red';
+                            setEnemies( allEnemies =>
+                            {
+                                const aux = [ ...allEnemies ];
+                                return aux.map( mob => mob.ID===thisEnemy.ID
+                                    ? manageDotInstance("BleedInstances", {dmgId, timerId}, thisEnemy, 'add')
+                                    : mob );
+                            });
+                            break;
+                        }
+                        case 'burn':
+                            {
+                                tag.aliment = '[Quemándose]';
+                                tag.color = 'orange';
+                                setEnemies( allEnemies =>
+                                {
+                                    const aux = [ ...allEnemies ];
+                                    return aux.map( mob => mob.ID===thisEnemy.ID
+                                        ? manageDotInstance("BurnInstances", {dmgId, timerId}, thisEnemy, 'add')
+                                        : mob );
+                                });
+                                break;
+                            }
+                        default:
+                            break;
+                    }
+        
+                    let dmgId = setInterval( () =>
+                    {
+                        let flag = true;
+                        setEnemies( prev =>
+                        {
+                            const aux = [ ...prev ];
+                            const updatedEnemy = aux.find( x => x.ID === thisEnemy.ID );
+
+                            if(!updatedEnemy) return prev;
+                            
+                            if( updatedEnemy.HP - dot <= 0 || !game)
+                            {
+                                cleanse('all', updatedEnemy.ID);
+                                if(flag)
+                                {
+                                    console.log("El bicho murió por DOT: ", aliment);
+                                    flag = false;
+                                }
+                                if(game)
+                                {
+                                    return enemyDeath(updatedEnemy.Data.x, updatedEnemy.Data.y, updatedEnemy, aux);
+                                }
+                                return aux;
+                            }
+                            if(flag)
+                            {
+                                console.log(`El bicho recibió ${dot} de daño por ${aliment}.`);
+                                flag = false;
+                            }
+                            return aux.map( mob => mob.ID === updatedEnemy.ID ? {...mob, HP: mob.HP - dot } : mob );
+                        } );
+                    }, 1000);
+        
+                    let timerId = setTimeout( () =>
+                    {
+                        switch(aliment)
+                        {
+                            case 'poison':
+                                {
+                                    setEnemies( prev =>
+                                    {
+                                        const aux = [ ...prev ];
+                                        return aux.map( x => x.ID === thisEnemy.ID
+                                            ? manageDotInstance("PoisonInstances", {dmgId, timerId}, x, 'remove')
+                                            : x );
+                                    } );
+                                    break;
+                                }
+                            case 'bleed':
+                                {
+                                    setEnemies( prev =>
+                                    {
+                                        const aux = [ ...prev ];
+                                        return aux.map( x => x.ID === thisEnemy.ID
+                                            ? manageDotInstance("BleedInstances", {dmgId, timerId}, x, 'remove')
+                                            : x );
+                                    } );
+                                    break;
+                                }
+                            case 'burn':
+                                {
+                                    setEnemies( prev =>
+                                    {
+                                        const aux = [ ...prev ];
+                                        return aux.map( x => x.ID === thisEnemy.ID
+                                            ? manageDotInstance("BurnInstances", {dmgId, timerId}, x, 'remove')
+                                            : x );
+                                    } );
+                                    break;
+                                }
+                            default:
+                                break;
+                        }
+                        clearInterval( dmgId );
+                    }, times*1000)
+                }
+
+                lan=='es'
+                ? queueLog(`Golpeaste a ${thisEnemy.Name} por ${dmg} de daño. [${thisEnemy.HP - dmg}/${thisEnemy.MaxHP}]. ${tag.aliment}`, tag.color)
+                : queueLog(`You HIT ${thisEnemy.Name} by ${dmg} damage. [${thisEnemy.HP - dmg}/${thisEnemy.MaxHP}]`, 'khaki');
+
+                return aux.map( mob => mob.ID===thisEnemy.ID ? { ...mob, HP: mob.HP - dmg } : mob );
+            }
+        } );
+    }
+
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
         setPlayer( prev =>
@@ -558,11 +828,8 @@ const App = () =>
                     
                     if( aux.HP - dot <= 0 || !game)
                     {
-                        clearInterval(dmgId);
-                        clearTimeout(timerId);
                         if(flag)
                         {
-                            console.log("Dije explícitamente que termine el juego.");
                             stopGame();
                         }
                         flag=false;
@@ -813,6 +1080,7 @@ const App = () =>
                         break;
                     }
                 case Sword1:
+                case Dagger1:
                     {
                         stepOnGear( newX, newY, symbol, tile );
                         break;
@@ -856,69 +1124,6 @@ const App = () =>
     const queueLog = ( message: string, color: string ): void =>
     {
         setDelayedLog( list => [ ...list, { message, color } ] );
-    }
-
-    const strikeEnemy = ( x: number, y: number ): void =>
-    {
-        const equippedWeapon = player.HotBar.Equippeable.find( item => item.equiped ) || basicWeapon;
-        const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy;
-
-        const damage = (equippedWeapon?.item.attackStats?.dmg || 0) - thisEnemy.Defense.Armor;
-
-        lan=='es'
-        ? queueLog(`Golpeaste a ${thisEnemy.Name} por ${damage} de daño.`, 'khaki')
-        : queueLog(`You HIT ${thisEnemy.Name} by ${damage} damage.`, 'khaki');
-
-        damageEnemy( x, y, damage );
-        setPlayer( playerInfo =>
-        {
-            const thisWeapon = playerInfo.HotBar.Equippeable.find( item => item.equiped ) || basicWeapon ;
-
-            if(thisWeapon.durability - thisEnemy.Defense.Toughness <= 0)
-            {
-                let Equipeables = [ ...playerInfo.HotBar.Equippeable ];
-                Equipeables = Equipeables.filter( x => x.equiped === false  );
-                Equipeables = Equipeables.map( x => x.item.name === 'Fists' ? { ...x, equiped: true } : x );
-                queueLog( `[${thisWeapon.item.symbol}] ${thisWeapon.item.name} ${lan=='es'?'se rompió':'broke'}.`, 'orangered');
-                return { ...playerInfo, HotBar: { ...playerInfo.HotBar, Equippeable: Equipeables } }
-            }
-            return { ...playerInfo, HotBar: { ...playerInfo.HotBar,
-                Equippeable: playerInfo.HotBar.Equippeable.map( x => x.equiped ? { ...x, durability: x.durability - thisEnemy.Defense.Toughness } : x ) } }
-        } );
-    }
-
-    const damageEnemy = ( x: number, y: number, dmg: number ): void =>
-    {
-        const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy ;
-
-        if(thisEnemy.HP-dmg<=0)
-        {
-            setMapa( prev =>
-            {
-                let aux = prev.map( x => [...x] );
-                if(thisEnemy.Drops.length>0)
-                {
-                    if( rollDrop(thisEnemy.Drops[0].chance) )
-                    {
-                        aux[x][y]=thisEnemy.Drops[0].item.symbol;
-                        return aux
-                    }
-                }
-                aux[x][y]='';
-                return aux;
-            } );
-
-            lan==='es'
-            ? queueLog( `${thisEnemy.Name} murió.`, 'crimson' )
-            : queueLog( `${thisEnemy.Name} died.`, 'crimson' );
-
-            setEnemies( mobs => mobs.filter( mob => mob.Data.x!==x && mob.Data.y!==y ) );
-        }
-        else
-        {
-            console.log(`Le quedan ${ thisEnemy.HP-dmg } puntos de vida.`);
-            setEnemies( mobs => mobs.map( mob => mob.Data.x===x && mob.Data.y===y ? { ...mob, HP: mob.HP - dmg } : mob ) );
-        }
     }
 
     const playerVectors: Record<string, [number, number]> =
@@ -1093,7 +1298,7 @@ const App = () =>
             { ...mob, Data: { ...mob.Data, PatrolId: id  } } : mob ) );
     }
 
-    const finishDoT = ( aliment: keyof AlimentInstances, info: Player, all?: boolean ): void =>
+    const finishDoT = <T extends WithAliments>( aliment: keyof AlimentInstances, info: T, all?: boolean ): void =>
     {
         if(all)
         {
@@ -1143,7 +1348,7 @@ const App = () =>
         }
     }
 
-    const manageDotInstance =( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
+    const manageDotInstance = <T extends WithAliments>( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: T, action: 'add' | 'remove' | 'clean' | 'restart' ) : T =>
     {
         let flag = '';
         switch(instance)
@@ -1186,48 +1391,112 @@ const App = () =>
         }
     };
 
-    const cleanse = ( aliment: string ): void =>
+    const cleanse = ( aliment: string, ID: string = '' ): void =>
     {
         switch( aliment )
         {
             case 'bleed':
             {
-                setPlayer( playerInfo =>
+                if(ID)
                 {
-                    const aux = { ...playerInfo };
-                    finishDoT( 'BleedInstances', aux );
-                    return manageDotInstance('BleedInstances', undefined, aux, 'clean')
-                } );
+                    setEnemies( prevEnemies =>
+                    {
+                        const aux = [ ...prevEnemies];
+                        return aux.map( mob =>
+                        {
+                            if( mob.ID!==ID ) return mob;
+                            finishDoT( 'BleedInstances',  mob );
+                            return manageDotInstance( 'BleedInstances', undefined, mob, 'clean' );
+                        } );
+                    } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'BleedInstances', aux );
+                        return manageDotInstance('BleedInstances', undefined, aux, 'clean')
+                    } );
+                }
                 break;
             }
             case 'poison':
             {
-                setPlayer( playerInfo =>
+                if(ID)
                 {
-                    const aux = { ...playerInfo };
-                    finishDoT( 'PoisonInstances', aux );
-                    return manageDotInstance('PoisonInstances', undefined, aux, 'clean')
-                } );
+                    setEnemies( prevEnemies =>
+                    {
+                        const aux = [ ...prevEnemies];
+                        return aux.map( mob =>
+                        {
+                            if( mob.ID!==ID ) return mob;
+                            finishDoT( 'PoisonInstances',  mob );
+                            return manageDotInstance( 'PoisonInstances', undefined, mob, 'clean' );
+                        } );
+                    } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'PoisonInstances', aux );
+                        return manageDotInstance('PoisonInstances', undefined, aux, 'clean')
+                    } );
+                }
                 break;
             }
             case 'burn':
             {
-                setPlayer( playerInfo =>
+                if(ID)
                 {
-                    const aux = { ...playerInfo };
-                    finishDoT( 'BurnInstances', aux );
-                    return manageDotInstance('BurnInstances', undefined, aux, 'clean')
-                } );
+                    setEnemies( prevEnemies =>
+                    {
+                        const aux = [ ...prevEnemies];
+                        return aux.map( mob =>
+                        {
+                            if( mob.ID!==ID ) return mob;
+                            finishDoT( 'BurnInstances',  mob );
+                            return manageDotInstance( 'BurnInstances', undefined, mob, 'clean' );
+                        } );
+                    } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'BurnInstances', aux );
+                        return manageDotInstance('BurnInstances', undefined, aux, 'clean')
+                    } );
+                }
                 break;
             }
             case 'all':
             {
-                setPlayer( playerInfo =>
+                if(ID)
                 {
-                    const aux = { ...playerInfo };
-                    finishDoT( 'BleedInstances', aux,  true );
-                    return manageDotInstance( 'BleedInstances', undefined, aux, 'restart' );
-                } );
+                    setEnemies( prevEnemies =>
+                    {
+                        const aux = [ ...prevEnemies];
+                        return aux.map( mob =>
+                        {
+                            if( mob.ID!==ID ) return mob;
+                            finishDoT( 'BleedInstances',  mob, true );
+                            return manageDotInstance( 'BleedInstances', undefined, mob, 'restart' );
+                        } );
+                    } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'BleedInstances', aux, true );
+                        return manageDotInstance('BleedInstances', undefined, aux, 'restart')
+                    } );
+                }
                 break;
             }
         }
@@ -1276,6 +1545,7 @@ const App = () =>
         auxiliar[2][7] = '+';
         auxiliar[2][8] = 'b';
         auxiliar[3][5] = '🗡';
+        auxiliar[4][6] = '🔪';
         auxiliar[2][10] = cursedTotem;
         auxiliar[10][10] = fire;
         auxiliar[10][12] = fountain;
@@ -1287,11 +1557,11 @@ const App = () =>
         setPlayer( prev => (
         { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } ) );
         setEnemies( [
-        { ...enemy, Data: { x: 15, y: 2, symbol: 'e' } },
-        { ...heavyEnemy, Data: { x: 13, y: 14, symbol: 'E' } } ] );
+        { ...enemy, ID: crypto.randomUUID(), Data: { x: 15, y: 2, symbol: 'e' } },
+        { ...heavyEnemy, ID: crypto.randomUUID(), Data: { x: 13, y: 14, symbol: 'E' } } ] );
         setTraps( [
-        { ...trap, Data: { x: 15, y: 5, symbol: 't' } },
-        { ...poisonTrap, Data: { x: 13, y: 13, symbol: 'p' } } ] );
+        { ...trap, ID: crypto.randomUUID(), Data: { x: 15, y: 5, symbol: 't' } },
+        { ...poisonTrap, ID: crypto.randomUUID(), Data: { x: 13, y: 13, symbol: 'p' } } ] );
         setMapa(auxiliar);
     }
 
@@ -1382,7 +1652,7 @@ const App = () =>
                 <ul className="inventory-list">
                   {player.HotBar.Equippeable.map((x, y) =>
                     <li key={y}>
-                      {x.item.name} — { `Durabilidad: ${x.durability}` } - { x.equiped && '✔'}
+                      {x.item.name} — {`DMG +${x.item.attackStats?.dmg}`} - { `Durabilidad: ${x.durability} /  ${x.item.durability}` } - { x.equiped && '✔'}
                     </li>)}
                 </ul>
               </div>
