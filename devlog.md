@@ -1,5 +1,45 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 11: Equipables, HotBar y durabilidad. 🗡💥✨
+
+🗓️ *2025-05-14*
+
+¡Durabilidad! ¡Equipables! ¡Clásico y obligatorio en un RPG!. Genial, ahora el jugador puede `equiparse` las armas que vaya encontrando, cambiando sus estadísticas a la hora de golpear enemigos ( Daño directo y DoT ).
+
+Los enemigos tienen distinta `dureza` (Toughness) que se traduce en daño a la durabilidad del arma, una vez esta llega a **cero** se **`ROMPE`**. Nada de "ah, si llega a cero la reparo" nonono- **Cero = PERDIDA del arma** 😈.
+
+Las armas aplican *`estados alterados`* en los enemigos (Veneno, Sangrado, Quemadura) tal y como se aplican a los jugadores. Planeo poner el tema de inmunidad a ciertos estados o resistencia a estos en próximos parches, consideré mas importante dejar la **BASE** sólida en este parche estable antes de incursionar en colores y detalles lindos como ese. ( % de chances de aplicar ciertos DoT según resistencias de las criaturas, inmunidad = 0% de chances de aplicar  el estado )
+
+El jugador tiene un feed visual inmediato en la consola de eventos cuando daña un enemigo, si le aplica estados alterados o si mató a la criatura. Colores, mensajes y prevención de doble-render (mas otros bugs cortesía de React y sus scope issues/asincronía) fueron añadidos para robustez y escalabilidad del código.
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- **Refactorización**: `damageEnemy();`, `enemyDeath();`, `manageDotInstance();` y `cleanse();` fueron modificadas para utilizar la misma lógica de DoT, cleanse y muerte.
+
+- **Limpieza de bugs**: `manageDotInstance();` y `finishDoT();` fueron refactorizados para consumir **siempre** de la última versión disponible de datos y actualizar correctamente la información. Encontré puntos débiles en el código que no eran un problema presente pero a futuro podían traer complicaciones.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯:
+
+- Ahora que tengo DoT en los enemigos, lo próximo es trabajar **resistencias**- **inmunidades**... ¿Quizá incluso **AoE**? 💥🔥😱
+
+- Manejar de manera mas 'realista' los DoT- digamos que el daño de mi arma no pasa la armadura del enemigo (Armadura 1, daño de mi arma 1 = daño que entró **0**)- en este caso- no tendría sentido que la criatura termine **envenenada** o **sangrando**. ¡No hubo contacto físico! jajaj En caaaso de que por lo menos lo toquemos por **1** de daño ->*tendría sentido* que termine envenenado, no se si tanto como para **SANGRANDO** pero envenenado sí. Quizá poner un threshold de "Si el arma mete sangrado y le pegué por lo menos **[tanto]** = sangrado" o alguna cosita así. Tipo, la **[Quemadura]** tendría sentido que le entre sin contacto físico- jugar con esos límites. ✨🐱‍💻✨
+
+- Aprovechando que este parche fue sobre Gear equipable y HotBar, podría ahondar en el asunto (preparandome para los próximo en mi lista de deseos) haciendo que no sea instantaneo el cambio de equipo, que uno pueda *`navegar`* por los items equipables, pararse sobre lo que uno quiere equipar/desequipar y con un botón **hacerlo** (como en Monster Hunter, navegar, quedarse sobre el ítem deseado, "usar").
+
+🗡  - 🔪  - `(🪒)`
+
+🗡  - `(🔪)`  - 🪒
+
+`(🗡)`  - 🔪  - 🪒
+
+- Si logro aplicar el HotBar seleccionable, agregar otro tipo de **`Gear equipable`**. Amuletos, escudos, no se, *`boosters`* de daño que duren por x golpes- **tantas posibilidades** gracias a la escalabilidad. ✨🐱‍💻💕
+
+---
+
 ## 🔹 Paso 10: Sistema de farmeo y drops implementado 🌾🪓🧱
 
 🗓️ *2025-05-07*

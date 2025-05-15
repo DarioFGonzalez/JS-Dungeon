@@ -4,6 +4,23 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.0.94] - 2025-05-14
+
+### Added
+- **Sistema de Gear Equipable**: Separación del inventario en dos categorías: `Inventory` (ítems consumibles) y `Equippeable` (ítems con durabilidad). Se implementó la lógica de auto-equipado de puños (`Fists`) al romperse el arma principal.
+- **Durabilidad de armas y lógica de rotura**: Las armas ahora pierden durabilidad al atacar enemigos. Esta se reduce según la `Toughness` (dureza) del enemigo. Si la durabilidad cae a 0 o menos, el arma se destruye.
+- **HotBar navegable**: Se agregó un sistema para cambiar el ítem equipado con las teclas de flecha (`ArrowLeft` / `ArrowRight`), facilitando la rotación entre armas disponibles.
+- **Logs visuales asincrónicos**: Implementado un sistema de consola en pantalla con logs estilizados, colores por tipo de evento, y gestión asincrónica para evitar repeticiones y errores de render.
+- **Inicio del sistema de estados alterados (DoT) en enemigos**: Se integró la lógica de daño por tiempo (`DoT`) en enemigos, reutilizando el sistema del jugador (veneno, quemadura, sangrado). Los logs reflejan estos eventos con tag e información contextual.
+
+### Changed
+- **Refactor de `damageEnemy`**: Se dividió la lógica de daño y muerte en `damageEnemy` y `enemyDeath`, mejorando legibilidad y atomicidad del sistema de combate.
+- **Unificación de lógica `strikeEnemy`**: Ahora encapsula correctamente la secuencia ataque ➝ daño ➝ pérdida de durabilidad ➝ muerte ➝ drop ➝ log.
+
+### Fixed
+- **Problemas de asincronía en logs y daño doble**: Se solucionaron problemas causados por doble render en `StrictMode`, como la duplicación de eventos o la pérdida de estados intermedios.
+- **Aplicación de daño post-mortem**: Los efectos DoT ya no siguen afectando a enemigos muertos gracias al refactor del control de instancias dentro de `manageDotInstance` y `finishDoT`.
+
 ## [v0.0.93] - 2025-05-07
 
 ### Added
