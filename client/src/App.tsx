@@ -1,22 +1,57 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
-const ship_up = '^';
-const ship_down = 'v';
-const ship_left = '<';
-const ship_right = '>';
+import healing from './Icons/heal.png';
+import clawHit from './Icons/claws.PNG';
+import redClawHit from './Icons/clawsRed.png';
+
+import goblinImg from './Icons/s_Goblin.PNG';
+import hGoblinImg from './Icons/dns-Goblin.PNG';
+import potionImg from './Icons/potion.png';
+import bandagesImg from './Icons/yPotion.PNG';
+import aloeImg from './Icons/aloe.png';
+import tpImg from './Icons/portal.png';
+import fireImg from './Icons/fuego.PNG';
+import fountainImg from './Icons/fountain.png';
+import trapImg from './Icons/trap.PNG';
+import pTrapImg from './Icons/pTrap.png';
+import wallImg from './Icons/wall.png';
+import boxImg from './Icons/box.png';
+import sword1Img from './Icons/sword.png';
+import dagger1Img from './Icons/dagger.png';
+import heroFront from './Icons/heroFront.png';
+import heroBack from './Icons/heroBack.png';
+import heroRight from './Icons/heroRight.png';
+import heroLeft from './Icons/heroLeft.png';
+
+const icons =
+[
+    healing, clawHit, redClawHit,
+    goblinImg, hGoblinImg,
+    potionImg, bandagesImg, aloeImg,
+    tpImg, fireImg, fountainImg,
+    trapImg, pTrapImg,
+    wallImg, boxImg,
+    dagger1Img, sword1Img,
+    heroBack, heroFront, heroLeft, heroRight
+];
+
+const ship_up = heroBack;
+const ship_down = heroFront;
+const ship_left = heroLeft;
+const ship_right = heroRight;
 const anyPlayer = [ship_down, ship_left, ship_right, ship_up];
-const box = 'B';
-const wall = 'x';
-const teleport = 'T';
+const box = boxImg;
+const wall = wallImg;
+const teleport = tpImg;
 const totem = 'u';
-const fountain = 'F';
+const fountain = fountainImg;
 const cursedTotem = '🧿';
 
 const mapSize = 18;
 const maxHp = 15;
 
-const fire = 'f';
+const fire = fireImg;
 
 type locationData = { x: number, y: number, symbol: string };
 type Coords = [ number, number ];
@@ -33,11 +68,21 @@ interface Item
     cd: number
 };
 
+const Aloe: Item =
+{
+    type: 'Item',
+    name: 'Aloe leaf',
+    symbol: aloeImg,
+    id: 3,
+    desc:  '',
+    cd: 4000
+}
+
 const Potion: Item =
 {
     type: 'Item',
     name: 'Potion',
-    symbol: '+',
+    symbol: potionImg,
     id: 2,
     desc: '+3 HP',
     cd: 3000
@@ -47,7 +92,7 @@ const Bandages: Item =
 {
     type: 'Item',
     name: 'Bandages',
-    symbol: 'b',
+    symbol: bandagesImg,
     id: 1,
     desc: 'Stops bleeding.',
     cd: 5000
@@ -86,8 +131,8 @@ const Fists: Gear =
 const Sword1: Gear =
 {
     type: 'Gear',
-    name: 'Sword_1',
-    symbol: '🗡',
+    name: 'Wooden Sword',
+    symbol: sword1Img,
     id: 3,
     slot: 'main_hand',
     desc: '+2 DMG',
@@ -100,7 +145,7 @@ const Dagger1: Gear =
 {
     type: 'Gear',
     name: 'Slicing Knife',
-    symbol: '🔪',
+    symbol: dagger1Img,
     id: 4,
     slot: 'main_hand',
     desc: '+1 DMG (5 🩸)',
@@ -164,7 +209,7 @@ const emptyPlayer: Player =
 {
     HP: maxHp,
     MaxHP: maxHp,
-    Data: { x: 0, y: 0, symbol: '^' },
+    Data: { x: 0, y: 0, symbol: ship_down },
     Inventory: [],
     HotBar: { Equippeable: [ { item: Fists, durability: 999, onCd: false, equiped: true } ] },
     Aliments:
@@ -200,7 +245,7 @@ const trap: Trap =
     ID: '0',
     Name: 'Trampa simple',
     Active: true,
-    Data: { x: 0, y: 0, symbol: 't' },
+    Data: { x: 0, y: 0, symbol: trapImg },
     Attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
 }
 
@@ -209,7 +254,7 @@ const poisonTrap: Trap =
     ID: '0',
     Name: 'Trampa venenosa',
     Active: true,
-    Data: { x: 0, y: 0, symbol: 'p' },
+    Data: { x: 0, y: 0, symbol: pTrapImg },
     Attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'poison' },
 }
 
@@ -234,7 +279,7 @@ const enemy: Enemy =
     Name: 'Goblin',
     HP: 5,
     MaxHP: 5,
-    Data: { x: 0, y: 0, symbol: 'e' },
+    Data: { x: 0, y: 0, symbol: goblinImg },
     Aliments:
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
@@ -249,10 +294,10 @@ const enemy: Enemy =
 const heavyEnemy: Enemy =
 {
     ID: '0',
-    Name: 'Troll',
+    Name: 'Heavy Goblin',
     HP: 20,
     MaxHP: 20,
-    Data: { x: 0, y: 0, symbol: 'E' },
+    Data: { x: 0, y: 0, symbol: hGoblinImg },
     Aliments:
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
@@ -264,6 +309,8 @@ const heavyEnemy: Enemy =
     Drops: [ { item: Potion, chance: 75 } ]
 }
 
+const emptyGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );
+
 type eventLog = { message: string, color: string };
 const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
@@ -273,7 +320,8 @@ const App = () =>
     const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
     const [ stun, setStun ] = useState<boolean>(false);
-    const [ mapa, setMapa ] = useState<string[][]>( Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') ) );
+    const [ mapa, setMapa ] = useState<string[][]>( emptyGrid );
+    const [ visuals, setVisuals ] = useState<string[][]>( emptyGrid );
     const [ tps, setTps ] = useState<ArrayOfCoords>([]);
     const [ residual, setResidual ] = useState<Residual[]>( [] );
 
@@ -320,19 +368,20 @@ const App = () =>
             case 'u': return totem;
             case '🧿': return cursedTotem;
             case '~': return 'water';
-            case 'F': return fountain;
-            case 'e': return enemy;
-            case 'E': return heavyEnemy;
-            case 'f': return fire;
+            case fountainImg: return fountain;
+            case goblinImg: return enemy;
+            case hGoblinImg: return heavyEnemy;
+            case fireImg: return fire;
             case 'D': return 'door';
-            case 'B': return box;
-            case 'T': return teleport;
-            case 't': return trap;
-            case 'p': return poisonTrap;
-            case '+': return Potion;
-            case 'b': return Bandages;
-            case '🗡': return Sword1;
-            case '🔪': return Dagger1;
+            case boxImg: return box;
+            case tpImg: return teleport;
+            case trapImg: return trap;
+            case pTrapImg: return poisonTrap;
+            case potionImg: return Potion;
+            case bandagesImg: return Bandages;
+            case aloeImg: return Aloe;
+            case sword1Img: return Sword1;
+            case dagger1Img: return Dagger1;
             default: return 'unknown';
         };
     };
@@ -389,9 +438,8 @@ const App = () =>
         const [ tp1X, tp1Y ] = tps[0];
         const [ tp2X, tp2Y ] = tps[1];
 
-        if(auxiliar[tp1X][tp1Y] == teleport && auxiliar[tp2X][tp2Y] == teleport)
+        if(auxiliar[tp1X][tp1Y] == tpImg && auxiliar[tp2X][tp2Y] == tpImg )
         {
-    
             switch(other)
             {
                 case box:
@@ -401,12 +449,12 @@ const App = () =>
                     setPlayer( prev => ({ ...prev, Data: { x: newX, y: newY, symbol } }) );
                     if( tp1X==newX+x && tp1Y==newY+y )
                     {
-                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp2X, tp2Y ] } ] );
+                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp2X, tp2Y ] } ] );
                         auxiliar[tp2X][tp2Y] = box;
                     }
                     else
                     {
-                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp1X, tp1Y ] } ] );
+                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp1X, tp1Y ] } ] );
                         auxiliar[tp1X][tp1Y] = box;
                     }
                     setMapa(auxiliar);
@@ -416,7 +464,7 @@ const App = () =>
                 {
                     if( tp1X==newX && tp1Y==newY )
                     {
-                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp2X, tp2Y ] } ] );
+                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp2X, tp2Y ] } ] );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp2X][tp2Y] = symbol;
                         setPlayer( prev => ({ ...prev, Data: { x: tp2X, y: tp2Y, symbol } }) );
@@ -424,7 +472,7 @@ const App = () =>
                     }
                     else
                     {
-                        setResidual( prev => [ ...prev, { symbol: teleport, coords: [ tp1X, tp1Y ] } ] );
+                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp1X, tp1Y ] } ] );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp1X][tp1Y] = symbol;
                         setPlayer( prev => ({ ...prev, Data: { x: tp1X, y: tp1Y, symbol } }) );
@@ -908,6 +956,7 @@ const App = () =>
         auxiliar[newX-x][newY-y] = '';
         auxiliar[newX][newY] = symbol
         setMapa(auxiliar);
+        manageBuffsVisuals('🔥', 100);
         hurtPlayer(1, 1, 8, 'burn');
         setTimeout( ()=>
         {
@@ -977,6 +1026,31 @@ const App = () =>
         }
     }
 
+    const manageBuffsVisuals = ( icon: string, time: number ) =>
+    {
+        setPlayer( playerInfo =>
+        {
+            setVisuals( visualsMap =>
+            {
+                const aux = [ ...visualsMap ];
+                aux[playerInfo.Data.x][playerInfo.Data.y] = icon;
+                return aux;
+            } );
+
+            setTimeout( () =>
+            {
+                setVisuals( prev=>
+                {
+                    const aux = [ ...prev ];
+                    aux[playerInfo.Data.x][playerInfo.Data.y] = '';
+                    return aux;
+                } );
+            }, time);
+
+            return playerInfo;
+        } );
+    }
+
     const consumeItem = ( item: Item, quantity: number ): void =>
     {
         const thisItem = player.Inventory.find( x => x.item.name===item.name ) as InventoryItem;
@@ -988,11 +1062,17 @@ const App = () =>
             case 'Potion':
             {
                 heal(3, 0, 0);
+                manageBuffsVisuals( healing, 500 );
                 break;
             }
             case 'Bandages':
             {
                 cleanse('bleed');
+                break;
+            }
+            case 'Aloe leaf':
+            {
+                cleanse('burn');
                 break;
             }
         }
@@ -1011,6 +1091,28 @@ const App = () =>
         {
             setPlayer( prev => ( {...prev, Inventory: prev.Inventory.filter( y => y.item.name!==thisItem.item.name ) } ) );
         }
+    }
+
+    const touchFountain = ( symbol: string ) =>
+    {
+        let flag = true;
+        setPlayer( playerInfo =>
+        {
+            const aux = { ...playerInfo};
+            if(flag)
+            {
+                
+                if(aux.Aliments.Flags.Burning)
+                {
+                    queueLog( 'Tocar la fuente calma tus quemaduras' ,'turquoise' );
+                    cleanse('burn');
+                }
+    
+                inconsecuente( symbol );
+                flag = false;
+            }
+            return aux;
+        } );
     }
         
     const movePlayer = ( x: number, y: number, symbol: string ): void =>
@@ -1041,6 +1143,7 @@ const App = () =>
                 case enemy:
                 case heavyEnemy:
                     {
+                        manageBuffsVisuals( clawHit, 400 );
                         touchEnemy( symbol, newX, newY );
                         break;
                     }
@@ -1063,8 +1166,7 @@ const App = () =>
                     }
                 case fountain:  //Cleanse('burn')
                     {
-                        inconsecuente( symbol );
-                        cleanse('burn');
+                        touchFountain( symbol );
                         break;
                     }
                 case cursedTotem:
@@ -1075,6 +1177,7 @@ const App = () =>
                     }
                 case Potion:
                 case Bandages:
+                case Aloe:
                     {
                         stepOnItem( newX, newY, symbol, tile, 1 );
                         break;
@@ -1126,17 +1229,55 @@ const App = () =>
         setDelayedLog( list => [ ...list, { message, color } ] );
     }
 
-    const playerVectors: Record<string, [number, number]> =
+    const playerVectors: Record<string, [number, number]> = //non
     {
-        '^': [-1, 0],
-        'v': [1, 0],
-        '<': [0, -1],
-        '>': [0, 1]
+        ship_up: [-1, 0],
+        ship_down: [1, 0],
+        ship_left: [0, -1],
+        ship_right: [0, 1]
     }
 
     const directionFromVector = ( symbol: string ): [number, number] =>
     {
-        return playerVectors[symbol] || [0, 0];
+        switch( symbol )
+        {
+            case ship_up:
+                return [-1, 0];
+            case ship_down:
+                return [1, 0];
+            case ship_left:
+                return [0, -1];
+            case ship_right:
+                return [0, 1];
+            default:
+                return [0, 0];
+        }
+        // return playerVectors[symbol] || [0, 0];
+    }
+
+    const manageVisualAnimation = ( x: number, y: number, icon: string, time: number ): void =>
+    {
+        setPlayer( playerInfo =>
+        {
+            setVisuals( visualsMap =>
+            {
+                const aux = [ ...visualsMap ];
+                aux[x][y] = icon;
+                return aux;
+            } );
+
+            setTimeout( () =>
+            {
+                setVisuals( prev=>
+                {
+                    const aux = [ ...prev ];
+                    aux[x][y] = '';
+                    return aux;
+                } );
+            }, time);
+
+            return playerInfo;
+        } );
     }
 
     const handleInteraction = ( ): void =>
@@ -1145,6 +1286,8 @@ const App = () =>
         let x = player.Data.x + dx;
         let y = player.Data.y + dy;
 
+        manageVisualAnimation( x, y, redClawHit, 200 );
+        
         const objective = checkCollision( x, y );
         switch(objective)
         {
@@ -1211,6 +1354,10 @@ const App = () =>
                 case 'o':   //poción
                 consumeItem(Potion, 1);
                 break;
+                case 'p':   //Aloe
+                consumeItem(Aloe, 1);
+                break;
+
                 case 'p':   //renew (HoT)
                 heal(0,1,5);
                 break;
@@ -1220,6 +1367,7 @@ const App = () =>
                 case 'g':   //mostrar Gear equipable
                 setShowGear(prev=> !prev);
                 break;
+
                 case 'enter':
                 handleInteraction();
                 break;
@@ -1528,40 +1676,39 @@ const App = () =>
         const auxiliar = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)
         {
-            auxiliar[i][0] = 'z';
-            auxiliar[0][i] = 'y';
-            auxiliar[i][17] = 'x';
-            auxiliar[17][i] = 'x';
+            auxiliar[i][0] = wallImg;
+            auxiliar[0][i] = wallImg;
+            auxiliar[i][17] = wallImg;
+            auxiliar[17][i] = wallImg;
         }
 
-        auxiliar[3][3] = 'B';
-        auxiliar[13][14] = 'E';
-        auxiliar[13][12] = totem;
-        auxiliar[15][2] = 'e';
-        auxiliar[13][13] = 'p';
-        auxiliar[15][5] = 't';
-        auxiliar[2][5] = '+';
-        auxiliar[2][6] = 'b';
-        auxiliar[2][7] = '+';
-        auxiliar[2][8] = 'b';
-        auxiliar[3][5] = '🗡';
-        auxiliar[4][6] = '🔪';
-        auxiliar[2][10] = cursedTotem;
+        auxiliar[3][3] = boxImg;
+        auxiliar[13][14] = hGoblinImg;
+        auxiliar[15][2] = goblinImg;
+        auxiliar[13][13] = pTrapImg;
+        auxiliar[15][5] = trapImg;
+        auxiliar[2][5] = potionImg;
+        auxiliar[2][6] =  bandagesImg;
+        auxiliar[2][7] = potionImg;
+        auxiliar[2][8] = bandagesImg;
+        auxiliar[2][10] = aloeImg;
+        auxiliar[3][5] = sword1Img;
+        auxiliar[4][6] = dagger1Img;
         auxiliar[10][10] = fire;
         auxiliar[10][12] = fountain;
-        auxiliar[2][16] = 'T';
-        auxiliar[16][2] = 'T';
+        auxiliar[2][16] = tpImg;
+        auxiliar[16][2] = tpImg;
 
         setTps( [ [2,16], [16,2] ] );
-        auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;    //Agrega el jugador al centro
+        auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;
         setPlayer( prev => (
         { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } ) );
         setEnemies( [
         { ...enemy, ID: crypto.randomUUID(), Data: { x: 15, y: 2, symbol: 'e' } },
         { ...heavyEnemy, ID: crypto.randomUUID(), Data: { x: 13, y: 14, symbol: 'E' } } ] );
         setTraps( [
-        { ...trap, ID: crypto.randomUUID(), Data: { x: 15, y: 5, symbol: 't' } },
-        { ...poisonTrap, ID: crypto.randomUUID(), Data: { x: 13, y: 13, symbol: 'p' } } ] );
+        { ...trap, ID: crypto.randomUUID(), Data: { x: 15, y: 5, symbol: trapImg } },
+        { ...poisonTrap, ID: crypto.randomUUID(), Data: { ...poisonTrap.Data, x: 13, y: 13 } } ] );
         setMapa(auxiliar);
     }
 
@@ -1622,18 +1769,37 @@ const App = () =>
       
           <div className="layout-flex">
             <div className='general'>
-              <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
-                {mapa.map((fila, x) => (
-                  <div key={x} className='fila'>
-                    {fila.map((celda, y) =>
-                      <label key={y} className='celda'>
-                        {celda}
-                      </label>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+  <div className='columna-wrapper'>
+    <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
+      {mapa.map((fila, x) => (
+        <div key={x} className='fila'>
+          {fila.map((celda, y) => {
+            if (icons.includes(celda)) {
+              return <img src={celda} key={y} className='celda' />;
+            } else {
+              return <label key={y} className='celda'>{celda}</label>;
+            }
+          })}
+        </div>
+      ))}
+    </div>
+
+    <div className='visuals-layer'>
+      {visuals.map((fila, x) => (
+        <div key={x} className='fila'>
+          {fila.map((celda, y) => {
+            if (icons.includes(celda)) {
+              return <img src={celda} key={y} className='celda' />;
+            } else {
+              return <label key={y} className='celda'>{celda}</label>;
+            }
+          })}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
       
             {showInventory && (
               <div className="inventory-window">
