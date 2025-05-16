@@ -4,6 +4,21 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.0.95] - 2025-05-15
+
+### Added
+- **Visual Overhaul**: Reemplazo completo del sistema de render ASCII por íconos PNG representativos. Ahora los elementos del mapa (jugador, enemigos, trampas, fuego, paredes) tienen sprites visuales claros.
+- **Sistema de Overlay visual**: Se agregó una segunda capa (`visualOverlay`) que permite superponer efectos visuales temporales (daño, buffs, etc.) sin alterar el mapa base.
+- **Funciones de gestión visual secundaria**: Nuevas funciones `setVisualOverlay` y `clearVisualOverlay` para manejar de forma modular los efectos en el overlay del mapa.
+
+### Changed
+- **Refactor del renderer principal**: Se modificó la lógica de renderizado para desacoplar el contenido lógico (`map`) de la presentación (`visualOverlay` + íconos). Esto facilita la extensión futura con animaciones o efectos más complejos.
+- **Soporte completo de íconos como entidades visuales**: Las entidades ya no se renderizan por carácter (`<`, `>`, `f`, `p`...), sino que se vinculan directamente a sus respectivos sprites a través de un mapa de visualización.
+
+### Notes
+- Primer sistema visual jugable para terceros no-devs: si bien sigue siendo una versión temprana, permite interpretar el entorno sin necesidad de conocer el sistema interno.
+- Este sistema visual es funcional pero no definitivo; se espera una segunda iteración con animaciones avanzadas, transiciones y visual feedback más completo.
+
 ## [v0.0.94] - 2025-05-14
 
 ### Added

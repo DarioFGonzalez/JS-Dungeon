@@ -1,13 +1,43 @@
+.columna-wrapper {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+.columna {
+  position: relative;
+  z-index: 1;
+}
+
+.visuals-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none; /* ✅ impide interacción */
+}
+
+.celda-visual {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* podés usar animaciones, bordes, efectos glow, etc */
+  background-color: rgba(255, 255, 0, 0.2); /* ejemplo visual */
+}
+
+
 .general {
-    background: linear-gradient(to bottom right, #8fc931, #1b7c07, #cccccc);
+    background: linear-gradient(to bottom right, #000000, #494949, #242424);
     opacity: 1;
 }
 
-.columna
+/* .columna
 {
     display: flex;
     flex-direction: column;
-}
+} */
 
 .fila
 {
@@ -18,12 +48,15 @@
 
 .celda
 {
+  /* background-image: url('./Icons/tile2.PNG');
+  background-size: cover;
+  background-position: center; */
     display: flex;
     justify-content: center;
     align-items: center;
-    border: .1px transparent rgba(5, 9, 238, 0);
+    /* border: .1px transparent rgba(5, 9, 238, 0);
     border-radius: 2px;
-    padding: .5px;
+    padding: .5px; */
     width: 25px;
     height: 25px;
 }
@@ -179,4 +212,3 @@
     box-shadow: 0 0 10px #ffffff44;
     z-index: 1;
   }
-  
