@@ -1,5 +1,38 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 11: ¡Adiós ASCII! Hola mundo entendible ✨😎🤙
+
+🗓️ *2025-05-15*
+
+Estaba avanzando en mecánicas core, refactorización, implementación- y me encontré pensando
+
+"¿Cómo represento esto nuevo?.. ¿Con una `'q'`? ¿Con un `'#'`? ¿Con un...? Perá... ¿Por que sigo usando `ASCII`?"
+
+No puedo avanzar sabiendo que hay algo *"mal"* en mi código, seguir tapando funcionalidades con ASCII era darle más trabajo a mi yo del futuro jajaja así que: ¡`Visual overhaul`!.
+
+Ahora alguien que trate de probar mi juego va a ***teneeeer una idea general*** de que está pasando o que puede hacer. ¡Lo cuál es muchisimo! Puedo mostrar el juego sin tener que estar como voz en *off* explicando que es cada cosa. 🤣👌 
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- **Creación de mapa secundario OVERLAY**: `setVisuals` fue creado para manejar animaciones secundarias, bufos, daños, ataques y demás.
+- **Íconos, refactorización y handlers**: Funciones para manejar efectos básicos tanto **sobre** el jugador como en **coordenadas específicas**, íconos .PNG (y su tipado en TS) y refactorización general del código para aceptar estos cambios ( String > ÍCONO ).
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯:
+
+(Claramente no seguí las ideas sueltas del parche pasado **jajajaj**)
+
+- Ahora que me saqué de encima la espina visual, puedo volver a mecánicas CORE como las planteadas en el parche anterior. Así que **retomando** objetivos pasados.
+- Principalmente:
+-> HotBar navegable
+-> Mas equipables
+-> Amuletos, Boosters, ¿Trampas?. //Experimentar\\
+
+---
+
 ## 🔹 Paso 11: Equipables, HotBar y durabilidad. 🗡💥✨
 
 🗓️ *2025-05-14*
