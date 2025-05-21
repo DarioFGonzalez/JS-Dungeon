@@ -212,3 +212,27 @@
     box-shadow: 0 0 10px #ffffff44;
     z-index: 1;
   }
+
+  .hotbar {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  list-style: none;
+}
+
+.hotbar-item {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: #1c1c1c;
+  color: #eee;
+}
+
+.hotbar-item.selected {
+  border: 2px solid gold;
+  background: #333;
+}
+
+.hotbar-item.ghost {
+  opacity: 0.5;
+  font-style: italic;
+}
