@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 
 import healing from './Icons/heal.png';
@@ -7,9 +7,11 @@ import redClawHit from './Icons/clawsRed.png';
 
 import goblinImg from './Icons/s_Goblin.PNG';
 import hGoblinImg from './Icons/dns-Goblin.PNG';
+
 import potionImg from './Icons/potion.png';
 import bandagesImg from './Icons/yPotion.PNG';
 import aloeImg from './Icons/aloe.png';
+
 import tpImg from './Icons/portal.png';
 import fireImg from './Icons/fuego.PNG';
 import fountainImg from './Icons/fountain.png';
@@ -17,8 +19,11 @@ import trapImg from './Icons/trap.PNG';
 import pTrapImg from './Icons/pTrap.png';
 import wallImg from './Icons/wall.png';
 import boxImg from './Icons/box.png';
+
 import sword1Img from './Icons/sword.png';
 import dagger1Img from './Icons/dagger.png';
+import necklaceImg from './Icons/necklace.PNG';
+
 import heroFront from './Icons/heroFront.png';
 import heroBack from './Icons/heroBack.png';
 import heroRight from './Icons/heroRight.png';
@@ -32,7 +37,7 @@ const icons =
     tpImg, fireImg, fountainImg,
     trapImg, pTrapImg,
     wallImg, boxImg,
-    dagger1Img, sword1Img,
+    dagger1Img, sword1Img, necklaceImg,
     heroBack, heroFront, heroLeft, heroRight
 ];
 
@@ -100,7 +105,7 @@ const Bandages: Item =
 
 interface Gear
 {
-    type: 'Gear',
+    type: string,
     name: string,
     symbol: string,
     id: number,
@@ -108,12 +113,13 @@ interface Gear
     desc: string,
     attackStats?: attackStats,
     defenseStats?: deffenseStats,
+    buffStats?: '',
     durability: number,
     Equippeable: boolean
 };
 
 type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, cd: number };
-type deffenseStats = { def: number, immunity?: string };
+type deffenseStats = { def?: number, immunity?: string, hp?: number };
 
 const Fists: Gear =
 {
@@ -121,20 +127,22 @@ const Fists: Gear =
     name: 'Fists',
     symbol: '🤜',
     id: 0,
-    slot: 'two_handed',
+    slot: 'weapon',
     desc: '+1 DMG',
-    attackStats: { dmg: 1, cd: 2500 },
+    attackStats: { dmg: 0, cd: 2500 },
     durability: 999,
     Equippeable: true
 }
+
+const emptyHanded = { id: '0', item: Fists, durability: 999, onCd: false, equiped: true, selected: true };
 
 const Sword1: Gear =
 {
     type: 'Gear',
     name: 'Wooden Sword',
     symbol: sword1Img,
-    id: 3,
-    slot: 'main_hand',
+    id: 1,
+    slot: 'weapon',
     desc: '+2 DMG',
     attackStats: { dmg: 2, DoT: 0, times: 0, cd: 1000 },
     durability: 10,
@@ -146,29 +154,41 @@ const Dagger1: Gear =
     type: 'Gear',
     name: 'Slicing Knife',
     symbol: dagger1Img,
-    id: 4,
-    slot: 'main_hand',
+    id: 2,
+    slot: 'weapon',
     desc: '+1 DMG (5 🩸)',
     attackStats: { dmg: 1, DoT: 1, times: 5, aliment: 'bleed', cd: 1000 },
     durability: 20,
     Equippeable: true
 }
 
-const Shield1: Gear =
+const Necklace1: Gear =
 {
-    type: 'Gear',
-    name: 'Shield_1',
-    symbol: '🛡',
-    id: 5,
-    slot: 'off_hand',
+    type: 'Accessory',
+    name: 'Protective pendant',
+    symbol: necklaceImg,
+    id: 3,
+    slot: 'charm',
+    desc: '+5 Shield',
+    durability: 5,
+    Equippeable: true
+}
+
+const Necklace2: Gear =
+{
+    type: 'Accessory',
+    name: 'Armor pendant',
+    symbol: necklaceImg,
+    id: 4,
+    slot: 'charm',
     desc: '+1 DEF',
     defenseStats: { def: 1 },
-    durability: 5,
-    Equippeable: false
+    durability: 50,
+    Equippeable: true
 }
 
 type InventoryItem = { item: Item, quantity: number, onCd: boolean };
-type InventoryGear = { item: Gear, durability: number, onCd: boolean, equiped?: boolean };
+type InventoryGear = { id: string, item: Gear, durability: number, onCd: boolean, equiped?: boolean, selected: boolean };
 type Inventory = InventoryItem[];
 type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
 type BuffFlags = { HoT: boolean };
@@ -211,7 +231,7 @@ const emptyPlayer: Player =
     MaxHP: maxHp,
     Data: { x: 0, y: 0, symbol: ship_down },
     Inventory: [],
-    HotBar: { Equippeable: [ { item: Fists, durability: 999, onCd: false, equiped: true } ] },
+    HotBar: { Equippeable: [ ] },
     Aliments:
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
@@ -223,8 +243,6 @@ const emptyPlayer: Player =
         Instances: { HotInstances: [] } 
     }
 }
-
-const basicWeapon = { item: Fists, durability: 999, onCd: false, equiped: true };
 
 type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string };
 type deffenseInfo = { Armor: number, Toughness: number, Immunity?: string };
@@ -319,9 +337,12 @@ const App = () =>
     const gridRef = useRef<HTMLDivElement>(null);
     const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
+    const [ allowed, setAllowed ] = useState<boolean>(true);
     const [ stun, setStun ] = useState<boolean>(false);
+
     const [ mapa, setMapa ] = useState<string[][]>( emptyGrid );
     const [ visuals, setVisuals ] = useState<string[][]>( emptyGrid );
+    
     const [ tps, setTps ] = useState<ArrayOfCoords>([]);
     const [ residual, setResidual ] = useState<Residual[]>( [] );
 
@@ -382,6 +403,8 @@ const App = () =>
             case aloeImg: return Aloe;
             case sword1Img: return Sword1;
             case dagger1Img: return Dagger1;
+            case necklaceImg: return Necklace1;
+            case necklaceImg: return 
             default: return 'unknown';
         };
     };
@@ -557,32 +580,42 @@ const App = () =>
         }
     };
 
-    const damageWeapon = ( enemyToughness: number ) =>
+    const damageWeapon = ( enemyToughness: number, weapon: InventoryGear ) =>
     {
         let flag = true;
 
         setPlayer( playerInfo =>
         {
             const aux = { ...playerInfo };
-            const equippedWeapon = aux.HotBar.Equippeable.find( w => w.equiped );
+            const equippedWeapon = aux.HotBar.Equippeable.find( w => w.id === weapon.id );
             if(!equippedWeapon) return aux;
 
             if( equippedWeapon.durability - enemyToughness <= 0 )
             {
-                const newEquippeables = aux.HotBar.Equippeable
-                .filter( wpn => !wpn.equiped || wpn.item.name === 'Fists' )
-                .map( wpn => wpn.item.name === 'Fists' ? { ...wpn, equiped: true } : wpn );
+                const newEquippeables = aux.HotBar.Equippeable.filter( wpn => wpn.id !== equippedWeapon.id );
 
                 if(flag)
                 {
-                    queueLog( `[${equippedWeapon.item.symbol}] ¡${equippedWeapon.item.name} se rompió! 💥`, 'orange');
+                    queueLog( `[🗡] ¡${equippedWeapon.item.name} se rompió! 💥`, 'orange');
                     flag = false;
                 }
 
                 return { ...aux, HotBar: { ...playerInfo.HotBar, Equippeable: newEquippeables }  };
             }
 
-            return { ...aux, HotBar: { ...aux.HotBar, Equippeable: aux.HotBar.Equippeable.map( w => w.equiped ? { ...w, durability: w.durability - enemyToughness } : w )}}    
+            let cdTimer = setTimeout( ()=> { setPlayer( all =>
+            {
+                const stillThere = all.HotBar.Equippeable.find( w => w.id == weapon.id );
+                if(stillThere)
+                {
+                    return { ...all, HotBar: { ...all.HotBar, Equippeable: all.HotBar.Equippeable.map(
+                        item => item.id == stillThere.id ? { ...stillThere, onCd: false } : item 
+                    ) } };
+                }
+                return all;
+            } ) }, equippedWeapon.item.attackStats?.cd )
+
+            return { ...aux, HotBar: { ...aux.HotBar, Equippeable: aux.HotBar.Equippeable.map( w => w.equiped ? { ...w, durability: w.durability - enemyToughness, onCd: true } : w )}}    
         } );
     }
 
@@ -592,23 +625,22 @@ const App = () =>
         setPlayer( playerInfo =>
         {
             const aux = { ...playerInfo };
-            const thisWeapon = aux.HotBar.Equippeable.find( item => item.equiped );
-            if(!thisWeapon) return aux;
+            const thisWeapon = aux.HotBar.Equippeable.find( item => item.item.slot==='weapon' && item.equiped ) || emptyHanded;
 
-            setEnemies( mobs =>
+            !thisWeapon.onCd && setEnemies( mobs =>
             {
                 const thisEnemy = mobs.find( mob => mob.Data.x===x && mob.Data.y===y );
                 if(!thisEnemy) return mobs;
 
                 const attk = thisWeapon.item.attackStats;
+                if(!attk) return mobs;
 
-                const damage = ( thisWeapon?.item.attackStats?.dmg || 1 )- thisEnemy.Defense.Armor;
-                console.log(`${thisEnemy.Name} tiene ${thisEnemy.Defense.Armor} de armadura y le pegaste por ${thisWeapon.item.attackStats?.dmg}, osea que recibe ${damage}.`);
+                const damage = attk.dmg- thisEnemy.Defense.Armor;
 
-                if(flag)
+                if(flag && !thisWeapon.onCd)
                 {
-                    damageEnemy( thisEnemy.Data.x, thisEnemy.Data.y, damage, attk?.DoT, attk?.times, attk?.aliment );
-                    damageWeapon( thisEnemy.Defense.Toughness );
+                    damageEnemy( thisEnemy.ID, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+                    thisWeapon!=emptyHanded && damageWeapon( thisEnemy.Defense.Toughness, thisWeapon );
                     flag = false;
                 }
 
@@ -643,18 +675,17 @@ const App = () =>
         return allEnemies.filter( mob => mob.Data.x!==x && mob.Data.y!==y );
     }
 
-    const damageEnemy = ( x: number, y: number, dmg: number, dot: number = 0, times: number = 0, aliment: string = '' ): void =>
+    const damageEnemy = ( ID: string, dmg: number, dot: number = 0, times: number = 0, aliment: string = '' ): void =>
     {
         setEnemies( allEnemies =>
         {
             const aux = [ ...allEnemies ];
             let tag = { aliment: '', color: 'khaki'};
-            const thisEnemy = aux.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy;
-            console.log( '------- Daño al enemigo -------');
+            const thisEnemy = aux.find( mob => mob.ID === ID ) || enemy;
             
             if(thisEnemy.HP-dmg<=0)
             {
-                return enemyDeath( x, y, thisEnemy, aux );
+                return enemyDeath( thisEnemy.Data.x, thisEnemy.Data.y, thisEnemy, aux );
             }
             else
             {
@@ -791,10 +822,39 @@ const App = () =>
         } );
     }
 
+    const damageCharm = ( charm: InventoryGear, dmg: number ) =>
+    {
+        const residualDmg = dmg - charm.durability;
+        const newCharm = { ...charm, durability: residualDmg<0?residualDmg*(-1):0 };
+        return { newCharm, residualDmg: residualDmg>0?residualDmg:0 }
+    }
+
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
+        let c = 0;
         setPlayer( prev =>
         {
+            c++;
+            let activeCharm = prev.HotBar.Equippeable.find( item => item.equiped && item.item.slot==='charm' );
+            if(activeCharm)
+            {
+                const { newCharm, residualDmg } = damageCharm( activeCharm, dmg );
+                if(prev.HP-residualDmg<=0)
+                {
+                    stopGame();
+                    return { ...prev, HP: 0 };
+                }
+                let newEquippeables = prev.HotBar.Equippeable;
+                if(newCharm.durability>0)
+                {
+                    newEquippeables = prev.HotBar.Equippeable.map( gear => gear.id===newCharm?.id ? newCharm : gear );
+                }
+                else
+                {
+                    newEquippeables =  prev.HotBar.Equippeable.filter( gear => gear.id!==newCharm?.id );
+                }
+                return { ...prev, HotBar: { ...prev.HotBar, Equippeable: newEquippeables }, HP: prev.HP - residualDmg };
+            }
             if(prev.HP-dmg<=0)
             {
                 stopGame();
@@ -956,7 +1016,11 @@ const App = () =>
         auxiliar[newX-x][newY-y] = '';
         auxiliar[newX][newY] = symbol
         setMapa(auxiliar);
-        manageBuffsVisuals('🔥', 100);
+        setPlayer( playerInfo =>
+            {
+                manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, '🔥', 100 );
+                return playerInfo;
+            });
         hurtPlayer(1, 1, 8, 'burn');
         setTimeout( ()=>
         {
@@ -1000,7 +1064,7 @@ const App = () =>
 
     const turnToInventoryGear = ( gear: Gear ): InventoryGear =>
     {
-        return { item: gear, durability: gear.durability, onCd: false, equiped: false };
+        return { item: gear, id: crypto.randomUUID(), durability: gear.durability, onCd: false, equiped: false, selected: false };
     }
 
     const addToEquippeable = ( gear: Gear ) =>
@@ -1026,31 +1090,6 @@ const App = () =>
         }
     }
 
-    const manageBuffsVisuals = ( icon: string, time: number ) =>
-    {
-        setPlayer( playerInfo =>
-        {
-            setVisuals( visualsMap =>
-            {
-                const aux = [ ...visualsMap ];
-                aux[playerInfo.Data.x][playerInfo.Data.y] = icon;
-                return aux;
-            } );
-
-            setTimeout( () =>
-            {
-                setVisuals( prev=>
-                {
-                    const aux = [ ...prev ];
-                    aux[playerInfo.Data.x][playerInfo.Data.y] = '';
-                    return aux;
-                } );
-            }, time);
-
-            return playerInfo;
-        } );
-    }
-
     const consumeItem = ( item: Item, quantity: number ): void =>
     {
         const thisItem = player.Inventory.find( x => x.item.name===item.name ) as InventoryItem;
@@ -1062,7 +1101,11 @@ const App = () =>
             case 'Potion':
             {
                 heal(3, 0, 0);
-                manageBuffsVisuals( healing, 500 );
+                setPlayer( playerInfo =>
+                    {
+                        manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, healing, 500 );
+                        return playerInfo;
+                    } )
                 break;
             }
             case 'Bandages':
@@ -1143,7 +1186,11 @@ const App = () =>
                 case enemy:
                 case heavyEnemy:
                     {
-                        manageBuffsVisuals( clawHit, 400 );
+                        setPlayer( playerInfo =>
+                        {
+                            manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, clawHit, 400 );
+                            return playerInfo;
+                        } );
                         touchEnemy( symbol, newX, newY );
                         break;
                     }
@@ -1184,6 +1231,7 @@ const App = () =>
                     }
                 case Sword1:
                 case Dagger1:
+                case Necklace1:
                     {
                         stepOnGear( newX, newY, symbol, tile );
                         break;
@@ -1255,7 +1303,7 @@ const App = () =>
         // return playerVectors[symbol] || [0, 0];
     }
 
-    const manageVisualAnimation = ( x: number, y: number, icon: string, time: number ): void =>
+    const manageVisualAnimation = ( type: string, x: number, y: number, icon: string, time: number ): void =>
     {
         setPlayer( playerInfo =>
         {
@@ -1286,7 +1334,7 @@ const App = () =>
         let x = player.Data.x + dx;
         let y = player.Data.y + dy;
 
-        manageVisualAnimation( x, y, redClawHit, 200 );
+        manageVisualAnimation( 'visual', x, y, redClawHit, 200 );
         
         const objective = checkCollision( x, y );
         switch(objective)
@@ -1294,7 +1342,6 @@ const App = () =>
             case enemy:
             case heavyEnemy:
                 {
-                    const thisWeapon = player.HotBar.Equippeable.find( item => item.equiped );
                     strikeEnemy( x, y );
                     break;
                 }
@@ -1303,21 +1350,58 @@ const App = () =>
         }
     }
 
-    const swapGear = ( key: string ): void =>
+    const navigateHotbar = ( key: string ): void =>
     {
-        const to = key==='arrowleft' ? -1 : +1 ;
-        const oldIndex = player.HotBar.Equippeable.findIndex( item => item.equiped );
-        const max = player.HotBar.Equippeable.length - 1;
-        const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
-
-        if(oldIndex===newIndex) return;
-        
+        let flag = true;
         setPlayer( playerInfo =>
         {
-            const aux = [ ...playerInfo.HotBar.Equippeable];
-            aux[oldIndex] = { ...aux[oldIndex], equiped: false };
-            aux[newIndex] = { ...aux[newIndex], equiped: true };
-            return { ...playerInfo, HotBar: { ...playerInfo.HotBar, Equippeable: aux } };
+            const player = { ...playerInfo };
+            const to = key==='arrowleft' ? -1 : +1 ;
+            const oldIndex = player.HotBar.Equippeable.findIndex( item => item.selected );
+            const max = player.HotBar.Equippeable.length - 1;
+            const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
+            
+            if(oldIndex===newIndex) return playerInfo;
+
+            const aux = [ ...player.HotBar.Equippeable];
+            aux[oldIndex] = { ...aux[oldIndex], selected: false };
+            aux[newIndex] = { ...aux[newIndex], selected: true };
+            flag = false;
+            return { ...player, HotBar: { ...player.HotBar, Equippeable: aux } };
+        } );
+    }
+
+    const swapGear = (): void =>
+    {
+        setPlayer( playerInfo =>
+        {
+            const aux = { ...playerInfo };
+            const Equippeables = aux.HotBar.Equippeable;
+
+            const selected = Equippeables.find( x => x.selected );
+            if(!selected) return playerInfo;
+
+            const toReplace = Equippeables.find( x => x.equiped && x.item.type === selected.item.type )
+
+            if(!toReplace)
+            {
+                return { ...aux,
+                    HotBar: { ...aux.HotBar, Equippeable:
+                        Equippeables.map( x => x === selected ? { ...selected, equiped: true } : x ) } };
+            }
+            
+            if(toReplace.id===selected.id)
+            {
+                return { ...aux,
+                    HotBar: { ...aux.HotBar, Equippeable:
+                        Equippeables.map( x => x.id === selected.id ? { ...selected, equiped: !selected.equiped } : x ) } };
+            }
+
+            return { ...aux,
+                HotBar: { ...aux.HotBar, Equippeable:
+                    Equippeables.map( x => x === toReplace ? { ...toReplace, equiped: false } : x === selected ? { ...selected, equiped: true } : x )
+                }
+            }
         } );
     }
 
@@ -1328,24 +1412,31 @@ const App = () =>
             findPlayer();
             const key = event.key.toLowerCase();
 
-            switch(key)
-            {
-                case 'w':
-                movePlayer(-1,0,ship_up);
-                break;
-                case 'a':
-                movePlayer(0,-1,ship_left);
-                break;
-                case 's':
-                movePlayer(+1,0,ship_down);
-                break;
-                case 'd':
-                movePlayer(0,+1,ship_right);
-                break;
+            const movementKeys = ['w', 'a', 's', 'd'];
 
+            if (movementKeys.includes(key))
+            {
+                if (!allowed) return;
+                setAllowed(false);
+                setTimeout(() => setAllowed(true), 100);
+
+                findPlayer();
+
+                switch (key)
+                {
+                    case 'w': movePlayer(-1, 0, ship_up); break;
+                    case 'a': movePlayer(0, -1, ship_left); break;
+                    case 's': movePlayer(1, 0, ship_down); break;
+                    case 'd': movePlayer(0, 1, ship_right); break;
+                }
+                return;
+            }
+
+            switch(key)
+            {    
                 case 'arrowleft':
                 case 'arrowright':
-                swapGear(key);
+                navigateHotbar(key);
                 break;
 
                 case 'k':   //bandages
@@ -1358,9 +1449,10 @@ const App = () =>
                 consumeItem(Aloe, 1);
                 break;
 
-                case 'p':   //renew (HoT)
+                case 'q':   //renew (HoT)
                 heal(0,1,5);
                 break;
+
                 case 'i':   //abrir inventario
                 setShowInventory(prev => !prev);
                 break;
@@ -1370,6 +1462,9 @@ const App = () =>
 
                 case 'enter':
                 handleInteraction();
+                break;
+                case 'e':
+                swapGear();
                 break;
                 default:
                     break;
@@ -1653,7 +1748,12 @@ const App = () =>
     const heal = ( healing: number, HoT: number, times: number ): void =>
     {
         queueLog(`+${healing} HP`, 'green');
-        setPlayer( prev => ( { ...prev, HP: prev.HP + healing < player.MaxHP ? prev.HP + healing : player.MaxHP } ) );
+
+        setPlayer( prev =>
+            {
+                manageVisualAnimation( 'healing', prev.Data.x, prev.Data.y, healing.toString(), 500 );
+                return {...prev, HP: prev.HP + healing < player.MaxHP ? prev.HP + healing : player.MaxHP }
+            } );
 
         if(HoT!==0)
         {
@@ -1694,6 +1794,8 @@ const App = () =>
         auxiliar[2][10] = aloeImg;
         auxiliar[3][5] = sword1Img;
         auxiliar[4][6] = dagger1Img;
+        auxiliar[5][6] = necklaceImg;
+        auxiliar[6][6] = necklaceImg;
         auxiliar[10][10] = fire;
         auxiliar[10][12] = fountain;
         auxiliar[2][16] = tpImg;
@@ -1797,6 +1899,7 @@ const App = () =>
         </div>
       ))}
     </div>
+
   </div>
 </div>
 
@@ -1812,17 +1915,24 @@ const App = () =>
                 </ul>
               </div>
             )}
+
             {showGear && (
               <div className="inventory-window">
                 <p>GEAR:</p>
                 <ul className="inventory-list">
                   {player.HotBar.Equippeable.map((x, y) =>
                     <li key={y}>
-                      {x.item.name} — {`DMG +${x.item.attackStats?.dmg}`} - { `Durabilidad: ${x.durability} /  ${x.item.durability}` } - { x.equiped && '✔'}
+                      { x.selected && '👉' } {x.item.name} —
+                      { x.item.attackStats?.dmg && `DMG: ${x.item.attackStats?.dmg} -` }
+                      { x.item.defenseStats?.def && `DEF: +${x.item.defenseStats.def} -` }
+                      { x.item.defenseStats?.hp && `HP (${x.item.defenseStats?.hp}) -`}
+                      Durability: {x.durability} / {x.item.durability} -
+                      { x.equiped && '✔' }
                     </li>)}
                 </ul>
               </div>
             )}
+
           </div>
 
          <div style={{ background: "#111", color: "#0f0", fontFamily: "monospace", padding: "0.01rem", height: "118px", overflowY: "auto" }}>

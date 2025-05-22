@@ -1,6 +1,47 @@
 # DevLog - Diario de Combate
 
-## 🔹 Paso 11: ¡Adiós ASCII! Hola mundo entendible ✨😎🤙
+## 🔹 Paso 13: Amuletos, y un traspié visual. 📿🧐/😨💻
+
+🗓️ *2025-05-20*
+
+¡Bueno! Tuve un pequeño percance 😅 Resulta que me emociono y dibujo en mi cabeza planes a futuro, digamos- **"creo el código de manera escalable"** -es decir que cada nueva pieza agregada está preparada para ampliarse- y extenderse- ¡Y conectarse con sus pares cosa de llegar a la complejidad que mi imaginación quiera! 🤪🎉
+
+**El problema: `REACT`** 🥶💻💥
+
+Nadando en mi cerebro escalable de **dev** tecleando lo que ama, me olvidé que, en la práctica, estoy construyendo una especie de motor visual personalizado desde cero, lo cual excede lo que React puede manejar eficientemente. 😅 ¡Ups!
+
+React no está ni por asomo preparado para tanto re-re-**RE**-renderizado, o manejar tantos estados funcionando a la vez- ni flags- o eventos- ¿¡Animaciones!? Nah React, con sus limitaciones estructurales para animaciones concurrentes, simplemente no está diseñado para este nivel de rendering intensivo.
+
+Por más que amaría terminar con un juego GIGANTE, como diría Howard Stark "Estoy limitado por la tecnología de mi época..." 😁
+
+`¡Mensaje recibido!`: Voy a dejar de implementar/agregar tantas cosas al proyecto y tratar de redondear con lo que tengo para dejar una demo jugable. En todo caso hago un mini-juego de farmeo, otro de combate, otro de.. no se, comercio. Tomé nota de estas ideas para potenciales mini-juegos independientes, pero voy a concentrarme en cerrar una demo jugable primero. ✨
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- ¡Tope técnico! Creé dos capas extra (con toda la lógica) para mostrar animaciones por separado tanto de curación, de daños y visuales en general.
+
+`PERO`... ¿A la hora de testearlo? 💥🔥💥🔥💥
+
+Debugging, testing, refactorizando, tocando y rompiendo dí con el problema. No era viable para el motor que estoy usando- así que tuve que deshacer los cambios y reestructurar la idea, ya que la performance no era viable con la arquitectura actual.
+
+- ¡Amuletos!
+`damageCharm();` para manejar el daño a los amuletos, refactorización de `hurtPlayer();` y agregado el ícono de `neckalceImg` entre otras cosas para la funcionalidad completa de amuletos de protección básicos.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯:
+
+Ahora que soy consciente del tope técnico:
+
+- Redondear una idea jugable con las herramientas que tengo.
+- Algún objetivo en concreto, mostrar `una` rama completa de ALGO: Armas, Estados de efecto, Items, Magias, etc.
+- Elegir mis herramientas, descartar las que no estén en sincronía con el objetivo elegido y refactorizar las que sí.
+
+---
+
+## 🔹 Paso 12: ¡Adiós ASCII! Hola mundo entendible ✨😎🤙
 
 🗓️ *2025-05-15*
 

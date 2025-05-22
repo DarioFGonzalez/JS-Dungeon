@@ -1,56 +1,67 @@
 # JS-Dungeon 🐉
 
-JS-Dungeon es un juego RPG retro creado desde cero usando JavaScript Vanilla, inspirado en clásicos como Mu, Lineage 2, Diablo y otros.
+*Un RPG retro hecho con JavaScript Vanilla, a puro amor por los juegos clásicos.*
 
-## 🎮 ¿Qué incluye?
+Inspirado en títulos como **Mu**, **Lineage II**, **Diablo**, **Neverwinter Nights** y más, JS-Dungeon es un homenaje al rol viejo con una arquitectura moderna y extensible. Todo hecho desde cero, sin frameworks, sin atajos.
 
-- Sistema de movimiento en mapa tipo grid
-- Combate básico y lógica de enemigos
-- Posibilidad de loot, niveles, y más sistemas escalables
-- Arquitectura pensada para crecer en complejidad
-- Interfaz simple pero funcional, totalmente custom
+---
 
-## 🛠️ Tecnologías
+## 🎮 ¿Qué podés encontrar?
 
-- JavaScript (Vanilla)
-- HTML5 / CSS3
-- Diseño responsivo básico
-- Sin frameworks externos (por ahora)
+- Mapa tipo grid y movimiento libre
+- Combate básico funcional
+- Sistema de loot y niveles
+- Interfaz custom sin dependencias externas
+- Código modular, pensado para escalar
 
-## 🚧 En desarrollo
+---
 
-El proyecto está en fase inicial. A medida que se avanza se agregarán:
+## 🧱 Tecnologías
 
-- Inventario
+- `JavaScript` (Vanilla, sin frameworks)
+- `HTML5` + `CSS3` con diseño responsivo básico
+- Arquitectura sin librerías externas (por ahora 👀)
+
+---
+
+## 🧪 ¿Está terminado?
+
+Ni cerca.  
+Esto es un proyecto en evolución constante. Cada parche trae algo nuevo, o rompe lo anterior (con cariño).
+
+En la hoja de ruta:
+- Inventario funcional
 - Magias y habilidades
-- IA de enemigos
+- IA básica y patrones de enemigos
 - Guardado de progreso
-- Interacción con otros jugadores (sistema experimental)
-
-## 💡 Filosofía
-
-Todo gran proyecto empieza desde lo pequeño, feo o ineficiente. La idea es construir desde lo básico hasta un juego con sistemas profundos, aprendiendo y adaptando en cada etapa.
-
-## 🧪 Demo
-
-*Próximamente*
-
-### 📚 Documentación complementaria
-
-- [📄 CHANGELOG.md](./CHANGELOG.md) – Registro técnico de cambios, con foco profesional: versiones, fixes, y mejoras.
-- [🧠 devlog.md](./devlog.md) – Bitácora personal del desarrollo: decisiones, frustraciones, ideas y momentos de euforia.
+- ¡Y hasta un sistema de interacción multijugador experimental!
 
 ---
 
+## 🧠 ¿Por qué hacer esto?
+
+Porque *"hacer un juego completo"* es el sueño de muchos devs, pero también una excusa perfecta para aprender, frustrarse, refactorizar y crecer.
+
+**JS-Dungeon** no es solo un juego, es un laboratorio.  
+Cada sistema está pensado para *ser escalable, entendible y divertido de programar.*
+
 ---
 
-### 📚 Documentación complementaria
+## 🔎 ¿Querés ver el backstage?
 
-- [📄 CHANGELOG.md](./CHANGELOG.md) – Registro técnico de cambios, con foco profesional: versiones, fixes, y mejoras.
-- [🧠 devlog.md](./devlog.md) – Bitácora personal del desarrollo: decisiones, frustraciones, ideas y momentos de euforia.
+- [📄 CHANGELOG.md](./CHANGELOG.md) – Registro técnico por versión (estilo profesional).
+- [🧠 devlog.md](./devlog.md) – Bitácora informal con decisiones, ideas, errores y catarsis del dev.
 
 ---
 
-## 📝 Licencia
-Este proyecto está licenciado bajo los términos de la licencia MIT.
-Podés leer los detalles completos en el archivo [LICENSE](./LICENSE).
+## 🚀 Demo
+
+*Próximamente.*  
+No esperes ray tracing, pero sí cariño en cada línea de código.
+
+---
+
+## 📜 Licencia
+
+Este proyecto está bajo licencia MIT.  
+Podés leer los detalles en el archivo [LICENSE](./LICENSE).
