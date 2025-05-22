@@ -4,6 +4,22 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.0.96] - 2025-05-20
+
+### Added
+- **Sistema de accesorios (Amuletos)**: Se incorporó el primer accesorio funcional (amuletos protectores). Implementación de `damageCharm()` para interceptar daño antes de que afecte la salud del jugador.
+- **Sprites de amuletos**: Se agregó el ícono `necklaceImg` y su integración con la UI general del jugador.
+  
+### Changed
+- **Refactor en `hurtPlayer()`**: Ahora contempla la lógica de accesorios protectores (si están equipados, reciben el daño antes que el jugador).
+
+### Removed
+- **Capas visuales experimentales**: Se eliminaron las funciones `setDamages` y `setHealings` que intentaban separar animaciones de daño y curación en capas independientes. Las pruebas revelaron limitaciones de performance severas en React ante múltiples renderizados concurrentes.
+
+### Notes
+- Se identificó un tope técnico crítico: React no escala bien al intentar simular un motor de rendering con múltiples capas activas en tiempo real. Se decidió priorizar estabilidad y jugabilidad sobre extensibilidad visual.
+- El enfoque a futuro será consolidar una demo funcional con los sistemas actuales, y explorar minijuegos modulares en lugar de un único juego extenso y complejo.
+
 ## [v0.0.95] - 2025-05-15
 
 ### Added
