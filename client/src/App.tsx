@@ -1,335 +1,35 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import * as icons from './Icons/index';
+import * as Types from './components/types/global';
+
+import * as Entities from './components/data/entities';
+import * as Gear from './components/data/gear';
+import * as Items from './components/data/items';
+
 import './App.css';
 
-import healing from './Icons/heal.png';
-import clawHit from './Icons/claws.PNG';
-import redClawHit from './Icons/clawsRed.png';
+import GearTab from './components/GearTab/GearTab';
 
-import goblinImg from './Icons/s_Goblin.PNG';
-import hGoblinImg from './Icons/dns-Goblin.PNG';
+const allIcons = Object.values(icons);
 
-import potionImg from './Icons/potion.png';
-import bandagesImg from './Icons/yPotion.PNG';
-import aloeImg from './Icons/aloe.png';
-
-import tpImg from './Icons/portal.png';
-import fireImg from './Icons/fuego.PNG';
-import fountainImg from './Icons/fountain.png';
-import trapImg from './Icons/trap.PNG';
-import pTrapImg from './Icons/pTrap.png';
-import wallImg from './Icons/wall.png';
-import boxImg from './Icons/box.png';
-
-import sword1Img from './Icons/sword.png';
-import dagger1Img from './Icons/dagger.png';
-import necklaceImg from './Icons/necklace.PNG';
-
-import heroFront from './Icons/heroFront.png';
-import heroBack from './Icons/heroBack.png';
-import heroRight from './Icons/heroRight.png';
-import heroLeft from './Icons/heroLeft.png';
-
-const icons =
-[
-    healing, clawHit, redClawHit,
-    goblinImg, hGoblinImg,
-    potionImg, bandagesImg, aloeImg,
-    tpImg, fireImg, fountainImg,
-    trapImg, pTrapImg,
-    wallImg, boxImg,
-    dagger1Img, sword1Img, necklaceImg,
-    heroBack, heroFront, heroLeft, heroRight
-];
-
-const ship_up = heroBack;
-const ship_down = heroFront;
-const ship_left = heroLeft;
-const ship_right = heroRight;
-const anyPlayer = [ship_down, ship_left, ship_right, ship_up];
-const box = boxImg;
-const wall = wallImg;
-const teleport = tpImg;
-const totem = 'u';
-const fountain = fountainImg;
-const cursedTotem = '🧿';
+// const ship_up = icons.heroBack;
+// const ship_down = icons.heroFront;
+// const ship_left = icons.heroLeft;
+// const ship_right = icons.heroRight;
+// const anyPlayer = [ship_down, ship_left, ship_right, ship_up];
+// const box = icons.boxImg;
+// const wall = icons.wallImg;
+// const teleport = icons.tpImg;
+// const totem = 'u';
+// const fountain = icons.fountainImg;
+// const cursedTotem = '🧿';
 
 const mapSize = 18;
-const maxHp = 15;
 
-const fire = fireImg;
-
-type locationData = { x: number, y: number, symbol: string };
-type Coords = [ number, number ];
-type ArrayOfCoords = Coords[];
-type Residual = { symbol: string, coords: number[] };
-
-interface Item
-{
-    type: 'Item',
-    name: string,
-    symbol: string,
-    id: number,
-    desc: string,
-    cd: number
-};
-
-const Aloe: Item =
-{
-    type: 'Item',
-    name: 'Aloe leaf',
-    symbol: aloeImg,
-    id: 3,
-    desc:  '',
-    cd: 4000
-}
-
-const Potion: Item =
-{
-    type: 'Item',
-    name: 'Potion',
-    symbol: potionImg,
-    id: 2,
-    desc: '+3 HP',
-    cd: 3000
-} 
-
-const Bandages: Item =
-{
-    type: 'Item',
-    name: 'Bandages',
-    symbol: bandagesImg,
-    id: 1,
-    desc: 'Stops bleeding.',
-    cd: 5000
-}
-
-interface Gear
-{
-    type: string,
-    name: string,
-    symbol: string,
-    id: number,
-    slot: string,
-    desc: string,
-    attackStats?: attackStats,
-    defenseStats?: deffenseStats,
-    buffStats?: '',
-    durability: number,
-    Equippeable: boolean
-};
-
-type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, cd: number };
-type deffenseStats = { def?: number, immunity?: string, hp?: number };
-
-const Fists: Gear =
-{
-    type: 'Gear',
-    name: 'Fists',
-    symbol: '🤜',
-    id: 0,
-    slot: 'weapon',
-    desc: '+1 DMG',
-    attackStats: { dmg: 0, cd: 2500 },
-    durability: 999,
-    Equippeable: true
-}
-
-const emptyHanded = { id: '0', item: Fists, durability: 999, onCd: false, equiped: true, selected: true };
-
-const Sword1: Gear =
-{
-    type: 'Gear',
-    name: 'Wooden Sword',
-    symbol: sword1Img,
-    id: 1,
-    slot: 'weapon',
-    desc: '+2 DMG',
-    attackStats: { dmg: 2, DoT: 0, times: 0, cd: 1000 },
-    durability: 10,
-    Equippeable: true
-}
-
-const Dagger1: Gear =
-{
-    type: 'Gear',
-    name: 'Slicing Knife',
-    symbol: dagger1Img,
-    id: 2,
-    slot: 'weapon',
-    desc: '+1 DMG (5 🩸)',
-    attackStats: { dmg: 1, DoT: 1, times: 5, aliment: 'bleed', cd: 1000 },
-    durability: 20,
-    Equippeable: true
-}
-
-const Necklace1: Gear =
-{
-    type: 'Accessory',
-    name: 'Protective pendant',
-    symbol: necklaceImg,
-    id: 3,
-    slot: 'charm',
-    desc: '+5 Shield',
-    durability: 5,
-    Equippeable: true
-}
-
-const Necklace2: Gear =
-{
-    type: 'Accessory',
-    name: 'Armor pendant',
-    symbol: necklaceImg,
-    id: 4,
-    slot: 'charm',
-    desc: '+1 DEF',
-    defenseStats: { def: 1 },
-    durability: 50,
-    Equippeable: true
-}
-
-type InventoryItem = { item: Item, quantity: number, onCd: boolean };
-type InventoryGear = { id: string, item: Gear, durability: number, onCd: boolean, equiped?: boolean, selected: boolean };
-type Inventory = InventoryItem[];
-type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
-type BuffFlags = { HoT: boolean };
-type AlimentInstances = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] }; 
-type BuffInstances = { HotInstances: alimentIds[] };
-
-interface WithAliments 
-{
-    Aliments: Aliments;
-}
-
-type Aliments = 
-{
-    Flags: AlimentFlags,
-    Instances: AlimentInstances
-};
-type Buffs =
-{
-    Flags: BuffFlags,
-    Instances: BuffInstances
-}
-type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: ReturnType<typeof setTimeout> };
-
-type HotBarItems = { Equippeable: InventoryGear[] }
-
-interface Player
-{
-    HP: number,
-    MaxHP: number,
-    Data: locationData,
-    Inventory: Inventory,
-    HotBar: HotBarItems,
-    Aliments: Aliments,
-    Buffs: Buffs
-}
-
-const emptyPlayer: Player =
-{
-    HP: maxHp,
-    MaxHP: maxHp,
-    Data: { x: 0, y: 0, symbol: ship_down },
-    Inventory: [],
-    HotBar: { Equippeable: [ ] },
-    Aliments:
-    {
-        Flags: { Poisoned: false, Bleeding: false, Burning: false },
-        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
-    },
-    Buffs:
-    {
-        Flags: { HoT: false },
-        Instances: { HotInstances: [] } 
-    }
-}
-
-type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string };
-type deffenseInfo = { Armor: number, Toughness: number, Immunity?: string };
-type dropInfo = { item: Item, chance: number };
-
-interface Trap
-{
-    ID: string,
-    Name: string,
-    Active: boolean,
-    Data: locationData,
-    Attack: attackInfo,
-    toDisarm?: Item[]
-}
-
-const trap: Trap =
-{
-    ID: '0',
-    Name: 'Trampa simple',
-    Active: true,
-    Data: { x: 0, y: 0, symbol: trapImg },
-    Attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
-}
-
-const poisonTrap: Trap =
-{
-    ID: '0',
-    Name: 'Trampa venenosa',
-    Active: true,
-    Data: { x: 0, y: 0, symbol: pTrapImg },
-    Attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'poison' },
-}
-
-interface Enemy
-{
-    ID: string,
-    Name: string,
-    HP: number,
-    MaxHP: number,
-    Data: locationData,
-    Aliments: Aliments,
-    Attack: attackInfo,
-    Defense: deffenseInfo,
-    Pattern: string,
-    PatrolId?: ReturnType<typeof setTimeout>,
-    Drops: dropInfo[]
-}
-
-const enemy: Enemy =
-{
-    ID: '0',
-    Name: 'Goblin',
-    HP: 5,
-    MaxHP: 5,
-    Data: { x: 0, y: 0, symbol: goblinImg },
-    Aliments:
-    {
-        Flags: { Poisoned: false, Bleeding: false, Burning: false },
-        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
-    },
-    Attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
-    Defense: { Armor: 0, Toughness: 1 },
-    Pattern: 'none',
-    Drops: []
-}
-
-const heavyEnemy: Enemy =
-{
-    ID: '0',
-    Name: 'Heavy Goblin',
-    HP: 20,
-    MaxHP: 20,
-    Data: { x: 0, y: 0, symbol: hGoblinImg },
-    Aliments:
-    {
-        Flags: { Poisoned: false, Bleeding: false, Burning: false },
-        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
-    },
-    Attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
-    Defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
-    Pattern: 'none',
-    Drops: [ { item: Potion, chance: 75 } ]
-}
+// const fire = icons.fireImg;
 
 const emptyGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );
 
-type eventLog = { message: string, color: string };
 const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
 const App = () =>
@@ -343,17 +43,17 @@ const App = () =>
     const [ mapa, setMapa ] = useState<string[][]>( emptyGrid );
     const [ visuals, setVisuals ] = useState<string[][]>( emptyGrid );
     
-    const [ tps, setTps ] = useState<ArrayOfCoords>([]);
-    const [ residual, setResidual ] = useState<Residual[]>( [] );
+    const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
+    const [ residual, setResidual ] = useState<Types.Residual[]>( [] );
 
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
     const [ showGear, setShowGear ] = useState<boolean>( false );
-    const [ events, setEvents ] = useState<eventLog[]>( [] );
-    const [ delayedLog, setDelayedLog ] = useState<eventLog[]>( [] );
+    const [ events, setEvents ] = useState<Types.eventLog[]>( [] );
+    const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
 
-    const [ player, setPlayer ] = useState<Player>( emptyPlayer );
-    const [ enemies, setEnemies ] = useState<Enemy[]>( [] );
-    const [ traps, setTraps ] = useState<Trap[]>( [] );
+    const [ player, setPlayer ] = useState<Types.Player>( Entities.emptyPlayer );
+    const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
+    const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
 
     useEffect( () =>
     {
@@ -372,7 +72,7 @@ const App = () =>
         let symbol = '';
         mapa.forEach( (fila, y) => fila.map( (celda, z) =>
         {
-            if(celda==ship_down || celda==ship_up || celda==ship_left || celda==ship_right ) { here=[ y, z ]; symbol=celda; }
+            if(celda==icons.heroFront || celda==icons.heroBack || celda==icons.heroLeft || celda==icons.heroRight ) { here=[ y, z ]; symbol=celda; }
         } ));
         setPlayer( prev => ({ ...prev, Data: { x: here[0], y: here[1], symbol } }) );
     };
@@ -382,29 +82,25 @@ const App = () =>
         if( x<0 || x >= mapa.length || y<0 || y >= mapa[0].length ) return 'oob';
         
         const tile = mapa[x][y];
+
         switch(tile)
         {
             case '': return 'empty';
-            case 'x': return wall;
-            case 'u': return totem;
-            case '🧿': return cursedTotem;
-            case '~': return 'water';
-            case fountainImg: return fountain;
-            case goblinImg: return enemy;
-            case hGoblinImg: return heavyEnemy;
-            case fireImg: return fire;
-            case 'D': return 'door';
-            case boxImg: return box;
-            case tpImg: return teleport;
-            case trapImg: return trap;
-            case pTrapImg: return poisonTrap;
-            case potionImg: return Potion;
-            case bandagesImg: return Bandages;
-            case aloeImg: return Aloe;
-            case sword1Img: return Sword1;
-            case dagger1Img: return Dagger1;
-            case necklaceImg: return Necklace1;
-            case necklaceImg: return 
+            case icons.wallImg: return icons.wallImg;
+            case icons.fountainImg: return icons.fountainImg;
+            case icons.goblinImg: return Entities.enemy;
+            case icons.hGoblinImg: return Entities.heavyEnemy;
+            case icons.fireImg: return icons.fireImg;
+            case icons.boxImg: return icons.boxImg;
+            case icons.tpImg: return icons.tpImg;
+            case icons.trapImg: return icons.trapImg;
+            case icons.pTrapImg: return Entities.poisonTrap;
+            case icons.potionImg: return Items.Potion;
+            case icons.bandagesImg: return Items.Bandages;
+            case icons.aloeImg: return Items.Aloe;
+            case icons.sword1Img: return Gear.Sword1;
+            case icons.dagger1Img: return Gear.Dagger1;
+            case icons.necklaceImg: return Gear.Necklace1;
             default: return 'unknown';
         };
     };
@@ -461,24 +157,24 @@ const App = () =>
         const [ tp1X, tp1Y ] = tps[0];
         const [ tp2X, tp2Y ] = tps[1];
 
-        if(auxiliar[tp1X][tp1Y] == tpImg && auxiliar[tp2X][tp2Y] == tpImg )
+        if(auxiliar[tp1X][tp1Y] == icons.tpImg && auxiliar[tp2X][tp2Y] == icons.tpImg )
         {
             switch(other)
             {
-                case box:
+                case icons.boxImg:
                 {
                     auxiliar[pX][pY] = '';
                     auxiliar[newX][newY] = symbol;
                     setPlayer( prev => ({ ...prev, Data: { x: newX, y: newY, symbol } }) );
                     if( tp1X==newX+x && tp1Y==newY+y )
                     {
-                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp2X, tp2Y ] } ] );
-                        auxiliar[tp2X][tp2Y] = box;
+                        setResidual( prev => [ ...prev, { symbol: icons.tpImg, coords: [ tp2X, tp2Y ] } ] );
+                        auxiliar[tp2X][tp2Y] = icons.boxImg;
                     }
                     else
                     {
-                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp1X, tp1Y ] } ] );
-                        auxiliar[tp1X][tp1Y] = box;
+                        setResidual( prev => [ ...prev, { symbol: icons.tpImg, coords: [ tp1X, tp1Y ] } ] );
+                        auxiliar[tp1X][tp1Y] = icons.boxImg;
                     }
                     setMapa(auxiliar);
                     break;
@@ -487,7 +183,7 @@ const App = () =>
                 {
                     if( tp1X==newX && tp1Y==newY )
                     {
-                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp2X, tp2Y ] } ] );
+                        setResidual( prev => [ ...prev, { symbol: icons.tpImg, coords: [ tp2X, tp2Y ] } ] );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp2X][tp2Y] = symbol;
                         setPlayer( prev => ({ ...prev, Data: { x: tp2X, y: tp2Y, symbol } }) );
@@ -495,7 +191,7 @@ const App = () =>
                     }
                     else
                     {
-                        setResidual( prev => [ ...prev, { symbol: tpImg, coords: [ tp1X, tp1Y ] } ] );
+                        setResidual( prev => [ ...prev, { symbol: icons.tpImg, coords: [ tp1X, tp1Y ] } ] );
                         auxiliar[pX][pY] = '';
                         auxiliar[tp1X][tp1Y] = symbol;
                         setPlayer( prev => ({ ...prev, Data: { x: tp1X, y: tp1Y, symbol } }) );
@@ -525,14 +221,14 @@ const App = () =>
             case 'empty':
             {
                 const auxiliar = moveHere( newX, newY, symbol, false );
-                auxiliar[nextX][nextY] = box;
+                auxiliar[nextX][nextY] = icons.boxImg;
                 setPlayer( prev => ( { ...prev, Data: { x: newX, y: newY, symbol } } ) );
                 setMapa( auxiliar );
                 break;
             }
-            case teleport:
+            case icons.tpImg:
             {
-                handleTp(x, y, symbol, box);
+                handleTp(x, y, symbol, icons.boxImg);
                 break;
             }
             default:
@@ -541,7 +237,7 @@ const App = () =>
         }
     };
 
-    const manageBuffInstance =( instance: keyof BuffInstances, thisInstance: alimentIds | undefined, prev: Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Player =>
+    const manageBuffInstance =( instance: keyof Types.BuffInstances, thisInstance: Types.alimentIds | undefined, prev: Types.Player, action: 'add' | 'remove' | 'clean' | 'restart' ) : Types.Player =>
     {
         let flag = '';
         switch(instance)
@@ -580,7 +276,7 @@ const App = () =>
         }
     };
 
-    const damageWeapon = ( enemyToughness: number, weapon: InventoryGear ) =>
+    const damageWeapon = ( enemyToughness: number, weapon: Types.InventoryGear ) =>
     {
         let flag = true;
 
@@ -625,7 +321,7 @@ const App = () =>
         setPlayer( playerInfo =>
         {
             const aux = { ...playerInfo };
-            const thisWeapon = aux.HotBar.Equippeable.find( item => item.item.slot==='weapon' && item.equiped ) || emptyHanded;
+            const thisWeapon = aux.HotBar.Equippeable.find( item => item.item.slot==='weapon' && item.equiped ) || Gear.emptyHanded;
 
             !thisWeapon.onCd && setEnemies( mobs =>
             {
@@ -640,7 +336,7 @@ const App = () =>
                 if(flag && !thisWeapon.onCd)
                 {
                     damageEnemy( thisEnemy.ID, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
-                    thisWeapon!=emptyHanded && damageWeapon( thisEnemy.Defense.Toughness, thisWeapon );
+                    thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.Defense.Toughness, thisWeapon );
                     flag = false;
                 }
 
@@ -651,7 +347,7 @@ const App = () =>
         } );
     }
 
-    const enemyDeath = ( x: number, y: number, enemy: Enemy, allEnemies: Enemy[] ): Enemy[] =>
+    const enemyDeath = ( x: number, y: number, enemy: Types.Enemy, allEnemies: Types.Enemy[] ): Types.Enemy[] =>
     {
         setMapa( prev =>
         {
@@ -681,7 +377,7 @@ const App = () =>
         {
             const aux = [ ...allEnemies ];
             let tag = { aliment: '', color: 'khaki'};
-            const thisEnemy = aux.find( mob => mob.ID === ID ) || enemy;
+            const thisEnemy = aux.find( mob => mob.ID === ID ) || Entities.enemy;
             
             if(thisEnemy.HP-dmg<=0)
             {
@@ -822,7 +518,7 @@ const App = () =>
         } );
     }
 
-    const damageCharm = ( charm: InventoryGear, dmg: number ) =>
+    const damageCharm = ( charm: Types.InventoryGear, dmg: number ) =>
     {
         const residualDmg = dmg - charm.durability;
         const newCharm = { ...charm, durability: residualDmg<0?residualDmg*(-1):0 };
@@ -990,7 +686,7 @@ const App = () =>
     
     const touchEnemy = ( symbol: string, x: number, y: number ): void =>
     {
-        const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || enemy;
+        const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || Entities.enemy;
         const { Attack } = thisEnemy;
         queueLog( `${thisEnemy.Name} te golpeó por ${Attack.Instant} de daño.`, 'red');
         hurtPlayer( Attack.Instant, Attack.DoT, Attack.Times, Attack.Aliment );
@@ -999,7 +695,7 @@ const App = () =>
 
     const stepOnTrap = ( x: number, y: number, symbol: string ): void =>
     {
-        const thisTrap = traps.find( trap => trap.Data.x===x && trap.Data.y===y ) || trap ;
+        const thisTrap = traps.find( trap => trap.Data.x===x && trap.Data.y===y ) || Entities.trap ;
 
         setResidual( prev => [ ...prev, { symbol: thisTrap.Data.symbol, coords: [ x, y ] } ] );
         moveHere( x, y, symbol, true );
@@ -1025,7 +721,7 @@ const App = () =>
         setTimeout( ()=>
         {
             const auxiliar = mapa.map(fila => [...fila]);
-            auxiliar[newX][newY] = fire;
+            auxiliar[newX][newY] = icons.fireImg;
             if(player.HP<=0)
             {
                 return ;
@@ -1036,7 +732,7 @@ const App = () =>
         }, 45);
     };
 
-    const stepOnItem = ( x: number, y: number, symbol: string, tile: Item, quantity: number ): void =>
+    const stepOnItem = ( x: number, y: number, symbol: string, tile: Types.Item, quantity: number ): void =>
     {
         if( player.Inventory.length >= 20 )
         {
@@ -1049,7 +745,7 @@ const App = () =>
         addToInventory( tile, quantity );
     }
 
-    const stepOnGear = ( x: number, y: number, symbol: string, tile: Gear ): void =>
+    const stepOnGear = ( x: number, y: number, symbol: string, tile: Types.Gear ): void =>
     {
         if( player.HotBar.Equippeable.length >= 6 )
         {
@@ -1062,19 +758,19 @@ const App = () =>
         addToEquippeable( tile );
     }
 
-    const turnToInventoryGear = ( gear: Gear ): InventoryGear =>
+    const turnToInventoryGear = ( gear: Types.Gear ): Types.InventoryGear =>
     {
         return { item: gear, id: crypto.randomUUID(), durability: gear.durability, onCd: false, equiped: false, selected: false };
     }
 
-    const addToEquippeable = ( gear: Gear ) =>
+    const addToEquippeable = ( gear: Types.Gear ) =>
     {
         queueLog(`${gear.name} agregado a la mochila.`, 'orange');
         setPlayer( playerInfo => ( { ...playerInfo, HotBar: { ...playerInfo.HotBar,
             Equippeable: [ ...playerInfo.HotBar.Equippeable, turnToInventoryGear(gear) ] } } ) );
     }
 
-    const addToInventory = ( item: Item, quantity: number ): void =>
+    const addToInventory = ( item: Types.Item, quantity: number ): void =>
     {
         const thisItem = player.Inventory.find( x => x.item.name === item.name )
         queueLog(`Recogiste ${quantity} ${item.name}.`, 'lime');
@@ -1090,9 +786,9 @@ const App = () =>
         }
     }
 
-    const consumeItem = ( item: Item, quantity: number ): void =>
+    const consumeItem = ( item: Types.Item, quantity: number ): void =>
     {
-        const thisItem = player.Inventory.find( x => x.item.name===item.name ) as InventoryItem;
+        const thisItem = player.Inventory.find( x => x.item.name===item.name ) as Types.InventoryItem;
 
         if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return ;
 
@@ -1103,7 +799,7 @@ const App = () =>
                 heal(3, 0, 0);
                 setPlayer( playerInfo =>
                     {
-                        manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, healing, 500 );
+                        manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, icons.healing, 500 );
                         return playerInfo;
                     } )
                 break;
@@ -1173,71 +869,59 @@ const App = () =>
                         moveHere( newX, newY, symbol, true );
                         break;
                     }
-                case box:
+                case icons.boxImg:
                     {
                         pushBox( x, y, symbol );
                         break;
                     }
-                case teleport:
+                case icons.tpImg:
                     {
                         handleTp( x, y, symbol, '' );
                         break;
                     }
-                case enemy:
-                case heavyEnemy:
+                case Entities.enemy:
+                case Entities.heavyEnemy:
                     {
                         setPlayer( playerInfo =>
                         {
-                            manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, clawHit, 400 );
+                            manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, icons.clawHit, 400 );
                             return playerInfo;
                         } );
                         touchEnemy( symbol, newX, newY );
                         break;
                     }
-                case trap:
-                case poisonTrap:
+                case Entities.trap:
+                case Entities.poisonTrap:
                     {
                         stepOnTrap( newX, newY, symbol );
                         break;
                     }
-                case fire:
+                case icons.fireImg:
                     {
                         walkOntoFire( x, y, symbol, newX, newY );
                         break;
                     }
-                case totem: //Cleanse('all')
-                    {
-                        inconsecuente( symbol );
-                        cleanse('all');
-                        break;
-                    }
-                case fountain:  //Cleanse('burn')
+                case icons.fountainImg:  //Cleanse('burn')
                     {
                         touchFountain( symbol );
                         break;
                     }
-                case cursedTotem:
-                    {
-                        inconsecuente( symbol );
-                        setPlayer( prev => manageBuffInstance( 'HotInstances', undefined, prev, 'clean' ) );
-                        break;
-                    }
-                case Potion:
-                case Bandages:
-                case Aloe:
+                case Items.Potion:
+                case Items.Bandages:
+                case Items.Aloe:
                     {
                         stepOnItem( newX, newY, symbol, tile, 1 );
                         break;
                     }
-                case Sword1:
-                case Dagger1:
-                case Necklace1:
+                case Gear.Sword1:
+                case Gear.Dagger1:
+                case Gear.Necklace1:
                     {
                         stepOnGear( newX, newY, symbol, tile );
                         break;
                     }
                 case 'unknown':
-                case wall:
+                case icons.wallImg:
                 case 'water':
                 case 'oob':
                     {
@@ -1289,18 +973,17 @@ const App = () =>
     {
         switch( symbol )
         {
-            case ship_up:
+            case icons.heroBack:
                 return [-1, 0];
-            case ship_down:
+            case icons.heroFront:
                 return [1, 0];
-            case ship_left:
+            case icons.heroLeft:
                 return [0, -1];
-            case ship_right:
+            case icons.heroRight:
                 return [0, 1];
             default:
                 return [0, 0];
         }
-        // return playerVectors[symbol] || [0, 0];
     }
 
     const manageVisualAnimation = ( type: string, x: number, y: number, icon: string, time: number ): void =>
@@ -1334,13 +1017,13 @@ const App = () =>
         let x = player.Data.x + dx;
         let y = player.Data.y + dy;
 
-        manageVisualAnimation( 'visual', x, y, redClawHit, 200 );
+        manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
         
         const objective = checkCollision( x, y );
         switch(objective)
         {
-            case enemy:
-            case heavyEnemy:
+            case Entities.enemy:
+            case Entities.heavyEnemy:
                 {
                     strikeEnemy( x, y );
                     break;
@@ -1424,10 +1107,10 @@ const App = () =>
 
                 switch (key)
                 {
-                    case 'w': movePlayer(-1, 0, ship_up); break;
-                    case 'a': movePlayer(0, -1, ship_left); break;
-                    case 's': movePlayer(1, 0, ship_down); break;
-                    case 'd': movePlayer(0, 1, ship_right); break;
+                    case 'w': movePlayer(-1, 0, icons.heroBack); break;
+                    case 'a': movePlayer(0, -1, icons.heroLeft); break;
+                    case 's': movePlayer(1, 0, icons.heroFront); break;
+                    case 'd': movePlayer(0, 1, icons.heroRight); break;
                 }
                 return;
             }
@@ -1440,13 +1123,13 @@ const App = () =>
                 break;
 
                 case 'k':   //bandages
-                consumeItem(Bandages, 2);
+                consumeItem(Items.Bandages, 2);
                 break;
                 case 'o':   //poción
-                consumeItem(Potion, 1);
+                consumeItem(Items.Potion, 1);
                 break;
                 case 'p':   //Aloe
-                consumeItem(Aloe, 1);
+                consumeItem(Items.Aloe, 1);
                 break;
 
                 case 'q':   //renew (HoT)
@@ -1541,7 +1224,7 @@ const App = () =>
             { ...mob, Data: { ...mob.Data, PatrolId: id  } } : mob ) );
     }
 
-    const finishDoT = <T extends WithAliments>( aliment: keyof AlimentInstances, info: T, all?: boolean ): void =>
+    const finishDoT = <T extends Types.WithAliments>( aliment: keyof Types.AlimentInstances, info: T, all?: boolean ): void =>
     {
         if(all)
         {
@@ -1566,7 +1249,7 @@ const App = () =>
         }
     }
 
-    const finishBuff = ( buff: keyof BuffInstances, info: Player, cleanse?: boolean ): void =>
+    const finishBuff = ( buff: keyof Types.BuffInstances, info: Types.Player, cleanse?: boolean ): void =>
     {
         if(cleanse)
         {
@@ -1591,7 +1274,7 @@ const App = () =>
         }
     }
 
-    const manageDotInstance = <T extends WithAliments>( instance: keyof AlimentInstances, newInstance: alimentIds | undefined, prev: T, action: 'add' | 'remove' | 'clean' | 'restart' ) : T =>
+    const manageDotInstance = <T extends Types.WithAliments>( instance: keyof Types.AlimentInstances, newInstance: Types.alimentIds | undefined, prev: T, action: 'add' | 'remove' | 'clean' | 'restart' ) : T =>
     {
         let flag = '';
         switch(instance)
@@ -1776,41 +1459,46 @@ const App = () =>
         const auxiliar = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)
         {
-            auxiliar[i][0] = wallImg;
-            auxiliar[0][i] = wallImg;
-            auxiliar[i][17] = wallImg;
-            auxiliar[17][i] = wallImg;
+            auxiliar[i][0] = icons.wallImg;
+            auxiliar[0][i] = icons.wallImg;
+            auxiliar[i][17] = icons.wallImg;
+            auxiliar[17][i] = icons.wallImg;
         }
 
-        auxiliar[3][3] = boxImg;
-        auxiliar[13][14] = hGoblinImg;
-        auxiliar[15][2] = goblinImg;
-        auxiliar[13][13] = pTrapImg;
-        auxiliar[15][5] = trapImg;
-        auxiliar[2][5] = potionImg;
-        auxiliar[2][6] =  bandagesImg;
-        auxiliar[2][7] = potionImg;
-        auxiliar[2][8] = bandagesImg;
-        auxiliar[2][10] = aloeImg;
-        auxiliar[3][5] = sword1Img;
-        auxiliar[4][6] = dagger1Img;
-        auxiliar[5][6] = necklaceImg;
-        auxiliar[6][6] = necklaceImg;
-        auxiliar[10][10] = fire;
-        auxiliar[10][12] = fountain;
-        auxiliar[2][16] = tpImg;
-        auxiliar[16][2] = tpImg;
+        auxiliar[3][3] = icons.boxImg;
+        auxiliar[13][14] = icons.hGoblinImg;
+        auxiliar[15][2] = icons.goblinImg;
+        auxiliar[13][13] = icons.pTrapImg;
+        auxiliar[15][5] = icons.trapImg;
+        auxiliar[2][5] = icons.potionImg;
+        auxiliar[2][6] =  icons.bandagesImg;
+        auxiliar[2][7] = icons.potionImg;
+        auxiliar[2][8] = icons.bandagesImg;
+        auxiliar[2][10] = icons.aloeImg;
+        auxiliar[3][5] = icons.sword1Img;
+        auxiliar[4][6] = icons.dagger1Img;
+        auxiliar[5][6] = icons.necklaceImg;
+        auxiliar[6][6] = icons.necklaceImg;
+        auxiliar[7][6] = icons.sword1Img;
+        auxiliar[8][6] = icons.dagger1Img;
+        auxiliar[9][6] = icons.necklaceImg;
+        auxiliar[10][6] = icons.sword1Img;
+        auxiliar[11][6] = icons.dagger1Img;
+        auxiliar[10][10] = icons.fireImg;
+        auxiliar[10][12] = icons.fountainImg;
+        auxiliar[2][16] = icons.tpImg;
+        auxiliar[16][2] = icons.tpImg;
 
         setTps( [ [2,16], [16,2] ] );
-        auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = ship_up;
+        auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = icons.heroFront;
         setPlayer( prev => (
-        { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } ) );
+        { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } ) );
         setEnemies( [
-        { ...enemy, ID: crypto.randomUUID(), Data: { x: 15, y: 2, symbol: 'e' } },
-        { ...heavyEnemy, ID: crypto.randomUUID(), Data: { x: 13, y: 14, symbol: 'E' } } ] );
+        { ...Entities.enemy, ID: crypto.randomUUID(), Data: { x: 15, y: 2, symbol: icons.goblinImg } },
+        { ...Entities.heavyEnemy, ID: crypto.randomUUID(), Data: { x: 13, y: 14, symbol: icons.hGoblinImg } } ] );
         setTraps( [
-        { ...trap, ID: crypto.randomUUID(), Data: { x: 15, y: 5, symbol: trapImg } },
-        { ...poisonTrap, ID: crypto.randomUUID(), Data: { ...poisonTrap.Data, x: 13, y: 13 } } ] );
+        { ...Entities.trap, ID: crypto.randomUUID(), Data: { x: 15, y: 5, symbol: icons.trapImg } },
+        { ...Entities.poisonTrap, ID: crypto.randomUUID(), Data: { x: 13, y: 13, symbol: icons.pTrapImg } } ] );
         setMapa(auxiliar);
     }
 
@@ -1832,7 +1520,7 @@ const App = () =>
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player.Data.x][player.Data.y] = '';
         setMapa(auxiliar);
-        setPlayer( {...emptyPlayer, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: ship_up } } );
+        setPlayer( {...Entities.emptyPlayer, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } );
         queueLog(`Moriste a causa de tus heridas.`, 'white');
         setGame(false);
     }
@@ -1842,12 +1530,12 @@ const App = () =>
         if(player.HP>=0)
         {
             const heartsLeft = '💖'.repeat( player.HP );
-            const heartsLost = '🖤'.repeat( maxHp - player.HP );
+            const heartsLost = '🖤'.repeat( Entities.maxHp - player.HP );
             return heartsLeft + heartsLost;
         }
         else
         {
-            const heartsLost = '🖤'.repeat( maxHp );
+            const heartsLost = '🖤'.repeat( Entities.maxHp );
             return heartsLost;
         }
     }
@@ -1859,92 +1547,95 @@ const App = () =>
         const burn = player.Aliments.Flags.Burning?'[Burning🔥]':'';
         return poison + bleed + burn;
     }
-    
-    return (
-        <div className='game-container'>
-          <button onClick={() => console.log(player)}> Player </button>
-          <button onClick={() => setLan('en')}> Inglés </button>
-          <button onClick={() => setLan('es')}> Español </button>
-          <span>StatusEffect: {renderAliments()}</span>
-          <br />
-          <span>HP: {renderHp()}</span>
-      
-          <div className="layout-flex">
-            <div className='general'>
-  <div className='columna-wrapper'>
-    <div className='columna' onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
-      {mapa.map((fila, x) => (
-        <div key={x} className='fila'>
-          {fila.map((celda, y) => {
-            if (icons.includes(celda)) {
-              return <img src={celda} key={y} className='celda' />;
-            } else {
-              return <label key={y} className='celda'>{celda}</label>;
-            }
-          })}
-        </div>
-      ))}
-    </div>
 
-    <div className='visuals-layer'>
-      {visuals.map((fila, x) => (
-        <div key={x} className='fila'>
-          {fila.map((celda, y) => {
-            if (icons.includes(celda)) {
-              return <img src={celda} key={y} className='celda' />;
-            } else {
-              return <label key={y} className='celda'>{celda}</label>;
-            }
-          })}
-        </div>
-      ))}
-    </div>
+return(
+  <div className="game-container">
 
-  </div>
-</div>
+    <div className="grid-layout">
+      {/* MAPA */}
+      <div className="map-zone">
+        <div className="map-container" style={{ position: 'relative' }}>
+          <div className="columna-wrapper">
+            <div
+              className="columna"
+              onKeyDown={handleMovement}
+              ref={gridRef}
+              tabIndex={0}
+            >
+              {mapa.map((fila, x) => (
+                <div key={x} className="fila">
+                  {fila.map((celda, y) =>
+                    allIcons.includes(celda) ? (
+                      <img src={celda} key={y} className="celda" />
+                    ) : (
+                      <label key={y} className="celda">{celda}</label>
+                    )
+                  )}
+                </div>
+              ))}
+            </div>
 
-      
-            {showInventory && (
-              <div className="inventory-window">
-                <p>Inventario:</p>
-                <ul className="inventory-list">
-                  {player.Inventory.map((x, y) =>
-                    <li key={y}>
-                      {x.item.name} — { `Cantidad: ${x.quantity}` }
-                    </li>)}
-                </ul>
-              </div>
-            )}
-
-            {showGear && (
-              <div className="inventory-window">
-                <p>GEAR:</p>
-                <ul className="inventory-list">
-                  {player.HotBar.Equippeable.map((x, y) =>
-                    <li key={y}>
-                      { x.selected && '👉' } {x.item.name} —
-                      { x.item.attackStats?.dmg && `DMG: ${x.item.attackStats?.dmg} -` }
-                      { x.item.defenseStats?.def && `DEF: +${x.item.defenseStats.def} -` }
-                      { x.item.defenseStats?.hp && `HP (${x.item.defenseStats?.hp}) -`}
-                      Durability: {x.durability} / {x.item.durability} -
-                      { x.equiped && '✔' }
-                    </li>)}
-                </ul>
-              </div>
-            )}
-
+            <div className="visuals-layer">
+              {visuals.map((fila, x) => (
+                <div key={x} className="fila">
+                  {fila.map((celda, y) =>
+                    allIcons.includes(celda) ? (
+                      <img src={celda} key={y} className="celda" />
+                    ) : (
+                      <label key={y} className="celda">{celda}</label>
+                    )
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
-         <div style={{ background: "#111", color: "#0f0", fontFamily: "monospace", padding: "0.01rem", height: "118px", overflowY: "auto" }}>
-            <ul style={{ margin: 0, padding: 0 }}>
-                {events.map((log, i) => <li key={i} style={{ color: log.color || 'inherit' }}>{log.message}</li>)}
-            </ul>
+          {/* Corazones flotando arriba */}
+          <div className="hearts-floating">
+            {/* Acá renderizás tus corazones */}
+            {renderHp()} {renderAliments()}
+          </div>
+
+          {/* Inventario flotante abajo */}
+          {showInventory && (
+            <div className="inventory-popup">
+              <p>Inventario:</p>
+              <ul className="inventory-list">
+                {player.Inventory.map((x, y) => (
+                  <li key={y}>
+                    {x.item.name} — {`Cantidad: ${x.quantity}`} - {`(${x.item.hotkey})`}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-      
+      </div>
+
+      {/* GEAR COLUMN */}
+      <div className="gear-column">
+        <div className="gear-controls">
           {!game && <button onClick={startGame}>START</button>}
           {game && <button onClick={stopGame}>STOP</button>}
         </div>
-      );
+
+        <GearTab player={player} />
+
+        {/* Consola flotante abajo, fuera del flujo normal */}
+        <div className="log-window-floating">
+          <ul>
+            {events.map((log, i) => (
+              <li key={i} style={{ color: log.color || 'inherit' }}>
+                {log.message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 }
 
 export default App;

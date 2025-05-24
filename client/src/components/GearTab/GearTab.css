@@ -1,0 +1,58 @@
+.gear-tab {
+  background-color: #222;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 8px;
+  height: 280px;
+  overflow: hidden;
+}
+
+.gear-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gear-card {
+  background-color: #222;
+  border: 2px solid #444;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  color: #eee;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 40px;
+  justify-content: space-between;
+}
+
+.gear-card.equipped {
+  background-color: #933;
+}
+
+.gear-card.selected {
+  border-color: yellow;
+}
+
+.gear-name {
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gear-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.gear-stat {
+  font-size: 0.7rem;
+  text-align: center;
+  white-space: nowrap;
+}
