@@ -93,7 +93,7 @@ const App = () =>
             case icons.fireImg: return icons.fireImg;
             case icons.boxImg: return icons.boxImg;
             case icons.tpImg: return icons.tpImg;
-            case icons.trapImg: return icons.trapImg;
+            case icons.trapImg: return Entities.trap;
             case icons.pTrapImg: return Entities.poisonTrap;
             case icons.potionImg: return Items.Potion;
             case icons.bandagesImg: return Items.Bandages;
@@ -527,14 +527,17 @@ const App = () =>
 
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
-        let c = 0;
+        let flag = true;
         setPlayer( prev =>
         {
-            c++;
             let activeCharm = prev.HotBar.Equippeable.find( item => item.equiped && item.item.slot==='charm' );
             if(activeCharm)
             {
                 const { newCharm, residualDmg } = damageCharm( activeCharm, dmg );
+                if(flag)
+                {
+                    queueLog(`${activeCharm.item.name} se activó, daño recibido: ${residualDmg}.`, 'white');
+                }
                 if(prev.HP-residualDmg<=0)
                 {
                     stopGame();
@@ -547,7 +550,16 @@ const App = () =>
                 }
                 else
                 {
+                    if(flag)
+                    {
+                        queueLog(`[📿] ¡${activeCharm.item.name} se rompió! 💥`, 'white');
+                        flag = false;
+                    }
                     newEquippeables =  prev.HotBar.Equippeable.filter( gear => gear.id!==newCharm?.id );
+                }
+                if(flag)
+                {
+                    flag = false;
                 }
                 return { ...prev, HotBar: { ...prev.HotBar, Equippeable: newEquippeables }, HP: prev.HP - residualDmg };
             }
@@ -788,48 +800,108 @@ const App = () =>
 
     const consumeItem = ( item: Types.Item, quantity: number ): void =>
     {
-        const thisItem = player.Inventory.find( x => x.item.name===item.name ) as Types.InventoryItem;
-
-        if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return ;
-
-        switch(item.name)
+        let flag = true;
+        setPlayer( playerInfo =>
         {
-            case 'Potion':
+            const aux = { ...playerInfo };
+            const thisItem = aux.Inventory.find( x => x.item.name===item.name ) as Types.InventoryItem;
+
+            if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return aux;
+            if(flag)    queueLog(`Usas ${quantity} ${item.name}`, 'lime');
+
+            switch(item.name)
             {
-                heal(3, 0, 0);
-                setPlayer( playerInfo =>
+                case 'Potion':
+                {
+                    if(flag)
                     {
-                        manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, icons.healing, 500 );
-                        return playerInfo;
-                    } )
-                break;
+                        heal(3, 0, 0);
+                        manageVisualAnimation( 'visual', aux.Data.x, aux.Data.y, icons.healing, 500 );
+                    }
+                    break;
+                }
+                case 'Bandages':
+                {
+                    if(aux.Aliments.Flags.Bleeding)
+                    {
+                        if(flag) queueLog(`[Frenas el sangrado]`, 'lime');
+                        cleanse('bleed');
+                    }
+                    manageVisualAnimation( 'visual', aux.Data.x, aux.Data.y, icons.bandagesImg, 500 );
+                    break;
+                }
+                case 'Aloe leaf':
+                {
+                    if(aux.Aliments.Flags.Burning)
+                    {
+                        if(flag) queueLog(`[Cortas la quemadura]`, 'lime');
+                        cleanse('burn');
+                    }
+                    manageVisualAnimation( 'visual', aux.Data.x, aux.Data.y, icons.aloeImg, 500 );
+                    break;
+                }
             }
-            case 'Bandages':
+
+            flag = false;
+
+            if(thisItem.quantity - quantity > 0)
             {
-                cleanse('bleed');
-                break;
+                setTimeout( () =>
+                {
+                    setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) } ) );
+                }, thisItem.item.cd)
+
+                return {...aux, Inventory: aux.Inventory.map( z =>
+                    'quantity' in z && z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) };
             }
-            case 'Aloe leaf':
+            else
             {
-                cleanse('burn');
-                break;
+                return {...aux, Inventory: aux.Inventory.filter( y => y.item.name!==thisItem.item.name ) };
             }
-        }
+        } );
+        
+        // const thisItem = player.Inventory.find( x => x.item.name===item.name ) as Types.InventoryItem;
+
+        // if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return ;
+
+        // switch(item.name)
+        // {
+        //     case 'Potion':
+        //     {
+        //         heal(3, 0, 0);
+        //         setPlayer( playerInfo =>
+        //             {
+        //                 manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, icons.healing, 500 );
+        //                 return playerInfo;
+        //             } )
+        //         break;
+        //     }
+        //     case 'Bandages':
+        //     {
+        //         cleanse('bleed');
+        //         break;
+        //     }
+        //     case 'Aloe leaf':
+        //     {
+        //         cleanse('burn');
+        //         break;
+        //     }
+        // }
 
         
-        if(thisItem.quantity - quantity > 0)
-        {
-            setTimeout( () =>
-            {
-                setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) } ) );
-            }, thisItem.item.cd)
-            setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z =>
-                'quantity' in z && z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) } ) );
-        }
-        else
-        {
-            setPlayer( prev => ( {...prev, Inventory: prev.Inventory.filter( y => y.item.name!==thisItem.item.name ) } ) );
-        }
+        // if(thisItem.quantity - quantity > 0)
+        // {
+        //     setTimeout( () =>
+        //     {
+        //         setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) } ) );
+        //     }, thisItem.item.cd)
+        //     setPlayer( prev => ( {...prev, Inventory: prev.Inventory.map( z =>
+        //         'quantity' in z && z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) } ) );
+        // }
+        // else
+        // {
+        //     setPlayer( prev => ( {...prev, Inventory: prev.Inventory.filter( y => y.item.name!==thisItem.item.name ) } ) );
+        // }
     }
 
     const touchFountain = ( symbol: string ) =>
@@ -1542,9 +1614,9 @@ const App = () =>
 
     const renderAliments = () : string =>
     {
-        const poison = player.Aliments.Flags.Poisoned?'[Poisoned💚]':'';
-        const bleed = player.Aliments.Flags.Bleeding?'[Bleeding🩸]':'';
-        const burn = player.Aliments.Flags.Burning?'[Burning🔥]':'';
+        const poison = player.Aliments.Flags.Poisoned?'[💚]':'';
+        const bleed = player.Aliments.Flags.Bleeding?'[🩸]':'';
+        const burn = player.Aliments.Flags.Burning?'[🔥]':'';
         return poison + bleed + burn;
     }
 

@@ -13,8 +13,8 @@
   gap: 8px;
 }
 
-.gear-card {
-  background-color: #222;
+.weapon-card {
+  background-color: #502e2e;
   border: 2px solid #444;
   border-radius: 6px;
   padding: 4px 6px;
@@ -28,11 +28,34 @@
   justify-content: space-between;
 }
 
-.gear-card.equipped {
-  background-color: #933;
+.weapon-card.equipped {
+  background-color: rgb(155, 15, 15);
 }
 
-.gear-card.selected {
+.weapon-card.selected {
+  border-color: yellow;
+}
+
+.charm-card {
+  background-color: #493d66;
+  border: 2px solid #444;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  color: #eee;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 40px;
+  justify-content: space-between;
+}
+
+.charm-card.equipped {
+  background-color: rgb(32, 19, 153);
+}
+
+.charm-card.selected {
   border-color: yellow;
 }
 
