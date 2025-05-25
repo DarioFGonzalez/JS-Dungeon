@@ -17,6 +17,7 @@ import trapImg from './trap.PNG';
 import pTrapImg from './pTrap.png';
 
 import wallImg from './wall.png';
+import torchdWallImg from './torchdWall.PNG';
 import boxImg from './box.png';
 
 import dagger1Img from './dagger.png';
@@ -34,7 +35,7 @@ export {
     potionImg, bandagesImg, aloeImg,
     tpImg, fireImg, fountainImg,
     trapImg, pTrapImg,
-    wallImg, boxImg,
+    wallImg, torchdWallImg, boxImg,
     dagger1Img, sword1Img, necklaceImg,
     heroBack, heroFront, heroLeft, heroRight,
 };

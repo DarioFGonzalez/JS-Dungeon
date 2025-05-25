@@ -41,13 +41,12 @@ const App = () =>
     const [ stun, setStun ] = useState<boolean>(false);
 
     const [ mapa, setMapa ] = useState<string[][]>( emptyGrid );
-    const [ visuals, setVisuals ] = useState<string[][]>( emptyGrid );
+    const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyGrid );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
     const [ residual, setResidual ] = useState<Types.Residual[]>( [] );
 
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
-    const [ showGear, setShowGear ] = useState<boolean>( false );
     const [ events, setEvents ] = useState<Types.eventLog[]>( [] );
     const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
 
@@ -439,6 +438,9 @@ const App = () =>
                         {
                             const aux = [ ...prev ];
                             const updatedEnemy = aux.find( x => x.ID === thisEnemy.ID );
+                            if(!updatedEnemy) return prev;
+
+                            manageVisualAnimation( 'damage', updatedEnemy?.Data.x, updatedEnemy?.Data.y, dot.toString(), 450 );
 
                             if(!updatedEnemy) return prev;
                             
@@ -1065,9 +1067,17 @@ const App = () =>
             setVisuals( visualsMap =>
             {
                 const aux = [ ...visualsMap ];
-                aux[x][y] = icon;
-                return aux;
-            } );
+                switch(type)
+                {
+                    case 'visual':
+                        aux[x][y] = icon;
+                        break;
+                    case 'damage':
+                        aux[x][y] = { color: 'crimson', text: icon };
+                        break;
+                    }
+                    return aux;
+                } );
 
             setTimeout( () =>
             {
@@ -1210,9 +1220,6 @@ const App = () =>
 
                 case 'i':   //abrir inventario
                 setShowInventory(prev => !prev);
-                break;
-                case 'g':   //mostrar Gear equipable
-                setShowGear(prev=> !prev);
                 break;
 
                 case 'enter':
@@ -1533,9 +1540,20 @@ const App = () =>
         {
             auxiliar[i][0] = icons.wallImg;
             auxiliar[0][i] = icons.wallImg;
-            auxiliar[i][17] = icons.wallImg;
-            auxiliar[17][i] = icons.wallImg;
+            auxiliar[i][mapSize-1] = icons.wallImg;
+            auxiliar[mapSize-1][i] = icons.wallImg;
         }
+        for(let i=0; i<mapSize; i++)
+        {
+            if(i%6==0 || i===0)
+            {
+                auxiliar[i][0] = icons.torchdWallImg;
+                auxiliar[0][i] = icons.torchdWallImg;
+                auxiliar[i][mapSize-1] = icons.torchdWallImg;
+                auxiliar[mapSize-1][i] = icons.torchdWallImg;
+            }
+        }
+        auxiliar[mapSize-1][mapSize-1] = icons.torchdWallImg;
 
         auxiliar[3][3] = icons.boxImg;
         auxiliar[13][14] = icons.hGoblinImg;
@@ -1624,7 +1642,6 @@ return(
   <div className="game-container">
 
     <div className="grid-layout">
-      {/* MAPA */}
       <div className="map-zone">
         <div className="map-container" style={{ position: 'relative' }}>
           <div className="columna-wrapper">
@@ -1650,25 +1667,34 @@ return(
             <div className="visuals-layer">
               {visuals.map((fila, x) => (
                 <div key={x} className="fila">
-                  {fila.map((celda, y) =>
-                    allIcons.includes(celda) ? (
-                      <img src={celda} key={y} className="celda" />
-                    ) : (
-                      <label key={y} className="celda">{celda}</label>
-                    )
-                  )}
+                  {fila.map((celda, y) => {
+                    if (typeof celda === 'string') {
+                        return allIcons.includes(celda) ? (
+                        <img src={celda} key={y} className="celda" />
+                        ) : (
+                        <label key={y} className="celda">{celda}</label>
+                        );
+                    } else {
+                        return (
+                        <label
+                            key={y}
+                            className="celda visual-text"
+                            style={{ color: celda.color || 'white' }}
+                        >
+                            {celda.text}
+                        </label>
+                        ); }
+                    })}
+
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Corazones flotando arriba */}
           <div className="hearts-floating">
-            {/* Acá renderizás tus corazones */}
             {renderHp()} {renderAliments()}
           </div>
 
-          {/* Inventario flotante abajo */}
           {showInventory && (
             <div className="inventory-popup">
               <p>Inventario:</p>
@@ -1684,16 +1710,14 @@ return(
         </div>
       </div>
 
-      {/* GEAR COLUMN */}
       <div className="gear-column">
-        <div className="gear-controls">
+        {!game && <div className="start-popup">
           {!game && <button onClick={startGame}>START</button>}
-          {game && <button onClick={stopGame}>STOP</button>}
-        </div>
+          {/* {game && <button onClick={stopGame}>STOP</button>} */}
+        </div>}
 
         <GearTab player={player} />
 
-        {/* Consola flotante abajo, fuera del flujo normal */}
         <div className="log-window-floating">
           <ul>
             {events.map((log, i) => (

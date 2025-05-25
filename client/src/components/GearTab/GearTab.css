@@ -3,7 +3,7 @@
   border: 1px solid #555;
   border-radius: 6px;
   padding: 8px;
-  height: 280px;
+  height: 350px;
   overflow: hidden;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .weapon-card {
-  background-color: #502e2e;
+  background-color: #614a4a;
   border: 2px solid #444;
   border-radius: 6px;
   padding: 4px 6px;

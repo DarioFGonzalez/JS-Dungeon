@@ -7,20 +7,33 @@
   --font-color: #ccc;
 }
 
+.visual-text {
+  font-size: 1rem;         /* tamaño del número */
+  font-weight: bold;       /* texto más gordo */
+  color: khaki;            /* color del texto */
+  text-shadow:
+    1px 1px 0 black,
+   -1px 1px 0 black,
+    1px -1px 0 black,
+   -1px -1px 0 black;      /* contorno negro */
+}
+
 body {
   margin: 0;
   background: black;
   color: var(--font-color);
   font-family: sans-serif;
+  overflow: hidden;
 }
 
 .game-container {
+  height: 100vh;
+  overflow: hidden; /* ← ¡clave! */
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  box-sizing: border-box;
   padding: var(--hud-padding);
   gap: var(--hud-gap);
-  box-sizing: border-box;
 }
 
 .top-bar {
@@ -36,10 +49,11 @@ body {
 }
 
 .grid-layout {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: 2.5fr 1fr;
   gap: var(--hud-gap);
-  flex: 1;
   overflow: hidden;
 }
 
@@ -52,12 +66,13 @@ body {
 }
 
 .map-container {
-  flex: 1;
   background: #222;
-  border: var(--border);
-  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
   position: relative;
 }
+
 
 .columna-wrapper {
   position: relative;
@@ -93,10 +108,27 @@ body {
   gap: 0.25rem;
   pointer-events: none;
   
-  background-color: rgba(0, 0, 0, 0.5); /* fondo negro semi-transparente */
+  background-color: rgba(238, 89, 89, 0.5); /* fondo negro semi-transparente */
   border-radius: 6px;
   padding: 0.2rem 0.5rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+.start-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background-color: rgba(34, 34, 34, 0.75);
+  border: var(--border);
+  border-radius: 6px;
+  padding: 0.5rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  max-height: 25vh;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  pointer-events: auto;
 }
 
 .inventory-popup {
@@ -133,6 +165,8 @@ body {
   border: var(--border);
   overflow: visible; /* para que log-window-floating pueda flotar */
   position: relative;
+  padding-bottom: 256px;
+  box-sizing: border-box;
 }
 
 /* Contenedor fijo para botones START/STOP */
@@ -166,21 +200,36 @@ body {
   padding: 0.5rem;
 }
 
-/* Consola flotante abajo de Gear */
 .log-window-floating {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  max-height: 200px;
+  height: 265px;
+  pointer-events: auto;
   background: black;
   color: #0f0;
   font-family: monospace;
   font-size: 0.8rem;
-  overflow-y: auto;
+  overflow-y: hidden;
   padding: 0.5rem;
   border-top: var(--border);
   box-sizing: border-box;
   z-index: 1000;
-  user-select: text;
+
+  scrollbar-width: none;
+}
+
+.log-window-floating::-webkit-scrollbar {
+  display: none;
+}
+
+.log-window-floating ul {
+  margin: 0;
+  padding-left: 0.75rem;
+  list-style: square;
+}
+
+.log-window-floating li {
+  list-style-position: outside;
 }

@@ -1,3 +1,8 @@
+export type VisualCell = string | {
+  text: string;
+  color?: string;
+};
+
 export type locationData = { x: number, y: number, symbol: string };
 export type Coords = [ number, number ];
 export type ArrayOfCoords = Coords[];
