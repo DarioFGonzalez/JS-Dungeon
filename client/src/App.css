@@ -1,238 +1,235 @@
+:root {
+  --hud-gap: 0.5rem;
+  --hud-padding: 0.5rem;
+  --border: 1px solid #444;
+  --bg-color: #111;
+  --accent-bg: #1a1a1a;
+  --font-color: #ccc;
+}
+
+.visual-text {
+  font-size: 1rem;         /* tamaño del número */
+  font-weight: bold;       /* texto más gordo */
+  color: khaki;            /* color del texto */
+  text-shadow:
+    1px 1px 0 black,
+   -1px 1px 0 black,
+    1px -1px 0 black,
+   -1px -1px 0 black;      /* contorno negro */
+}
+
+body {
+  margin: 0;
+  background: black;
+  color: var(--font-color);
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+.game-container {
+  height: 100vh;
+  overflow: hidden; /* ← ¡clave! */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--hud-padding);
+  gap: var(--hud-gap);
+}
+
+.top-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  background: rgba(34, 34, 34, 0.7); /* fondo semi-transparente */
+  border: var(--border);
+  padding: 0.5rem;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.8);
+  user-select: none;
+}
+
+.grid-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: var(--hud-gap);
+  overflow: hidden;
+}
+
+/* MAPA + INVENTARIO */
+.map-zone {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.map-container {
+  background: #222;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+
 .columna-wrapper {
   position: relative;
-  width: fit-content;
-  height: fit-content;
 }
 
-.columna {
-  position: relative;
-  z-index: 1;
+.fila {
+  display: flex;
 }
 
+.celda {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Visual layer encima del mapa */
 .visuals-layer {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2;
-  pointer-events: none; /* ✅ impide interacción */
+  pointer-events: none;
 }
 
-.celda-visual {
-  width: 25px;
-  height: 25px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* podés usar animaciones, bordes, efectos glow, etc */
-  background-color: rgba(255, 255, 0, 0.2); /* ejemplo visual */
-}
-
-
-.general {
-    background: linear-gradient(to bottom right, #000000, #494949, #242424);
-    opacity: 1;
-}
-
-/* .columna
-{
-    display: flex;
-    flex-direction: column;
-} */
-
-.fila
-{
-    background-color: #ffffff00;
-    display: flex;
-    flex-direction: row;
-}
-
-.celda
-{
-  /* background-image: url('./Icons/tile2.PNG');
-  background-size: cover;
-  background-position: center; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* border: .1px transparent rgba(5, 9, 238, 0);
-    border-radius: 2px;
-    padding: .5px; */
-    width: 25px;
-    height: 25px;
-}
-
-.titilar
-{
-    animation: titilar 1s infinite;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px transparent rgba(65, 65, 141, 0.322);
-    border-radius: 2px;
-    padding: .5px;
-    width: 25px;
-    height: 25px;
-}
-
-@keyframes fadeOut
-{
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-@keyframes titilar
-{
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.1; }
-}
-
-@keyframes logo
-{
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-  
-.message
-{
+/* Corazones flotantes arriba, sobre el mapa */
+.hearts-floating {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2em;
-  color: white;
-  animation: fadeOut 3s forwards;
-}
-
-.ready
-{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2em;
-  color: rgb(31, 16, 238);
-  animation: fadeOut 3s forwards;
-  text-shadow:
-    -1px -1px 0 #fff,
-    1px -1px 0 #fff,
-    -1px 1px 0 #fff,
-    1px 1px 0 #fff;
-}
-
-.go
-{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2em;
-    color: rgb(31, 16, 238);
-    animation: fadeOut 1s forwards;
-    text-shadow:
-    -1px -1px 0 #fff,
-    1px -1px 0 #fff,
-    -1px 1px 0 #fff,
-    1px 1px 0 #fff;
-}
-
-.logo
-{
-    animation: logo 4s infinite;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 250px;
-    height: 250px;
-    object-fit: cover;
-}
-
-/*inventory*/
-.game-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.general {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.inventory-window {
-  position: absolute;
-  bottom: 20px;
-  background-color: #000;
-  color: #fff;
-  font-family: 'Courier New', monospace;
-  border: 2px solid #fff;
-  padding: 1rem;
-  width: 300px;
-  box-shadow: 0 0 10px #ffffff44;
+  top: 0.25rem;
+  left: 0.5rem;
   z-index: 1000;
+  display: flex;
+  gap: 0.25rem;
+  pointer-events: none;
+  
+  background-color: rgba(238, 89, 89, 0.5); /* fondo negro semi-transparente */
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+.start-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background-color: rgba(34, 34, 34, 0.75);
+  border: var(--border);
+  border-radius: 6px;
+  padding: 0.5rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  max-height: 25vh;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  pointer-events: auto;
+}
+
+.inventory-popup {
+  position: absolute;
+  bottom: 0.25rem;
+  left: 0.5rem;
+  z-index: 1000;
+  background-color: rgba(34, 34, 34, 0.75); /* gris translúcido */
+  border: var(--border);
+  border-radius: 6px;
+  padding: 0.5rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  max-height: 25vh;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  pointer-events: auto;
 }
 
 .inventory-list {
   list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 0 0;
+  margin: 0;
+  padding-left: 1rem;
+}
+
+/* GEAR COLUMN: ancho fijo, flex columna */
+.gear-column {
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  background: var(--accent-bg);
+  border: var(--border);
+  overflow: visible; /* para que log-window-floating pueda flotar */
+  position: relative;
+  padding-bottom: 256px;
+  box-sizing: border-box;
 }
 
-.inventory-list li {
-  padding: 0.3rem 0.5rem;
-  background-color: #111;
-  border-left: 3px solid #fff;
-}
-
-.layout-flex {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2rem;
-    width: 100%;
-    margin-top: 1rem;
-  }
-  
-  /* Ahora el inventario NO es absoluto */
-  .inventory-window {
-    position: relative;
-    background-color: #000;
-    color: #fff;
-    font-family: 'Courier New', monospace;
-    border: 2px solid #fff;
-    padding: 1rem;
-    width: 260px;
-    max-height: 70vh;
-    overflow-y: auto;
-    box-shadow: 0 0 10px #ffffff44;
-    z-index: 1;
-  }
-
-  .hotbar {
+/* Contenedor fijo para botones START/STOP */
+.gear-controls {
   display: flex;
-  gap: 1rem;
   justify-content: center;
-  list-style: none;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  height: 36px;
+  background: #222;
+  border-bottom: var(--border);
+  flex-shrink: 0;
+  align-items: center;
 }
 
-.hotbar-item {
+/* Botones START/STOP tamaño fijo */
+.gear-controls button {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  height: 28px;
+  min-width: 60px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* GearTab ocupa el espacio que queda y es scrollable */
+.gear-column > :nth-child(2) {
+  flex: 1 1 auto;
+  overflow-y: auto;
   padding: 0.5rem;
-  border-radius: 0.5rem;
-  background: #1c1c1c;
-  color: #eee;
 }
 
-.hotbar-item.selected {
-  border: 2px solid gold;
-  background: #333;
+.log-window-floating {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 265px;
+  pointer-events: auto;
+  background: black;
+  color: #0f0;
+  font-family: monospace;
+  font-size: 0.8rem;
+  overflow-y: hidden;
+  padding: 0.5rem;
+  border-top: var(--border);
+  box-sizing: border-box;
+  z-index: 1000;
+
+  scrollbar-width: none;
 }
 
-.hotbar-item.ghost {
-  opacity: 0.5;
-  font-style: italic;
+.log-window-floating::-webkit-scrollbar {
+  display: none;
+}
+
+.log-window-floating ul {
+  margin: 0;
+  padding-left: 0.75rem;
+  list-style: square;
+}
+
+.log-window-floating li {
+  list-style-position: outside;
 }
