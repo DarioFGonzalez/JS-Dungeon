@@ -1,5 +1,45 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 14: Massive visual overhaul & modularization 💻🤓🔧
+
+🗓️ *2025-05-24*
+
+**`¡MODULARIZACIÓN!`**
+
+Estaba pensado como mi trump-card, dejar de ser el proyecto de las +2K lineas de código por algo modular y bonito- pero resultó ser inevitable: navegar entre miles de líneas de código desorganizado para mover interfaces, types o íconos era un caos. ¡Hora de la revolución! 💥
+
+Separé archivos específicos para: `types & interfaces`, `entities`, `items`, `gear` e `icons`, mejorando la organización y reutilización del código. Todo correctamente exportado/importado y modularizado. ¡Che bellezza! 🤏
+
+Como el objetivo era avanzar hacia una *demo jugable*, el desorden visual del HUD me hacía demasiado ruído. Este parche se enfocó en corregir el layout, mejorar la coherencia visual y pulir la UX/UI en general.
+
+Manejo de medidas, posiciones absolutas, padding, tamaños de fuente, cards de Gear, logs de consola, estado del jugador... Todo lo necesario para que el juego pase de adivinar que representa ese ASCII a algo más entendible y coherente. 
+
+Además, ahora el daño continuo (DoT) sobre enemigos se ve claramente con valores numéricos. GearCards es más explícito, los ítems tienen hotkeys y muchos otros detalles que, en conjunto, hacen al juego *presentable*... `jugable`. ✨
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- Eliminé scrolls visuales innecesarios y establecí medidas fijas y responsivas para asegurar que todos los elementos encajen correctamente dentro de sus contenedores.
+- Se refactorizaron funciones clave (como `setPlayer`, `setEnemies`, etc.) para consolidar actualizaciones y reducir renderizados redundantes, optimizando el rendimiento.
+- Se mejoraron detalles visuales: daño visible en enemigos, texto más claro para status effects, hotkeys visibles en ítems (`Item.hotkey: string`), y más.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯:
+
+Ahora sí: el proyecto está *presentable*. El siguiente objetivo será redondear un concepto jugable simple, sin añadir nuevas features complejas.
+
+- Evitar agregar nuevas mecánicas pesadas (como patrullas dinámicas, aunque me encantaría) que podrían sobrecargar el motor gráfico basado en React.
+- Considerar reemplazar los enemigos actuales por dummys o muñecos de práctica para mantener coherencia ya que- bueno- no se mueven.
+- Comenzar la modularización de funciones (hooks personalizados, lógica desacoplada) para continuar limpiando el proyecto a medida que vaya avanzando.
+
+---
+
+🎮 *JS-Dungeon está cada vez más cerca de ser una demo sólida, jugable y con fundamentos técnicos bien plantados.* 👨‍💻✨
+
+---
+
 ## 🔹 Paso 13: Amuletos, y un traspié visual. 📿🧐/😨💻
 
 🗓️ *2025-05-20*

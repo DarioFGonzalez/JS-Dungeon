@@ -4,6 +4,32 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.0.97] - 2025-05-24
+
+### Added
+- **Indicadores visuales de daño continuo (DoT)**: Ahora los enemigos muestran sobre sí mismos los valores numéricos del daño que están recibiendo con formato claro y legible.
+- **Iconografía de entorno**: Se añadieron nuevas imágenes como antorchas (`torchWallLeft`, `torchWallRight`) que enriquecen la ambientación del mapa.
+
+### Changed
+- **Overhaul visual del HUD**: 
+  - Rediseño completo del layout de los componentes principales (`mapa`, `GearTab`, `inventory`, `log`, y controles).
+  - Reorganización en un sistema de grilla para mejorar la coherencia visual y la legibilidad.
+- **Estilización de la consola de eventos**:
+  - Reformateo del texto de cada entrada para ajustarse automáticamente al ancho, mejorar la separación visual y eliminar desbordes no deseados.
+  - Se agregaron logs visibles para acciones como el uso de ítems (`onUse`), mejorando la retroalimentación al jugador.
+- **Refactor de elementos de estado del jugador**:
+  - La vida, los efectos de estado (DoT, Buffs), el inventario y el botón de control ahora son **consolas flotantes** visualmente integradas al entorno.
+- **Estética del equipo equipado y seleccionable**:
+  - El equipo seleccionado se resalta visualmente.
+  - Se mejoró la separación entre ítems equipados (`charm`, `weapon`) con fondos diferenciados según tipo.
+
+### Fixed
+- **Scroll visual innecesario** en el área de consola de eventos: se eliminó un overflow vertical que causaba desbordes visuales no deseados.
+
+### Notes
+- Esta versión se centró en unificar criterios visuales, ordenar el layout general del juego y preparar el terreno para parches más técnicos. Se buscó evitar superposición de preocupaciones entre parches visuales y lógicos.
+- El `manageVisuals` fue refactorizado para permitir mayor flexibilidad visual sin sobrecargar la lógica del juego.
+
 ## [v0.0.96] - 2025-05-20
 
 ### Added
