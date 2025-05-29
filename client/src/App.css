@@ -1,3 +1,17 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: black;
+  color: var(--font-color);
+  font-family: sans-serif;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 :root {
   --hud-gap: 0.5rem;
   --hud-padding: 0.5rem;
@@ -5,17 +19,18 @@
   --bg-color: #111;
   --accent-bg: #1a1a1a;
   --font-color: #ccc;
+  --log-window-height: 265px; /* Nueva variable para la altura del log window */
 }
 
 .visual-text {
-  font-size: 1rem;         /* tamaño del número */
-  font-weight: bold;       /* texto más gordo */
-  color: khaki;            /* color del texto */
+  font-size: 1rem;
+  font-weight: bold;
+  color: khaki;
   text-shadow:
     1px 1px 0 black,
-   -1px 1px 0 black,
+    -1px 1px 0 black,
     1px -1px 0 black,
-   -1px -1px 0 black;      /* contorno negro */
+    -1px -1px 0 black;
 }
 
 body {
@@ -27,24 +42,23 @@ body {
 }
 
 .game-container {
-  height: 100vh;
-  overflow: hidden; /* ← ¡clave! */
-  display: flex;
+
+  max-height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
   flex-direction: column;
   box-sizing: border-box;
-  padding: var(--hud-padding);
-  gap: var(--hud-gap);
 }
 
 .top-bar {
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  background: rgba(34, 34, 34, 0.7); /* fondo semi-transparente */
+  background: rgba(34, 34, 34, 0.7);
   border: var(--border);
   padding: 0.5rem;
   border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.8);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
   user-select: none;
 }
 
@@ -55,6 +69,7 @@ body {
   grid-template-columns: 2.5fr 1fr;
   gap: var(--hud-gap);
   overflow: hidden;
+  max-height: 649px;
 }
 
 /* MAPA + INVENTARIO */
@@ -69,13 +84,23 @@ body {
   background: #222;
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
-  position: relative;
-}
+  position: relative; /* Mantener la posición relativa para elementos absolutos internos */
 
+  /* --- CAMBIOS CLAVE AQUÍ para el mapa --- */
+  /* NO necesitamos display flex aquí si el contenido del mapa ya es grande.
+     El problema era que el contenido del mapa no crecía para llenar el contenedor.
+     Ahora, simplemente dejamos que el 'columna-wrapper' sea el que potencialmente
+     se desborde y el 'map-container' el que maneje el overflow. */
+  overflow: auto; /* Permitir scroll si el contenido del mapa es más grande */
+}
 
 .columna-wrapper {
   position: relative;
+  /* Si necesitas que el mapa tenga un tamaño mínimo, agrégalo aquí. */
+  /* Si el mapa es dinámico y puede ser más pequeño que el contenedor,
+     y quieres centrarlo para que no haya 'zona muerta' en el fondo,
+     entonces sí podríamos poner display: flex y justify/align en map-container
+     Y en columna-wrapper agregar: flex-shrink: 0; para que no se encoja */
 }
 
 .fila {
@@ -96,7 +121,15 @@ body {
   top: 0;
   left: 0;
   pointer-events: none;
+  /* --- IMPORTANTE: Asegurarse que visuals-layer tenga el mismo tamaño que el mapa --- */
+  /* Necesita tener el mismo ancho y alto que .columna-wrapper para superponerse correctamente */
+  /* Una forma es ponerle el mismo display y asegurar que sus hijos mapeados coincidan */
+  /* O en JavaScript, ajustar su tamaño dinámicamente si el mapa cambia de tamaño. */
+  /* Por ahora, asumimos que se mapea con la misma lógica que el mapa base */
+  width: 100%;
+  height: 100%;
 }
+
 
 /* Corazones flotantes arriba, sobre el mapa */
 .hearts-floating {
@@ -107,8 +140,7 @@ body {
   display: flex;
   gap: 0.25rem;
   pointer-events: none;
-  
-  background-color: rgba(238, 89, 89, 0.5); /* fondo negro semi-transparente */
+  background-color: rgba(238, 89, 89, 0.5);
   border-radius: 6px;
   padding: 0.2rem 0.5rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
@@ -136,7 +168,7 @@ body {
   bottom: 0.25rem;
   left: 0.5rem;
   z-index: 1000;
-  background-color: rgba(34, 34, 34, 0.75); /* gris translúcido */
+  background-color: rgba(34, 34, 34, 0.75);
   border: var(--border);
   border-radius: 6px;
   padding: 0.5rem;
@@ -160,13 +192,14 @@ body {
   max-width: 260px;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Organiza los hijos en columna */
   background: var(--accent-bg);
   border: var(--border);
-  overflow: visible; /* para que log-window-floating pueda flotar */
-  position: relative;
-  padding-bottom: 256px;
+  overflow: hidden; /* Oculta el overflow, ya que los hijos gestionarán su propio scroll */
+  position: relative; /* Mantener por si hay otros elementos absolutamente posicionados */
   box-sizing: border-box;
+
+  /* --- CAMBIO CLAVE AQUÍ: No más padding-bottom, el log-window es parte del flujo flex --- */
 }
 
 /* Contenedor fijo para botones START/STOP */
@@ -179,7 +212,7 @@ body {
   height: 36px;
   background: #222;
   border-bottom: var(--border);
-  flex-shrink: 0;
+  flex-shrink: 0; /* No se encogerá */
   align-items: center;
 }
 
@@ -194,28 +227,37 @@ body {
 }
 
 /* GearTab ocupa el espacio que queda y es scrollable */
-.gear-column > :nth-child(2) {
-  flex: 1 1 auto;
-  overflow-y: auto;
+.gear-column > :nth-child(2) { /* Este selector apunta al GearTab component */
+  flex: 1 1 auto; /* Permite que este elemento crezca y ocupe el espacio disponible */
+  overflow-y: auto; /* Permite scroll si el contenido es demasiado largo */
   padding: 0.5rem;
+  /* --- CAMBIO CLAVE AQUÍ: Eliminamos el padding-bottom fijo,
+     el log-window-floating ya no es absolute en este contexto --- */
+  padding-bottom: 0; /* Aseguramos que no haya padding extra */
+  box-sizing: border-box;
 }
 
 .log-window-floating {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 265px;
+  /* --- CAMBIO CLAVE AQUÍ: Ya no es absolute, es parte del flujo flex --- */
+  position: static; /* O simplemente elimínala, ya que la posición por defecto es static */
+  height: var(--log-window-height); /* Usa la variable para la altura fija */
+  flex-shrink: 0; /* Asegura que no se encoja cuando el espacio sea limitado */
+
+  bottom: unset; /* Quitar propiedades de posicionamiento absoluto antiguas */
+  left: unset;
+  right: unset;
+
   pointer-events: auto;
   background: black;
   color: #0f0;
   font-family: monospace;
   font-size: 0.8rem;
-  overflow-y: hidden;
+  /* --- CAMBIO AQUÍ: El overflow-y se mantiene en el UL interno --- */
+  overflow-y: hidden; /* El contenedor no tiene scroll, el UL interno sí */
   padding: 0.5rem;
   border-top: var(--border);
   box-sizing: border-box;
-  z-index: 1000;
+  z-index: 1000; /* Puede que ya no sea necesario si está en el flujo normal */
 
   scrollbar-width: none;
 }
@@ -228,6 +270,13 @@ body {
   margin: 0;
   padding-left: 0.75rem;
   list-style: square;
+  height: 100%; /* Asegura que el ul ocupe toda la altura del contenedor */
+  overflow-y: auto; /* Permite scroll para los logs */
+  scrollbar-width: none; /* Firefox */
+}
+
+.log-window-floating ul::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 .log-window-floating li {

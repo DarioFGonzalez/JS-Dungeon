@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as icons from './Icons/index';
 import * as Types from './components/types/global';
 
@@ -1642,6 +1642,7 @@ return(
   <div className="game-container">
 
     <div className="grid-layout">
+        
       <div className="map-zone">
         <div className="map-container" style={{ position: 'relative' }}>
           <div className="columna-wrapper">
@@ -1711,6 +1712,7 @@ return(
       </div>
 
       <div className="gear-column">
+
         {!game && <div className="start-popup">
           {!game && <button onClick={startGame}>START</button>}
           {/* {game && <button onClick={stopGame}>STOP</button>} */}
@@ -1727,7 +1729,9 @@ return(
             ))}
           </ul>
         </div>
+
       </div>
+
     </div>
   </div>
 );
