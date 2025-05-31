@@ -32,6 +32,30 @@ const emptyGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize)
 
 const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
+interface slideItem
+{
+    title: string,
+    text: string,
+    img?: string
+}
+
+const slides: slideItem[] =
+[
+    {
+        title: 'Controls',
+        text: 'Controles: W,A,S,D.'
+    },
+    {
+        title: 'Gear',
+        text: 'Navigate with the arrows ← & →, equip/unequip selected gear with "e".'
+    },
+    {
+        title: 'Console',
+        text: 'Last events will show here.'
+    }
+];
+    
+
 const App = () =>
 {
     const gridRef = useRef<HTMLDivElement>(null);
@@ -41,6 +65,9 @@ const App = () =>
     const [ stun, setStun ] = useState<boolean>(false);
 
     const [ mapa, setMapa ] = useState<string[][]>( emptyGrid );
+    const [ showSlides, setShowSlides ] = useState<boolean>( false );
+    const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
+    const currentSlide = slides[slideIndex];
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyGrid );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
@@ -53,6 +80,17 @@ const App = () =>
     const [ player, setPlayer ] = useState<Types.Player>( Entities.emptyPlayer );
     const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
     const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
+
+    const moveSlide = ( where: string ): void =>
+    {
+        if(where==='next')
+        {
+            setSlideIndex( prev => ( prev + 1 ) % slides.length );
+            return ;
+        }
+        setSlideIndex( prev => ( prev - 1 + slides.length ) % slides.length );
+        return ;
+    }
 
     useEffect( () =>
     {
@@ -1198,7 +1236,7 @@ const App = () =>
             }
 
             switch(key)
-            {    
+            {
                 case 'arrowleft':
                 case 'arrowright':
                 navigateHotbar(key);
@@ -1220,6 +1258,10 @@ const App = () =>
 
                 case 'i':   //abrir inventario
                 setShowInventory(prev => !prev);
+                break;
+
+                case 'h':   //ayuda
+                setShowSlides( prev => !prev );
                 break;
 
                 case 'enter':
@@ -1644,10 +1686,11 @@ return(
     <div className="grid-layout">
         
       <div className="map-zone">
+
         <div className="map-container" style={{ position: 'relative' }}>
+
           <div className="columna-wrapper">
             <div
-              className="columna"
               onKeyDown={handleMovement}
               ref={gridRef}
               tabIndex={0}
@@ -1690,6 +1733,7 @@ return(
                 </div>
               ))}
             </div>
+
           </div>
 
           <div className="hearts-floating">
@@ -1708,7 +1752,16 @@ return(
               </ul>
             </div>
           )}
+
         </div>
+
+        {showSlides && <div className='help-layer'>
+            <button onClick={()=> {setShowSlides( false );setTimeout(() => gridRef.current?.focus(), 0); } }> X </button>
+            <p> {slides[slideIndex].text} </p>
+            <button onClick={()=> moveSlide('previous')}> anterior </button>
+            <button onClick={()=> moveSlide('next')}> siguiente </button>
+        </div>}
+
       </div>
 
       <div className="gear-column">
@@ -1721,6 +1774,7 @@ return(
         <GearTab player={player} />
 
         <div className="log-window-floating">
+
           <ul>
             {events.map((log, i) => (
               <li key={i} style={{ color: log.color || 'inherit' }}>
@@ -1728,11 +1782,13 @@ return(
               </li>
             ))}
           </ul>
+
         </div>
 
       </div>
 
     </div>
+
   </div>
 );
 
