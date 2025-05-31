@@ -4,16 +4,24 @@ import './ConsoleTab.css';
 
 interface CtabProps
 {
-    events: eventLog;
+    events: eventLog[];
 };
 
 const ConsoleTab: React.FC<CtabProps> = ( { events } ) =>
 {
 
     return(
-        <div>
-            hola
-        </div>
+    <div className="log-window-floating">
+
+        <ul>
+        {events.map((log, i) => (
+            <li key={i} style={{ color: log.color || 'inherit' }}>
+            {log.message}
+            </li>
+        ))}
+        </ul>
+
+    </div>
     );
 }
 

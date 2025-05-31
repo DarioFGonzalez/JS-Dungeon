@@ -8,6 +8,7 @@ import * as Items from './components/data/items';
 
 import './App.css';
 
+import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import GearTab from './components/GearTab/GearTab';
 
 const allIcons = Object.values(icons);
@@ -1773,17 +1774,7 @@ return(
 
         <GearTab player={player} />
 
-        <div className="log-window-floating">
-
-          <ul>
-            {events.map((log, i) => (
-              <li key={i} style={{ color: log.color || 'inherit' }}>
-                {log.message}
-              </li>
-            ))}
-          </ul>
-
-        </div>
+        <ConsoleTab events={events} />
 
       </div>
 

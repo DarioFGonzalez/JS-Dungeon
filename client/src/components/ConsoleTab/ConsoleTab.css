@@ -1,0 +1,30 @@
+.log-window-floating
+{
+    background-color: #3f27f81f;
+    border: 1px solid #5f3bff77;
+    border-radius: 6px;
+    padding: 8px;
+    height: 250px;
+    overflow: hidden;
+}
+
+.log-window-floating::-webkit-scrollbar {
+  display: none;
+}
+
+.log-window-floating ul {
+  margin: 0;
+  padding-left: 0.75rem;
+  list-style: square;
+  height: 100%; /* Asegura que el ul ocupe toda la altura del contenedor */
+  overflow-y: auto; /* Permite scroll para los logs */
+  scrollbar-width: none; /* Firefox */
+}
+
+.log-window-floating ul::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.log-window-floating li {
+  list-style-position: outside;
+}
