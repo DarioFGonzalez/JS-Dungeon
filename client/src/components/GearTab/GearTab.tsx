@@ -1,5 +1,5 @@
 import React from 'react';
-import {Player} from '../types/global';
+import { Player } from '../types/global';
 import './GearTab.css';
 
 interface GearTabProps
@@ -11,13 +11,11 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
 
   return (
     <div className="gear-tab">
+
       <div className="gear-grid">
         {player.HotBar.Equippeable.map((x, y) => (
-          <div
-            onClick={() => console.log(x.item)}
-            key={y}
-            className={`${x.item.slot=='weapon'?'weapon-card':'charm-card'} ${x.equiped ? 'equipped' : ''} ${x.selected ? 'selected' : ''}`}
-          >
+          <div onClick={() => console.log(x.item)} key={y}
+          className={`${x.item.slot=='weapon'?'weapon-card':'charm-card'} ${x.equiped ? 'equipped' : ''} ${x.selected ? 'selected' : ''}`} >
             <div className="gear-name">{x.item.name}</div>
             <div className="gear-stats-row">
               <div className="gear-stat">🗡 {x.item.attackStats?.dmg ?? '—'}</div>
@@ -35,6 +33,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
           </div>
         ))}
       </div>
+
     </div>
   );
 };

@@ -33,18 +33,18 @@ html, body {
     -1px -1px 0 black;
 }
 
-body {
+body
+{
   margin: 0;
-  background: black;
-  color: var(--font-color);
+  background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);  color: var(--font-color);
   font-family: sans-serif;
   overflow: hidden;
 }
 
 .game-container {
 
-  max-height: 100vh;
-  max-width: 100vw;
+  max-height: 650px;
+  max-width: 950px;
   overflow: hidden;
   flex-direction: column;
   box-sizing: border-box;
@@ -65,11 +65,11 @@ body {
 .grid-layout {
   flex: 1 1 auto;
   min-height: 0;
+  max-height: 649px;
   display: grid;
   grid-template-columns: 2.5fr 1fr;
   gap: var(--hud-gap);
   overflow: hidden;
-  max-height: 649px;
 }
 
 /* MAPA + INVENTARIO */
@@ -84,23 +84,17 @@ body {
   background: #222;
   flex: 1 1 auto;
   min-height: 0;
-  position: relative; /* Mantener la posición relativa para elementos absolutos internos */
-
-  /* --- CAMBIOS CLAVE AQUÍ para el mapa --- */
-  /* NO necesitamos display flex aquí si el contenido del mapa ya es grande.
-     El problema era que el contenido del mapa no crecía para llenar el contenedor.
-     Ahora, simplemente dejamos que el 'columna-wrapper' sea el que potencialmente
-     se desborde y el 'map-container' el que maneje el overflow. */
-  overflow: auto; /* Permitir scroll si el contenido del mapa es más grande */
+  max-height: 650px;
+  position: relative;
+  overflow: auto;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+  border: var(--border);
 }
 
 .columna-wrapper {
+  height: 100%;
+  width: 650px;
   position: relative;
-  /* Si necesitas que el mapa tenga un tamaño mínimo, agrégalo aquí. */
-  /* Si el mapa es dinámico y puede ser más pequeño que el contenedor,
-     y quieres centrarlo para que no haya 'zona muerta' en el fondo,
-     entonces sí podríamos poner display: flex y justify/align en map-container
-     Y en columna-wrapper agregar: flex-shrink: 0; para que no se encoja */
 }
 
 .fila {
@@ -121,15 +115,35 @@ body {
   top: 0;
   left: 0;
   pointer-events: none;
-  /* --- IMPORTANTE: Asegurarse que visuals-layer tenga el mismo tamaño que el mapa --- */
-  /* Necesita tener el mismo ancho y alto que .columna-wrapper para superponerse correctamente */
-  /* Una forma es ponerle el mismo display y asegurar que sus hijos mapeados coincidan */
-  /* O en JavaScript, ajustar su tamaño dinámicamente si el mapa cambia de tamaño. */
-  /* Por ahora, asumimos que se mapea con la misma lógica que el mapa base */
   width: 100%;
   height: 100%;
 }
 
+.h-img
+{
+  max-height: 200px;
+  max-width: 300px;
+  top: 50%;
+  left: 50%;
+}
+
+.help-layer
+{
+  height: 250px;
+  width: 350px;
+  align-content: center;
+  text-align: center;
+  position: absolute;
+  top: 30%;
+  left: 25%;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn
+{
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
 
 /* Corazones flotantes arriba, sobre el mapa */
 .hearts-floating {
@@ -140,7 +154,7 @@ body {
   display: flex;
   gap: 0.25rem;
   pointer-events: none;
-  background-color: rgba(238, 89, 89, 0.5);
+  background-color: rgba(223, 50, 50, 0.171);
   border-radius: 6px;
   padding: 0.2rem 0.5rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
@@ -190,7 +204,7 @@ body {
   width: 260px;
   min-width: 260px;
   max-width: 260px;
-  height: 100%;
+  height: 650px;
   display: flex;
   flex-direction: column; /* Organiza los hijos en columna */
   background: var(--accent-bg);
@@ -237,48 +251,28 @@ body {
   box-sizing: border-box;
 }
 
-.log-window-floating {
-  /* --- CAMBIO CLAVE AQUÍ: Ya no es absolute, es parte del flujo flex --- */
-  position: static; /* O simplemente elimínala, ya que la posición por defecto es static */
-  height: var(--log-window-height); /* Usa la variable para la altura fija */
-  flex-shrink: 0; /* Asegura que no se encoja cuando el espacio sea limitado */
-
-  bottom: unset; /* Quitar propiedades de posicionamiento absoluto antiguas */
-  left: unset;
-  right: unset;
-
-  pointer-events: auto;
-  background: black;
-  color: #0f0;
-  font-family: monospace;
-  font-size: 0.8rem;
-  /* --- CAMBIO AQUÍ: El overflow-y se mantiene en el UL interno --- */
-  overflow-y: hidden; /* El contenedor no tiene scroll, el UL interno sí */
-  padding: 0.5rem;
-  border-top: var(--border);
-  box-sizing: border-box;
-  z-index: 1000; /* Puede que ya no sea necesario si está en el flujo normal */
-
-  scrollbar-width: none;
+.button-ui {
+  background: #333;
+  border: var(--border);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  color: var(--font-color);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.button-ui:hover {
+  background: #444;
 }
 
-.log-window-floating::-webkit-scrollbar {
-  display: none;
-}
-
-.log-window-floating ul {
-  margin: 0;
-  padding-left: 0.75rem;
-  list-style: square;
-  height: 100%; /* Asegura que el ul ocupe toda la altura del contenedor */
-  overflow-y: auto; /* Permite scroll para los logs */
-  scrollbar-width: none; /* Firefox */
-}
-
-.log-window-floating ul::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
-.log-window-floating li {
-  list-style-position: outside;
+.death-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: red;
+  text-shadow: 0 0 4px black;
 }

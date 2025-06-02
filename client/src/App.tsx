@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import * as icons from './Icons/index';
 import * as Types from './components/types/global';
+
+import * as icons from './Icons/index';
+import * as images from './images/index';
 
 import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
@@ -8,6 +10,7 @@ import * as Items from './components/data/items';
 
 import './App.css';
 
+import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import GearTab from './components/GearTab/GearTab';
 
 const allIcons = Object.values(icons);
@@ -32,6 +35,42 @@ const emptyGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize)
 
 const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
+interface slideItem
+{
+    title: string,
+    text?: string,
+    img?: string
+}
+
+const slides: slideItem[] =
+[
+    {
+        title: 'Movimiento',
+        img: images.h_mov
+    },
+    {
+        title: 'Gear nav',
+        img: images.h_gear_nav
+    },
+    {
+        title: 'Inventory',
+        img: images.h_inventory
+    },
+    {
+        title: 'Weapons',
+        img: images.h_weapons
+    },
+    {
+        title: 'Accesories',
+        img: images.h_accesories
+    },
+    {
+        title: 'Attack',
+        img: images.h_attack
+    }
+];
+    
+
 const App = () =>
 {
     const gridRef = useRef<HTMLDivElement>(null);
@@ -41,6 +80,9 @@ const App = () =>
     const [ stun, setStun ] = useState<boolean>(false);
 
     const [ mapa, setMapa ] = useState<string[][]>( emptyGrid );
+    const [ showSlides, setShowSlides ] = useState<boolean>( false );
+    const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
+    const currentSlide = slides[slideIndex];
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyGrid );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
@@ -53,6 +95,17 @@ const App = () =>
     const [ player, setPlayer ] = useState<Types.Player>( Entities.emptyPlayer );
     const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
     const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
+
+    const moveSlide = ( where: string ): void =>
+    {
+        if(where==='next')
+        {
+            setSlideIndex( prev => ( prev + 1 ) % slides.length );
+            return ;
+        }
+        setSlideIndex( prev => ( prev - 1 + slides.length ) % slides.length );
+        return ;
+    }
 
     useEffect( () =>
     {
@@ -1121,7 +1174,7 @@ const App = () =>
         setPlayer( playerInfo =>
         {
             const player = { ...playerInfo };
-            const to = key==='arrowleft' ? -1 : +1 ;
+            const to = key==='arrowup' ? -1 : +1 ;
             const oldIndex = player.HotBar.Equippeable.findIndex( item => item.selected );
             const max = player.HotBar.Equippeable.length - 1;
             const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
@@ -1198,9 +1251,9 @@ const App = () =>
             }
 
             switch(key)
-            {    
-                case 'arrowleft':
-                case 'arrowright':
+            {
+                case 'arrowup':
+                case 'arrowdown':
                 navigateHotbar(key);
                 break;
 
@@ -1220,6 +1273,10 @@ const App = () =>
 
                 case 'i':   //abrir inventario
                 setShowInventory(prev => !prev);
+                break;
+
+                case 'h':   //ayuda
+                setShowSlides( prev => !prev );
                 break;
 
                 case 'enter':
@@ -1610,7 +1667,7 @@ const App = () =>
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player.Data.x][player.Data.y] = '';
         setMapa(auxiliar);
-        setPlayer( {...Entities.emptyPlayer, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } );
+        setPlayer( {...Entities.emptyPlayer, HP: 0, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } );
         queueLog(`Moriste a causa de tus heridas.`, 'white');
         setGame(false);
     }
@@ -1644,10 +1701,18 @@ return(
     <div className="grid-layout">
         
       <div className="map-zone">
+
         <div className="map-container" style={{ position: 'relative' }}>
+
+            {player.HP <= 0 && (
+            <div className="death-overlay">
+                <h2>MORISTE</h2>
+            </div>
+)}
+
           <div className="columna-wrapper">
+
             <div
-              className="columna"
               onKeyDown={handleMovement}
               ref={gridRef}
               tabIndex={0}
@@ -1690,6 +1755,7 @@ return(
                 </div>
               ))}
             </div>
+
           </div>
 
           <div className="hearts-floating">
@@ -1708,31 +1774,35 @@ return(
               </ul>
             </div>
           )}
+
         </div>
+
+        {showSlides &&
+        <div className='help-layer'>
+            <button className='absolute top-0 left-0' onClick={()=> {setShowSlides( false );setTimeout(() => gridRef.current?.focus(), 0); } }> X </button>
+            {/* <p> {slides[slideIndex].text} </p> */}
+            { slides[slideIndex].img && <img className= 'h-img' src={slides[slideIndex].img}/> }
+            <button onClick={()=> moveSlide('previous')}> anterior </button>
+            <button onClick={()=> moveSlide('next')}> siguiente </button>
+        </div>}
+
       </div>
 
       <div className="gear-column">
 
         {!game && <div className="start-popup">
-          {!game && <button onClick={startGame}>START</button>}
+          {!game && <button className='button-ui' onClick={startGame}>START</button>}
           {/* {game && <button onClick={stopGame}>STOP</button>} */}
         </div>}
 
         <GearTab player={player} />
 
-        <div className="log-window-floating">
-          <ul>
-            {events.map((log, i) => (
-              <li key={i} style={{ color: log.color || 'inherit' }}>
-                {log.message}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ConsoleTab events={events} />
 
       </div>
 
     </div>
+
   </div>
 );
 

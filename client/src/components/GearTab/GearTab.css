@@ -1,5 +1,5 @@
 .gear-tab {
-  background-color: #222;
+  background-color: #f8923e2c;
   border: 1px solid #555;
   border-radius: 6px;
   padding: 8px;
@@ -15,7 +15,7 @@
 
 .weapon-card {
   background-color: #614a4a;
-  border: 2px solid #444;
+  border: 2px solid #201d1d;
   border-radius: 6px;
   padding: 4px 6px;
   font-size: 0.85rem;
@@ -30,6 +30,7 @@
 
 .weapon-card.equipped {
   background-color: rgb(155, 15, 15);
+  border-radius: 50px;
 }
 
 .weapon-card.selected {
@@ -38,7 +39,7 @@
 
 .charm-card {
   background-color: #493d66;
-  border: 2px solid #444;
+  border: 2px solid #201d1d;
   border-radius: 6px;
   padding: 4px 6px;
   font-size: 0.85rem;
@@ -53,6 +54,7 @@
 
 .charm-card.equipped {
   background-color: rgb(32, 19, 153);
+  border-radius: 50px;
 }
 
 .charm-card.selected {

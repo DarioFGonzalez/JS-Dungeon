@@ -1,5 +1,38 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 15: "Press H for HUH?!" ¡Slides de ayuda! 👌🧐✨
+
+🗓️ *2025-05-26*
+
+Estoy cerrando conceptos visuales, redondeando ideas generales y pensando en levantar el proyecto online para que cualquiera pueda probarlo. En este contexto me pregunté: ¿Qué queda **críptico**? ¿Qué NO entendería alguien que entra sin contexto previo?
+
+Con esa mirada crítica sumé un sistema de **slides de ayuda**: presionando la tecla `'H'`, se abre una serie de imágenes que explican lo básico `(HUD, Gear, controles, etc)`. Para hacerlas:
+- Busqué, recorté y limpié los fondos de `cada` ícono.
+- Diseñé los slides `a mano` (250x350px) con íconos, textos y colores coherentes.
+- Organicé todo en una carpeta `Images/`, con su propio `index.ts` para facilitar las importaciones.
+
+También agregué una **pantalla de muerte** (cuando el jugador llega a 0 HP) y reorganicé la interacción con la *hotbar*, que ahora se navega con ↑↓ en vez de ←→ para mantener coherencia con su disposición vertical.
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- **Hotbar**: La navegación pasó de horizontal (←→) a vertical (↑↓), alineándose con el diseño visual.
+- **Slides de ayuda**:
+  - Lógica de apertura/cierre mediante tecla `'H'`.
+  - Estructura de tipos e interfaces para manejar el sistema.
+  - Imágenes personalizadas diseñadas a mano y organizadas modularmente.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+- Mostrar información de enemigos al pasar el mouse por encima (vida, daño, armadura).
+- Mostrar tooltip con stats de los ítems al hacer hover.
+- Crear más mapas con objetivos reales: actualmente el juego es un *sandbox de funciones*. Quiero usar toda esta paleta y crear **algo jugable, con color y sentido**. 🎊✨
+
+---
+
 ## 🔹 Paso 14: Massive visual overhaul & modularization 💻🤓🔧
 
 🗓️ *2025-05-24*
