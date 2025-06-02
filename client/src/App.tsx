@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import * as icons from './Icons/index';
 import * as Types from './components/types/global';
+
+import * as icons from './Icons/index';
+import * as images from './images/index';
 
 import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
@@ -36,23 +38,35 @@ const emptyDelayedLog = { status: false, message: '', color: 'white' };
 interface slideItem
 {
     title: string,
-    text: string,
+    text?: string,
     img?: string
 }
 
 const slides: slideItem[] =
 [
     {
-        title: 'Controls',
-        text: 'Controles: W,A,S,D.'
+        title: 'Movimiento',
+        img: images.h_mov
     },
     {
-        title: 'Gear',
-        text: 'Navigate with the arrows ← & →, equip/unequip selected gear with "e".'
+        title: 'Gear nav',
+        img: images.h_gear_nav
     },
     {
-        title: 'Console',
-        text: 'Last events will show here.'
+        title: 'Inventory',
+        img: images.h_inventory
+    },
+    {
+        title: 'Weapons',
+        img: images.h_weapons
+    },
+    {
+        title: 'Accesories',
+        img: images.h_accesories
+    },
+    {
+        title: 'Attack',
+        img: images.h_attack
     }
 ];
     
@@ -1160,7 +1174,7 @@ const App = () =>
         setPlayer( playerInfo =>
         {
             const player = { ...playerInfo };
-            const to = key==='arrowleft' ? -1 : +1 ;
+            const to = key==='arrowup' ? -1 : +1 ;
             const oldIndex = player.HotBar.Equippeable.findIndex( item => item.selected );
             const max = player.HotBar.Equippeable.length - 1;
             const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
@@ -1238,8 +1252,8 @@ const App = () =>
 
             switch(key)
             {
-                case 'arrowleft':
-                case 'arrowright':
+                case 'arrowup':
+                case 'arrowdown':
                 navigateHotbar(key);
                 break;
 
@@ -1653,7 +1667,7 @@ const App = () =>
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player.Data.x][player.Data.y] = '';
         setMapa(auxiliar);
-        setPlayer( {...Entities.emptyPlayer, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } );
+        setPlayer( {...Entities.emptyPlayer, HP: 0, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } );
         queueLog(`Moriste a causa de tus heridas.`, 'white');
         setGame(false);
     }
@@ -1690,7 +1704,14 @@ return(
 
         <div className="map-container" style={{ position: 'relative' }}>
 
+            {player.HP <= 0 && (
+            <div className="death-overlay">
+                <h2>MORISTE</h2>
+            </div>
+)}
+
           <div className="columna-wrapper">
+
             <div
               onKeyDown={handleMovement}
               ref={gridRef}
@@ -1756,9 +1777,11 @@ return(
 
         </div>
 
-        {showSlides && <div className='help-layer'>
-            <button onClick={()=> {setShowSlides( false );setTimeout(() => gridRef.current?.focus(), 0); } }> X </button>
-            <p> {slides[slideIndex].text} </p>
+        {showSlides &&
+        <div className='help-layer'>
+            <button className='absolute top-0 left-0' onClick={()=> {setShowSlides( false );setTimeout(() => gridRef.current?.focus(), 0); } }> X </button>
+            {/* <p> {slides[slideIndex].text} </p> */}
+            { slides[slideIndex].img && <img className= 'h-img' src={slides[slideIndex].img}/> }
             <button onClick={()=> moveSlide('previous')}> anterior </button>
             <button onClick={()=> moveSlide('next')}> siguiente </button>
         </div>}
@@ -1768,7 +1791,7 @@ return(
       <div className="gear-column">
 
         {!game && <div className="start-popup">
-          {!game && <button onClick={startGame}>START</button>}
+          {!game && <button className='button-ui' onClick={startGame}>START</button>}
           {/* {game && <button onClick={stopGame}>STOP</button>} */}
         </div>}
 

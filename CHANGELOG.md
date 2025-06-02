@@ -4,6 +4,26 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.0.98] - 2025-05-26
+
+### Added
+- **Sistema de Slides de Ayuda**: Nueva interfaz emergente que explica mecánicas clave del juego. Contiene imágenes creadas manualmente con íconos, textos e indicadores estilizados para mantener coherencia estética con el HUD.
+- **Pantalla de Muerte**: Se implementó una vista clara de *Game Over* que aparece automáticamente cuando el jugador alcanza 0 de HP, brindando cierre visual al combate.
+- **Carpeta unificada de assets visuales (`Images`)**: Nueva estructura de imágenes importables desde `index.ts` para facilitar la organización y reutilización de elementos gráficos.
+
+### Changed
+- **Hotbar de Gear**:
+  - Navegación rediseñada: ahora se utiliza ↑ ↓ en lugar de → ←, respetando la orientación vertical del equipo visible.
+- **Estética del Gear y consola de eventos**:
+  - Se aplicaron cambios de color y contraste para mejorar la legibilidad de los textos y destacar ítems activos o equipados.
+  - Ajustes visuales menores para integrar mejor estos componentes al entorno general del juego.
+- **Formato y consistencia visual de Slides**:
+  - Imágenes de ayuda exportadas desde Photoshop, Figma y Paint, con íconos recortados manualmente y ajustados a una paleta y dimensiones coherentes.
+
+### Notes
+- Este parche tuvo como objetivo reforzar la experiencia del jugador mediante feedback visual claro, asistencia contextual (Slides), y mayor cohesión estética entre los elementos interactivos.
+- También sienta las bases para un tutorial inicial o sistema de progresión visual escalable en futuras versiones.
+
 ## [v0.0.97] - 2025-05-24
 
 ### Added
