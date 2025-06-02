@@ -6,9 +6,9 @@
 
 Estoy cerrando conceptos visuales, redondeando ideas generales y pensando en levantar el proyecto online para que cualquiera pueda probarlo. En este contexto me pregunté: ¿Qué queda **críptico**? ¿Qué NO entendería alguien que entra sin contexto previo?
 
-Con esa mirada crítica sumé un sistema de **slides de ayuda**: presionando la tecla `'H'`, se abre una serie de imágenes que explican lo básico (HUD, Gear, controles, etc). Para hacerlas:
-- Busqué, recorté y limpié los fondos de cada ícono.
-- Diseñé los slides a mano (250x350px) con íconos, textos y colores coherentes.
+Con esa mirada crítica sumé un sistema de **slides de ayuda**: presionando la tecla `'H'`, se abre una serie de imágenes que explican lo básico `(HUD, Gear, controles, etc)`. Para hacerlas:
+- Busqué, recorté y limpié los fondos de `cada` ícono.
+- Diseñé los slides `a mano` (250x350px) con íconos, textos y colores coherentes.
 - Organicé todo en una carpeta `Images/`, con su propio `index.ts` para facilitar las importaciones.
 
 También agregué una **pantalla de muerte** (cuando el jugador llega a 0 HP) y reorganicé la interacción con la *hotbar*, que ahora se navega con ↑↓ en vez de ←→ para mantener coherencia con su disposición vertical.

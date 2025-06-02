@@ -18,7 +18,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Se aplicaron cambios de color y contraste para mejorar la legibilidad de los textos y destacar ítems activos o equipados.
   - Ajustes visuales menores para integrar mejor estos componentes al entorno general del juego.
 - **Formato y consistencia visual de Slides**:
-  - Imágenes de ayuda exportadas desde Photoshop, Figma y Paint, con íconos recortados manualmente y ajustados a una paleta y dimensiones coherentes.
+  - Imágenes de ayuda exportadas desde `Photoshop`, `Figma` y `Paint`, con íconos recortados `manualmente` y ajustados a una paleta y dimensiones coherentes.
 
 ### Notes
 - Este parche tuvo como objetivo reforzar la experiencia del jugador mediante feedback visual claro, asistencia contextual (Slides), y mayor cohesión estética entre los elementos interactivos.
