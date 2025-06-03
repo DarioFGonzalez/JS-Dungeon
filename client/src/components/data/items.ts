@@ -1,5 +1,5 @@
-import * as Types from '../types/global';
 import * as icons from '../../Icons/index';
+import * as Types from '../types/global';
 
 export const Aloe: Types.Item =
 {
@@ -8,7 +8,7 @@ export const Aloe: Types.Item =
     symbol: icons.aloeImg,
     hotkey: 'P',
     id: 3,
-    desc:  '',
+    desc:  'Corta la quemadura.',
     cd: 4000
 }
 
@@ -19,7 +19,7 @@ export const Potion: Types.Item =
     symbol: icons.potionImg,
     hotkey: 'O',
     id: 2,
-    desc: '+3 HP',
+    desc: 'Recupera 3 HP.',
     cd: 3000
 } 
 
@@ -30,6 +30,6 @@ export const Bandages: Types.Item =
     symbol: icons.bandagesImg,
     hotkey: 'K',
     id: 1,
-    desc: 'Stops bleeding.',
+    desc: 'Detiene el sangrado.',
     cd: 5000
 }

@@ -2,7 +2,7 @@
 
 *Un RPG retro hecho con JavaScript Vanilla, a puro amor por los juegos clásicos.*
 
-Inspirado en títulos como **Mu**, **Lineage II**, **Diablo**, **Neverwinter Nights** y más, JS-Dungeon es un homenaje al rol viejo con una arquitectura moderna y extensible. Todo hecho desde cero, sin frameworks, sin atajos.
+Inspirado en juegos retro RPG, JS-Dungeon es un homenaje al rol viejo con una arquitectura moderna y extensible. Todo hecho desde cero, sin frameworks, sin atajos.
 
 ---
 
@@ -10,7 +10,7 @@ Inspirado en títulos como **Mu**, **Lineage II**, **Diablo**, **Neverwinter Nig
 
 - Mapa tipo grid y movimiento libre
 - Combate básico funcional
-- Sistema de loot y niveles
+- Sistema de loot
 - Interfaz custom sin dependencias externas
 - Código modular, pensado para escalar
 
@@ -20,21 +20,22 @@ Inspirado en títulos como **Mu**, **Lineage II**, **Diablo**, **Neverwinter Nig
 
 - `JavaScript` (Vanilla, sin frameworks)
 - `HTML5` + `CSS3` con diseño responsivo básico
-- Arquitectura sin librerías externas (por ahora 👀)
+- Arquitectura sin una sola librería externas
 
 ---
 
 ## 🧪 ¿Está terminado?
 
-Ni cerca.  
-Esto es un proyecto en evolución constante. Cada parche trae algo nuevo, o rompe lo anterior (con cariño).
+Para nada.
+Este proyecto es un constante crecimiento, mientras avanzo- voy descubriendo nuevas ideas- encontrando la forma de aplicarlas, probando y encontrando otra idea todavía más divertida que la anterior. ¡Evolución!.
 
 En la hoja de ruta:
 - Inventario funcional
-- Magias y habilidades
+- Magias, habilidades, pasivas
+- DoT, Buffs, Debuffs
 - IA básica y patrones de enemigos
 - Guardado de progreso
-- ¡Y hasta un sistema de interacción multijugador experimental!
+- Loot, farming, grinding
 
 ---
 
@@ -42,7 +43,7 @@ En la hoja de ruta:
 
 Porque *"hacer un juego completo"* es el sueño de muchos devs, pero también una excusa perfecta para aprender, frustrarse, refactorizar y crecer.
 
-**JS-Dungeon** no es solo un juego, es un laboratorio.  
+**JS-Dungeon** no es solo un juego, es un laboratorio.
 Cada sistema está pensado para *ser escalable, entendible y divertido de programar.*
 
 ---
@@ -56,12 +57,17 @@ Cada sistema está pensado para *ser escalable, entendible y divertido de progra
 
 ## 🚀 Demo
 
-*Próximamente.*  
-No esperes ray tracing, pero sí cariño en cada línea de código.
+¡Deployed DEMO! `[v0.0.98]`
+
+[ ⚔ JS-Dungeon ⚔ ](https://js-dungeon.vercel.app)
+
+Amo programar, amo crear y romperme la cabeza con código. ¡Gracias por interesarte en mi proyecto!
+
+Tu feedback positivo o "negativo", bugs, errores o sugerencias voy a usarlos para ser mejor dev.
 
 ---
 
 ## 📜 Licencia
 
-Este proyecto está bajo licencia MIT.  
+Este proyecto está bajo licencia MIT.
 Podés leer los detalles en el archivo [LICENSE](./LICENSE).

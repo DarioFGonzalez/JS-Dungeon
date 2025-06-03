@@ -4,6 +4,16 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.0.99] - 2025-06-02
+
+### Added
+- Cartel fijo en el HUD: *"Apretá H para el tutorial"* agregado al borde superior derecho para mejorar la accesibilidad de los controles.
+- Nueva slide de ayuda: sección "Repositorio" con imagen explicativa y botón que redirige directamente al repositorio de GitHub.
+- Link directo a la demo en Vercel agregado en la sección `DEMO` del `README.md`.
+
+### Notes
+- Esta versión funciona como hotfix visual menor y de accesibilidad. Mejora la entrada de nuevos jugadores y la transparencia del proyecto al brindar acceso visible a documentación y código fuente.
+
 ## [v0.0.98] - 2025-05-26
 
 ### Added

@@ -67,6 +67,11 @@ const slides: slideItem[] =
     {
         title: 'Attack',
         img: images.h_attack
+    },
+    {
+        title: 'Repositorio',
+        img: images.h_repo,
+        text: 'https://github.com/DarioFGonzalez/JS-Dungeon'
     }
 ];
     
@@ -1762,13 +1767,17 @@ return(
             {renderHp()} {renderAliments()}
           </div>
 
+          <div className="h-text">
+           Apretá H para ver los controles [V0.0.98]
+          </div>
+
           {showInventory && (
             <div className="inventory-popup">
               <p>Inventario:</p>
               <ul className="inventory-list">
                 {player.Inventory.map((x, y) => (
                   <li key={y}>
-                    {x.item.name} — {`Cantidad: ${x.quantity}`} - {`(${x.item.hotkey})`}
+                    {x.item.name} — {x.item.desc} - {`Tenés ${x.quantity}`} {`(${x.item.hotkey})`}
                   </li>
                 ))}
               </ul>
@@ -1783,6 +1792,10 @@ return(
             {/* <p> {slides[slideIndex].text} </p> */}
             { slides[slideIndex].img && <img className= 'h-img' src={slides[slideIndex].img}/> }
             <button onClick={()=> moveSlide('previous')}> anterior </button>
+            { slides[slideIndex].text &&
+            <a href={slides[slideIndex].text} target="_blank" rel="noopener noreferrer">
+                <button> ¡Repo! </button>
+            </a>}
             <button onClick={()=> moveSlide('next')}> siguiente </button>
         </div>}
 

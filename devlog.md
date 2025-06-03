@@ -1,5 +1,33 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 16: Demo levantada en Vercel 🙂🚀✨
+
+🗓️ *2025-05-26*
+
+`Primer gran paso.`
+
+JS-Dungeon no está terminado, ni yendo totalmente en la dirección que pensaba en un principio- pero eso está perfecto. Mi idea original mutó y evolucionó, yo ya no dirijo la batuta, me dejo guiar por las ideas.
+
+Haber encontrado el tope técnico de `React` no pudiendo manejar ciertas cosas (como multiples layer visuales) me hizo entender que no puedo ***'crear un videojuego complejo'*** acá, pero igual le voy a sacar todo el provecho que pueda. 🔥🔨⚙
+
+Todavía faltan algunas slides de ayuda, explicando por ejemplo DoT- sangrado- veneno- fuego- como usar bien los accesorios o como quitarse los estados, pero no debería seguir pateando para adelante, como si tuviera miedo o verguenza de mi juego- este proyecto es la punta de todo lo que puedo hacer- mientras que me divierto en el proceso
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- DOCS: Actualizado el README.md para tener link directo a la demo levantada en Vercel.
+- UI: Agregado cartel de "Apretá H para el tutorial".
+- Slide: Agregado slide con botón que redirije al repositorio.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+- ¡Seguimos! Pero ahora, en vivo y desplegados en Vercel. 🚀✨
+
+---
+
 ## 🔹 Paso 15: "Press H for HUH?!" ¡Slides de ayuda! 👌🧐✨
 
 🗓️ *2025-05-26*
