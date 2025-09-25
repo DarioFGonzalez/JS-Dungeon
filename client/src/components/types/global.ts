@@ -1,9 +1,11 @@
+import * as images from '../../images/index';
+
 export type VisualCell = string | {
   text: string;
   color?: string;
 };
 
-export type locationData = { x: number, y: number, symbol: string };
+export type locationData = { x: number, y: number };
 export type Coords = [ number, number ];
 export type ArrayOfCoords = Coords[];
 export type Residual = { symbol: string, coords: number[] };
@@ -44,23 +46,29 @@ export interface WithAliments
     Aliments: Aliments;
 }
 
+export interface Environment
+{
+    name: string,
+    symbol: string
+}
+
 export interface Item
 {
     type: 'Item',
     name: string,
     symbol: string,
     hotkey: string,
-    id: number,
+    id: string,
     desc: string,
     cd: number
 };
 
 export interface Gear
 {
-    type: string,
+    type: 'Gear',
     name: string,
     symbol: string,
-    id: number,
+    id: string,
     slot: string,
     desc: string,
     attackStats?: attackStats,
@@ -72,8 +80,10 @@ export interface Gear
 
 export interface Player
 {
+    Type: 'Player', //agregado
     HP: number,
     MaxHP: number,
+    symbol: string,
     Data: locationData,
     Inventory: Inventory,
     HotBar: HotBarItems,
@@ -83,8 +93,10 @@ export interface Player
 
 export interface Trap
 {
-    ID: string,
-    Name: string,
+    Type: 'Trap', //agregado
+    id: string,
+    name: string,
+    symbol: string,
     Active: boolean,
     Data: locationData,
     Attack: attackInfo,
@@ -93,10 +105,12 @@ export interface Trap
 
 export interface Enemy
 {
-    ID: string,
-    Name: string,
+    Type: 'Enemy', //agregado
+    id: string,
+    name: string,
     HP: number,
     MaxHP: number,
+    symbol: string,
     Data: locationData,
     Aliments: Aliments,
     Attack: attackInfo,
@@ -105,3 +119,43 @@ export interface Enemy
     PatrolId?: ReturnType<typeof setTimeout>,
     Drops: dropInfo[]
 }
+
+export interface slideItem
+{
+    title: string,
+    text?: string,
+    img?: string
+}
+
+export const slides: slideItem[] =
+[
+    {
+        title: 'Movimiento',
+        img: images.h_mov
+    },
+    {
+        title: 'Gear nav',
+        img: images.h_gear_nav
+    },
+    {
+        title: 'Inventory',
+        img: images.h_inventory
+    },
+    {
+        title: 'Weapons',
+        img: images.h_weapons
+    },
+    {
+        title: 'Accesories',
+        img: images.h_accesories
+    },
+    {
+        title: 'Attack',
+        img: images.h_attack
+    },
+    {
+        title: 'Repositorio',
+        img: images.h_repo,
+        text: 'https://github.com/DarioFGonzalez/JS-Dungeon'
+    }
+];

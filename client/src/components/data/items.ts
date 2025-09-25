@@ -7,7 +7,7 @@ export const Aloe: Types.Item =
     name: 'Aloe leaf',
     symbol: icons.aloeImg,
     hotkey: 'P',
-    id: 3,
+    id: '',
     desc:  'Corta la quemadura.',
     cd: 4000
 }
@@ -18,7 +18,7 @@ export const Potion: Types.Item =
     name: 'Potion',
     symbol: icons.potionImg,
     hotkey: 'O',
-    id: 2,
+    id: '',
     desc: 'Recupera 3 HP.',
     cd: 3000
 } 
@@ -29,7 +29,11 @@ export const Bandages: Types.Item =
     name: 'Bandages',
     symbol: icons.bandagesImg,
     hotkey: 'K',
-    id: 1,
+    id: '',
     desc: 'Detiene el sangrado.',
     cd: 5000
 }
+
+export const Consumables: Types.Item[] = [
+    Potion, Bandages, Aloe
+];

@@ -6,9 +6,11 @@ export const maxHp = 10;
 
 export const emptyPlayer: Types.Player =
 {
+    Type: 'Player',
     HP: maxHp,
     MaxHP: maxHp,
-    Data: { x: 0, y: 0, symbol: icons.heroFront },
+    symbol: icons.heroFront,
+    Data: { x: 0, y: 0 },
     Inventory: [],
     HotBar: { Equippeable: [ ] },
     Aliments:
@@ -25,29 +27,39 @@ export const emptyPlayer: Types.Player =
 
 export const trap: Types.Trap =
 {
-    ID: '0',
-    Name: 'Trampa simple',
+    Type: 'Trap',
+    id: '0',
+    name: 'Trampa simple',
+    symbol: icons.trapImg,
     Active: true,
-    Data: { x: 0, y: 0, symbol: icons.trapImg },
+    Data: { x: 0, y: 0 },
     Attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
 }
 
 export const poisonTrap: Types.Trap =
 {
-    ID: '0',
-    Name: 'Trampa venenosa',
+    Type: 'Trap',
+    id: '0',
+    name: 'Trampa venenosa',
+    symbol: icons.pTrapImg,
     Active: true,
-    Data: { x: 0, y: 0, symbol: icons.pTrapImg },
+    Data: { x: 0, y: 0 },
     Attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'poison' },
 }
 
+export const Traps: Types.Trap[] = [
+    trap, poisonTrap
+]
+
 export const enemy: Types.Enemy =
 {
-    ID: '0',
-    Name: 'Goblin',
+    Type: 'Enemy',
+    id: '0',
+    name: 'Goblin',
     HP: 5,
     MaxHP: 5,
-    Data: { x: 0, y: 0, symbol: icons.goblinImg },
+    symbol: icons.goblinImg,
+    Data: { x: 0, y: 0 },
     Aliments:
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
@@ -61,11 +73,13 @@ export const enemy: Types.Enemy =
 
 export const heavyEnemy: Types.Enemy =
 {
-    ID: '0',
-    Name: 'Heavy Goblin',
+    Type: 'Enemy',
+    id: '0',
+    name: 'Hobgoblin',
     HP: 20,
     MaxHP: 20,
-    Data: { x: 0, y: 0, symbol: icons.hGoblinImg },
+    symbol: icons.hGoblinImg,
+    Data: { x: 0, y: 0 },
     Aliments:
     {
         Flags: { Poisoned: false, Bleeding: false, Burning: false },
@@ -76,3 +90,7 @@ export const heavyEnemy: Types.Enemy =
     Pattern: 'none',
     Drops: [ { item: Items.Potion, chance: 75 } ]
 }
+
+export const allEnemies: Types.Enemy[] = [
+    enemy, heavyEnemy
+];

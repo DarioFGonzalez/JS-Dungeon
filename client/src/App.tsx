@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import * as Types from './components/types/global';
 
 import * as icons from './Icons/index';
-import * as images from './images/index';
 
 import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
@@ -15,66 +14,14 @@ import GearTab from './components/GearTab/GearTab';
 
 const allIcons = Object.values(icons);
 
-// const ship_up = icons.heroBack;
-// const ship_down = icons.heroFront;
-// const ship_left = icons.heroLeft;
-// const ship_right = icons.heroRight;
-// const anyPlayer = [ship_down, ship_left, ship_right, ship_up];
-// const box = icons.boxImg;
-// const wall = icons.wallImg;
-// const teleport = icons.tpImg;
-// const totem = 'u';
-// const fountain = icons.fountainImg;
-// const cursedTotem = '🧿';
-
 const mapSize = 18;
-
-// const fire = icons.fireImg;
 
 const emptyGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );
 
-const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
-interface slideItem
-{
-    title: string,
-    text?: string,
-    img?: string
-}
+type CellContent = string | Types.Enemy | Types.Trap | Types.Item | Types.Gear;
 
-const slides: slideItem[] =
-[
-    {
-        title: 'Movimiento',
-        img: images.h_mov
-    },
-    {
-        title: 'Gear nav',
-        img: images.h_gear_nav
-    },
-    {
-        title: 'Inventory',
-        img: images.h_inventory
-    },
-    {
-        title: 'Weapons',
-        img: images.h_weapons
-    },
-    {
-        title: 'Accesories',
-        img: images.h_accesories
-    },
-    {
-        title: 'Attack',
-        img: images.h_attack
-    },
-    {
-        title: 'Repositorio',
-        img: images.h_repo,
-        text: 'https://github.com/DarioFGonzalez/JS-Dungeon'
-    }
-];
-    
+const emptyDelayedLog = { status: false, message: '', color: 'white' };    
 
 const App = () =>
 {
@@ -84,10 +31,10 @@ const App = () =>
     const [ allowed, setAllowed ] = useState<boolean>(true);
     const [ stun, setStun ] = useState<boolean>(false);
 
-    const [ mapa, setMapa ] = useState<string[][]>( emptyGrid );
+    const [ mapa, setMapa ] = useState<CellContent[][]>( emptyGrid );
     const [ showSlides, setShowSlides ] = useState<boolean>( false );
     const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
-    const currentSlide = slides[slideIndex];
+    const currentSlide = Types.slides[slideIndex];
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyGrid );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
@@ -105,10 +52,10 @@ const App = () =>
     {
         if(where==='next')
         {
-            setSlideIndex( prev => ( prev + 1 ) % slides.length );
+            setSlideIndex( prev => ( prev + 1 ) % Types.slides.length );
             return ;
         }
-        setSlideIndex( prev => ( prev - 1 + slides.length ) % slides.length );
+        setSlideIndex( prev => ( prev - 1 + Types.slides.length ) % Types.slides.length );
         return ;
     }
 
@@ -181,7 +128,7 @@ const App = () =>
         setMapa(auxiliar);
     };
 
-    const moveHere = ( x: number, y: number, symbol: string, complete: boolean ): string[][] =>
+    const moveHere = ( x: number, y: number, symbol: string, complete: boolean ): CellContent[][] =>
     {
         const auxiliar = mapa.map(fila => [...fila]);
         const  { x: pX, y: pY } = player.Data;
@@ -392,8 +339,16 @@ const App = () =>
 
                 if(flag && !thisWeapon.onCd)
                 {
-                    damageEnemy( thisEnemy.ID, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
-                    thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.Defense.Toughness, thisWeapon );
+                    if(thisEnemy.name==='Ore' && thisWeapon.item.name==='Pickaxe')
+                    {
+                        damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+                        thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.Defense.Toughness, thisWeapon );
+                    }
+                    else
+                    {
+                        damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+                        thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.Defense.Toughness, thisWeapon );
+                    }
                     flag = false;
                 }
 
@@ -422,8 +377,8 @@ const App = () =>
         } );
         
         lan==='es'
-        ? queueLog( `${enemy.Name} murió.`, 'crimson' )
-        : queueLog( `${enemy.Name} died.`, 'crimson' );
+        ? queueLog( `${enemy.name} murió.`, 'crimson' )
+        : queueLog( `${enemy.name} died.`, 'crimson' );
 
         return allEnemies.filter( mob => mob.Data.x!==x && mob.Data.y!==y );
     }
@@ -434,7 +389,7 @@ const App = () =>
         {
             const aux = [ ...allEnemies ];
             let tag = { aliment: '', color: 'khaki'};
-            const thisEnemy = aux.find( mob => mob.ID === ID ) || Entities.enemy;
+            const thisEnemy = aux.find( mob => mob.id === ID ) || Entities.enemy;
             
             if(thisEnemy.HP-dmg<=0)
             {
@@ -453,7 +408,7 @@ const App = () =>
                             setEnemies( allEnemies =>
                             {
                                 const aux = [ ...allEnemies ];
-                                return aux.map( mob => mob.ID===thisEnemy.ID
+                                return aux.map( mob => mob.id===thisEnemy.id
                                     ? manageDotInstance("PoisonInstances", {dmgId, timerId}, thisEnemy, 'add')
                                     : mob );
                             });
@@ -466,7 +421,7 @@ const App = () =>
                             setEnemies( allEnemies =>
                             {
                                 const aux = [ ...allEnemies ];
-                                return aux.map( mob => mob.ID===thisEnemy.ID
+                                return aux.map( mob => mob.id===thisEnemy.id
                                     ? manageDotInstance("BleedInstances", {dmgId, timerId}, thisEnemy, 'add')
                                     : mob );
                             });
@@ -479,7 +434,7 @@ const App = () =>
                                 setEnemies( allEnemies =>
                                 {
                                     const aux = [ ...allEnemies ];
-                                    return aux.map( mob => mob.ID===thisEnemy.ID
+                                    return aux.map( mob => mob.id===thisEnemy.id
                                         ? manageDotInstance("BurnInstances", {dmgId, timerId}, thisEnemy, 'add')
                                         : mob );
                                 });
@@ -495,7 +450,7 @@ const App = () =>
                         setEnemies( prev =>
                         {
                             const aux = [ ...prev ];
-                            const updatedEnemy = aux.find( x => x.ID === thisEnemy.ID );
+                            const updatedEnemy = aux.find( x => x.id === thisEnemy.id );
                             if(!updatedEnemy) return prev;
 
                             manageVisualAnimation( 'damage', updatedEnemy?.Data.x, updatedEnemy?.Data.y, dot.toString(), 450 );
@@ -504,7 +459,7 @@ const App = () =>
                             
                             if( updatedEnemy.HP - dot <= 0 || !game)
                             {
-                                cleanse('all', updatedEnemy.ID);
+                                cleanse('all', updatedEnemy.id);
                                 if(flag)
                                 {
                                     console.log("El bicho murió por DOT: ", aliment);
@@ -521,7 +476,7 @@ const App = () =>
                                 console.log(`El bicho recibió ${dot} de daño por ${aliment}.`);
                                 flag = false;
                             }
-                            return aux.map( mob => mob.ID === updatedEnemy.ID ? {...mob, HP: mob.HP - dot } : mob );
+                            return aux.map( mob => mob.id === updatedEnemy.id ? {...mob, HP: mob.HP - dot } : mob );
                         } );
                     }, 1000);
         
@@ -534,7 +489,7 @@ const App = () =>
                                     setEnemies( prev =>
                                     {
                                         const aux = [ ...prev ];
-                                        return aux.map( x => x.ID === thisEnemy.ID
+                                        return aux.map( x => x.id === thisEnemy.id
                                             ? manageDotInstance("PoisonInstances", {dmgId, timerId}, x, 'remove')
                                             : x );
                                     } );
@@ -545,7 +500,7 @@ const App = () =>
                                     setEnemies( prev =>
                                     {
                                         const aux = [ ...prev ];
-                                        return aux.map( x => x.ID === thisEnemy.ID
+                                        return aux.map( x => x.id === thisEnemy.id
                                             ? manageDotInstance("BleedInstances", {dmgId, timerId}, x, 'remove')
                                             : x );
                                     } );
@@ -556,7 +511,7 @@ const App = () =>
                                     setEnemies( prev =>
                                     {
                                         const aux = [ ...prev ];
-                                        return aux.map( x => x.ID === thisEnemy.ID
+                                        return aux.map( x => x.id === thisEnemy.id
                                             ? manageDotInstance("BurnInstances", {dmgId, timerId}, x, 'remove')
                                             : x );
                                     } );
@@ -570,10 +525,10 @@ const App = () =>
                 }
 
                 lan=='es'
-                ? queueLog(`Golpeaste a ${thisEnemy.Name} por ${dmg} de daño. [${thisEnemy.HP - dmg}/${thisEnemy.MaxHP}]. ${tag.aliment}`, tag.color)
-                : queueLog(`You HIT ${thisEnemy.Name} by ${dmg} damage. [${thisEnemy.HP - dmg}/${thisEnemy.MaxHP}]`, 'khaki');
+                ? queueLog(`Golpeaste a ${thisEnemy.name} por ${dmg} de daño. [${thisEnemy.HP - dmg}/${thisEnemy.MaxHP}]. ${tag.aliment}`, tag.color)
+                : queueLog(`You HIT ${thisEnemy.name} by ${dmg} damage. [${thisEnemy.HP - dmg}/${thisEnemy.MaxHP}]`, 'khaki');
 
-                return aux.map( mob => mob.ID===thisEnemy.ID ? { ...mob, HP: mob.HP - dmg } : mob );
+                return aux.map( mob => mob.id===thisEnemy.id ? { ...mob, HP: mob.HP - dmg } : mob );
             }
         } );
     }
@@ -760,7 +715,7 @@ const App = () =>
     {
         const thisEnemy = enemies.find( mob => mob.Data.x===x && mob.Data.y===y ) || Entities.enemy;
         const { Attack } = thisEnemy;
-        queueLog( `${thisEnemy.Name} te golpeó por ${Attack.Instant} de daño.`, 'red');
+        queueLog( `${thisEnemy.name} te golpeó por ${Attack.Instant} de daño.`, 'red');
         hurtPlayer( Attack.Instant, Attack.DoT, Attack.Times, Attack.Aliment );
         inconsecuente(symbol);
     };
@@ -769,11 +724,11 @@ const App = () =>
     {
         const thisTrap = traps.find( trap => trap.Data.x===x && trap.Data.y===y ) || Entities.trap ;
 
-        setResidual( prev => [ ...prev, { symbol: thisTrap.Data.symbol, coords: [ x, y ] } ] );
+        setResidual( prev => [ ...prev, { symbol: thisTrap.symbol, coords: [ x, y ] } ] );
         moveHere( x, y, symbol, true );
 
         const {Attack} = thisTrap;
-        queueLog(`${thisTrap.Name} te causó ${Attack.Instant} de daño.`, 'crimson');
+        queueLog(`${thisTrap.name} te causó ${Attack.Instant} de daño.`, 'crimson');
 
         hurtPlayer( Attack.Instant, Attack.DoT, Attack.Times, Attack.Aliment );
     };
@@ -1153,7 +1108,7 @@ const App = () =>
 
     const handleInteraction = ( ): void =>
     {
-        const [dx, dy] = directionFromVector(player.Data.symbol);
+        const [dx, dy] = directionFromVector(player.symbol);
         let x = player.Data.x + dx;
         let y = player.Data.y + dy;
 
@@ -1342,7 +1297,7 @@ const App = () =>
                     return aux;
                 }
 
-                aux[nextX][y] = thisEnemy?.Data.symbol || '❌';
+                aux[nextX][y] = thisEnemy?.symbol || '❌';
                 aux[currentX][y] = '';
                 return aux;
             });
@@ -1471,7 +1426,7 @@ const App = () =>
                         const aux = [ ...prevEnemies];
                         return aux.map( mob =>
                         {
-                            if( mob.ID!==ID ) return mob;
+                            if( mob.id!==ID ) return mob;
                             finishDoT( 'BleedInstances',  mob );
                             return manageDotInstance( 'BleedInstances', undefined, mob, 'clean' );
                         } );
@@ -1497,7 +1452,7 @@ const App = () =>
                         const aux = [ ...prevEnemies];
                         return aux.map( mob =>
                         {
-                            if( mob.ID!==ID ) return mob;
+                            if( mob.id!==ID ) return mob;
                             finishDoT( 'PoisonInstances',  mob );
                             return manageDotInstance( 'PoisonInstances', undefined, mob, 'clean' );
                         } );
@@ -1523,7 +1478,7 @@ const App = () =>
                         const aux = [ ...prevEnemies];
                         return aux.map( mob =>
                         {
-                            if( mob.ID!==ID ) return mob;
+                            if( mob.id!==ID ) return mob;
                             finishDoT( 'BurnInstances',  mob );
                             return manageDotInstance( 'BurnInstances', undefined, mob, 'clean' );
                         } );
@@ -1549,7 +1504,7 @@ const App = () =>
                         const aux = [ ...prevEnemies];
                         return aux.map( mob =>
                         {
-                            if( mob.ID!==ID ) return mob;
+                            if( mob.id!==ID ) return mob;
                             finishDoT( 'BleedInstances',  mob, true );
                             return manageDotInstance( 'BleedInstances', undefined, mob, 'restart' );
                         } );
@@ -1597,7 +1552,7 @@ const App = () =>
 
     const loadGame = (): void =>
     {
-        const auxiliar = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
+        const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)
         {
             auxiliar[i][0] = icons.wallImg;
@@ -1617,8 +1572,32 @@ const App = () =>
         }
         auxiliar[mapSize-1][mapSize-1] = icons.torchdWallImg;
 
+        // auxiliar[3][3] = icons.boxImg;               LEGACY SPAWNS
+        // auxiliar[13][14] = icons.hGoblinImg;
+        // auxiliar[15][2] = icons.goblinImg;
+        // auxiliar[13][13] = icons.pTrapImg;
+        // auxiliar[15][5] = icons.trapImg;
+        // auxiliar[2][5] = icons.potionImg;
+        // auxiliar[2][6] =  icons.bandagesImg;
+        // auxiliar[2][7] = icons.potionImg;
+        // auxiliar[2][8] = icons.bandagesImg;
+        // auxiliar[2][10] = icons.aloeImg;
+        // auxiliar[3][5] = icons.sword1Img;
+        // auxiliar[4][6] = icons.dagger1Img;
+        // auxiliar[5][6] = icons.necklaceImg;
+        // auxiliar[6][6] = icons.necklaceImg;
+        // auxiliar[7][6] = icons.sword1Img;
+        // auxiliar[8][6] = icons.dagger1Img;
+        // auxiliar[9][6] = icons.necklaceImg;
+        // auxiliar[10][6] = icons.sword1Img;
+        // auxiliar[11][6] = icons.dagger1Img;
+        // auxiliar[10][10] = icons.fireImg;
+        // auxiliar[10][12] = icons.fountainImg;
+        // auxiliar[2][16] = icons.tpImg;
+        // auxiliar[16][2] = icons.tpImg;
+
         auxiliar[3][3] = icons.boxImg;
-        auxiliar[13][14] = icons.hGoblinImg;
+        auxiliar[13][14] = createEntity( 'Enemies', 'Hobgoblin' );
         auxiliar[15][2] = icons.goblinImg;
         auxiliar[13][13] = icons.pTrapImg;
         auxiliar[15][5] = icons.trapImg;
@@ -1642,16 +1621,36 @@ const App = () =>
         auxiliar[16][2] = icons.tpImg;
 
         setTps( [ [2,16], [16,2] ] );
+        
         auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = icons.heroFront;
+        
         setPlayer( prev => (
         { ...prev, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } ) );
         setEnemies( [
-        { ...Entities.enemy, ID: crypto.randomUUID(), Data: { x: 15, y: 2, symbol: icons.goblinImg } },
-        { ...Entities.heavyEnemy, ID: crypto.randomUUID(), Data: { x: 13, y: 14, symbol: icons.hGoblinImg } } ] );
+        { ...Entities.enemy, id: crypto.randomUUID(), symbol: icons.goblinImg, Data: { x: 15, y: 2 } },
+        { ...Entities.heavyEnemy, id: crypto.randomUUID(), symbol: icons.hGoblinImg, Data: { x: 13, y: 14 } } ] );
         setTraps( [
-        { ...Entities.trap, ID: crypto.randomUUID(), Data: { x: 15, y: 5, symbol: icons.trapImg } },
-        { ...Entities.poisonTrap, ID: crypto.randomUUID(), Data: { x: 13, y: 13, symbol: icons.pTrapImg } } ] );
+        { ...Entities.trap, id: crypto.randomUUID(), symbol: icons.trapImg, Data: { x: 15, y: 5 } },
+        { ...Entities.poisonTrap, id: crypto.randomUUID(), symbol: icons.pTrapImg, Data: { x: 13, y: 13 } } ] );
+        
         setMapa(auxiliar);
+    }
+
+    const createEntity = ( type: 'Equippables' | 'Enemies' | 'Consumables', entityName: string ): Types.Gear | Types.Enemy | Types.Item =>
+    {
+        const typeContainer  =
+        {
+            'Equippables': Gear.Equippables,
+            'Enemies': Entities.allEnemies,
+            'Consumables': Items.Consumables
+        };
+
+        const container = typeContainer[type] as Array<Types.Gear | Types.Enemy | Types.Item>;
+
+        const thisEntity = container.find( (x: Types.Gear | Types.Enemy | Types.Item) => x.name === entityName );
+        if(!thisEntity) throw new Error(`No se encontró la entidad ${entityName} en ${type}`);
+        
+        return { ...thisEntity, id: crypto.randomUUID() };
     }
 
     const startGame = (): void =>
@@ -1672,7 +1671,7 @@ const App = () =>
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player.Data.x][player.Data.y] = '';
         setMapa(auxiliar);
-        setPlayer( {...Entities.emptyPlayer, HP: 0, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2), symbol: icons.heroFront } } );
+        setPlayer( {...Entities.emptyPlayer, HP: 0, symbol: icons.heroFront, Data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2) } } );
         queueLog(`Moriste a causa de tus heridas.`, 'white');
         setGame(false);
     }
@@ -1725,11 +1724,14 @@ return(
               {mapa.map((fila, x) => (
                 <div key={x} className="fila">
                   {fila.map((celda, y) =>
-                    allIcons.includes(celda) ? (
-                      <img src={celda} key={y} className="celda" />
-                    ) : (
-                      <label key={y} className="celda">{celda}</label>
-                    )
+                  {
+                    return <div> hola </div> // reparar esto
+                  }
+                    // allIcons.includes() ? (
+                    //   <img src={celda} key={y} className="celda" />
+                    // ) : (
+                    //   <label key={y} className="celda">{celda}</label>
+                    // )
                   )}
                 </div>
               ))}
@@ -1790,10 +1792,10 @@ return(
         <div className='help-layer'>
             <button className='absolute top-0 left-0' onClick={()=> {setShowSlides( false );setTimeout(() => gridRef.current?.focus(), 0); } }> X </button>
             {/* <p> {slides[slideIndex].text} </p> */}
-            { slides[slideIndex].img && <img className= 'h-img' src={slides[slideIndex].img}/> }
+            { Types.slides[slideIndex].img && <img className= 'h-img' src={Types.slides[slideIndex].img}/> }
             <button onClick={()=> moveSlide('previous')}> anterior </button>
-            { slides[slideIndex].text &&
-            <a href={slides[slideIndex].text} target="_blank" rel="noopener noreferrer">
+            { Types.slides[slideIndex].text &&
+            <a href={Types.slides[slideIndex].text} target="_blank" rel="noopener noreferrer">
                 <button> ¡Repo! </button>
             </a>}
             <button onClick={()=> moveSlide('next')}> siguiente </button>
