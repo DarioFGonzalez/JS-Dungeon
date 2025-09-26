@@ -6,6 +6,7 @@ import * as icons from './Icons/index';
 import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
 import * as Items from './components/data/items';
+import { allObjects, allTiles } from './components/data/tiles';
 
 import './App.css';
 
@@ -19,7 +20,7 @@ const mapSize = 18;
 const emptyGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '') );
 
 
-type CellContent = string | Types.Enemy | Types.Trap | Types.Item | Types.Gear;
+type CellContent = string | Types.Enemy | Types.Trap | Types.Item | Types.Gear | Types.Environment;
 
 const emptyDelayedLog = { status: false, message: '', color: 'white' };    
 
@@ -1596,29 +1597,29 @@ const App = () =>
         // auxiliar[2][16] = icons.tpImg;
         // auxiliar[16][2] = icons.tpImg;
 
-        auxiliar[3][3] = icons.boxImg;
-        auxiliar[13][14] = createEntity( 'Enemies', 'Hobgoblin' );
-        auxiliar[15][2] = icons.goblinImg;
-        auxiliar[13][13] = icons.pTrapImg;
-        auxiliar[15][5] = icons.trapImg;
-        auxiliar[2][5] = icons.potionImg;
-        auxiliar[2][6] =  icons.bandagesImg;
-        auxiliar[2][7] = icons.potionImg;
-        auxiliar[2][8] = icons.bandagesImg;
-        auxiliar[2][10] = icons.aloeImg;
-        auxiliar[3][5] = icons.sword1Img;
-        auxiliar[4][6] = icons.dagger1Img;
-        auxiliar[5][6] = icons.necklaceImg;
-        auxiliar[6][6] = icons.necklaceImg;
-        auxiliar[7][6] = icons.sword1Img;
-        auxiliar[8][6] = icons.dagger1Img;
-        auxiliar[9][6] = icons.necklaceImg;
-        auxiliar[10][6] = icons.sword1Img;
-        auxiliar[11][6] = icons.dagger1Img;
-        auxiliar[10][10] = icons.fireImg;
-        auxiliar[10][12] = icons.fountainImg;
+        auxiliar[3][3] = createEntity( 'Object', 'Box' );
+        auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
+        auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[13][13] = createEntity( 'Enemie', 'Poison Trap' );
+        auxiliar[15][5] = createEntity( 'Enemie', 'Trap' );
+        auxiliar[2][5] = createEntity( 'Consumable', 'Potion' );
+        auxiliar[2][6] =  createEntity( 'Consumable', 'Bandage' );
+        auxiliar[2][7] = createEntity( 'Consumable', 'Potion' );
+        auxiliar[2][8] = createEntity( 'Consumable', 'Bandage' );
+        auxiliar[2][10] = createEntity( 'Consumable', 'Aloe leaf' );
+        auxiliar[3][5] = createEntity( 'Equippable', 'Wooden sword');
+        auxiliar[4][6] = createEntity( 'Equippable', 'Slicing knife');
+        auxiliar[5][6] = createEntity( 'Equippable', 'Protective pendant' );
+        auxiliar[6][6] = createEntity( 'Equippable', 'Protective pendant' );
+        auxiliar[7][6] = createEntity( 'Equippable', 'Wooden sword' );
+        auxiliar[8][6] = createEntity( 'Equippable', 'Slicing knife' );
+        auxiliar[9][6] = createEntity( 'Equippable', 'Protective pendant' );
+        auxiliar[10][6] = createEntity( 'Equippable', 'Wooden sword' );
+        auxiliar[11][6] = createEntity( 'Equippable', 'Slicing knife' );
+        auxiliar[10][10] = createEntity( 'Object', 'Fire' );
+        auxiliar[10][12] = createEntity( 'Object', 'Fountain' );
         auxiliar[2][16] = icons.tpImg;
-        auxiliar[16][2] = icons.tpImg;
+        auxiliar[16][2] = icons.tpImg;  //modificar TPs behaviour + Player placement
 
         setTps( [ [2,16], [16,2] ] );
         
@@ -1636,19 +1637,23 @@ const App = () =>
         setMapa(auxiliar);
     }
 
-    const createEntity = ( type: 'Equippables' | 'Enemies' | 'Consumables', entityName: string ): Types.Gear | Types.Enemy | Types.Item =>
+    const createEntity = ( type: 'Equippable' | 'Enemie' | 'Consumable' | 'Object' | 'Tile', entityName: string ): Types.Gear | Types.Enemy | Types.Item | Types.Environment =>
     {
         const typeContainer  =
         {
-            'Equippables': Gear.Equippables,
-            'Enemies': Entities.allEnemies,
-            'Consumables': Items.Consumables
+            'Equippable': Gear.Equippables,
+            'Enemie': Entities.allEnemies,
+            'Consumable': Items.Consumables,
+            'Object':  allObjects,
+            'Tile': allTiles
         };
 
-        const container = typeContainer[type] as Array<Types.Gear | Types.Enemy | Types.Item>;
+        const container = typeContainer[type] as Array<Types.Gear | Types.Enemy | Types.Item | Types.Environment>;
 
-        const thisEntity = container.find( (x: Types.Gear | Types.Enemy | Types.Item) => x.name === entityName );
+        const thisEntity = container.find( (x: Types.Gear | Types.Enemy | Types.Item | Types.Environment) => x.name === entityName );
         if(!thisEntity) throw new Error(`No se encontró la entidad ${entityName} en ${type}`);
+
+        if(type==='Object' || type==='Tile') return thisEntity as Types.Environment;
         
         return { ...thisEntity, id: crypto.randomUUID() };
     }

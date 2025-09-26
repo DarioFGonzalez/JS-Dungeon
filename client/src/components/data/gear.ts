@@ -17,7 +17,7 @@ export const Fists: Types.Gear =
 export const Sword1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Wooden Sword',
+    name: 'Wooden sword',
     symbol: icons.sword1Img,
     id: '',
     slot: 'weapon',
@@ -30,7 +30,7 @@ export const Sword1: Types.Gear =
 export const Dagger1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Slicing Knife',
+    name: 'Slicing knife',
     symbol: icons.dagger1Img,
     id: '',
     slot: 'weapon',
