@@ -5,17 +5,19 @@ export type VisualCell = string | {
   color?: string;
 };
 
+type allEntities = Gear | Enemy | Player | Item | Environment; 
+
 export type locationData = { x: number, y: number };
 export type Coords = [ number, number ];
 export type ArrayOfCoords = Coords[];
-export type Residual = { symbol: string, coords: number[] };
+export type Residual = { entity: allEntities, coords: number[] };
 
 export type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, cd: number };
 export type deffenseStats = { def?: number, immunity?: string, hp?: number };
 
 export type InventoryItem = { item: Item, quantity: number, onCd: boolean };
 export type InventoryGear = { id: string, item: Gear, durability: number, onCd: boolean, equiped?: boolean, selected: boolean };
-export type Inventory = InventoryItem[];
+export type inventory = InventoryItem[];
 export type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
 export type BuffFlags = { HoT: boolean };
 export type AlimentInstances = { PoisonInstances: alimentIds[], BleedInstances: alimentIds[], BurnInstances: alimentIds[] }; 
@@ -33,23 +35,25 @@ export type eventLog = { message: string, color: string };
 
 export type Aliments = 
 {
-    Flags: AlimentFlags,
-    Instances: AlimentInstances
+    flags: AlimentFlags,
+    instances: AlimentInstances
 }
 export type Buffs =
 {
-    Flags: BuffFlags,
-    Instances: BuffInstances
+    flags: BuffFlags,
+    instances: BuffInstances
 }
 export interface WithAliments 
 {
-    Aliments: Aliments;
+    aliments: Aliments;
 }
 
 export interface Environment
 {
+    type: string,
     name: string,
-    symbol: string
+    symbol: string,
+    content?: any
 }
 
 export interface Item
@@ -75,49 +79,51 @@ export interface Gear
     defenseStats?: deffenseStats,
     buffStats?: '',
     durability: number,
-    Equippeable: boolean
+    equippeable: boolean
 };
 
 export interface Player
 {
-    Type: 'Player', //agregado
-    HP: number,
-    MaxHP: number,
+    type: 'Player',
+    name: string,
+    hp: number,
+    maxHp: number,
+    defense: number,
     symbol: string,
-    Data: locationData,
-    Inventory: Inventory,
-    HotBar: HotBarItems,
-    Aliments: Aliments,
-    Buffs: Buffs
+    data: locationData,
+    inventory: inventory,
+    hotBar: HotBarItems,
+    aliments: Aliments,
+    buffs: Buffs
 }
 
 export interface Trap
 {
-    Type: 'Trap', //agregado
+    type: 'Trap', //agregado
     id: string,
     name: string,
     symbol: string,
-    Active: boolean,
-    Data: locationData,
-    Attack: attackInfo,
+    active: boolean,
+    data: locationData,
+    attack: attackInfo,
     toDisarm?: Item[]
 }
 
 export interface Enemy
 {
-    Type: 'Enemy', //agregado
+    type: 'Enemy', //agregado
     id: string,
     name: string,
-    HP: number,
-    MaxHP: number,
+    hp: number,
+    maxHp: number,
     symbol: string,
-    Data: locationData,
-    Aliments: Aliments,
-    Attack: attackInfo,
-    Defense: deffenseInfo,
-    Pattern: string,
-    PatrolId?: ReturnType<typeof setTimeout>,
-    Drops: dropInfo[]
+    data: locationData,
+    aliments: Aliments,
+    attack: attackInfo,
+    defense: deffenseInfo,
+    pattern: string,
+    patrolId?: ReturnType<typeof setTimeout>,
+    drops: dropInfo[]
 }
 
 export interface slideItem
@@ -138,7 +144,7 @@ export const slides: slideItem[] =
         img: images.h_gear_nav
     },
     {
-        title: 'Inventory',
+        title: 'inventory',
         img: images.h_inventory
     },
     {

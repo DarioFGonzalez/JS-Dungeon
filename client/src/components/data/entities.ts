@@ -6,89 +6,91 @@ export const maxHp = 10;
 
 export const emptyPlayer: Types.Player =
 {
-    Type: 'Player',
-    HP: maxHp,
-    MaxHP: maxHp,
+    type: 'Player',
+    name: 'Hero',
+    hp: maxHp,
+    maxHp: maxHp,
+    defense: 0,
     symbol: icons.heroFront,
-    Data: { x: 0, y: 0 },
-    Inventory: [],
-    HotBar: { Equippeable: [ ] },
-    Aliments:
+    data: { x: 0, y: 0 },
+    inventory: [],
+    hotBar: { Equippeable: [ ] },
+    aliments:
     {
-        Flags: { Poisoned: false, Bleeding: false, Burning: false },
-        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
-    Buffs:
+    buffs:
     {
-        Flags: { HoT: false },
-        Instances: { HotInstances: [] } 
+        flags: { HoT: false },
+        instances: { HotInstances: [] } 
     }
 }
 
 export const trap: Types.Trap =
 {
-    Type: 'Trap',
+    type: 'Trap',
     id: '0',
-    name: 'Trampa simple',
+    name: 'Simple trap',
     symbol: icons.trapImg,
-    Active: true,
-    Data: { x: 0, y: 0 },
-    Attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
+    active: true,
+    data: { x: 0, y: 0 },
+    attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
 }
 
 export const poisonTrap: Types.Trap =
 {
-    Type: 'Trap',
+    type: 'Trap',
     id: '0',
-    name: 'Trampa venenosa',
+    name: 'Poison trap',
     symbol: icons.pTrapImg,
-    Active: true,
-    Data: { x: 0, y: 0 },
-    Attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'poison' },
+    active: true,
+    data: { x: 0, y: 0 },
+    attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'poison' },
 }
 
-export const Traps: Types.Trap[] = [
+export const allTraps: Types.Trap[] = [
     trap, poisonTrap
 ]
 
 export const enemy: Types.Enemy =
 {
-    Type: 'Enemy',
+    type: 'Enemy',
     id: '0',
     name: 'Goblin',
-    HP: 5,
-    MaxHP: 5,
+    hp: 5,
+    maxHp: 5,
     symbol: icons.goblinImg,
-    Data: { x: 0, y: 0 },
-    Aliments:
+    data: { x: 0, y: 0 },
+    aliments:
     {
-        Flags: { Poisoned: false, Bleeding: false, Burning: false },
-        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
-    Attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
-    Defense: { Armor: 0, Toughness: 1 },
-    Pattern: 'none',
-    Drops: []
+    attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
+    defense: { Armor: 0, Toughness: 1 },
+    pattern: 'none',
+    drops: []
 }
 
 export const heavyEnemy: Types.Enemy =
 {
-    Type: 'Enemy',
+    type: 'Enemy',
     id: '0',
     name: 'Hobgoblin',
-    HP: 20,
-    MaxHP: 20,
+    hp: 20,
+    maxHp: 20,
     symbol: icons.hGoblinImg,
-    Data: { x: 0, y: 0 },
-    Aliments:
+    data: { x: 0, y: 0 },
+    aliments:
     {
-        Flags: { Poisoned: false, Bleeding: false, Burning: false },
-        Instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
-    Attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
-    Defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
-    Pattern: 'none',
-    Drops: [ { item: Items.Potion, chance: 75 } ]
+    attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
+    defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
+    pattern: 'none',
+    drops: [ { item: Items.Potion, chance: 75 } ]
 }
 
 export const allEnemies: Types.Enemy[] = [

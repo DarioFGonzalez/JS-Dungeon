@@ -10,10 +10,10 @@ interface GearTabProps
 const GearTab: React.FC<GearTabProps> = ({ player }) => {
 
   return (
-    <div className="gear-tab">
+    <div onClick={()=>console.log( player ) } className="gear-tab">
 
       <div className="gear-grid">
-        {player.HotBar.Equippeable.map((x, y) => (
+        {player.hotBar.Equippeable.map((x, y) => (
           <div onClick={() => console.log(x.item)} key={y}
           className={`${x.item.slot=='weapon'?'weapon-card':'charm-card'} ${x.equiped ? 'equipped' : ''} ${x.selected ? 'selected' : ''}`} >
             <div className="gear-name">{x.item.name}</div>

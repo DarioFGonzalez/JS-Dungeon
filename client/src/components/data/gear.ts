@@ -11,7 +11,7 @@ export const Fists: Types.Gear =
     desc: '+1 DMG',
     attackStats: { dmg: 0, cd: 2500 },
     durability: 999,
-    Equippeable: true
+    equippeable: true
 }
 
 export const Sword1: Types.Gear =
@@ -24,7 +24,7 @@ export const Sword1: Types.Gear =
     desc: '+2 DMG',
     attackStats: { dmg: 2, DoT: 0, times: 0, cd: 1000 },
     durability: 10,
-    Equippeable: true
+    equippeable: true
 }
 
 export const Dagger1: Types.Gear =
@@ -37,7 +37,7 @@ export const Dagger1: Types.Gear =
     desc: '+1 DMG (5 🩸)',
     attackStats: { dmg: 1, DoT: 1, times: 5, aliment: 'bleed', cd: 1000 },
     durability: 20,
-    Equippeable: true
+    equippeable: true
 }
 
 export const Pickaxe1: Types.Gear =
@@ -50,7 +50,7 @@ export const Pickaxe1: Types.Gear =
     desc: 'Useful to mine ores',
     attackStats: { dmg: 1, cd: 1000 },
     durability: 20,
-    Equippeable: true
+    equippeable: true
 }
 
 export const Necklace1: Types.Gear =
@@ -62,7 +62,7 @@ export const Necklace1: Types.Gear =
     slot: 'charm',
     desc: '+5 Shield',
     durability: 5,
-    Equippeable: true
+    equippeable: true
 }
 
 export const Necklace2: Types.Gear =
@@ -75,7 +75,7 @@ export const Necklace2: Types.Gear =
     desc: '+1 DEF',
     defenseStats: { def: 1 },
     durability: 50,
-    Equippeable: true
+    equippeable: true
 }
 
 export const Equippables: Types.Gear[] = [

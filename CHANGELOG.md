@@ -18,7 +18,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - **Sistema de Slides de Ayuda**: Nueva interfaz emergente que explica mecánicas clave del juego. Contiene imágenes creadas manualmente con íconos, textos e indicadores estilizados para mantener coherencia estética con el HUD.
-- **Pantalla de Muerte**: Se implementó una vista clara de *Game Over* que aparece automáticamente cuando el jugador alcanza 0 de HP, brindando cierre visual al combate.
+- **Pantalla de Muerte**: Se implementó una vista clara de *Game Over* que aparece automáticamente cuando el jugador alcanza 0 de hp, brindando cierre visual al combate.
 - **Carpeta unificada de assets visuales (`Images`)**: Nueva estructura de imágenes importables desde `index.ts` para facilitar la organización y reutilización de elementos gráficos.
 
 ### Changed
@@ -124,7 +124,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [v0.0.92] - 2025-04-28
 
 ### Changed
-- Refactor completo del estado `player`: ahora incluye `HP`, `MaxHP`, `Coords`, `Inventory` y `Aliments`, permitiendo una gestión centralizada, consistente y escalable de la información del jugador.
+- Refactor completo del estado `player`: ahora incluye `hp`, `MaxHP`, `Coords`, `Inventory` y `Aliments`, permitiendo una gestión centralizada, consistente y escalable de la información del jugador.
 - Rediseñado el sistema de daño en el tiempo (DoT): encapsulado en la función `manageDotInstance()`, con soporte para agregar, remover y limpiar efectos individuales como `bleed`, `poison` y `burn`.
 - Separación clara entre flags (`Poisoned`, `Bleeding`, `Burning`) y sus instancias (`PoisonInstances`, etc.), manteniendo sincronía automática según el estado de cada efecto.
 - Eliminación de estructuras crudas (`number[]`) para representar posiciones residuales: reemplazadas por objetos estructurados con propiedades explícitas (`x`, `y`, `symbol`).

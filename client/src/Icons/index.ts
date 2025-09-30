@@ -25,6 +25,8 @@ import dagger1Img from './dagger.png';
 import sword1Img from './sword.png';
 import necklaceImg from './necklace.PNG';
 
+import bagImg from './bag.png';
+
 import heroBack from './heroBack.png';
 import heroFront from './heroFront.png';
 import heroLeft from './heroLeft.png';
@@ -38,5 +40,6 @@ export {
     trapImg, pTrapImg,
     wallImg, tile1, torchdWallImg, boxImg,
     dagger1Img, sword1Img, necklaceImg,
+    bagImg,
     heroBack, heroFront, heroLeft, heroRight,
 };
