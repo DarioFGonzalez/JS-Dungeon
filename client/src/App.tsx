@@ -64,6 +64,20 @@ const App = () =>
         return ;
     }
 
+    const handleEventLogs = ( event: string, color: string ): void =>
+    {
+        setEvents( eventos =>
+        {
+            const aux = [ ...eventos ];
+            if(aux.length>=6)
+            {
+                aux.pop();
+            }
+            aux.unshift( {message: event, color: color} );
+            return aux;
+        } );
+    }
+
     useEffect( () =>
     {
         if(delayedLog.length===0) return;
@@ -79,9 +93,10 @@ const App = () =>
     {
         let here = [ 0, 0 ];
         let symbol = '';
+        let heroIcons = [icons.heroFront, icons.heroBack, icons.heroLeft, icons.heroRight];
         mapa.forEach( (fila, y) => fila.map( (celda, z) =>
         {
-            if(celda.symbol==icons.heroFront || celda.symbol==icons.heroBack || celda.symbol==icons.heroLeft || celda.symbol==icons.heroRight ) { here=[ y, z ]; symbol=celda.symbol; }
+            if( heroIcons.includes(celda.symbol) ) { here=[ y, z ]; symbol=celda.symbol; }
         } ));
         setPlayer( prev => ({ ...prev, symbol, data: { x: here[0], y: here[1] } }) );
     };
@@ -125,7 +140,6 @@ const App = () =>
 
     const moveHere = ( x: number, y: number, symbol: string, complete: boolean ): CellContent[][] =>
     {
-        console.log( 'Entré al moveHere() ' );
         const auxiliar = mapa.map( fila => [...fila] );
         const  { x: pX, y: pY } = player.data;
         const thisResidual = residual.find( ({coords}) => coords[0]===pX && coords[1]===pY );
@@ -139,15 +153,32 @@ const App = () =>
             auxiliar[pX][pY] = emptyTile;
         }
 
-        auxiliar[x][y] = player;
-
+        
         if(complete==true)
         {
-            setPlayer( prev => ({ ...prev, symbol, data: { x, y } }) );
+            setPlayer( prev =>
+                {
+                    auxiliar[x][y] = { ...prev, symbol, data: { x, y } };
+                    return { ...prev, symbol, data: { x, y } } 
+                });
             setMapa(auxiliar);
         }
         return auxiliar
     };
+
+    const findThisEnemy = ( id: string ): { x: number, y: number, entity: Types.Enemy } | undefined =>
+    {
+        for( let i=0; i<mapa.length; i++ )
+        {
+            for( let j=0; j<mapa[i].length; j++ )
+            {
+                const cell = mapa[i][j];
+                if( 'type' in cell &&  cell.type==='Enemy' && 'id' in cell && cell.id===id )  return { x: i, y: j, entity: cell };
+            }
+        }
+
+        return undefined;
+    }
 
     const handleTp = ( x: number, y: number, symbol: string, other: string ): void =>
     {
@@ -323,9 +354,26 @@ const App = () =>
     {
         let flag = true;
 
-        let auxiliar = mapa.map( fila => [ ...fila ] );
+        const thisWeapon = player.hotBar.Equippeable.find( item => item.item.slot==='weapon' && item.equiped ) || Gear.emptyHanded;
 
-        setPlayer( playerInfo =>
+        if(thisWeapon.onCd) return ;
+
+        const thisEnemy = mapa[x][y] as Types.Enemy;
+
+        if(!thisEnemy) return ;
+
+        const attk = thisWeapon.item.attackStats;
+        if(!attk) return ;
+
+        const damage = attk.dmg- thisEnemy.defense.Armor;
+
+        if(flag)
+        {
+            damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+            thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
+            flag=false;
+        }
+        /*setPlayer( playerInfo =>
         {
             const aux = { ...playerInfo };
             const thisWeapon = aux.hotBar.Equippeable.find( item => item.item.slot==='weapon' && item.equiped ) || Gear.emptyHanded;
@@ -342,10 +390,14 @@ const App = () =>
 
                 if(flag && !thisWeapon.onCd)
                 {
-                    if(thisEnemy.name==='Ore' && thisWeapon.item.name==='Pickaxe')
+                    if(thisEnemy.name==='Ore')
                     {
-                        damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
-                        thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
+                        if(thisWeapon.item.name==='Pickaxe')
+                        {
+                            damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+                            thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
+                        }
+                        return mobs;
                     }
                     else
                     {
@@ -359,32 +411,30 @@ const App = () =>
             } );
 
             return aux;
-        } );
+        } );*/
     }
 
-    const enemyDeath = ( x: number, y: number, enemy: Types.Enemy, allEnemies: Types.Enemy[] ): Types.Enemy[] =>
+    const enemyDeath = ( id: string, aux: CellContent[][] ): CellContent[][] =>
     {
-        setMapa( prev =>
-        {
-            let mapAux = prev.map( x => [...x] );
+        const thisMonster = findThisEnemy( id );
+        if(!thisMonster) return aux ;
 
-            if(enemy.drops.length>0)
-            {
-                const loot = enemy.drops.filter( drop => rollDrop( drop.chance ) )
-                .map( drop => drop.item );
-                mapAux[x][y] = lootBag( loot );
-                return mapAux;
-            }
+        const { x, y } = thisMonster;
 
-            mapAux[x][y]= emptyTile;
-            return mapAux;
-        } );
-        
         lan==='es'
-        ? queueLog( `${enemy.name} murió.`, 'crimson' )
-        : queueLog( `${enemy.name} died.`, 'crimson' );
+        ? queueLog( `${thisMonster.entity.name} murió.`, 'crimson' )
+        : queueLog( `${thisMonster.entity.name} died.`, 'crimson' );
 
-        return allEnemies.filter( mob => mob.data.x!==x && mob.data.y!==y );
+        if(thisMonster.entity.drops.length>0)
+        {
+            const loot = thisMonster.entity.drops.filter( drop => rollDrop( drop.chance ) )
+            .map( drop => drop.item );
+            aux[x][y] = lootBag( loot );
+            return aux;
+        }
+
+        aux[x][y]= emptyTile;     
+        return aux;
     }
 
     const lootBag = ( loot: (Types.Gear | Types.Item)[] ) : Types.Environment =>
@@ -393,9 +443,190 @@ const App = () =>
         return emptyTile;
     }
 
-    const damageEnemy = ( ID: string, dmg: number, dot: number = 0, times: number = 0, aliment: string = '' ): void =>
+    const damageEnemy = ( id: string, dmg: number, dot: number = 0, times: number = 0, aliment: string = '' ): void =>
     {
-        setEnemies( allEnemies =>
+        let tag = { aliment: '', color: 'khaki'};
+
+        const thisMonsterData = findThisEnemy( id );
+        if(!thisMonsterData) return ;
+
+        const { entity } = thisMonsterData;
+        const { x, y } = thisMonsterData;
+
+        if(entity.hp-dmg <= 0)
+        {
+            setMapa( prev => enemyDeath( entity.id, prev ) );
+            return ;
+        }
+        else
+        {
+            if(dot!=0)
+            {
+                let dmgId = setInterval( () =>
+                {
+                    let flag = true;
+
+                    setMapa( prev =>
+                    {
+                        const aux = prev.map( fila => [ ...fila ] );
+                        const thisMonsterData = findThisEnemy( id );
+                        
+                        if(!thisMonsterData) return prev;
+                        const { x, y, entity } = thisMonsterData;
+                        
+                        manageVisualAnimation( 'damage', x, y, dot.toString(), 450 );
+
+                        if( entity.hp - dot <= 0 || !game )
+                        {
+                            cleanse( 'all', id );
+                            if(flag)
+                            {
+                                console.log("El bicho murió por DOT: ", aliment); // ?. handleEventLog para esto porfavor.
+                                flag = false;
+                            }
+                            if(game)
+                            {
+                                return enemyDeath( id, aux );
+                            }
+                            return aux;
+                        }
+                        if(flag)
+                        {
+                            console.log(`El bicho recibió ${dot} de daño por ${aliment}.`);
+                            flag = false;
+                        }
+                        
+                        aux[x][y] = { ...entity, hp: entity.hp - dot };
+                        
+                        return aux;
+                    } )
+
+                    /*setEnemies( prev =>   // LEGACY CODE, POR SI ACASO.
+                    {
+                        const aux = [ ...prev ];
+                        const updatedEnemy = aux.find( x => x.id === thisEnemy.id );
+                        if(!updatedEnemy) return prev;
+
+                        manageVisualAnimation( 'damage', updatedEnemy?.data.x, updatedEnemy?.data.y, dot.toString(), 450 );
+
+                        if(!updatedEnemy) return prev;
+                        
+                        if( updatedEnemy.hp - dot <= 0 || !game)
+                        {
+                            cleanse('all', updatedEnemy.id);
+                            if(flag)
+                            {
+                                console.log("El bicho murió por DOT: ", aliment);
+                                flag = false;
+                            }
+                            if(game)
+                            {
+                                return enemyDeath(updatedEnemy.data.x, updatedEnemy.data.y, updatedEnemy, aux);
+                            }
+                            return aux;
+                        }
+                        if(flag)
+                        {
+                            console.log(`El bicho recibió ${dot} de daño por ${aliment}.`);
+                            flag = false;
+                        }
+                        return aux.map( mob => mob.id === updatedEnemy.id ? {...mob, hp: mob.hp - dot } : mob );
+                    } );*/
+                }, 1000);
+    
+                let timerId = setTimeout( () =>
+                {
+                    setMapa( prev =>
+                    {
+                        const aux = prev.map( cell => [ ...cell ] );
+
+                        const thisEnemyData = findThisEnemy( id );
+                        if(!thisEnemyData) return prev;
+
+                        const { x, y, entity } = thisEnemyData;
+
+                        const alimentVector =
+                        {
+                            'poison': 'PoisonInstances',
+                            'bleed': 'BleedInstances',
+                            'burn': 'BurnInstances'
+                        } as const;
+
+                        type AlimentKey = keyof typeof alimentVector; 
+
+                        if (aliment in alimentVector)
+                        {
+                            aux[x][y] = manageDotInstance(
+                                alimentVector[aliment as AlimentKey], { dmgId, timerId }, entity, 'remove' );
+                        }
+
+                        return aux;
+                        /*switch(aliment)   // LEGACY CODE, POR SI ACASO.
+                        {
+                            case 'poison':
+                                {
+                                    aux[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'remove');
+                                    break;
+                                }
+                            case 'bleed':
+                                {
+                                    aux[x][y] = manageDotInstance("BleedInstances", {dmgId, timerId}, entity, 'remove');
+                                    break;
+                                }
+                            case 'burn':
+                                {
+                                    aux[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'remove');
+                                    break;
+                                }
+                            default:
+                                break;
+                        }*/
+                    } );
+
+                    clearInterval( dmgId );
+                }, times*1000);
+
+                switch(aliment)
+                {
+                    case 'poison':
+                    {
+                        tag.aliment = '[Envenenado]';
+                        tag.color = 'lime';
+                        mapa[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'add');
+                        break;
+                    }
+                    case 'bleed':
+                    {
+                        tag.aliment = '[Sangrando]';
+                        tag.color = 'red';
+                        mapa[x][y] = manageDotInstance("BleedInstances", {dmgId, timerId}, entity, 'add');
+                        break;
+                    }
+                    case 'burn':
+                    {
+                        tag.aliment = '[Quemándose]';
+                        tag.color = 'orange';
+                        mapa[x][y] = manageDotInstance("BurnInstances", {dmgId, timerId}, entity, 'add');
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            };
+
+            setMapa( prev =>
+            {
+                const aux = prev.map( x => [ ...x ] );
+
+                aux[x][y] = { ...entity, hp: entity.hp - dmg };
+                return aux;
+            } );
+
+            lan=='es'
+            ? queueLog(`Golpeaste a ${entity.name} por ${dmg} de daño. [${entity.hp - dmg}/${entity.maxHp}]. ${tag.aliment}`, tag.color)
+            : queueLog(`You HIT ${entity.name} by ${dmg} damage. [${entity.hp- dmg}/${entity.maxHp}]`, 'khaki');
+
+        /*setEnemies( allEnemies =>
         {
             const aux = [ ...allEnemies ];
             let tag = { aliment: '', color: 'khaki'};
@@ -540,7 +771,8 @@ const App = () =>
 
                 return aux.map( mob => mob.id===thisEnemy.id ? { ...mob, hp: mob.hp - dmg } : mob );
             }
-        } );
+        } );*/
+        }
     }
 
     const damageCharm = ( charm: Types.InventoryGear, dmg: number ) =>
@@ -1039,20 +1271,6 @@ const App = () =>
         return false;
     }
 
-    const handleEventLogs = ( event: string, color: string ): void =>
-    {
-        setEvents( eventos =>
-        {
-            const aux = [ ...eventos ];
-            if(aux.length>=6)
-            {
-                aux.pop();
-            }
-            aux.unshift( {message: event, color: color} );
-            return aux;
-        } );
-    }
-
     const queueLog = ( message: string, color: string ): void =>
     {
         setDelayedLog( list => [ ...list, { message, color } ] );
@@ -1126,10 +1344,10 @@ const App = () =>
         manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
         
         const objective = aux[x][y];
-        switch(objective)
+
+        switch(objective.type)
         {
-            case Entities.enemy:
-            case Entities.heavyEnemy:
+            case 'Enemy':
                 {
                     strikeEnemy( x, y );
                     break;
