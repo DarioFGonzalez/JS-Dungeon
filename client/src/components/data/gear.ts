@@ -34,8 +34,8 @@ export const Dagger1: Types.Gear =
     symbol: icons.dagger1Img,
     id: '',
     slot: 'weapon',
-    desc: '+1 DMG (5 🩸)',
-    attackStats: { dmg: 1, DoT: 1, times: 5, aliment: 'bleed', cd: 1000 },
+    desc: '+8 DMG (5 🩸)',
+    attackStats: { dmg: 8, DoT: 1, times: 5, aliment: 'bleed', cd: 1000 },
     durability: 20,
     equippeable: true
 }

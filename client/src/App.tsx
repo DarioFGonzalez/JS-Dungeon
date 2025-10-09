@@ -166,13 +166,13 @@ const App = () =>
         return auxiliar
     };
 
-    const findThisEnemy = ( id: string ): { x: number, y: number, entity: Types.Enemy } | undefined =>
+    const findThisEnemy = ( id: string, map: CellContent[][] ): { x: number, y: number, entity: Types.Enemy } | undefined =>
     {
-        for( let i=0; i<mapa.length; i++ )
+        for( let i=0; i<map.length; i++ )
         {
-            for( let j=0; j<mapa[i].length; j++ )
+            for( let j=0; j<map[i].length; j++ )
             {
-                const cell = mapa[i][j];
+                const cell = map[i][j];
                 if( 'type' in cell &&  cell.type==='Enemy' && 'id' in cell && cell.id===id )  return { x: i, y: j, entity: cell };
             }
         }
@@ -416,7 +416,7 @@ const App = () =>
 
     const enemyDeath = ( id: string, aux: CellContent[][] ): CellContent[][] =>
     {
-        const thisMonster = findThisEnemy( id );
+        const thisMonster = findThisEnemy( id, mapa );
         if(!thisMonster) return aux ;
 
         const { x, y } = thisMonster;
@@ -447,7 +447,7 @@ const App = () =>
     {
         let tag = { aliment: '', color: 'khaki'};
 
-        const thisMonsterData = findThisEnemy( id );
+        const thisMonsterData = findThisEnemy( id, mapa );
         if(!thisMonsterData) return ;
 
         const { entity } = thisMonsterData;
@@ -462,6 +462,22 @@ const App = () =>
         {
             if(dot!=0)
             {
+                const alimentVector =
+                {
+                    'poison': 'PoisonInstances',
+                    'bleed': 'BleedInstances',
+                    'burn': 'BurnInstances'
+                } as const;
+                
+                const alimentTag =
+                {
+                    'poison': { aliment: '[Envenenado]', color: 'lime' },
+                    'bleed': { aliment: '[Sangrando]', color: 'red' },
+                    'burn': { aliment: '[Quemándose]', color: 'orange' }
+                };
+
+                type AlimentKey = keyof typeof alimentVector;
+                 
                 let dmgId = setInterval( () =>
                 {
                     let flag = true;
@@ -469,10 +485,10 @@ const App = () =>
                     setMapa( prev =>
                     {
                         const aux = prev.map( fila => [ ...fila ] );
-                        const thisMonsterData = findThisEnemy( id );
+                        const dmgIntervalMonster = findThisEnemy( id, aux );
                         
-                        if(!thisMonsterData) return prev;
-                        const { x, y, entity } = thisMonsterData;
+                        if(!dmgIntervalMonster) return prev;
+                        const { x, y, entity } = dmgIntervalMonster;
                         
                         manageVisualAnimation( 'damage', x, y, dot.toString(), 450 );
 
@@ -540,19 +556,10 @@ const App = () =>
                     {
                         const aux = prev.map( cell => [ ...cell ] );
 
-                        const thisEnemyData = findThisEnemy( id );
-                        if(!thisEnemyData) return prev;
+                        const timeoutMonster = findThisEnemy( id, aux );
+                        if(!timeoutMonster) return prev;
 
-                        const { x, y, entity } = thisEnemyData;
-
-                        const alimentVector =
-                        {
-                            'poison': 'PoisonInstances',
-                            'bleed': 'BleedInstances',
-                            'burn': 'BurnInstances'
-                        } as const;
-
-                        type AlimentKey = keyof typeof alimentVector; 
+                        const { x, y, entity } = timeoutMonster;
 
                         if (aliment in alimentVector)
                         {
@@ -586,13 +593,31 @@ const App = () =>
                     clearInterval( dmgId );
                 }, times*1000);
 
-                switch(aliment)
+                if (aliment in alimentVector)
+                {
+                    setMapa( prev =>
+                    {
+                        const aux = prev.map( cell => [ ...cell ] );
+                        aux[x][y] = manageDotInstance(
+                            alimentVector[aliment as AlimentKey], { dmgId, timerId }, entity, 'add' );
+                        
+                        const tag = alimentTag[aliment as AlimentKey];
+                        return aux;
+                    } );
+                }
+
+                /*switch(aliment)       // LEGACY CODE, POR SI ACASO.
                 {
                     case 'poison':
                     {
                         tag.aliment = '[Envenenado]';
                         tag.color = 'lime';
-                        mapa[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'add');
+                        setMapa( prev =>
+                        {
+                            const aux = prev.map( x => [ ...x ] );
+                            aux[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'add');
+                            return aux;
+                        } );
                         break;
                     }
                     case 'bleed':
@@ -611,7 +636,7 @@ const App = () =>
                     }
                     default:
                         break;
-                }
+                }*/
             };
 
             setMapa( prev =>
