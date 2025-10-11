@@ -29,7 +29,9 @@ export type HotBarItems = { Equippeable: InventoryGear[] }
 
 export type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string };
 export type deffenseInfo = { Armor: number, Toughness: number, Immunity?: string };
-export type dropInfo = { item: Item, chance: number };
+export type dropInfo = { item: Item | Gear, chance: number, quantity: number };
+
+export type lootBagItem = { item: Item | Gear, quantity: number };
 
 export type eventLog = { message: string, color: string };
 
@@ -50,6 +52,7 @@ export interface WithAliments
 
 export interface Environment
 {
+    id?: string,
     type: string,
     name: string,
     symbol: string,

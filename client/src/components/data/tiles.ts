@@ -45,6 +45,7 @@ export const teleport: Environment =
 
 export const bag: Environment =
 {
+    id: '',
     type: 'Object',
     name: 'Bag',
     symbol: Icons.bagImg,

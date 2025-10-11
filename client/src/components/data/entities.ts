@@ -1,6 +1,7 @@
 import * as icons from '../../Icons/index';
 import * as Types from '../types/global';
 import * as Items from './items';
+import * as Gear from './gear';
 
 export const maxHp = 10;
 
@@ -90,7 +91,7 @@ export const heavyEnemy: Types.Enemy =
     attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
     defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
     pattern: 'none',
-    drops: [ { item: Items.Potion, chance: 75 } ]
+    drops: [ { item: Items.Potion, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
 }
 
 export const allEnemies: Types.Enemy[] = [

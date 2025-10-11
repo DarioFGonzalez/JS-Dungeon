@@ -173,7 +173,7 @@ const App = () =>
             for( let j=0; j<map[i].length; j++ )
             {
                 const cell = map[i][j];
-                if( 'type' in cell &&  cell.type==='Enemy' && 'id' in cell && cell.id===id )  return { x: i, y: j, entity: cell };
+                if( 'type' in cell &&  cell.type==='Enemy' && 'id' in cell && cell.id===id )  return { x: i, y: j, entity: cell as Types.Enemy };
             }
         }
 
@@ -346,7 +346,7 @@ const App = () =>
                 return all;
             } ) }, equippedWeapon.item.attackStats?.cd )
 
-            return { ...aux, hotBar: { ...aux.hotBar, Equippeable: aux.hotBar.Equippeable.map( w => w.equiped ? { ...w, durability: w.durability - enemyToughness, onCd: true } : w )}}    
+            return { ...aux, hotBar: { ...aux.hotBar, Equippeable: aux.hotBar.Equippeable.map( w => w.id === weapon.id ? { ...w, durability: w.durability - enemyToughness, onCd: true } : w )}}    
         } );
     }
 
@@ -373,45 +373,6 @@ const App = () =>
             thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
             flag=false;
         }
-        /*setPlayer( playerInfo =>
-        {
-            const aux = { ...playerInfo };
-            const thisWeapon = aux.hotBar.Equippeable.find( item => item.item.slot==='weapon' && item.equiped ) || Gear.emptyHanded;
-
-            !thisWeapon.onCd && setEnemies( mobs =>
-            {
-                const thisEnemy = auxiliar[x][y] as Types.Enemy;
-                if(!thisEnemy) return mobs;
-
-                const attk = thisWeapon.item.attackStats;
-                if(!attk) return mobs;
-
-                const damage = attk.dmg- thisEnemy.defense.Armor;
-
-                if(flag && !thisWeapon.onCd)
-                {
-                    if(thisEnemy.name==='Ore')
-                    {
-                        if(thisWeapon.item.name==='Pickaxe')
-                        {
-                            damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
-                            thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
-                        }
-                        return mobs;
-                    }
-                    else
-                    {
-                        damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
-                        thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
-                    }
-                    flag = false;
-                }
-
-                return mobs;
-            } );
-
-            return aux;
-        } );*/
     }
 
     const enemyDeath = ( id: string, aux: CellContent[][] ): CellContent[][] =>
@@ -428,7 +389,8 @@ const App = () =>
         if(thisMonster.entity.drops.length>0)
         {
             const loot = thisMonster.entity.drops.filter( drop => rollDrop( drop.chance ) )
-            .map( drop => drop.item );
+            .map( drop => ({ item: drop.item, quantity: drop.quantity }) );
+            console.log("El monstruo dropeó: ", loot);
             aux[x][y] = lootBag( loot );
             return aux;
         }
@@ -437,9 +399,9 @@ const App = () =>
         return aux;
     }
 
-    const lootBag = ( loot: (Types.Gear | Types.Item)[] ) : Types.Environment =>
+    const lootBag = ( loot: {item: (Types.Gear | Types.Item), quantity: number}[] ) : Types.Environment =>
     {
-        if(loot.length>0) return { type: 'Object', name: 'Bag', symbol: icons.bagImg, content: loot  };
+        if(loot.length>0) return { id: crypto.randomUUID(), type: 'Object', name: 'Bag', symbol: icons.bagImg, content: loot  };
         return emptyTile;
     }
 
@@ -606,37 +568,6 @@ const App = () =>
                     } );
                 }
 
-                /*switch(aliment)       // LEGACY CODE, POR SI ACASO.
-                {
-                    case 'poison':
-                    {
-                        tag.aliment = '[Envenenado]';
-                        tag.color = 'lime';
-                        setMapa( prev =>
-                        {
-                            const aux = prev.map( x => [ ...x ] );
-                            aux[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'add');
-                            return aux;
-                        } );
-                        break;
-                    }
-                    case 'bleed':
-                    {
-                        tag.aliment = '[Sangrando]';
-                        tag.color = 'red';
-                        mapa[x][y] = manageDotInstance("BleedInstances", {dmgId, timerId}, entity, 'add');
-                        break;
-                    }
-                    case 'burn':
-                    {
-                        tag.aliment = '[Quemándose]';
-                        tag.color = 'orange';
-                        mapa[x][y] = manageDotInstance("BurnInstances", {dmgId, timerId}, entity, 'add');
-                        break;
-                    }
-                    default:
-                        break;
-                }*/
             };
 
             setMapa( prev =>
@@ -651,152 +582,6 @@ const App = () =>
             ? queueLog(`Golpeaste a ${entity.name} por ${dmg} de daño. [${entity.hp - dmg}/${entity.maxHp}]. ${tag.aliment}`, tag.color)
             : queueLog(`You HIT ${entity.name} by ${dmg} damage. [${entity.hp- dmg}/${entity.maxHp}]`, 'khaki');
 
-        /*setEnemies( allEnemies =>
-        {
-            const aux = [ ...allEnemies ];
-            let tag = { aliment: '', color: 'khaki'};
-            const thisEnemy = aux.find( mob => mob.id === ID ) || Entities.enemy;
-            
-            if(thisEnemy.hp-dmg <= 0)
-            {
-                return enemyDeath( thisEnemy.data.x, thisEnemy.data.y, thisEnemy, aux );
-            }
-            else
-            {
-                if(dot!=0)
-                {
-                    switch(aliment)
-                    {
-                        case 'poison':
-                        {
-                            tag.aliment = '[Envenenado]';
-                            tag.color = 'lime';
-                            setEnemies( allEnemies =>
-                            {
-                                const aux = [ ...allEnemies ];
-                                return aux.map( mob => mob.id===thisEnemy.id
-                                    ? manageDotInstance("PoisonInstances", {dmgId, timerId}, thisEnemy, 'add')
-                                    : mob );
-                            });
-                            break;
-                        }
-                        case 'bleed':
-                        {
-                            tag.aliment = '[Sangrando]';
-                            tag.color = 'red';
-                            setEnemies( allEnemies =>
-                            {
-                                const aux = [ ...allEnemies ];
-                                return aux.map( mob => mob.id===thisEnemy.id
-                                    ? manageDotInstance("BleedInstances", {dmgId, timerId}, thisEnemy, 'add')
-                                    : mob );
-                            });
-                            break;
-                        }
-                        case 'burn':
-                            {
-                                tag.aliment = '[Quemándose]';
-                                tag.color = 'orange';
-                                setEnemies( allEnemies =>
-                                {
-                                    const aux = [ ...allEnemies ];
-                                    return aux.map( mob => mob.id===thisEnemy.id
-                                        ? manageDotInstance("BurnInstances", {dmgId, timerId}, thisEnemy, 'add')
-                                        : mob );
-                                });
-                                break;
-                            }
-                        default:
-                            break;
-                    }
-        
-                    let dmgId = setInterval( () =>
-                    {
-                        let flag = true;
-                        setEnemies( prev =>
-                        {
-                            const aux = [ ...prev ];
-                            const updatedEnemy = aux.find( x => x.id === thisEnemy.id );
-                            if(!updatedEnemy) return prev;
-
-                            manageVisualAnimation( 'damage', updatedEnemy?.data.x, updatedEnemy?.data.y, dot.toString(), 450 );
-
-                            if(!updatedEnemy) return prev;
-                            
-                            if( updatedEnemy.hp - dot <= 0 || !game)
-                            {
-                                cleanse('all', updatedEnemy.id);
-                                if(flag)
-                                {
-                                    console.log("El bicho murió por DOT: ", aliment);
-                                    flag = false;
-                                }
-                                if(game)
-                                {
-                                    return enemyDeath(updatedEnemy.data.x, updatedEnemy.data.y, updatedEnemy, aux);
-                                }
-                                return aux;
-                            }
-                            if(flag)
-                            {
-                                console.log(`El bicho recibió ${dot} de daño por ${aliment}.`);
-                                flag = false;
-                            }
-                            return aux.map( mob => mob.id === updatedEnemy.id ? {...mob, hp: mob.hp - dot } : mob );
-                        } );
-                    }, 1000);
-        
-                    let timerId = setTimeout( () =>
-                    {
-                        switch(aliment)
-                        {
-                            case 'poison':
-                                {
-                                    setEnemies( prev =>
-                                    {
-                                        const aux = [ ...prev ];
-                                        return aux.map( x => x.id === thisEnemy.id
-                                            ? manageDotInstance("PoisonInstances", {dmgId, timerId}, x, 'remove')
-                                            : x );
-                                    } );
-                                    break;
-                                }
-                            case 'bleed':
-                                {
-                                    setEnemies( prev =>
-                                    {
-                                        const aux = [ ...prev ];
-                                        return aux.map( x => x.id === thisEnemy.id
-                                            ? manageDotInstance("BleedInstances", {dmgId, timerId}, x, 'remove')
-                                            : x );
-                                    } );
-                                    break;
-                                }
-                            case 'burn':
-                                {
-                                    setEnemies( prev =>
-                                    {
-                                        const aux = [ ...prev ];
-                                        return aux.map( x => x.id === thisEnemy.id
-                                            ? manageDotInstance("BurnInstances", {dmgId, timerId}, x, 'remove')
-                                            : x );
-                                    } );
-                                    break;
-                                }
-                            default:
-                                break;
-                        }
-                        clearInterval( dmgId );
-                    }, times*1000)
-                }
-
-                lan=='es'
-                ? queueLog(`Golpeaste a ${thisEnemy.name} por ${dmg} de daño. [${thisEnemy.hp - dmg}/${thisEnemy.maxHp}]. ${tag.aliment}`, tag.color)
-                : queueLog(`You HIT ${thisEnemy.name} by ${dmg} damage. [${thisEnemy.hp- dmg}/${thisEnemy.maxHp}]`, 'khaki');
-
-                return aux.map( mob => mob.id===thisEnemy.id ? { ...mob, hp: mob.hp - dmg } : mob );
-            }
-        } );*/
         }
     }
 
@@ -1026,28 +811,34 @@ const App = () =>
         }, 45);
     };
 
-    const stepOnItem = ( x: number, y: number, symbol: string, tile: Types.Item, quantity: number ): void =>
+    const stepOnItem = (  tile: Types.Item, quantity: number, x?: number, y?: number, symbol?: string, lootBag?: boolean ): void =>
     {
         if( player.inventory.length >= 20 )
         {
-            setResidual( prev => [ ...prev, { entity: tile, coords: [ x, y ] } ] );
-            moveHere( x, y, symbol, true );
+            if(!lootBag && x!==undefined && y!==undefined && symbol)
+            {
+                setResidual( prev => [ ...prev, { entity: tile, coords: [ x, y ] } ] );
+                moveHere( x, y, symbol, true );
+            };
             return ;
         }
-        moveHere( x, y, symbol, true );
+        if(!lootBag && x!==undefined && y!==undefined && symbol!== undefined) moveHere( x, y, symbol, true );
 
         addToInventory( tile, quantity );
     }
 
-    const stepOnGear = ( x: number, y: number, symbol: string, tile: Types.Gear ): void =>
+    const stepOnGear = ( tile: Types.Gear, x?: number, y?: number, symbol?: string, lootBag?: boolean ): void =>
     {
         if( player.hotBar.Equippeable.length >= 6 )
         {
-            setResidual( prev => [ ...prev, { entity: tile, coords: [ x, y ] } ] );
-            moveHere( x, y, symbol, true );
+            if(!lootBag && x !== undefined && y != undefined && symbol != undefined )
+            {
+                setResidual( prev => [ ...prev, { entity: tile, coords: [ x, y ] } ] );
+                moveHere( x, y, symbol, true );
+            }
             return ;
         }
-        moveHere( x, y, symbol, true );
+        if(!lootBag && x!==undefined && y!==undefined && symbol!==undefined) moveHere( x, y, symbol, true );
 
         addToEquippeable( tile );
     }
@@ -1207,6 +998,15 @@ const App = () =>
             return aux;
         } );
     }
+
+    const checkLootBag = ( lootContent: Types.lootBagItem[] ): void =>
+    {
+        lootContent.forEach( drop =>
+        {
+            if(drop.item.type==='Item') stepOnItem( drop.item as Types.Item, drop.quantity, undefined, undefined, undefined, true );
+            if(drop.item.type==='Gear') stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
+        } );
+    }
         
     const movePlayer = ( x: number, y: number, symbol: string ): void =>
     {
@@ -1214,6 +1014,7 @@ const App = () =>
 
         const newX = player.data.x+x;
         const newY = player.data.y+y;
+
         const tile = aux[newX][newY];
 
         if(!stun)
@@ -1222,6 +1023,12 @@ const App = () =>
             {
                 case 'Void':
                     {
+                        moveHere( newX, newY, symbol, true );
+                        break;
+                    }
+                case 'Bag':
+                    {
+                        if('content' in tile) checkLootBag(tile.content);
                         moveHere( newX, newY, symbol, true );
                         break;
                     }
@@ -1259,12 +1066,12 @@ const App = () =>
             {
                 case 'Item':
                     {
-                        stepOnItem( newX, newY, symbol, tile as Types.Item, 1 );
+                        stepOnItem( tile as Types.Item, 1, newX, newY, symbol );
                         break;
                     }
                 case 'Gear':
                     {
-                        stepOnGear( newX, newY, symbol, tile as Types.Gear );
+                        stepOnGear( tile as Types.Gear, newX, newY, symbol );
                         break;
                     }
                 case 'Trap':
@@ -1413,7 +1220,7 @@ const App = () =>
             const selected = Equippeables.find( x => x.selected );
             if(!selected) return playerInfo;
 
-            const toReplace = Equippeables.find( x => x.equiped && x.item.type === selected.item.type )
+            const toReplace = Equippeables.find( x => x.equiped && x.item.slot === selected.item.slot )
 
             if(!toReplace)
             {
