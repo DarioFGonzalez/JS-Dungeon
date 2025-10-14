@@ -70,7 +70,7 @@ export const enemy: Types.Enemy =
     },
     attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { Armor: 0, Toughness: 1 },
-    pattern: 'none',
+    pattern: 'horizontal',
     drops: []
 }
 
@@ -90,7 +90,7 @@ export const heavyEnemy: Types.Enemy =
     },
     attack: { Instant: 3, DoT: 2, Times: 3, Aliment: 'bleed' },
     defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
-    pattern: 'none',
+    pattern: 'vertical',
     drops: [ { item: Items.Potion, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
 }
 

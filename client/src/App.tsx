@@ -35,6 +35,7 @@ const App = () =>
     const [ game, setGame ] = useState<boolean>(false);
     const [ allowed, setAllowed ] = useState<boolean>(true);
     const [ stun, setStun ] = useState<boolean>(false);
+    const [ patrolsId, setPatrolsId ] = useState<NodeJS.Timer>();
 
     const [ mapa, setMapa ] = useState<CellContent[][]>( emptyGrid );
     const [ showSlides, setShowSlides ] = useState<boolean>( false );
@@ -88,6 +89,24 @@ const App = () =>
 
         return () => clearTimeout( timeId );
     }, [ delayedLog ] );
+
+    useEffect( () =>
+    {
+        if(game)
+        {
+            setPatrolsId( setInterval( () =>
+            {
+                console.log("Desde el useEffect, se ejecuta handlePatrols();");
+                handlePatrols();
+            }, 3000 ) );
+        }
+        else
+        {
+            clearInterval(patrolsId);
+            setPatrolsId(undefined);
+        }
+
+    },[ game ] );
 
     const findPlayer = (): void =>
     {
@@ -390,7 +409,6 @@ const App = () =>
         {
             const loot = thisMonster.entity.drops.filter( drop => rollDrop( drop.chance ) )
             .map( drop => ({ item: drop.item, quantity: drop.quantity }) );
-            console.log("El monstruo dropeó: ", loot);
             aux[x][y] = lootBag( loot );
             return aux;
         }
@@ -824,7 +842,7 @@ const App = () =>
         }
         if(!lootBag && x!==undefined && y!==undefined && symbol!== undefined) moveHere( x, y, symbol, true );
 
-        addToInventory( tile, quantity );
+        addToInventory( tile, quantity, lootBag?lootBag:false );
     }
 
     const stepOnGear = ( tile: Types.Gear, x?: number, y?: number, symbol?: string, lootBag?: boolean ): void =>
@@ -840,7 +858,7 @@ const App = () =>
         }
         if(!lootBag && x!==undefined && y!==undefined && symbol!==undefined) moveHere( x, y, symbol, true );
 
-        addToEquippeable( tile );
+        addToEquippeable( tile, lootBag?lootBag:false );
     }
 
     const turnToInventoryGear = ( gear: Types.Gear ): Types.InventoryGear =>
@@ -848,17 +866,17 @@ const App = () =>
         return { item: gear, id: crypto.randomUUID(), durability: gear.durability, onCd: false, equiped: false, selected: false };
     }
 
-    const addToEquippeable = ( gear: Types.Gear ) =>
+    const addToEquippeable = ( gear: Types.Gear, lootBag: boolean ) =>
     {
-        queueLog(`${gear.name} agregado a la mochila.`, 'orange');
+        if(!lootBag) queueLog(`${gear.name} agregado a la mochila.`, 'orange');
         setPlayer( playerInfo => ( { ...playerInfo, hotBar: { ...playerInfo.hotBar,
             Equippeable: [ ...playerInfo.hotBar.Equippeable, turnToInventoryGear(gear) ] } } ) );
     }
 
-    const addToInventory = ( item: Types.Item, quantity: number ): void =>
+    const addToInventory = ( item: Types.Item, quantity: number, lootBag?: boolean ): void =>
     {
         const thisItem = player.inventory.find( x => x.item.name === item.name )
-        queueLog(`Recogiste ${quantity} ${item.name}.`, 'lime');
+        if(!lootBag) queueLog(`Recogiste ${quantity} ${item.name}.`, 'lime');
         if(!thisItem)
         {
             setPlayer( prev => ( { ...prev, inventory: [ ...prev.inventory, { item: item, quantity: quantity, onCd: false } ] } ) );
@@ -1001,11 +1019,14 @@ const App = () =>
 
     const checkLootBag = ( lootContent: Types.lootBagItem[] ): void =>
     {
+        handleEventLogs(`------------------------`, 'orange' );
         lootContent.forEach( drop =>
         {
+            handleEventLogs(`- ${drop.quantity} x ${drop.item.name}`, 'khaki' );
             if(drop.item.type==='Item') stepOnItem( drop.item as Types.Item, drop.quantity, undefined, undefined, undefined, true );
             if(drop.item.type==='Gear') stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
         } );
+        handleEventLogs(`La bolsa contenía:`, 'orange')
     }
         
     const movePlayer = ( x: number, y: number, symbol: string ): void =>
@@ -1312,23 +1333,73 @@ const App = () =>
         }
     }
 
-    /*const beginPatrol = ( x: number, y: number, symbol: string, patrol: string ) => //non
+    const handlePatrols = ( ): void =>
     {
-        const thisEnemy = enemies.find( mob => mob.data.x === x && mob.data.y === y );
-
-        if( thisEnemy?.pattern !== 'none' )
+        setMapa( prev =>
         {
-            switch(patrol)
+            let aux = prev.map( cell => [ ... cell ] );
+            let moved: string[] = [];
+
+            for( let i=0; i<aux.length; i++ )
             {
-                case 'straight':
+                for( let j=0; j<aux[i].length; j++ )
                 {
-                    straightPatrol( x, y, symbol );
-                    break;
+                    const cell = aux[i][j];
+                    if( 'type' in cell &&  cell.type==='Enemy' && 'pattern' in cell && cell.pattern !== 'none' )
+                    {
+                        if(moved.includes(cell.id)) continue;
+                        
+                        moved.push(cell.id);
+                        aux = patrolMovement( i, j, cell, aux );
+                    }
                 }
-                default: return;
             }
+
+            return aux;
+        } );
+    }
+
+    const patrolDirections: Record<string, number[][]> =    // Vector
+    {
+        'vertical': [ [-1, 0], [1, 0] ],
+        'horizontal': [ [0, -1], [0, 1] ],
+        'random': [ [-1, 0], [1, 0], [0, -1], [0, 1] ]
+    };
+
+    const patrolMovement = ( x: number, y: number, entity: Types.Enemy, mapaState: CellContent[][] ): CellContent[][] =>
+    {
+        const direcciones = patrolDirections[entity.pattern];
+        const direccion = direcciones[Math.floor(Math.random()*direcciones.length)];
+
+        const newX = x + direccion[0];
+        const newY = y + direccion[1];
+
+        if( mapaState[newX][newY]===emptyTile)
+        {
+            mapaState[x][y] = emptyTile;
+            mapaState[newX][newY] = entity;
         }
-    }*/
+
+        return mapaState;
+    }
+
+    // const checkPatrol = ( id: string ): void => 
+    // {
+    //     const thisEnemy = enemies.find( mob => mob.data.x === x && mob.data.y === y );
+
+    //     if( thisEnemy?.pattern !== 'none' )
+    //     {
+    //         switch(patrol)
+    //         {
+    //             case 'straight':
+    //             {
+    //                 straightPatrol( x, y, symbol );
+    //                 break;
+    //             }
+    //             default: return;
+    //         }
+    //     }
+    // }
 
     /*const straightPatrol = ( x: number, y: number, symbol: string ): void => //non
     {
