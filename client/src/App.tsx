@@ -88,7 +88,7 @@ const App = () =>
         const timeId = setTimeout( () => { setDelayedLog( rest ); }, 50 );
 
         return () => clearTimeout( timeId );
-    }, [ delayedLog ] );
+    }, [ delayedLog ] );    //Cola de eventos en log
 
     useEffect( () =>
     {
@@ -96,9 +96,8 @@ const App = () =>
         {
             setPatrolsId( setInterval( () =>
             {
-                console.log("Desde el useEffect, se ejecuta handlePatrols();");
                 handlePatrols();
-            }, 3000 ) );
+            }, 1500 ) );
         }
         else
         {
@@ -106,7 +105,7 @@ const App = () =>
             setPatrolsId(undefined);
         }
 
-    },[ game ] );
+    },[ game ] );   //Comenzar/Detener patrullas
 
     const findPlayer = (): void =>
     {
@@ -477,7 +476,6 @@ const App = () =>
                             cleanse( 'all', id );
                             if(flag)
                             {
-                                console.log("El bicho murió por DOT: ", aliment); // ?. handleEventLog para esto porfavor.
                                 flag = false;
                             }
                             if(game)
@@ -488,7 +486,6 @@ const App = () =>
                         }
                         if(flag)
                         {
-                            console.log(`El bicho recibió ${dot} de daño por ${aliment}.`);
                             flag = false;
                         }
                         
@@ -613,6 +610,7 @@ const App = () =>
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
         let flag = true;
+
         setPlayer( prev =>
         {
             let activeCharm = prev.hotBar.Equippeable.find( item => item.equiped && item.item.slot==='charm' );
@@ -642,10 +640,12 @@ const App = () =>
                     }
                     newEquippeables =  prev.hotBar.Equippeable.filter( gear => gear.id!==newCharm?.id );
                 }
+                
                 if(flag)
                 {
                     flag = false;
                 }
+
                 return { ...prev, hotBar: { ...prev.hotBar, Equippeable: newEquippeables }, hp: prev.hp - residualDmg };
             }
             if(prev.hp-dmg<=0)
@@ -653,6 +653,7 @@ const App = () =>
                 stopGame();
                 return { ...prev, hp: 0 };
             }
+            
             return { ...prev, hp: prev.hp - dmg };
         });
 
@@ -778,7 +779,9 @@ const App = () =>
                 clearInterval( dmgId );
             }, times*1000)
 
-        }
+        };
+
+        return ;
     };
     
     const touchEnemy = ( symbol: string, x: number, y: number ): void =>
@@ -1374,11 +1377,17 @@ const App = () =>
         const newX = x + direccion[0];
         const newY = y + direccion[1];
 
-        if( mapaState[newX][newY]===emptyTile)
+        if( mapaState[newX][newY]===emptyTile )
         {
             mapaState[x][y] = emptyTile;
             mapaState[newX][newY] = entity;
-        }
+        };
+
+        if( mapaState[newX][newY].type === 'Player' )
+        {
+            console.log('Pegarle al player');
+            hurtPlayer( entity.attack.Instant, entity.attack.DoT, entity.attack.Times, entity.attack.Aliment );
+        };
 
         return mapaState;
     }
@@ -1729,7 +1738,8 @@ const App = () =>
         // auxiliar[16][2] = icons.tpImg;
 
         auxiliar[3][3] = createEntity( 'Object', 'Box' );
-        auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
+        // auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
+        // auxiliar[4][10] = createEntity( 'Enemie', 'Agile Goblin' );
         auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[13][13] = createEntity( 'Trap', 'Poison trap' );
         auxiliar[15][5] = createEntity( 'Trap', 'Simple trap' );

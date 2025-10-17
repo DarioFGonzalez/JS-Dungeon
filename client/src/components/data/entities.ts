@@ -94,6 +94,26 @@ export const heavyEnemy: Types.Enemy =
     drops: [ { item: Items.Potion, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
 }
 
+const agileEnemy: Types.Enemy =
+{
+    type: 'Enemy',
+    id: '0',
+    name: 'Agile Goblin',
+    hp: 5,
+    maxHp: 5,
+    symbol: icons.snsGoblinImg,
+    data: { x: 0, y: 0 },
+    aliments:
+    {
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
+    attack: { Instant: 1, DoT: 0, Times: 0, Aliment: '' },
+    defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
+    pattern: 'random',
+    drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]
+};
+
 export const allEnemies: Types.Enemy[] = [
-    enemy, heavyEnemy
+    enemy, heavyEnemy, agileEnemy
 ];
