@@ -22,7 +22,7 @@ export const Sword1: Types.Gear =
     id: '',
     slot: 'weapon',
     desc: '+2 DMG',
-    attackStats: { dmg: 2, DoT: 0, times: 0, cd: 1000 },
+    attackStats: { dmg: 2, DoT: 1, times: 5, cd: 1000, aliment: 'bleed' },
     durability: 10,
     equippeable: true
 }

@@ -105,7 +105,7 @@ const App = () =>
             setPatrolsId(undefined);
         }
 
-    },[ game ] );   //Comenzar/Detener patrullas
+    },[ game ] );
 
     const findPlayer = (): void =>
     {
@@ -439,7 +439,7 @@ const App = () =>
         }
         else
         {
-            if(dot!=0)
+            if(dot!=0 && entity.defense.Immunity!=aliment)
             {
                 const alimentVector =
                 {
@@ -784,9 +784,8 @@ const App = () =>
         return ;
     };
     
-    const touchEnemy = ( symbol: string, x: number, y: number ): void =>
+    const touchEnemy = ( symbol: string, thisEnemy: Types.Enemy ): void =>
     {
-        const thisEnemy = enemies.find( mob => mob.data.x===x && mob.data.y===y ) || Entities.enemy;
         const { attack } = thisEnemy;
         queueLog( `${thisEnemy.name} te golpeó por ${attack.Instant} de daño.`, 'red');
         hurtPlayer( attack.Instant, attack.DoT, attack.Times, attack.Aliment );
@@ -1110,7 +1109,7 @@ const App = () =>
                             manageVisualAnimation( 'visual', playerInfo.data.x, playerInfo.data.y, icons.clawHit, 400 );
                             return playerInfo;
                         } );
-                        touchEnemy( symbol, newX, newY );
+                        touchEnemy( symbol, tile as Types.Enemy );
                         break;
                     }
             }
@@ -1139,6 +1138,13 @@ const App = () =>
         ship_left: [0, -1],
         ship_right: [0, 1]
     }
+
+    const navigateHotBarVectors: Record<string, number> =
+    {
+        'arrowup': -1,
+        'arrowdown': 1,
+        'delete': 0
+    };
 
     const directionFromVector = ( symbol: string ): [number, number] =>
     {
@@ -1216,21 +1222,35 @@ const App = () =>
     const navigateHotbar = ( key: string ): void =>
     {
         let flag = true;
+
         setPlayer( playerInfo =>
         {
             const player = { ...playerInfo };
-            const to = key==='arrowup' ? -1 : +1 ;
-            const oldIndex = player.hotBar.Equippeable.findIndex( item => item.selected );
-            const max = player.hotBar.Equippeable.length - 1;
-            const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
-            
-            if(oldIndex===newIndex) return playerInfo;
+            const to = navigateHotBarVectors[key];
 
-            const aux = [ ...player.hotBar.Equippeable];
-            aux[oldIndex] = { ...aux[oldIndex], selected: false };
-            aux[newIndex] = { ...aux[newIndex], selected: true };
-            flag = false;
-            return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
+            if(to!==0)
+            {
+                const oldIndex = player.hotBar.Equippeable.findIndex( item => item.selected );
+
+                if(oldIndex==-1)
+                {
+                    const aux = player.hotBar.Equippeable.map( ( x, y ) => y==0 ? {...x, selected: true } : x );
+                    return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
+                }
+
+                const max = player.hotBar.Equippeable.length - 1;
+                const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
+                
+                if(oldIndex===newIndex) return playerInfo;
+    
+                const aux = [ ...player.hotBar.Equippeable];
+                aux[oldIndex] = { ...aux[oldIndex], selected: false };
+                aux[newIndex] = { ...aux[newIndex], selected: true };
+                flag = false;
+                return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
+            }
+
+            return { ...player, hotBar: { ...player.hotBar, Equippeable: player.hotBar.Equippeable.filter( x => !x.selected ) } };
         } );
     }
 
@@ -1297,8 +1317,10 @@ const App = () =>
 
             switch(key)
             {
+                case 'delete':
                 case 'arrowup':
                 case 'arrowdown':
+                    console.log("Tocaste ", key);
                 navigateHotbar(key);
                 break;
 
@@ -1338,10 +1360,17 @@ const App = () =>
 
     const handlePatrols = ( ): void =>
     {
+        let flag = true;
         setMapa( prev =>
         {
             let aux = prev.map( cell => [ ... cell ] );
             let moved: string[] = [];
+
+            if(flag)
+            {
+                flag = false;
+                return aux;
+            }
 
             for( let i=0; i<aux.length; i++ )
             {
@@ -1351,7 +1380,7 @@ const App = () =>
                     if( 'type' in cell &&  cell.type==='Enemy' && 'pattern' in cell && cell.pattern !== 'none' )
                     {
                         if(moved.includes(cell.id)) continue;
-                        
+                            
                         moved.push(cell.id);
                         aux = patrolMovement( i, j, cell, aux );
                     }
@@ -1385,7 +1414,6 @@ const App = () =>
 
         if( mapaState[newX][newY].type === 'Player' )
         {
-            console.log('Pegarle al player');
             hurtPlayer( entity.attack.Instant, entity.attack.DoT, entity.attack.Times, entity.attack.Aliment );
         };
 
@@ -1713,34 +1741,10 @@ const App = () =>
         }
         auxiliar[mapSize-1][mapSize-1] = Tiles.torchedWall;
 
-        // auxiliar[3][3] = icons.boxImg;               LEGACY SPAWNS
-        // auxiliar[13][14] = icons.hGoblinImg;
-        // auxiliar[15][2] = icons.goblinImg;
-        // auxiliar[13][13] = icons.pTrapImg;
-        // auxiliar[15][5] = icons.trapImg;
-        // auxiliar[2][5] = icons.potionImg;
-        // auxiliar[2][6] =  icons.bandagesImg;
-        // auxiliar[2][7] = icons.potionImg;
-        // auxiliar[2][8] = icons.bandagesImg;
-        // auxiliar[2][10] = icons.aloeImg;
-        // auxiliar[3][5] = icons.sword1Img;
-        // auxiliar[4][6] = icons.dagger1Img;
-        // auxiliar[5][6] = icons.necklaceImg;
-        // auxiliar[6][6] = icons.necklaceImg;
-        // auxiliar[7][6] = icons.sword1Img;
-        // auxiliar[8][6] = icons.dagger1Img;
-        // auxiliar[9][6] = icons.necklaceImg;
-        // auxiliar[10][6] = icons.sword1Img;
-        // auxiliar[11][6] = icons.dagger1Img;
-        // auxiliar[10][10] = icons.fireImg;
-        // auxiliar[10][12] = icons.fountainImg;
-        // auxiliar[2][16] = icons.tpImg;
-        // auxiliar[16][2] = icons.tpImg;
-
         auxiliar[3][3] = createEntity( 'Object', 'Box' );
         // auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
-        // auxiliar[4][10] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[4][10] = createEntity( 'Enemie', 'Agile Goblin' );
+        // auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[13][13] = createEntity( 'Trap', 'Poison trap' );
         auxiliar[15][5] = createEntity( 'Trap', 'Simple trap' );
         auxiliar[2][5] = createEntity( 'Consumable', 'Potion' );

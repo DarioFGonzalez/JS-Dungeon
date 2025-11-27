@@ -71,7 +71,7 @@ export const enemy: Types.Enemy =
     attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { Armor: 0, Toughness: 1 },
     pattern: 'horizontal',
-    drops: []
+    drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]
 }
 
 export const heavyEnemy: Types.Enemy =
@@ -109,7 +109,7 @@ const agileEnemy: Types.Enemy =
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: '' },
-    defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
+    defense: { Armor: 1, Toughness: 3 },
     pattern: 'random',
     drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]
 };

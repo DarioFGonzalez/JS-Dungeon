@@ -10,19 +10,19 @@ interface GearTabProps
 const GearTab: React.FC<GearTabProps> = ({ player }) => {
 
   return (
-    <div onClick={()=>console.log( player ) } className="gear-tab">
+    <div onClick={()=>console.log( player.hotBar.Equippeable.length ) } className="gear-tab">
 
       <div className="gear-grid">
-        {player.hotBar.Equippeable.map((x, y) => (
+        {player.hotBar.Equippeable.length > 0 && player.hotBar.Equippeable.map((x, y) => (
           <div onClick={() => console.log(x.item)} key={y}
-          className={`${x.item.slot=='weapon'?'weapon-card':'charm-card'} ${x.equiped ? 'equipped' : ''} ${x.selected ? 'selected' : ''}`} >
+          className={`${x?.item.slot=='weapon'?'weapon-card':'charm-card'} ${x.equiped ? 'equipped' : ''} ${x.selected ? 'selected' : ''}`} >
             <div className="gear-name">{x.item.name}</div>
             <div className="gear-stats-row">
               <div className="gear-stat">🗡 {x.item.attackStats?.dmg ?? '—'}</div>
               <div className="gear-stat">🛡 +{x.item.defenseStats?.def ?? ' —'}</div>
               <div className="gear-stat">
-                {x.item.slot === 'weapon' && `🛠 ${x.durability}/${x.item.durability}`}
-                {x.item.slot === 'charm' && `💙 ${x.durability}/${x.item.durability}`}
+                {x?.item.slot === 'weapon' && `🛠 ${x.durability}/${x.item.durability}`}
+                {x?.item.slot === 'charm' && `💙 ${x.durability}/${x.item.durability}`}
               </div>
               <div className="gear-stat">
                 {x.item.attackStats?.aliment
@@ -32,6 +32,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
             </div>
           </div>
         ))}
+        { player.hotBar.Equippeable.length == 0 && <div> </div> }
       </div>
 
     </div>
