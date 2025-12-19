@@ -125,7 +125,7 @@ export interface Enemy
     attack: attackInfo,
     defense: deffenseInfo,
     pattern: string,
-    patrolId?: ReturnType<typeof setTimeout>,
+    patrolId?: ReturnType<typeof setInterval>,
     drops: dropInfo[]
 }
 

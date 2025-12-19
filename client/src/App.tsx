@@ -38,6 +38,7 @@ const App = () =>
     const [ patrolsId, setPatrolsId ] = useState<NodeJS.Timer>();
 
     const [ mapa, setMapa ] = useState<CellContent[][]>( emptyGrid );
+    const mapaRef = useRef( mapa );
     const [ showSlides, setShowSlides ] = useState<boolean>( false );
     const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
     const currentSlide = Types.slides[slideIndex];
@@ -81,6 +82,11 @@ const App = () =>
 
     useEffect( () =>
     {
+        mapaRef.current = mapa;
+    }, [ mapa ] );
+
+    useEffect( () =>
+    {
         if(delayedLog.length===0) return;
 
         const [ actual, ...rest ] = delayedLog;
@@ -90,22 +96,22 @@ const App = () =>
         return () => clearTimeout( timeId );
     }, [ delayedLog ] );    //Cola de eventos en log
 
-    useEffect( () =>
-    {
-        if(game)
-        {
-            setPatrolsId( setInterval( () =>
-            {
-                handlePatrols();
-            }, 1500 ) );
-        }
-        else
-        {
-            clearInterval(patrolsId);
-            setPatrolsId(undefined);
-        }
+    // useEffect( () =>
+    // {
+    //     if(game)
+    //     {
+    //         setPatrolsId( setInterval( () =>
+    //         {
+    //             handlePatrols();
+    //         }, 1500 ) );
+    //     }
+    //     else
+    //     {
+    //         clearInterval(patrolsId);
+    //         setPatrolsId(undefined);
+    //     }
 
-    },[ game ] );
+    // },[ game ] );
 
     const findPlayer = (): void =>
     {
@@ -184,13 +190,14 @@ const App = () =>
         return auxiliar
     };
 
-    const findThisEnemy = ( id: string, map: CellContent[][] ): { x: number, y: number, entity: Types.Enemy } | undefined =>
+    const findThisEnemy = ( id: string, map?: CellContent[][]): { x: number, y: number, entity: Types.Enemy } | undefined =>
     {
-        for( let i=0; i<map.length; i++ )
+        const activeMap = map ?? mapaRef.current;
+        for( let i=0; i<activeMap.length; i++ )
         {
-            for( let j=0; j<map[i].length; j++ )
+            for( let j=0; j<activeMap[i].length; j++ )
             {
-                const cell = map[i][j];
+                const cell = activeMap[i][j];
                 if( 'type' in cell &&  cell.type==='Enemy' && 'id' in cell && cell.id===id )  return { x: i, y: j, entity: cell as Types.Enemy };
             }
         }
@@ -393,12 +400,14 @@ const App = () =>
         }
     }
 
-    const enemyDeath = ( id: string, aux: CellContent[][] ): CellContent[][] =>
+    const enemyDeath = ( id: string ): CellContent[][] =>
     {
-        const thisMonster = findThisEnemy( id, mapa );
-        if(!thisMonster) return aux ;
+        const aux = mapaRef.current.map( x => [ ...x ] );
+        const thisMonster = findThisEnemy( id, aux );
+        if(!thisMonster) return mapaRef.current;
 
-        const { x, y } = thisMonster;
+        const { x, y, entity } = thisMonster;
+        clearInterval( entity.patrolId );
 
         lan==='es'
         ? queueLog( `${thisMonster.entity.name} murió.`, 'crimson' )
@@ -412,7 +421,7 @@ const App = () =>
             return aux;
         }
 
-        aux[x][y]= emptyTile;     
+        aux[x][y]= emptyTile;
         return aux;
     }
 
@@ -434,7 +443,31 @@ const App = () =>
 
         if(entity.hp-dmg <= 0)
         {
-            setMapa( prev => enemyDeath( entity.id, prev ) );
+            setMapa( prev =>
+            {
+                const aux = prev.map( x => [ ...x ] );
+
+                const thisMonster = findThisEnemy( id, aux );
+                if(!thisMonster) return aux ;
+
+                const { x: mobX, y: mobY, entity: mob } = thisMonster;
+                clearInterval( mob.patrolId );
+
+                lan==='es'
+                ? queueLog( `${thisMonster.entity.name} murió.`, 'crimson' )
+                : queueLog( `${thisMonster.entity.name} died.`, 'crimson' );
+
+                if(thisMonster.entity.drops.length>0)
+                {
+                    const loot = thisMonster.entity.drops.filter( drop => rollDrop( drop.chance ) )
+                    .map( drop => ({ item: drop.item, quantity: drop.quantity }) );
+                    aux[mobX][mobY] = lootBag( loot );
+                    return aux;
+                }
+
+                aux[mobX][mobY]= emptyTile;     
+                return aux;
+            } );
             return ;
         }
         else
@@ -463,6 +496,12 @@ const App = () =>
 
                     setMapa( prev =>
                     {
+                        if(flag)
+                        {
+                            flag = false;
+                            return prev;
+                        }
+
                         const aux = prev.map( fila => [ ...fila ] );
                         const dmgIntervalMonster = findThisEnemy( id, aux );
                         
@@ -473,20 +512,9 @@ const App = () =>
 
                         if( entity.hp - dot <= 0 || !game )
                         {
+                            console.log("El bicho murió por un DoT");
                             cleanse( 'all', id );
-                            if(flag)
-                            {
-                                flag = false;
-                            }
-                            if(game)
-                            {
-                                return enemyDeath( id, aux );
-                            }
-                            return aux;
-                        }
-                        if(flag)
-                        {
-                            flag = false;
+                            return enemyDeath( id );
                         }
                         
                         aux[x][y] = { ...entity, hp: entity.hp - dot };
@@ -1358,38 +1386,38 @@ const App = () =>
         }
     }
 
-    const handlePatrols = ( ): void =>
-    {
-        let flag = true;
-        setMapa( prev =>
-        {
-            let aux = prev.map( cell => [ ... cell ] );
-            let moved: string[] = [];
+    // const handlePatrols = ( ): void =>
+    // {
+    //     let flag = true;
+    //     setMapa( prev =>
+    //     {
+    //         let aux = prev.map( cell => [ ... cell ] );
+    //         let moved: string[] = [];
 
-            if(flag)
-            {
-                flag = false;
-                return aux;
-            }
+    //         if(flag)
+    //         {
+    //             flag = false;
+    //             return aux;
+    //         }
 
-            for( let i=0; i<aux.length; i++ )
-            {
-                for( let j=0; j<aux[i].length; j++ )
-                {
-                    const cell = aux[i][j];
-                    if( 'type' in cell &&  cell.type==='Enemy' && 'pattern' in cell && cell.pattern !== 'none' )
-                    {
-                        if(moved.includes(cell.id)) continue;
+    //         for( let i=0; i<aux.length; i++ )
+    //         {
+    //             for( let j=0; j<aux[i].length; j++ )
+    //             {
+    //                 const cell = aux[i][j];
+    //                 if( 'type' in cell &&  cell.type==='Enemy' && 'pattern' in cell && cell.pattern !== 'none' )
+    //                 {
+    //                     if(moved.includes(cell.id)) continue;
                             
-                        moved.push(cell.id);
-                        aux = patrolMovement( i, j, cell, aux );
-                    }
-                }
-            }
+    //                     moved.push(cell.id);
+    //                     aux = patrolMovement( i, j, cell, aux );
+    //                 }
+    //             }
+    //         }
 
-            return aux;
-        } );
-    }
+    //         return aux;
+    //     } );
+    // }
 
     const patrolDirections: Record<string, number[][]> =    // Vector
     {
@@ -1742,9 +1770,12 @@ const App = () =>
         auxiliar[mapSize-1][mapSize-1] = Tiles.torchedWall;
 
         auxiliar[3][3] = createEntity( 'Object', 'Box' );
-        // auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
+        auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[4][10] = createEntity( 'Enemie', 'Agile Goblin' );
-        // auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[4][11] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[4][12] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[4][13] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[13][13] = createEntity( 'Trap', 'Poison trap' );
         auxiliar[15][5] = createEntity( 'Trap', 'Simple trap' );
         auxiliar[2][5] = createEntity( 'Consumable', 'Potion' );
@@ -1802,6 +1833,30 @@ const App = () =>
         if( entityName === 'Bag' ) (thisEntity as Types.Environment).content = loot;
 
         if(type==='Object' || type==='Tile') return thisEntity as Types.Environment;
+
+        if(type==='Enemie' && 'pattern' in thisEntity && (thisEntity.pattern!=='none' || undefined) )
+        {
+            const id = crypto.randomUUID();
+
+            const patrolId = setInterval( () =>
+            {
+                setMapa( prev =>
+                {
+                    let aux = prev.map( x => [ ...x ] );
+                    
+                    const data = findThisEnemy( id, aux );
+                    if(!data) return prev;
+
+                    const { x: mobX, y: mobY, entity: mob } = data;
+
+                    aux = patrolMovement( mobX, mobY, mob, aux );
+
+                    return aux;
+                } );
+            }, 2000 );
+
+            return { ...thisEntity, id, patrolId };
+        }
         
         return { ...thisEntity, id: crypto.randomUUID() } as Types.Gear | Types.Enemy | Types.Item;
     }
