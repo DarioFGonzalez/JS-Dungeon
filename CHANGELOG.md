@@ -4,6 +4,32 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
+## [v0.0.99+] - 2025-12-26
+
+### Added
+- **Soporte para creación de mapas externos (Excel-based)**: Se adopta un flujo de trabajo manual para diseño de mapas utilizando una grilla 18×18 con celdas perfectamente cuadradas, permitiendo prototipado rápido y control visual total del layout.
+- **Referencia visual de mapas**: Incorporación de una imagen documentada del mapa base en el repositorio como fuente de verdad para la traducción manual a matriz lógica.
+- **Estructura de mapa orientada a entidades**: Cada posición del mapa representa ahora una entidad completa, facilitando la lectura, transformación y validación de mapas definidos externamente.
+
+### Changed
+- **Refactor profundo de la lógica base del juego**:
+  - La matriz principal deja de contener valores primitivos o símbolos aislados y pasa a manejar entidades estructuradas.
+  - Se prioriza escalabilidad y coherencia interna por sobre velocidad de implementación.
+- **Gestión de patrullas de enemigos**:
+  - Cada patrulla se maneja de forma individual e independiente.
+  - Se habilita la cancelación segura de intervalos específicos (`clearInterval(id)`), evitando comportamientos zombis o fugas de lógica.
+- **Flujo de desarrollo**:
+  - Se abandona la necesidad de un “motor de mapas” interno en favor de una herramienta externa más simple, flexible y controlable.
+
+### Fixed
+- Bug crítico relacionado con **muerte por daño en el tiempo (DoT)** que generaba estados inconsistentes al finalizar entidades.
+
+### Notes
+- Este release marca un **punto de estabilización estructural** del proyecto.
+- El nuevo flujo de creación de mapas prioriza claridad, control y rapidez iterativa, incluso a costa de automatización temprana.
+- A partir de esta versión, el foco pasa de refactorización interna a **construcción de contenido jugable** con vistas a una demo funcional.
+
 ## [v0.0.99] - 2025-06-02
 
 ### Added

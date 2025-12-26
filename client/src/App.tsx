@@ -96,23 +96,6 @@ const App = () =>
         return () => clearTimeout( timeId );
     }, [ delayedLog ] );    //Cola de eventos en log
 
-    // useEffect( () =>
-    // {
-    //     if(game)
-    //     {
-    //         setPatrolsId( setInterval( () =>
-    //         {
-    //             handlePatrols();
-    //         }, 1500 ) );
-    //     }
-    //     else
-    //     {
-    //         clearInterval(patrolsId);
-    //         setPatrolsId(undefined);
-    //     }
-
-    // },[ game ] );
-
     const findPlayer = (): void =>
     {
         let here = [ 0, 0 ];
@@ -124,34 +107,6 @@ const App = () =>
         } ));
         setPlayer( prev => ({ ...prev, symbol, data: { x: here[0], y: here[1] } }) );
     };
-
-    /*const checkCollision = ( x: number, y: number ) =>
-    {
-        if( x<0 || x >= mapa.length || y<0 || y >= mapa[0].length ) return 'oob';
-        
-        const tile = mapa[x][y];
-
-        switch(tile)
-        {
-            case '': return 'empty';
-            case icons.wallImg: return icons.wallImg;
-            case icons.fountainImg: return icons.fountainImg;
-            case icons.goblinImg: return Entities.enemy;
-            case icons.hGoblinImg: return Entities.heavyEnemy;
-            case icons.fireImg: return icons.fireImg;
-            case icons.boxImg: return icons.boxImg;
-            case icons.tpImg: return icons.tpImg;
-            case icons.trapImg: return Entities.trap;
-            case icons.pTrapImg: return Entities.poisonTrap;
-            case icons.potionImg: return Items.Potion;
-            case icons.bandagesImg: return Items.Bandages;
-            case icons.aloeImg: return Items.Aloe;
-            case icons.sword1Img: return Gear.Sword1;
-            case icons.dagger1Img: return Gear.Dagger1;
-            case icons.necklaceImg: return Gear.Necklace1;
-            default: return 'unknown';
-        };
-    };*/
 
     const inconsecuente = ( symbol: string ): void =>
     {
@@ -512,7 +467,6 @@ const App = () =>
 
                         if( entity.hp - dot <= 0 || !game )
                         {
-                            console.log("El bicho murió por un DoT");
                             cleanse( 'all', id );
                             return enemyDeath( id );
                         }
@@ -521,38 +475,6 @@ const App = () =>
                         
                         return aux;
                     } )
-
-                    /*setEnemies( prev =>   // LEGACY CODE, POR SI ACASO.
-                    {
-                        const aux = [ ...prev ];
-                        const updatedEnemy = aux.find( x => x.id === thisEnemy.id );
-                        if(!updatedEnemy) return prev;
-
-                        manageVisualAnimation( 'damage', updatedEnemy?.data.x, updatedEnemy?.data.y, dot.toString(), 450 );
-
-                        if(!updatedEnemy) return prev;
-                        
-                        if( updatedEnemy.hp - dot <= 0 || !game)
-                        {
-                            cleanse('all', updatedEnemy.id);
-                            if(flag)
-                            {
-                                console.log("El bicho murió por DOT: ", aliment);
-                                flag = false;
-                            }
-                            if(game)
-                            {
-                                return enemyDeath(updatedEnemy.data.x, updatedEnemy.data.y, updatedEnemy, aux);
-                            }
-                            return aux;
-                        }
-                        if(flag)
-                        {
-                            console.log(`El bicho recibió ${dot} de daño por ${aliment}.`);
-                            flag = false;
-                        }
-                        return aux.map( mob => mob.id === updatedEnemy.id ? {...mob, hp: mob.hp - dot } : mob );
-                    } );*/
                 }, 1000);
     
                 let timerId = setTimeout( () =>
@@ -648,6 +570,7 @@ const App = () =>
                 if(flag)
                 {
                     queueLog(`${activeCharm.item.name} se activó, daño recibido: ${residualDmg}.`, 'white');
+                    flag = false;
                 }
                 if(prev.hp-residualDmg<=0)
                 {
@@ -667,11 +590,6 @@ const App = () =>
                         flag = false;
                     }
                     newEquippeables =  prev.hotBar.Equippeable.filter( gear => gear.id!==newCharm?.id );
-                }
-                
-                if(flag)
-                {
-                    flag = false;
                 }
 
                 return { ...prev, hotBar: { ...prev.hotBar, Equippeable: newEquippeables }, hp: prev.hp - residualDmg };
@@ -750,22 +668,23 @@ const App = () =>
                 let flag = true;
                 setPlayer( prev =>
                 {
-                    const aux = { ...prev};
                     if(flag)
                     {
-                        queueLog(`Daño por ${estado}: ${dot}`, color);
+                        flag = false;
+                        return prev;
                     }
+
+                    const aux = { ...prev};
+
+                    queueLog(`Daño por ${estado}: ${dot}`, color);
                     
                     if( aux.hp - dot <= 0 || !game)
                     {
-                        if(flag)
-                        {
-                            stopGame();
-                        }
-                        flag=false;
+                        stopGame();
+
                         return {...aux, hp: 0 };
                     }
-                    flag=false;
+
                     return {...aux, hp: aux.hp - dot };
                 } );
             }, 1000);
@@ -1061,7 +980,7 @@ const App = () =>
         
     const movePlayer = ( x: number, y: number, symbol: string ): void =>
     {
-        const aux = mapa.map( fila => [ ...fila ] );
+        const aux = mapaRef.current.map( fila => [ ...fila ] );
 
         const newX = player.data.x+x;
         const newY = player.data.y+y;
@@ -1348,8 +1267,7 @@ const App = () =>
                 case 'delete':
                 case 'arrowup':
                 case 'arrowdown':
-                    console.log("Tocaste ", key);
-                navigateHotbar(key);
+                    navigateHotbar(key);
                 break;
 
                 case 'k':   //bandages
@@ -1386,39 +1304,6 @@ const App = () =>
         }
     }
 
-    // const handlePatrols = ( ): void =>
-    // {
-    //     let flag = true;
-    //     setMapa( prev =>
-    //     {
-    //         let aux = prev.map( cell => [ ... cell ] );
-    //         let moved: string[] = [];
-
-    //         if(flag)
-    //         {
-    //             flag = false;
-    //             return aux;
-    //         }
-
-    //         for( let i=0; i<aux.length; i++ )
-    //         {
-    //             for( let j=0; j<aux[i].length; j++ )
-    //             {
-    //                 const cell = aux[i][j];
-    //                 if( 'type' in cell &&  cell.type==='Enemy' && 'pattern' in cell && cell.pattern !== 'none' )
-    //                 {
-    //                     if(moved.includes(cell.id)) continue;
-                            
-    //                     moved.push(cell.id);
-    //                     aux = patrolMovement( i, j, cell, aux );
-    //                 }
-    //             }
-    //         }
-
-    //         return aux;
-    //     } );
-    // }
-
     const patrolDirections: Record<string, number[][]> =    // Vector
     {
         'vertical': [ [-1, 0], [1, 0] ],
@@ -1447,75 +1332,6 @@ const App = () =>
 
         return mapaState;
     }
-
-    // const checkPatrol = ( id: string ): void => 
-    // {
-    //     const thisEnemy = enemies.find( mob => mob.data.x === x && mob.data.y === y );
-
-    //     if( thisEnemy?.pattern !== 'none' )
-    //     {
-    //         switch(patrol)
-    //         {
-    //             case 'straight':
-    //             {
-    //                 straightPatrol( x, y, symbol );
-    //                 break;
-    //             }
-    //             default: return;
-    //         }
-    //     }
-    // }
-
-    /*const straightPatrol = ( x: number, y: number, symbol: string ): void => //non
-    {
-        let direction = -1;
-        let currentX = x;
-
-        const thisEnemy = enemies?.find( mob => mob.Data.x===x && mob.Data.y===y );
-        !thisEnemy && console.log('No se encontró un mob en las coordenadas iniciales.');
-
-        if(thisEnemy?.PatrolId)
-        {
-            clearInterval(thisEnemy.PatrolId);
-        }
-
-        let id = setInterval( () =>
-        {
-            let change = [];
-            let nextX = currentX + direction;
-
-            setMapa( prev =>
-            {
-                const aux = prev.map( x => [...x] );
-
-                if(checkCollision(nextX,y)!=='empty')
-                {
-                    change.push(true);
-                    return aux;
-                }
-
-                aux[nextX][y] = thisEnemy?.symbol || '❌';
-                aux[currentX][y] = '';
-                return aux;
-            });
-            
-            setEnemies( prev => prev.map( mob => mob.Data.x===x && mob.Data.y===y ?
-            { ...mob, Data: { ...mob.Data, x: nextX } } : mob ) );
-            
-            if(change.length>0)
-            {
-                direction*=-1;
-            }
-            else
-            {
-                currentX = nextX;
-            }
-            console.log("---------------------------------------- fin de una vuelta");
-        },1000);
-
-        setEnemies( prev => prev.map( mob => mob.Data.x===x && mob.Data.y===y ?
-            { ...mob, Data: { ...mob.Data, PatrolId: id  } } : mob ) );
-    }*/
 
     const finishDoT = <T extends Types.WithAliments>( aliment: keyof Types.AlimentInstances, info: T, all?: boolean ): void =>
     {
@@ -1747,71 +1563,147 @@ const App = () =>
         }
     }
 
-    const loadGame = (): void =>
-    {
-        const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
-        for(let i=0; i<mapSize; i++)
-        {
-            auxiliar[i][0] = Tiles.basicWalls;
-            auxiliar[0][i] = Tiles.basicWalls;
-            auxiliar[i][mapSize-1] = Tiles.basicWalls;
-            auxiliar[mapSize-1][i] = Tiles.basicWalls;
-        }
-        for(let i=0; i<mapSize; i++)
-        {
-            if(i%6==0 || i===0)
-            {
-                auxiliar[i][0] = Tiles.torchedWall;
-                auxiliar[0][i] = Tiles.torchedWall;
-                auxiliar[i][mapSize-1] = Tiles.torchedWall;
-                auxiliar[mapSize-1][i] = Tiles.torchedWall;
-            }
-        }
-        auxiliar[mapSize-1][mapSize-1] = Tiles.torchedWall;
+    // const loadGame = (): void =>
+    // {
+    //     const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
+    //     for(let i=0; i<mapSize; i++)
+    //     {
+    //         auxiliar[i][0] = Tiles.basicWalls;
+    //         auxiliar[0][i] = Tiles.basicWalls;
+    //         auxiliar[i][mapSize-1] = Tiles.basicWalls;
+    //         auxiliar[mapSize-1][i] = Tiles.basicWalls;
+    //     }
+    //     for(let i=0; i<mapSize; i++)
+    //     {
+    //         if(i%6==0 || i===0)
+    //         {
+    //             auxiliar[i][0] = Tiles.torchedWall;
+    //             auxiliar[0][i] = Tiles.torchedWall;
+    //             auxiliar[i][mapSize-1] = Tiles.torchedWall;
+    //             auxiliar[mapSize-1][i] = Tiles.torchedWall;
+    //         }
+    //     }
+    //     auxiliar[mapSize-1][mapSize-1] = Tiles.torchedWall;
 
-        auxiliar[3][3] = createEntity( 'Object', 'Box' );
-        auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
-        auxiliar[4][10] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[4][11] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[4][12] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[4][13] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
-        auxiliar[13][13] = createEntity( 'Trap', 'Poison trap' );
-        auxiliar[15][5] = createEntity( 'Trap', 'Simple trap' );
-        auxiliar[2][5] = createEntity( 'Consumable', 'Potion' );
-        auxiliar[2][6] =  createEntity( 'Consumable', 'Bandages' );
-        auxiliar[2][7] = createEntity( 'Consumable', 'Potion' );
-        auxiliar[2][8] = createEntity( 'Consumable', 'Bandages' );
-        auxiliar[2][10] = createEntity( 'Consumable', 'Aloe leaf' );
-        auxiliar[3][5] = createEntity( 'Equippable', 'Wooden sword');
-        auxiliar[4][6] = createEntity( 'Equippable', 'Slicing knife');
-        auxiliar[5][6] = createEntity( 'Equippable', 'Protective pendant' );
-        auxiliar[6][6] = createEntity( 'Equippable', 'Protective pendant' );
-        auxiliar[7][6] = createEntity( 'Equippable', 'Wooden sword' );
-        auxiliar[8][6] = createEntity( 'Equippable', 'Slicing knife' );
-        auxiliar[9][6] = createEntity( 'Equippable', 'Protective pendant' );
-        auxiliar[10][6] = createEntity( 'Equippable', 'Wooden sword' );
-        auxiliar[11][6] = createEntity( 'Equippable', 'Slicing knife' );
-        auxiliar[10][10] = createEntity( 'Object', 'Fire' );
-        auxiliar[10][12] = createEntity( 'Object', 'Fountain' );
-        auxiliar[2][16] = createEntity( 'Object', 'Teleport' );
-        auxiliar[16][2] = createEntity( 'Object', 'Teleport' );
+    //     auxiliar[3][3] = createEntity( 'Object', 'Box' );
+    //     auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
+    //     auxiliar[4][10] = createEntity( 'Enemie', 'Agile Goblin' );
+    //     auxiliar[4][11] = createEntity( 'Enemie', 'Agile Goblin' );
+    //     auxiliar[4][12] = createEntity( 'Enemie', 'Agile Goblin' );
+    //     auxiliar[4][13] = createEntity( 'Enemie', 'Agile Goblin' );
+    //     auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
+    //     auxiliar[13][13] = createEntity( 'Trap', 'Poison trap' );
+    //     auxiliar[15][5] = createEntity( 'Trap', 'Simple trap' );
+    //     auxiliar[2][5] = createEntity( 'Consumable', 'Potion' );
+    //     auxiliar[2][6] =  createEntity( 'Consumable', 'Bandages' );
+    //     auxiliar[2][7] = createEntity( 'Consumable', 'Potion' );
+    //     auxiliar[2][8] = createEntity( 'Consumable', 'Bandages' );
+    //     auxiliar[2][10] = createEntity( 'Consumable', 'Aloe leaf' );
+    //     auxiliar[3][5] = createEntity( 'Equippable', 'Wooden sword');
+    //     auxiliar[4][6] = createEntity( 'Equippable', 'Slicing knife');
+    //     auxiliar[5][6] = createEntity( 'Equippable', 'Protective pendant' );
+    //     auxiliar[6][6] = createEntity( 'Equippable', 'Protective pendant' );
+    //     auxiliar[7][6] = createEntity( 'Equippable', 'Wooden sword' );
+    //     auxiliar[8][6] = createEntity( 'Equippable', 'Slicing knife' );
+    //     auxiliar[9][6] = createEntity( 'Equippable', 'Protective pendant' );
+    //     auxiliar[10][6] = createEntity( 'Equippable', 'Wooden sword' );
+    //     auxiliar[11][6] = createEntity( 'Equippable', 'Slicing knife' );
+    //     auxiliar[10][10] = createEntity( 'Object', 'Fire' );
+    //     auxiliar[10][12] = createEntity( 'Object', 'Fountain' );
+    //     auxiliar[2][16] = createEntity( 'Object', 'Teleport' );
+    //     auxiliar[16][2] = createEntity( 'Object', 'Teleport' );
 
-        setTps( [ [2,16], [16,2] ] );
+    //     setTps( [ [2,16], [16,2] ] );
         
-        auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = player;
+    //     auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = player;
         
-        setPlayer( prev => (
-        { ...prev, data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2) } } ) );
-        setEnemies( [
-        { ...Entities.enemy, id: crypto.randomUUID(), symbol: icons.goblinImg, data: { x: 15, y: 2 } },
-        { ...Entities.heavyEnemy, id: crypto.randomUUID(), symbol: icons.hGoblinImg, data: { x: 13, y: 14 } } ] );
-        setTraps( [
-        { ...Entities.trap, id: crypto.randomUUID(), symbol: icons.trapImg, data: { x: 15, y: 5 } },
-        { ...Entities.poisonTrap, id: crypto.randomUUID(), symbol: icons.pTrapImg, data: { x: 13, y: 13 } } ] );
+    //     setPlayer( prev => (
+    //     { ...prev, data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2) } } ) );
+    //     setTraps( [
+    //     { ...Entities.trap, id: crypto.randomUUID(), symbol: icons.trapImg, data: { x: 15, y: 5 } },
+    //     { ...Entities.poisonTrap, id: crypto.randomUUID(), symbol: icons.pTrapImg, data: { x: 13, y: 13 } } ] );
         
-        setMapa(auxiliar);
+    //     setMapa(auxiliar);
+    // }
+
+const loadGame = (): void => {
+    const mapSize = 18;
+    const auxiliar: CellContent[][] = Array.from({ length: mapSize }, () => Array.from(Array(mapSize), () => emptyTile));
+
+    for (let i = 0; i < mapSize; i++) {
+        auxiliar[i][0] = Tiles.basicWalls;
+        auxiliar[0][i] = Tiles.basicWalls;
+        auxiliar[i][mapSize - 1] = Tiles.basicWalls;
+        auxiliar[mapSize - 1][i] = Tiles.basicWalls;
+        if (i % 6 == 0 || i === 0) {
+            auxiliar[i][0] = Tiles.torchedWall;
+            auxiliar[0][i] = Tiles.torchedWall;
+            auxiliar[i][mapSize - 1] = Tiles.torchedWall;
+            auxiliar[mapSize - 1][i] = Tiles.torchedWall;
+        }
     }
+
+    for (let i = 0; i < 5; i++) {
+        auxiliar[4][i] = Tiles.basicWalls; 
+        auxiliar[i][4] = Tiles.basicWalls; 
+        auxiliar[4][i + 5] = Tiles.basicWalls; 
+        auxiliar[i][10] = Tiles.basicWalls; 
+    }
+    auxiliar[4][2] = emptyTile; 
+    auxiliar[4][7] = emptyTile; 
+    auxiliar[2][7] = createEntity('Equippable', 'Protective pendant');
+
+    for (let i = 6; i < 12; i++) {
+        auxiliar[6][i] = Tiles.basicWalls;
+        auxiliar[11][i] = Tiles.basicWalls;
+        if (i !== 8 && i !== 9) {
+            auxiliar[i][6] = Tiles.basicWalls;
+            auxiliar[i][11] = Tiles.basicWalls;
+        }
+    }
+    auxiliar[6][8] = emptyTile; 
+    auxiliar[11][9] = emptyTile; 
+
+    auxiliar[8][8] = createEntity('Object', 'Teleport');
+    auxiliar[7][8] = createEntity('Enemie', 'Agile Goblin');
+    auxiliar[8][7] = createEntity('Enemie', 'Agile Goblin');
+    auxiliar[9][8] = createEntity('Enemie', 'Agile Goblin');
+
+    for (let i = 13; i < 18; i++) {
+        for (let j = 13; j < 18; j++) {
+            if (i === 13 || j === 13) auxiliar[i][j] = Tiles.basicWalls;
+        }
+    }
+    auxiliar[15][15] = createEntity('Object', 'Teleport');
+    auxiliar[14][14] = createEntity('Equippable', 'Wooden sword');
+    auxiliar[14][16] = createEntity('Consumable', 'Potion');
+
+    for (let i = 5; i < 13; i++) auxiliar[i][12] = Tiles.basicWalls; 
+    for (let i = 1; i < 11; i++) auxiliar[12][i] = Tiles.basicWalls; 
+    auxiliar[12][5] = emptyTile;
+
+    auxiliar[15][2] = createEntity('Trap', 'Poison trap');
+    auxiliar[16][2] = createEntity('Consumable', 'Potion'); 
+    
+    auxiliar[1][14] = createEntity('Object', 'Fire');
+    auxiliar[2][14] = createEntity('Object', 'Fire');
+    auxiliar[3][14] = createEntity('Object', 'Fire');
+
+    auxiliar[1][16] = createEntity('Object', 'Box');
+    auxiliar[2][16] = createEntity('Enemie', 'Hobgoblin');
+    auxiliar[10][2] = createEntity('Enemie', 'Goblin');
+    auxiliar[10][14] = createEntity('Enemie', 'Agile Goblin');
+
+    const startX = 2;
+    const startY = 2;
+    auxiliar[startX][startY] = player;
+
+    setPlayer(prev => ({ ...prev, data: { x: startX, y: startY } }));
+    setTps([[8, 8], [15, 15]]);
+    setTraps([{ ...Entities.poisonTrap, id: crypto.randomUUID(), symbol: icons.pTrapImg, data: { x: 15, y: 2 } }]);
+
+    setMapa(auxiliar);
+}
 
     const createEntity = ( type: 'Equippable' | 'Enemie' | 'Trap' | 'Consumable' | 'Object' | 'Tile', entityName: string, loot?: any[] ): Types.Gear | Types.Enemy | Types.Item | Types.Environment =>
     {
@@ -1840,8 +1732,16 @@ const App = () =>
 
             const patrolId = setInterval( () =>
             {
+                let flag = true;
+
                 setMapa( prev =>
                 {
+                    if(flag)
+                    {
+                        flag = false;
+                        return prev;
+                    }
+
                     let aux = prev.map( x => [ ...x ] );
                     
                     const data = findThisEnemy( id, aux );

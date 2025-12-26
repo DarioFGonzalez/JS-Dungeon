@@ -27,7 +27,7 @@ export type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: Retur
 
 export type HotBarItems = { Equippeable: InventoryGear[] }
 
-export type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string };
+export type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string, Attacked?: boolean };
 export type deffenseInfo = { Armor: number, Toughness: number, Immunity?: string };
 export type dropInfo = { item: Item | Gear, chance: number, quantity: number };
 

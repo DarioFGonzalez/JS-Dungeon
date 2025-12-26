@@ -1,5 +1,51 @@
 # DevLog - Diario de Combate
 
+
+## 🔹 Paso 17: Re-definiendo la base.
+
+🗓️ *2025-12-26*
+
+`Mucho debugging, mucho re-thinking.`
+
+Re-definí todo lo que tiene que ver con la lógica base del juego pensando **exclusivamente en escalabilidad**. Cambié avance inmediato por estabilidad futura y, aunque engorroso, era un paso inevitable.
+
+**¡Sorpresa!** *[para mí]*
+
+Mientras reordenaba la base me di cuenta de algo:
+para avanzar de verdad no necesitaba un “motor de mapas”… necesitaba una herramienta práctica.
+
+¡Contemplad **JS Map Creator**! 🤓✨
+
+Excel, casillas perfectamente cuadradas, un mapa 18×18, leyendas a un costado y libertad total para experimentar ideas sin pelearme con el código base. Rústico, directo y absurdamente efectivo.
+
+<p align="center">
+  <img src="image.png" alt="JS Map Creator" width="480" />
+  <br />
+  <em>JS Map Creator (Excel-based, 18×18 grid)</em>
+</p>
+
+Después pienso traducir manualmente- usando ciclos for y esta referencia clara -fila por fila el mapa para que quede como quiero/necesito.
+
+Como creador solo necesito un fix básico para seguir avanzando, EXCEL tiene lo justo y necesario- del resto me encargo yo. 🎶
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- Cada fila dentro de la matriz ahora representa una entidad completa, no un ícono o dato aislado.
+- Las patrullas se manejan de forma individual, permitiendo cortar intervalos específicos *( clearInterval(id) )* sin efectos colaterales ni glitches.
+- Bug relacionado con muerte por DoT solucionado.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+Si todo marcha bien y logro mantener el foco, el próximo parche debería cerrar en una **demo jugable real**, con un objetivo claro y gameplay concreto.
+
+...Me muero de ganas por agregar armas a distancia... **magia... ¡AREA DE EFECTO!**. ¡Pero no!. Foco- foco- ¡FOCO! ¡Vamos bien! 👾✨
+
+---
+
 ## 🔹 Paso 16: Demo levantada en Vercel 🙂🚀✨
 
 🗓️ *2025-05-26*
