@@ -17,12 +17,12 @@ export const Fists: Types.Gear =
 export const Sword1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Wooden sword',
-    symbol: icons.sword1Img,
+    name: 'Razor',
+    symbol: icons.dagger1Img,
     id: '',
     slot: 'weapon',
-    desc: '+2 DMG',
-    attackStats: { dmg: 2, DoT: 1, times: 5, cd: 1000, aliment: 'bleed' },
+    desc: '+1 DMG',
+    attackStats: { dmg: 1, DoT: 1, times: 5, cd: 1000, aliment: 'bleed' },
     durability: 10,
     equippeable: true
 }
@@ -30,25 +30,12 @@ export const Sword1: Types.Gear =
 export const Dagger1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Slicing knife',
-    symbol: icons.dagger1Img,
+    name: 'Machete',
+    symbol: icons.sword1Img,
     id: '',
     slot: 'weapon',
-    desc: '+8 DMG (5 🩸)',
-    attackStats: { dmg: 8, DoT: 1, times: 5, aliment: 'bleed', cd: 1000 },
-    durability: 20,
-    equippeable: true
-}
-
-export const Pickaxe1: Types.Gear =
-{
-    type: 'Gear',
-    name: 'Pickaxe',
-    symbol: icons.tile1,
-    id: '',
-    slot: 'weapon',
-    desc: 'Useful to mine ores',
-    attackStats: { dmg: 1, cd: 1000 },
+    desc: '+8 DMG',
+    attackStats: { dmg: 8, DoT: 0, times: 0, aliment: 'none', cd: 2500 },
     durability: 20,
     equippeable: true
 }
@@ -56,7 +43,7 @@ export const Pickaxe1: Types.Gear =
 export const Necklace1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Protective pendant',
+    name: 'Amuleto escudo',
     symbol: icons.necklaceImg,
     id: '',
     slot: 'charm',
@@ -79,7 +66,24 @@ export const Necklace2: Types.Gear =
 }
 
 export const Equippables: Types.Gear[] = [
-    Fists, Sword1, Dagger1, Pickaxe1, Necklace1, Necklace2
+    Fists, Sword1, Dagger1, Necklace1, Necklace2
 ];
 
 export const emptyHanded = { id: '', item: Fists, durability: 999, onCd: false, equiped: true, selected: true };
+
+
+export const CopperPickaxe: Types.Gear =
+{
+    type: 'Tool',
+    name: 'Copper Pickaxe',
+    symbol: icons.copperPickaxe,
+    id: '',
+    slot: 'tool',
+    desc: 'Useful to mine ores',
+    attackStats: { dmg: 1, cd: 4000 },
+    durability: 5,
+    equippeable: true
+}
+
+export const allTools: Types.Gear[] =
+[ CopperPickaxe ]

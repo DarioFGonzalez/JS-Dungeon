@@ -18,13 +18,30 @@ import trapImg from './trap.PNG';
 import pTrapImg from './pTrap.png';
 
 import wallImg from './wall.png';
-import tile1 from './tile1.jpg';
 import torchdWallImg from './torchdWall.PNG';
+import rockyWall1 from './rockyWall.png';
+import rockyWall2 from './rockyWall2.png';
+import rockyWall3 from './rockyWall3.png';
+
+import copperVein1 from './copperVein1.png';
+import copperVein2 from './copperVein2.png';
+import copperVein3 from './copperVein3.png';
+
+import silverVein1 from './silverVein1.png';
+import silverVein2 from './silverVein2.png';
+import silverVein3 from './silverVein3.png';
+
+import copperOre from './copperOre.png';
+import silverOre from './silverOre.png';
+
+import tile1 from './tile1.jpg';
 import boxImg from './box.png';
 
 import dagger1Img from './dagger.png';
 import sword1Img from './sword.png';
 import necklaceImg from './necklace.PNG';
+
+import copperPickaxe from './copperPickaxe.png';
 
 import bagImg from './bag.png';
 
@@ -39,8 +56,14 @@ export {
     potionImg, bandagesImg, aloeImg,
     tpImg, fireImg, fountainImg,
     trapImg, pTrapImg,
-    wallImg, tile1, torchdWallImg, boxImg,
+    wallImg, torchdWallImg,
+    rockyWall1, rockyWall2, rockyWall3,
+    copperVein1, copperVein2, copperVein3,
+    silverVein1, silverVein2, silverVein3,
+    copperOre, silverOre,
+    boxImg, tile1,
     dagger1Img, sword1Img, necklaceImg,
+    copperPickaxe,
     bagImg,
     heroBack, heroFront, heroLeft, heroRight,
 };

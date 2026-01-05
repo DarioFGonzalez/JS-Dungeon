@@ -7,7 +7,7 @@ import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
 import * as Items from './components/data/items';
 import * as Tiles from './components/data/tiles';
-import { allObjects, allTiles } from './components/data/tiles';
+import { allObjects, allTiles, allNodes, silverNodes, copperNodes } from './components/data/tiles';
 
 import './App.css';
 
@@ -24,7 +24,7 @@ const emptyGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize)
 
 const emptyVisualGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> '' ) );
 
-type CellContent = Types.Player | Types.Enemy | Types.Trap | Types.Item | Types.Gear | Types.Environment;
+type CellContent = Types.Player | Types.Enemy | Types.Trap | Types.Item | Types.Gear | Types.Environment | Types.Node;
 
 const emptyDelayedLog = { status: false, message: '', color: 'white' };    
 
@@ -112,7 +112,7 @@ const App = () =>
     {
         const auxiliar = mapa.map(fila => [...fila]);
         const {x, y} = player.data;
-        auxiliar[x][y] = player;
+        auxiliar[x][y] = { ...player, symbol: symbol, data: { x, y } };
         setPlayer( prev => ({ ...prev, symbol, data: { x, y } }) );
         setMapa(auxiliar);
     };
@@ -297,19 +297,21 @@ const App = () =>
 
         setPlayer( playerInfo =>
         {
+            if(flag)
+            {
+                flag = false;
+                return playerInfo;
+            }
             const aux = { ...playerInfo };
             const equippedWeapon = aux.hotBar.Equippeable.find( w => w.id === weapon.id );
             if(!equippedWeapon) return aux;
 
-            if( equippedWeapon.durability - enemyToughness <= 0 )
+            if( 'durability' in equippedWeapon && equippedWeapon.durability!==undefined && equippedWeapon.durability - enemyToughness <= 0 )
             {
                 const newEquippeables = aux.hotBar.Equippeable.filter( wpn => wpn.id !== equippedWeapon.id );
 
-                if(flag)
-                {
-                    queueLog( `[🗡] ¡${equippedWeapon.item.name} se rompió! 💥`, 'orange');
-                    flag = false;
-                }
+                queueLog( `[🗡] ¡${equippedWeapon.item.name} se rompió! 💥`, 'orange');
+                flag = false;
 
                 return { ...aux, hotBar: { ...playerInfo.hotBar, Equippeable: newEquippeables }  };
             }
@@ -326,7 +328,11 @@ const App = () =>
                 return all;
             } ) }, equippedWeapon.item.attackStats?.cd )
 
-            return { ...aux, hotBar: { ...aux.hotBar, Equippeable: aux.hotBar.Equippeable.map( w => w.id === weapon.id ? { ...w, durability: w.durability - enemyToughness, onCd: true } : w )}}    
+            return { ...aux, hotBar: { ...aux.hotBar, Equippeable: aux.hotBar.Equippeable.map( w =>
+                {
+                    if(w.durability) return(w.id === weapon.id ? { ...w, durability: w.durability - enemyToughness, onCd: true } : w)
+                        return w;
+                } )}}
         } );
     }
 
@@ -380,7 +386,7 @@ const App = () =>
         return aux;
     }
 
-    const lootBag = ( loot: {item: (Types.Gear | Types.Item), quantity: number}[] ) : Types.Environment =>
+    const lootBag = ( loot: {item: (Types.Gear | Types.Item | Types.Material ) , quantity: number}[] ) : Types.Environment =>
     {
         if(loot.length>0) return { id: crypto.randomUUID(), type: 'Object', name: 'Bag', symbol: icons.bagImg, content: loot  };
         return emptyTile;
@@ -552,7 +558,7 @@ const App = () =>
 
     const damageCharm = ( charm: Types.InventoryGear, dmg: number ) =>
     {
-        const residualDmg = dmg - charm.durability;
+        const residualDmg = dmg - (charm.durability || 0);
         const newCharm = { ...charm, durability: residualDmg<0?residualDmg*(-1):0 };
         return { newCharm, residualDmg: residualDmg>0?residualDmg:0 }
     }
@@ -560,18 +566,19 @@ const App = () =>
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
         let flag = true;
-
         setPlayer( prev =>
         {
+            if(flag)
+            {
+                flag = false;
+                return prev;
+            }
+
             let activeCharm = prev.hotBar.Equippeable.find( item => item.equiped && item.item.slot==='charm' );
             if(activeCharm)
             {
                 const { newCharm, residualDmg } = damageCharm( activeCharm, dmg );
-                if(flag)
-                {
-                    queueLog(`${activeCharm.item.name} se activó, daño recibido: ${residualDmg}.`, 'white');
-                    flag = false;
-                }
+                queueLog(`${activeCharm.item.name} se activó, daño recibido: ${residualDmg}.`, 'white');
                 if(prev.hp-residualDmg<=0)
                 {
                     stopGame();
@@ -584,11 +591,7 @@ const App = () =>
                 }
                 else
                 {
-                    if(flag)
-                    {
-                        queueLog(`[📿] ¡${activeCharm.item.name} se rompió! 💥`, 'white');
-                        flag = false;
-                    }
+                    queueLog(`[📿] ¡${activeCharm.item.name} se rompió! 💥`, 'white');
                     newEquippeables =  prev.hotBar.Equippeable.filter( gear => gear.id!==newCharm?.id );
                 }
 
@@ -615,14 +618,16 @@ const App = () =>
                     {
                         setPlayer( prev =>
                             {
+                                if(flag)
+                                {
+                                    flag = false;
+                                    return prev;
+                                }
                                 let aux = {...prev};
                                 estado = "veneno";
                                 color = 'lime';
-                                if(flag)
-                                {
-                                    queueLog('[ENVENENADO]', 'lime');
-                                    flag=false;
-                                }
+                                queueLog('[ENVENENADO]', 'lime');
+
                                 return manageDotInstance("PoisonInstances", {dmgId, timerId}, aux, 'add')
                             });
                         break;
@@ -631,14 +636,16 @@ const App = () =>
                     {
                         setPlayer( prev =>
                         {
+                            if(flag)
+                            {
+                                flag=false;
+                                return prev;
+                            }
                             const aux = {...prev };
                             estado = 'sangrado';
                             color = 'red';
-                            if(flag)
-                            {
-                                queueLog('[SANGRANDO]', 'red');
-                                flag=false;
-                            }
+                            queueLog('[SANGRANDO]', 'red');
+                            
                             return manageDotInstance("BleedInstances", {dmgId, timerId}, aux, 'add')
                         } );
                         break;
@@ -647,14 +654,16 @@ const App = () =>
                     {
                         setPlayer( prev =>
                         {
+                            if(flag)
+                            {
+                                flag=false;
+                                return prev;
+                            }
                             const aux = {...prev};
                             estado = 'quemadura';
                             color = 'orange';
-                            if(flag)
-                            {
-                                queueLog('[EN LLAMAS]', 'orange');
-                                flag=false;
-                            }
+                            queueLog('[EN LLAMAS]', 'orange');
+                            
                             return manageDotInstance("BurnInstances", {dmgId, timerId}, aux, 'add')
                         } );
                         break;
@@ -691,12 +700,18 @@ const App = () =>
 
             let timerId = setTimeout( () =>
             {
+                let flag = true;
                 switch(aliment)
                 {
                     case 'poison':
                         {
                             setPlayer( prev =>
                                 {
+                                    if(flag)
+                                    {
+                                        flag = false;
+                                        return prev;
+                                    }
                                     const aux = { ...prev };
                                     return manageDotInstance("PoisonInstances", {dmgId, timerId}, aux, 'remove')
                                 } );
@@ -706,6 +721,11 @@ const App = () =>
                         {
                             setPlayer( prev =>
                                 {
+                                    if(flag)
+                                    {
+                                        flag=false;
+                                        return prev;
+                                    }
                                     const aux = { ...prev };
                                     return manageDotInstance("BleedInstances", {dmgId, timerId}, aux, 'remove')
                                 } );
@@ -715,6 +735,11 @@ const App = () =>
                         {
                             setPlayer( prev =>
                                 {
+                                    if(flag)
+                                    {
+                                        flag=false;
+                                        return prev;
+                                    }
                                     const aux = { ...prev };
                                     return manageDotInstance("BurnInstances", {dmgId, timerId}, aux, 'remove')
                                 } );
@@ -741,15 +766,19 @@ const App = () =>
 
     const stepOnTrap = ( x: number, y: number, symbol: string ): void =>
     {
-        const thisTrap = traps.find( trap => trap.data.x===x && trap.data.y===y ) || Entities.trap ;
+        const thisTrap = mapaRef.current[x][y];
+        // const thisTrap = traps.find( trap => trap.data.x===x && trap.data.y===y ) || Entities.trap ;
 
         setResidual( prev => [ ...prev, { entity: thisTrap, coords: [ x, y ] } ] );
         moveHere( x, y, symbol, true );
 
-        const {attack} = thisTrap;
-        queueLog(`${thisTrap.name} te causó ${attack.Instant} de daño.`, 'crimson');
-
-        hurtPlayer( attack.Instant, attack.DoT, attack.Times, attack.Aliment );
+        if( 'attack' in thisTrap)
+        {
+            const {attack} = thisTrap;
+            queueLog(`${thisTrap.name} te causó ${attack.Instant} de daño.`, 'crimson');
+    
+            hurtPlayer( attack.Instant, attack.DoT, attack.Times, attack.Aliment );
+        }
     };
 
     const walkOntoFire = ( x: number, y: number, symbol: string, newX: number, newY: number ): void =>
@@ -794,7 +823,7 @@ const App = () =>
         addToInventory( tile, quantity, lootBag?lootBag:false );
     }
 
-    const stepOnGear = ( tile: Types.Gear, x?: number, y?: number, symbol?: string, lootBag?: boolean ): void =>
+    const stepOnGear = ( tile: Types.Gear, x?: number, y?: number, symbol?: string, lootBag?: boolean, quantity?: number ): void =>
     {
         if( player.hotBar.Equippeable.length >= 6 )
         {
@@ -805,8 +834,16 @@ const App = () =>
             }
             return ;
         }
-        if(!lootBag && x!==undefined && y!==undefined && symbol!==undefined) moveHere( x, y, symbol, true );
+        if(!lootBag && x!==undefined && y!==undefined && symbol!==undefined)
+        {
+            moveHere( x, y, symbol, true );
+        }
 
+        if( quantity )
+        {
+            addToEquippeable( tile, lootBag?lootBag:false, quantity );
+            return ;
+        }        
         addToEquippeable( tile, lootBag?lootBag:false );
     }
 
@@ -815,11 +852,47 @@ const App = () =>
         return { item: gear, id: crypto.randomUUID(), durability: gear.durability, onCd: false, equiped: false, selected: false };
     }
 
-    const addToEquippeable = ( gear: Types.Gear, lootBag: boolean ) =>
+    const turnToInventoryMaterial = ( material: Types.Gear, quantity: number ): Types.InventoryGear =>
+    {
+        return { item: material, id: crypto.randomUUID(), quantity, selected: false };
+    }
+
+    const addToEquippeable = ( gear: Types.Gear, lootBag: boolean, quantity?: number ) =>
     {
         if(!lootBag) queueLog(`${gear.name} agregado a la mochila.`, 'orange');
+
+        let item: any;
+
+        if( 'durability' in gear )
+        {
+            item = turnToInventoryGear(gear);
+        }
+        else
+        {
+            const ownedMaterial = player.hotBar.Equippeable.find( x => x.item.name == gear.name );
+            if( quantity )
+            {
+                if( ownedMaterial && ownedMaterial.quantity )
+                {
+                    item = { ...ownedMaterial, quantity: ownedMaterial.quantity + quantity };
+                    
+                    setPlayer( playerInfo => ( { ...playerInfo, hotBar: { ...playerInfo.hotBar,
+                    Equippeable: playerInfo.hotBar.Equippeable.map( x => x.id === item.id ? item : x ) } } ) );
+                    
+                    return ;
+                }
+                else
+                {
+                    item = turnToInventoryMaterial(gear, quantity);
+                }
+            }
+        }
+
+
         setPlayer( playerInfo => ( { ...playerInfo, hotBar: { ...playerInfo.hotBar,
-            Equippeable: [ ...playerInfo.hotBar.Equippeable, turnToInventoryGear(gear) ] } } ) );
+        Equippeable: [ ...playerInfo.hotBar.Equippeable, item ] } } ) );
+        
+        return ;
     }
 
     const addToInventory = ( item: Types.Item, quantity: number, lootBag?: boolean ): void =>
@@ -899,49 +972,6 @@ const App = () =>
                 return {...aux, inventory: aux.inventory.filter( y => y.item.name!==thisItem.item.name ) };
             }
         } );
-        
-        // const thisItem = player.inventory.find( x => x.item.name===item.name ) as Types.InventoryItem;
-
-        // if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return ;
-
-        // switch(item.name)
-        // {
-        //     case 'Potion':
-        //     {
-        //         heal(3, 0, 0);
-        //         setPlayer( playerInfo =>
-        //             {
-        //                 manageVisualAnimation( 'visual', playerInfo.Data.x, playerInfo.Data.y, icons.healing, 500 );
-        //                 return playerInfo;
-        //             } )
-        //         break;
-        //     }
-        //     case 'Bandages':
-        //     {
-        //         cleanse('bleed');
-        //         break;
-        //     }
-        //     case 'Aloe leaf':
-        //     {
-        //         cleanse('burn');
-        //         break;
-        //     }
-        // }
-
-        
-        // if(thisItem.quantity - quantity > 0)
-        // {
-        //     setTimeout( () =>
-        //     {
-        //         setPlayer( prev => ( {...prev, inventory: prev.inventory.map( z => z.item.name === thisItem.item.name ? { ...z, onCd: false } : z ) } ) );
-        //     }, thisItem.item.cd)
-        //     setPlayer( prev => ( {...prev, inventory: prev.inventory.map( z =>
-        //         'quantity' in z && z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) } ) );
-        // }
-        // else
-        // {
-        //     setPlayer( prev => ( {...prev, inventory: prev.inventory.filter( y => y.item.name!==thisItem.item.name ) } ) );
-        // }
     }
 
     const touchFountain = ( symbol: string ) =>
@@ -1034,12 +1064,19 @@ const App = () =>
 
             switch(tile.type)
             {
+                case 'Wall':
+                case 'Node':
+                    {
+                        inconsecuente( symbol );
+                        break;
+                    }
                 case 'Item':
                     {
                         stepOnItem( tile as Types.Item, 1, newX, newY, symbol );
                         break;
                     }
                 case 'Gear':
+                case 'Tool':
                     {
                         stepOnGear( tile as Types.Gear, newX, newY, symbol );
                         break;
@@ -1143,6 +1180,58 @@ const App = () =>
         } );
     }
 
+    const hitOre = ( x: number, y: number ): void =>
+    {
+        let flag = true;
+
+        const thisTool = player.hotBar.Equippeable.find( item => item.item.type==='Tool' && item.equiped );
+        if(!thisTool) return ;
+
+        if(thisTool.onCd) return ;
+
+        let aux = mapaRef.current.map( x => [...x] );
+        
+        const thisOre = aux[x][y] as Types.Node;
+
+        if(!thisOre) return ;
+
+        const attk = thisTool.item.attackStats;
+        if(!attk) return ;
+
+        const damage = attk.dmg;
+
+        if(thisOre.hp - damage <= 0)
+        {
+            const randomValue = Math.floor( Math.random() * 3 ) + 1;
+
+            const availableTiles: Record<number, Types.Environment> =
+            {
+                1: Tiles.rockyWall1,
+                2: Tiles.rockyWall2,
+                3: Tiles.rockyWall3
+            }
+
+            const drops = thisOre.drops.filter( drop => rollDrop( drop.chance ) )
+            .map( drop => ({ item: drop.item, quantity: drop.quantity }) );
+
+            drops.forEach( x => stepOnGear( x.item as Types.Gear, undefined, undefined, undefined, true, x.quantity ) );
+
+            aux[x][y] = availableTiles[randomValue];
+        }
+        else
+        {
+            aux[x][y] = { ...thisOre, hp: thisOre.hp - damage }
+        }
+        
+        setMapa( aux );
+        damageWeapon( thisOre.thoughness, thisTool );
+        // if(flag)
+        // {
+        //     damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+        //     flag=false;
+        // }
+    }
+
     const handleInteraction = ( ): void =>
     {
         const aux = mapa.map( fila => [ ...fila ] );
@@ -1159,6 +1248,11 @@ const App = () =>
             case 'Enemy':
                 {
                     strikeEnemy( x, y );
+                    break;
+                }
+            case 'Node':
+                {
+                    hitOre( x, y );
                     break;
                 }
             default:
@@ -1209,7 +1303,7 @@ const App = () =>
             const Equippeables = aux.hotBar.Equippeable;
 
             const selected = Equippeables.find( x => x.selected );
-            if(!selected) return playerInfo;
+            if(!selected || selected.item.slot=='ore') return playerInfo;
 
             const toReplace = Equippeables.find( x => x.equiped && x.item.slot === selected.item.slot )
 
@@ -1563,170 +1657,363 @@ const App = () =>
         }
     }
 
-    // const loadGame = (): void =>
-    // {
-    //     const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
-    //     for(let i=0; i<mapSize; i++)
-    //     {
-    //         auxiliar[i][0] = Tiles.basicWalls;
-    //         auxiliar[0][i] = Tiles.basicWalls;
-    //         auxiliar[i][mapSize-1] = Tiles.basicWalls;
-    //         auxiliar[mapSize-1][i] = Tiles.basicWalls;
-    //     }
-    //     for(let i=0; i<mapSize; i++)
-    //     {
-    //         if(i%6==0 || i===0)
-    //         {
-    //             auxiliar[i][0] = Tiles.torchedWall;
-    //             auxiliar[0][i] = Tiles.torchedWall;
-    //             auxiliar[i][mapSize-1] = Tiles.torchedWall;
-    //             auxiliar[mapSize-1][i] = Tiles.torchedWall;
-    //         }
-    //     }
-    //     auxiliar[mapSize-1][mapSize-1] = Tiles.torchedWall;
+    const nodes: Record< string, Types.Node[] > =
+    {
+        'Copper': copperNodes,
+        'Silver': silverNodes
+    }
 
-    //     auxiliar[3][3] = createEntity( 'Object', 'Box' );
-    //     auxiliar[13][14] = createEntity( 'Enemie', 'Hobgoblin' );
-    //     auxiliar[4][10] = createEntity( 'Enemie', 'Agile Goblin' );
-    //     auxiliar[4][11] = createEntity( 'Enemie', 'Agile Goblin' );
-    //     auxiliar[4][12] = createEntity( 'Enemie', 'Agile Goblin' );
-    //     auxiliar[4][13] = createEntity( 'Enemie', 'Agile Goblin' );
-    //     auxiliar[15][2] = createEntity( 'Enemie', 'Goblin' );
-    //     auxiliar[13][13] = createEntity( 'Trap', 'Poison trap' );
-    //     auxiliar[15][5] = createEntity( 'Trap', 'Simple trap' );
-    //     auxiliar[2][5] = createEntity( 'Consumable', 'Potion' );
-    //     auxiliar[2][6] =  createEntity( 'Consumable', 'Bandages' );
-    //     auxiliar[2][7] = createEntity( 'Consumable', 'Potion' );
-    //     auxiliar[2][8] = createEntity( 'Consumable', 'Bandages' );
-    //     auxiliar[2][10] = createEntity( 'Consumable', 'Aloe leaf' );
-    //     auxiliar[3][5] = createEntity( 'Equippable', 'Wooden sword');
-    //     auxiliar[4][6] = createEntity( 'Equippable', 'Slicing knife');
-    //     auxiliar[5][6] = createEntity( 'Equippable', 'Protective pendant' );
-    //     auxiliar[6][6] = createEntity( 'Equippable', 'Protective pendant' );
-    //     auxiliar[7][6] = createEntity( 'Equippable', 'Wooden sword' );
-    //     auxiliar[8][6] = createEntity( 'Equippable', 'Slicing knife' );
-    //     auxiliar[9][6] = createEntity( 'Equippable', 'Protective pendant' );
-    //     auxiliar[10][6] = createEntity( 'Equippable', 'Wooden sword' );
-    //     auxiliar[11][6] = createEntity( 'Equippable', 'Slicing knife' );
-    //     auxiliar[10][10] = createEntity( 'Object', 'Fire' );
-    //     auxiliar[10][12] = createEntity( 'Object', 'Fountain' );
-    //     auxiliar[2][16] = createEntity( 'Object', 'Teleport' );
-    //     auxiliar[16][2] = createEntity( 'Object', 'Teleport' );
+    const randomNode = (type: string): Types.Node =>
+    {
+        const randomIndex = Math.floor( Math.random() * nodes[type].length );
 
-    //     setTps( [ [2,16], [16,2] ] );
-        
-    //     auxiliar[Math.floor(mapa.length/2)][Math.floor(mapa[0].length/2)] = player;
-        
-    //     setPlayer( prev => (
-    //     { ...prev, data: { x: Math.floor(mapa.length/2), y: Math.floor(mapa[0].length/2) } } ) );
-    //     setTraps( [
-    //     { ...Entities.trap, id: crypto.randomUUID(), symbol: icons.trapImg, data: { x: 15, y: 5 } },
-    //     { ...Entities.poisonTrap, id: crypto.randomUUID(), symbol: icons.pTrapImg, data: { x: 13, y: 13 } } ] );
-        
-    //     setMapa(auxiliar);
-    // }
+        return nodes[type][randomIndex];
+    }
 
-const loadGame = (): void => {
-    const mapSize = 18;
-    const auxiliar: CellContent[][] = Array.from({ length: mapSize }, () => Array.from(Array(mapSize), () => emptyTile));
+    const addNodes = (mapa: CellContent[][], minerals: Types.mineralsToAdd[]) : CellContent[][] =>
+    {
+        type Coords = { x: number, y: number };
 
-    for (let i = 0; i < mapSize; i++) {
-        auxiliar[i][0] = Tiles.basicWalls;
-        auxiliar[0][i] = Tiles.basicWalls;
-        auxiliar[i][mapSize - 1] = Tiles.basicWalls;
-        auxiliar[mapSize - 1][i] = Tiles.basicWalls;
-        if (i % 6 == 0 || i === 0) {
-            auxiliar[i][0] = Tiles.torchedWall;
-            auxiliar[0][i] = Tiles.torchedWall;
-            auxiliar[i][mapSize - 1] = Tiles.torchedWall;
-            auxiliar[mapSize - 1][i] = Tiles.torchedWall;
+        const wallCoords: Coords[] = [];
+
+        for(let y=1; y<mapa.length - 1; y++)
+        {
+            for(let x=1; x<mapa[0].length - 1; x++)
+            {
+                if(mapa[y][x].type==='Wall')
+                {
+                    if(
+                        mapa[y-1][x]==emptyTile || mapa[y+1][x]==emptyTile ||
+                        mapa[y][x-1]==emptyTile || mapa[y][x+1]==emptyTile
+                    )
+                    {
+                        wallCoords.push( {x, y} );
+                    }
+                }
+            }
+        };
+        for(let i=0; i<minerals.length; i++)
+        {
+            for(let j=0; j<minerals[i].quantity; j++)
+            {
+                let randomIndex = Math.floor( Math.random() * wallCoords.length );
+                const { x, y } = wallCoords.splice( randomIndex, 1 )[0];
+                mapa[y][x] = randomNode(minerals[i].node);
+            }
         }
+        return mapa;
     }
 
-    for (let i = 0; i < 5; i++) {
-        auxiliar[4][i] = Tiles.basicWalls; 
-        auxiliar[i][4] = Tiles.basicWalls; 
-        auxiliar[4][i + 5] = Tiles.basicWalls; 
-        auxiliar[i][10] = Tiles.basicWalls; 
-    }
-    auxiliar[4][2] = emptyTile; 
-    auxiliar[4][7] = emptyTile; 
-    auxiliar[2][7] = createEntity('Equippable', 'Protective pendant');
-
-    for (let i = 6; i < 12; i++) {
-        auxiliar[6][i] = Tiles.basicWalls;
-        auxiliar[11][i] = Tiles.basicWalls;
-        if (i !== 8 && i !== 9) {
-            auxiliar[i][6] = Tiles.basicWalls;
-            auxiliar[i][11] = Tiles.basicWalls;
+    const loadFarmMap = (): void =>
+    {
+        let auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
+        
+        for(let i=0; i<mapSize; i++)        //Por columna
+        {
+            auxiliar[i][0] = Tiles.rockyWall2;
+            auxiliar[0][i] = Tiles.rockyWall1;
+            auxiliar[i][mapSize-1] = Tiles.rockyWall1;
+            auxiliar[mapSize-1][i] = Tiles.rockyWall1;
+            if(i%6===0 || i===0)
+            {
+                auxiliar[i][0] = Tiles.rockyWall3;
+                auxiliar[0][i] = Tiles.rockyWall3;
+                auxiliar[i][mapSize-1] = Tiles.rockyWall3;
+                auxiliar[mapSize-1][i] = Tiles.rockyWall3;
+            }
+            for(let j=1;j<mapSize-1;j++)    //Por fila
+            {
+                if( [1,2,3].includes(i) )
+                {
+                    if( [4,8,12,13].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall3;
+                    }
+                }
+                if( i===4 )
+                {
+                    if( [1, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall3;
+                    }
+                }
+                if( i===5 )
+                {
+                    if( [10, 12, 13, 14, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall3;
+                    }
+                }
+                if( i===6 )
+                {
+                    if( [1, 2, 3, 5, 6, 10, 12, 13, 14, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall3;
+                    }
+                }
+                if( i===7 )
+                {
+                    if( [6, 10 ].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall2;
+                    }
+                }
+                if( i===8 )
+                {
+                    if( [6, 10, 12, 13, 14, 15].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall2;
+                    }
+                }
+                if( i===9 )
+                {
+                    if( [6, 10].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall2;
+                    }
+                }
+                if( i===10 )
+                {
+                    if( [1, 2, 3, 4, 5, 6, 10, 12, 13, 15, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall2;
+                    }
+                }
+                if( i===11 )
+                {
+                    if( j===8 )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall1;
+                    }
+                }
+                if(i===12)
+                {
+                    if( [8, 10, 11, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall1;
+                    }
+                }
+                if( i===13 )
+                {
+                    if( [8, 10, 14, 15, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall1;
+                    }
+                }
+                if( i===14 )
+                {
+                    if( [8, 13, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall1;
+                    }
+                }
+                if( i===15 )
+                {
+                    if( [8, 10, 13].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall1;
+                    }
+                }
+                if( i===16 )
+                {
+                    if( [10, 13].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.rockyWall1;
+                    }
+                }
+            }
         }
+
+        auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[2][2] = player;
+        auxiliar[2][5] = createEntity( 'Equippable', 'Razor');
+
+        auxiliar[2][3] = createEntity( 'Tool', 'Copper Pickaxe' );
+        auxiliar[3][3] = createEntity( 'Tool', 'Copper Pickaxe' );
+        auxiliar[1][10] = createEntity( 'Equippable', 'Machete');
+
+        auxiliar = addNodes( auxiliar, [ {node: 'Copper', quantity: 7}, {node: 'Silver', quantity: 2} ] );
+
+        setPlayer( prev => (
+        { ...prev, data: { x: 2, y: 2 } } ) );
+
+        setMapa(auxiliar);
     }
-    auxiliar[6][8] = emptyTile; 
-    auxiliar[11][9] = emptyTile; 
 
-    auxiliar[8][8] = createEntity('Object', 'Teleport');
-    auxiliar[7][8] = createEntity('Enemie', 'Agile Goblin');
-    auxiliar[8][7] = createEntity('Enemie', 'Agile Goblin');
-    auxiliar[9][8] = createEntity('Enemie', 'Agile Goblin');
-
-    for (let i = 13; i < 18; i++) {
-        for (let j = 13; j < 18; j++) {
-            if (i === 13 || j === 13) auxiliar[i][j] = Tiles.basicWalls;
+    const loadGame = (): void =>
+    {
+        const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
+        for(let i=0; i<mapSize; i++)        //Por columna
+        {
+            auxiliar[i][0] = Tiles.basicWalls;
+            auxiliar[0][i] = Tiles.basicWalls;
+            auxiliar[i][mapSize-1] = Tiles.basicWalls;
+            auxiliar[mapSize-1][i] = Tiles.basicWalls;
+            if(i%6===0 || i===0)
+            {
+                auxiliar[i][0] = Tiles.torchedWall;
+                auxiliar[0][i] = Tiles.torchedWall;
+                auxiliar[i][mapSize-1] = Tiles.torchedWall;
+                auxiliar[mapSize-1][i] = Tiles.torchedWall;
+            }
+            for(let j=1;j<mapSize-1;j++)    //Por fila
+            {
+                if( [1,2,3].includes(i) )
+                {
+                    if( [4,8,12,13].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===4 )
+                {
+                    if( [1, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===5 )
+                {
+                    if( [10, 12, 13, 14, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===6 )
+                {
+                    if( [1, 2, 3, 5, 6, 10, 12, 13, 14, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===7 )
+                {
+                    if( [6, 10 ].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===8 )
+                {
+                    if( [6, 10, 12, 13, 14, 15].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===9 )
+                {
+                    if( [6, 10].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===10 )
+                {
+                    if( [1, 2, 3, 4, 5, 6, 10, 12, 13, 15, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===11 )
+                {
+                    if( j===8 )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if(i===12)
+                {
+                    if( [8, 10, 11, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===13 )
+                {
+                    if( [8, 10, 14, 15, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===14 )
+                {
+                    if( [8, 13, 16].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===15 )
+                {
+                    if( [8, 10, 13].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+                if( i===16 )
+                {
+                    if( [10, 13].includes(j) )
+                    {
+                        auxiliar[i][j]=Tiles.basicWalls;
+                    }
+                }
+            }
         }
+
+        auxiliar[mapSize-1][mapSize-1] = Tiles.torchedWall;
+
+        auxiliar[1][7] = createEntity( 'Equippable', 'Amuleto escudo' );
+        auxiliar[1][10] = createEntity( 'Equippable', 'Machete');
+        auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[2][2] = player;
+        auxiliar[2][15] = createEntity( 'Object', 'Box' );
+        auxiliar[4][15] = createEntity( 'Enemie', 'Hobgoblin' );
+        auxiliar[5][11] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[7][2] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[8][3] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[9][1] = createEntity( 'Object', 'Teleport' );
+        auxiliar[9][11] = createEntity( 'Trap', 'Poison trap' );
+        auxiliar[11][16] = createEntity( 'Object', 'Fire' );
+        auxiliar[12][15] = createEntity( 'Object', 'Fire' );
+        auxiliar[14][10] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[14][14] = createEntity( 'Equippable', 'Razor');
+        auxiliar[14][15] = createEntity( 'Object', 'Fire' );
+        auxiliar[15][16] = createEntity( 'Object', 'Fire' );
+        auxiliar[16][16] = createEntity( 'Object', 'Teleport' );
+
+        setTps( [ [9, 1], [16, 16] ] );
+                
+        setPlayer( prev => (
+        { ...prev, data: { x: 2, y: 2 } } ) );
+
+        setMapa(auxiliar);
     }
-    auxiliar[15][15] = createEntity('Object', 'Teleport');
-    auxiliar[14][14] = createEntity('Equippable', 'Wooden sword');
-    auxiliar[14][16] = createEntity('Consumable', 'Potion');
 
-    for (let i = 5; i < 13; i++) auxiliar[i][12] = Tiles.basicWalls; 
-    for (let i = 1; i < 11; i++) auxiliar[12][i] = Tiles.basicWalls; 
-    auxiliar[12][5] = emptyTile;
-
-    auxiliar[15][2] = createEntity('Trap', 'Poison trap');
-    auxiliar[16][2] = createEntity('Consumable', 'Potion'); 
-    
-    auxiliar[1][14] = createEntity('Object', 'Fire');
-    auxiliar[2][14] = createEntity('Object', 'Fire');
-    auxiliar[3][14] = createEntity('Object', 'Fire');
-
-    auxiliar[1][16] = createEntity('Object', 'Box');
-    auxiliar[2][16] = createEntity('Enemie', 'Hobgoblin');
-    auxiliar[10][2] = createEntity('Enemie', 'Goblin');
-    auxiliar[10][14] = createEntity('Enemie', 'Agile Goblin');
-
-    const startX = 2;
-    const startY = 2;
-    auxiliar[startX][startY] = player;
-
-    setPlayer(prev => ({ ...prev, data: { x: startX, y: startY } }));
-    setTps([[8, 8], [15, 15]]);
-    setTraps([{ ...Entities.poisonTrap, id: crypto.randomUUID(), symbol: icons.pTrapImg, data: { x: 15, y: 2 } }]);
-
-    setMapa(auxiliar);
-}
-
-    const createEntity = ( type: 'Equippable' | 'Enemie' | 'Trap' | 'Consumable' | 'Object' | 'Tile', entityName: string, loot?: any[] ): Types.Gear | Types.Enemy | Types.Item | Types.Environment =>
+    const createEntity = ( type: 'Equippable' | 'Tool' | 'Enemie' | 'Trap' | 'Consumable' | 'Object' | 'Tile' | 'Node', entityName: string, loot?: any[] ): Types.Gear | Types.Enemy | Types.Item | Types.Environment =>
     {
         const typeContainer  =
         {
             'Equippable': Gear.Equippables,
+            'Tool': Gear.allTools,
             'Enemie': Entities.allEnemies,
             'Trap': Entities.allTraps,
             'Consumable': Items.Consumables,
             'Object':  allObjects,
-            'Tile': allTiles
+            'Tile': allTiles,
+            'Node': allNodes
         };
 
-        const container = typeContainer[type] as Array<Types.Gear | Types.Enemy | Types.Item | Types.Environment>;
+        const container = typeContainer[type] as Array<Types.Gear | Types.Enemy | Types.Item | Types.Environment | Types.Node>;
 
-        const thisEntity = container.find( (x: Types.Gear | Types.Enemy | Types.Trap | Types.Item | Types.Environment) => x.name === entityName );
+        const thisEntity = container.find( (x: Types.Gear | Types.Enemy | Types.Trap | Types.Item | Types.Environment | Types.Node) => x.name === entityName );
         if(!thisEntity) throw new Error(`No se encontró la entidad ${entityName} en ${type}`);
 
         if( entityName === 'Bag' ) (thisEntity as Types.Environment).content = loot;
 
-        if(type==='Object' || type==='Tile') return thisEntity as Types.Environment;
+        if( type==='Object' || type==='Tile' ) return thisEntity as Types.Environment;
 
-        if(type==='Enemie' && 'pattern' in thisEntity && (thisEntity.pattern!=='none' || undefined) )
+        if( type==='Node' ) return thisEntity as Types.Node;
+
+        if( type==='Enemie' && 'pattern' in thisEntity && (thisEntity.pattern!=='none' || undefined) )
         {
             const id = crypto.randomUUID();
 
@@ -1753,7 +2040,7 @@ const loadGame = (): void => {
 
                     return aux;
                 } );
-            }, 2000 );
+            }, 1000 );
 
             return { ...thisEntity, id, patrolId };
         }
@@ -1764,7 +2051,8 @@ const loadGame = (): void => {
     const startGame = (): void =>
     {
         setEvents( [] );
-        loadGame();
+        loadFarmMap();
+        // loadGame();
         setPlayer( prev => ({ ...prev, hp: player.maxHp }) );
         setGame(true);
         setTimeout(() => gridRef.current?.focus(), 0);
@@ -1834,7 +2122,7 @@ return(
                   {fila.map((celda, y) =>
                     celda.symbol===''
                     ? ( <label key={y} className="celda">{celda.symbol}</label>)
-                    : ( <img src={celda.symbol} key={y} className="celda" /> )
+                    : ( <img src={celda.symbol} alt={'main_map'} key={y} className="celda" /> )
                   )}
                 </div>
               ))}
@@ -1846,7 +2134,7 @@ return(
                   {fila.map((celda, y) => {
                     if (typeof celda === 'string') {
                         return allIcons.includes(celda) ? (
-                        <img src={celda} key={y} className="celda" />
+                        <img src={celda} alt={'visual'} key={y} className="celda" />
                         ) : (
                         <label key={y} className="celda">{celda}</label>
                         );
@@ -1895,7 +2183,7 @@ return(
         <div className='help-layer'>
             <button className='absolute top-0 left-0' onClick={()=> {setShowSlides( false );setTimeout(() => gridRef.current?.focus(), 0); } }> X </button>
             {/* <p> {slides[slideIndex].text} </p> */}
-            { Types.slides[slideIndex].img && <img className= 'h-img' src={Types.slides[slideIndex].img}/> }
+            { Types.slides[slideIndex].img && <img className= 'h-img' alt='slide' src={Types.slides[slideIndex].img}/> }
             <button onClick={()=> moveSlide('previous')}> anterior </button>
             { Types.slides[slideIndex].text &&
             <a href={Types.slides[slideIndex].text} target="_blank" rel="noopener noreferrer">

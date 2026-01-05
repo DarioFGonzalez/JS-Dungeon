@@ -88,7 +88,7 @@ export const heavyEnemy: Types.Enemy =
         flags: { Poisoned: false, Bleeding: false, Burning: false },
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
-    attack: { Instant: 1, DoT: 2, Times: 3, Aliment: 'bleed' },
+    attack: { Instant: 3, DoT: 1, Times: 3, Aliment: 'bleed' },
     defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
     pattern: 'vertical',
     drops: [ { item: Items.Potion, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
@@ -108,7 +108,7 @@ const agileEnemy: Types.Enemy =
         flags: { Poisoned: false, Bleeding: false, Burning: false },
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
-    attack: { Instant: 1, DoT: 0, Times: 0, Aliment: '' },
+    attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { Armor: 1, Toughness: 3 },
     pattern: 'random',
     drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]

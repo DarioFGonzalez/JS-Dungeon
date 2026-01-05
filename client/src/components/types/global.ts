@@ -5,7 +5,7 @@ export type VisualCell = string | {
   color?: string;
 };
 
-type allEntities = Gear | Enemy | Player | Item | Environment; 
+type allEntities = Gear | Enemy | Player | Item | Material |Environment; 
 
 export type locationData = { x: number, y: number };
 export type Coords = [ number, number ];
@@ -16,7 +16,8 @@ export type attackStats = { dmg: number, DoT?: number, times?: number, aliment?:
 export type deffenseStats = { def?: number, immunity?: string, hp?: number };
 
 export type InventoryItem = { item: Item, quantity: number, onCd: boolean };
-export type InventoryGear = { id: string, item: Gear, durability: number, onCd: boolean, equiped?: boolean, selected: boolean };
+export type InventoryGear = { id: string, item: Gear, durability?: number, onCd?: boolean, quantity?: number, equiped?: boolean, selected: boolean };
+export type InventoryMaterial = { id: string, item: Material, selected: boolean };
 export type inventory = InventoryItem[];
 export type AlimentFlags = { Poisoned: boolean, Bleeding: boolean, Burning: boolean };
 export type BuffFlags = { HoT: boolean };
@@ -29,7 +30,7 @@ export type HotBarItems = { Equippeable: InventoryGear[] }
 
 export type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string, Attacked?: boolean };
 export type deffenseInfo = { Armor: number, Toughness: number, Immunity?: string };
-export type dropInfo = { item: Item | Gear, chance: number, quantity: number };
+export type dropInfo = { item: Item | Gear | Material, chance: number, quantity: number };
 
 export type lootBagItem = { item: Item | Gear, quantity: number };
 
@@ -50,6 +51,12 @@ export interface WithAliments
     aliments: Aliments;
 }
 
+export interface mineralsToAdd
+{
+    node: string,
+    quantity: number
+}
+
 export interface Environment
 {
     id?: string,
@@ -57,6 +64,19 @@ export interface Environment
     name: string,
     symbol: string,
     content?: any
+}
+
+export interface Node
+{
+    id: string,
+    type: 'Node',
+    name: string,
+    mineral: string,
+    symbol: string,
+    thoughness: number,
+    maxHp: number,
+    hp: number,
+    drops: dropInfo[]
 }
 
 export interface Item
@@ -72,18 +92,28 @@ export interface Item
 
 export interface Gear
 {
-    type: 'Gear',
+    type: string,
     name: string,
     symbol: string,
     id: string,
-    slot: string,
+    slot?: string,
     desc: string,
     attackStats?: attackStats,
     defenseStats?: deffenseStats,
     buffStats?: '',
-    durability: number,
-    equippeable: boolean
+    durability?: number,
+    equippeable?: boolean
 };
+
+export interface Material
+{
+    type: 'Ore',
+    name: string,
+    symbol: string,
+    id: string,
+    desc: string,
+    value: number
+}
 
 export interface Player
 {
