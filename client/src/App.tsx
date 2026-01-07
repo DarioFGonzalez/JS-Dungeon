@@ -7,7 +7,7 @@ import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
 import * as Items from './components/data/items';
 import * as Tiles from './components/data/tiles';
-import { allObjects, allTiles, allNodes, silverNodes, copperNodes } from './components/data/tiles';
+import { allObjects, rockyWalls, allTiles, allNodes, silverNodes, copperNodes } from './components/data/tiles';
 
 import './App.css';
 
@@ -1702,6 +1702,19 @@ const App = () =>
             }
         }
         return mapa;
+    };
+
+    const walls: Record< string, Types.Environment[] > =
+    {
+        'Basic': [ Tiles.basicWalls ],
+        'Rocky': rockyWalls
+    };
+
+    const addWall = (type: string): Types.Environment =>
+    {
+        let randomIndex = Math.floor( Math.random() * walls[type].length );
+        
+        return walls[type][randomIndex];
     }
 
     const loadFarmMap = (): void =>
@@ -1714,6 +1727,7 @@ const App = () =>
             auxiliar[0][i] = Tiles.rockyWall1;
             auxiliar[i][mapSize-1] = Tiles.rockyWall1;
             auxiliar[mapSize-1][i] = Tiles.rockyWall1;
+
             if(i%6===0 || i===0)
             {
                 auxiliar[i][0] = Tiles.rockyWall3;
@@ -1721,121 +1735,135 @@ const App = () =>
                 auxiliar[i][mapSize-1] = Tiles.rockyWall3;
                 auxiliar[mapSize-1][i] = Tiles.rockyWall3;
             }
+
             for(let j=1;j<mapSize-1;j++)    //Por fila
             {
-                if( [1,2,3].includes(i) )
+                if(i===1)
                 {
-                    if( [4,8,12,13].includes(j) )
+                    if( !([3, 7, 11, 15].includes(j)) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall3;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===4 )
+                if(i===2)
                 {
-                    if( [1, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 16].includes(j) )
+                    if( [1, 5, 9, 13].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall3;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===5 )
+                if(i===3)
                 {
-                    if( [10, 12, 13, 14, 16].includes(j) )
+                    if( [11, 15].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall3;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===6 )
+                if(i==4)
                 {
-                    if( [1, 2, 3, 5, 6, 10, 12, 13, 14, 16].includes(j) )
+                    if( [4, 8, 9, 11, 12, 13, 15].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall3;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===7 )
+                if(i===5)
                 {
-                    if( [6, 10 ].includes(j) )
+                    if( [4, 8, 9, 13, 15].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall2;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===8 )
+                if(i===6)
                 {
-                    if( [6, 10, 12, 13, 14, 15].includes(j) )
+                    if( [1, 2, 3, 4, 5, 8, 12, 13, 15].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall2;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===9 )
+                if(i===7 || i===8)
                 {
-                    if( [6, 10].includes(j) )
+                    if( [1, 8, 11, 12, 13, 15].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall2;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===10 )
+                if(i===9)
                 {
-                    if( [1, 2, 3, 4, 5, 6, 10, 12, 13, 15, 16].includes(j) )
+                    if( [1, 4, 5, 7, 8, 12, 13, 15].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall2;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===11 )
+                if(i===10)
                 {
-                    if( j===8 )
+                    if( [1, 5, 7, 12, 13 ].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall1;
+                        auxiliar[i][j] = addWall('Rocky');
+                    }
+                }
+                if(i===11)
+                {
+                    if( [1, 4, 5, 7, 12, 13, 16].includes(j) )
+                    {
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
                 if(i===12)
                 {
-                    if( [8, 10, 11, 16].includes(j) )
+                    if( [1, 4, 5, 7, 12, 13, 15, 16].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall1;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===13 )
+                if(i===13)
                 {
-                    if( [8, 10, 14, 15, 16].includes(j) )
+                    if( [1, 4, 5, 7, 8, 9, 10, 11, 12, 13].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall1;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===14 )
+                if(i===14)
                 {
-                    if( [8, 13, 16].includes(j) )
+                    if( [5, 7, 12, 13].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall1;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===15 )
+                if(i===15)
                 {
-                    if( [8, 10, 13].includes(j) )
+                    if( [12].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall1;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if( i===16 )
+                if(i===16)
                 {
-                    if( [10, 13].includes(j) )
+                    if( [5, 6, 7, 12, 13].includes(j) )
                     {
-                        auxiliar[i][j]=Tiles.rockyWall1;
+                        auxiliar[i][j] = addWall('Rocky');
                     }
                 }
             }
         }
 
-        auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[2][2] = player;
-        auxiliar[2][5] = createEntity( 'Equippable', 'Razor');
+        auxiliar[1][11] = createEntity( 'Enemie', 'Hobgoblin' );
+        auxiliar[3][14] = createEntity( 'Enemie', 'Hobgoblin' );
+        auxiliar[5][1] = createEntity( 'Node', 'Copper' );
+        auxiliar[6][15] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[9][15]= createEntity( 'Node', 'Copper' );
+        auxiliar[10][1]= createEntity( 'Enemie', 'Goblin' );
+        auxiliar[11][9]= createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[12][8]= createEntity( 'Node', 'Copper' );
+        auxiliar[14][11]= createEntity( 'Node', 'Copper' );
+        auxiliar[15][2]= player;
+        auxiliar[15][3] = createEntity( 'Tool', 'Copper Pickaxe' );
+        auxiliar[15][10]= createEntity( 'Enemie', 'Goblin' );
+        auxiliar[15][13]= createEntity( 'Node', 'Silver' );
 
-        auxiliar[2][3] = createEntity( 'Tool', 'Copper Pickaxe' );
-        auxiliar[3][3] = createEntity( 'Tool', 'Copper Pickaxe' );
-        auxiliar[1][10] = createEntity( 'Equippable', 'Machete');
-
-        auxiliar = addNodes( auxiliar, [ {node: 'Copper', quantity: 7}, {node: 'Silver', quantity: 2} ] );
+        auxiliar = addNodes( auxiliar, [ {node: 'Copper', quantity: 2} ] );
 
         setPlayer( prev => (
-        { ...prev, data: { x: 2, y: 2 } } ) );
+        { ...prev, data: { x: 15, y: 2 } } ) );
 
         setMapa(auxiliar);
     }
@@ -2004,7 +2032,7 @@ const App = () =>
 
         const container = typeContainer[type] as Array<Types.Gear | Types.Enemy | Types.Item | Types.Environment | Types.Node>;
 
-        const thisEntity = container.find( (x: Types.Gear | Types.Enemy | Types.Trap | Types.Item | Types.Environment | Types.Node) => x.name === entityName );
+        const thisEntity = container.find( (x: Types.Gear | Types.Enemy | Types.Trap | Types.Item | Types.Environment | Types.Node) => (x.name === entityName) || ('mineral' in x && x.mineral === entityName) );
         if(!thisEntity) throw new Error(`No se encontró la entidad ${entityName} en ${type}`);
 
         if( entityName === 'Bag' ) (thisEntity as Types.Environment).content = loot;

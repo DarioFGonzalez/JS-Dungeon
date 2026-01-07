@@ -19,6 +19,7 @@ import pTrapImg from './pTrap.png';
 
 import wallImg from './wall.png';
 import torchdWallImg from './torchdWall.PNG';
+
 import rockyWall1 from './rockyWall.png';
 import rockyWall2 from './rockyWall2.png';
 import rockyWall3 from './rockyWall3.png';

@@ -37,6 +37,8 @@ export const rockyWall3: Environment =
     symbol: Icons.rockyWall3
 };
 
+export const rockyWalls: Environment[] = [ rockyWall1, rockyWall2, rockyWall3 ];
+
 export const box: Environment =
 {
     type: 'Object',
@@ -170,4 +172,8 @@ export const copperNodes: Node[] = [ copperNode1, copperNode2, copperNode3 ];
 
 export const silverNodes: Node[] = [ silverNode1, silverNode2, silverNode3 ];
 
-export const allNodes: Node[] = [ copperNode1, copperNode2, copperNode3 ];
+export const allNodes: Node[] =
+[
+    copperNode1, copperNode2, copperNode3,
+    silverNode1, silverNode2, silverNode3
+];
