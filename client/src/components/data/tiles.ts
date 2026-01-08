@@ -65,7 +65,14 @@ export const teleport: Environment =
     type: 'Object',
     name: 'Teleport',
     symbol: Icons.tpImg
-};
+}
+
+export const mapTeleport: Environment =
+{
+    type: 'Object',
+    name: 'Map teleport',
+    symbol: Icons.mapTpImg,
+}
 
 export const bag: Environment =
 {
@@ -165,7 +172,8 @@ export const allObjects:  Environment[] =
     box,
     fire,
     fountain,
-    teleport
+    teleport,
+    mapTeleport
 ];
 
 export const copperNodes: Node[] = [ copperNode1, copperNode2, copperNode3 ];

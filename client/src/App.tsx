@@ -38,6 +38,10 @@ const App = () =>
     const [ patrolsId, setPatrolsId ] = useState<NodeJS.Timer>();
 
     const [ mapa, setMapa ] = useState<CellContent[][]>( emptyGrid );
+
+    interface listOfMaps { name: string, visitedMap?: CellContent[][], load:() => void, actual: boolean, visited: boolean };
+    const [ maps, setMaps ] = useState<listOfMaps[]>([]);
+
     const mapaRef = useRef( mapa );
     const [ showSlides, setShowSlides ] = useState<boolean>( false );
     const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
@@ -45,6 +49,7 @@ const App = () =>
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyVisualGrid );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
+    
     const [ residual, setResidual ] = useState<Types.Residual[]>( [] );
 
     const [ showInventory, setShowInventory ] = useState<boolean>( false );
@@ -1052,6 +1057,16 @@ const App = () =>
                         touchFountain( symbol );
                         break;
                     }
+                case 'Map teleport':
+                    {
+                        console.log("Quise entrar a un Map teleport: ", tile);
+                        if('content' in tile)
+                        {
+                            console.log("Obviamente tenía 'content' in tile- y su tile.content es: ", tile.content);
+                            swapMap(tile.content)
+                        }
+                        break;
+                    }
                 case 'Unknown':
                 case 'Wall':
                 case 'Water':
@@ -1717,7 +1732,7 @@ const App = () =>
         return walls[type][randomIndex];
     }
 
-    const loadFarmMap = (): void =>
+    const loadMinesMap = (): void =>
     {
         let auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
         
@@ -1850,25 +1865,27 @@ const App = () =>
         auxiliar[3][14] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[5][1] = createEntity( 'Node', 'Copper' );
         auxiliar[6][15] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[9][15]= createEntity( 'Node', 'Copper' );
-        auxiliar[10][1]= createEntity( 'Enemie', 'Goblin' );
-        auxiliar[11][9]= createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[12][8]= createEntity( 'Node', 'Copper' );
-        auxiliar[14][11]= createEntity( 'Node', 'Copper' );
-        auxiliar[15][2]= player;
-        auxiliar[15][3] = createEntity( 'Tool', 'Copper Pickaxe' );
-        auxiliar[15][10]= createEntity( 'Enemie', 'Goblin' );
-        auxiliar[15][13]= createEntity( 'Node', 'Silver' );
+        auxiliar[9][15] = createEntity( 'Node', 'Copper' );
+        auxiliar[10][1] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[11][9] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[12][8] = createEntity( 'Node', 'Copper' );
+        auxiliar[14][11] = createEntity( 'Node', 'Copper' );
+        auxiliar[15][3] = player;
+        auxiliar[15][5] = createEntity( 'Tool', 'Copper Pickaxe' );
+        auxiliar[15][10] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[15][13] = createEntity( 'Node', 'Silver' );
+
+        auxiliar[15][2] = createEntity( 'Object', 'Map teleport', ['Caves'] );
 
         auxiliar = addNodes( auxiliar, [ {node: 'Copper', quantity: 2} ] );
 
         setPlayer( prev => (
-        { ...prev, data: { x: 15, y: 2 } } ) );
+        { ...prev, data: { x: 15, y: 3 } } ) );
 
         setMapa(auxiliar);
     }
 
-    const loadGame = (): void =>
+    const loadCaveMap = ( first?: boolean ): void =>
     {
         const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)        //Por columna
@@ -1992,7 +2009,7 @@ const App = () =>
         auxiliar[1][7] = createEntity( 'Equippable', 'Amuleto escudo' );
         auxiliar[1][10] = createEntity( 'Equippable', 'Machete');
         auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[2][2] = player;
+        first ? auxiliar[2][2] = player : auxiliar[15][3] = player; 
         auxiliar[2][15] = createEntity( 'Object', 'Box' );
         auxiliar[4][15] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[5][11] = createEntity( 'Enemie', 'Agile Goblin' );
@@ -2008,10 +2025,12 @@ const App = () =>
         auxiliar[15][16] = createEntity( 'Object', 'Fire' );
         auxiliar[16][16] = createEntity( 'Object', 'Teleport' );
 
+        auxiliar[15][2] = createEntity( 'Object', 'Map teleport', ['Mines'] );
+
         setTps( [ [9, 1], [16, 16] ] );
                 
         setPlayer( prev => (
-        { ...prev, data: { x: 2, y: 2 } } ) );
+        { ...prev, data: first ? { x: 2, y: 2 } : { x: 15, y: 3 } } ) );
 
         setMapa(auxiliar);
     }
@@ -2036,6 +2055,12 @@ const App = () =>
         if(!thisEntity) throw new Error(`No se encontró la entidad ${entityName} en ${type}`);
 
         if( entityName === 'Bag' ) (thisEntity as Types.Environment).content = loot;
+
+        if( entityName === 'Map teleport' )
+        {
+            if(loot!==undefined)
+            return { ...thisEntity, content: loot[0] ?? '' } as Types.Environment;
+        }
 
         if( type==='Object' || type==='Tile' ) return thisEntity as Types.Environment;
 
@@ -2076,11 +2101,52 @@ const App = () =>
         return { ...thisEntity, id: crypto.randomUUID() } as Types.Gear | Types.Enemy | Types.Item;
     }
 
+    const swapMap = ( mapName: string ): void =>
+    {
+        const newMap = maps.find( x => x.name === mapName );
+        console.log( "Una vez dentro, encontré este como el mapa nuevo: ", newMap );
+        if(!newMap) return setMapa(mapaRef.current);
+
+        const actualMap = maps.find( x => x.actual );
+        if(!actualMap) return setMapa(mapaRef.current);
+        console.log( "Y este como el mapa actual: ", actualMap );
+
+        setMaps( prev => prev.map( mapInfo =>
+        {
+            if(mapInfo.name===actualMap.name)
+            {
+                setTimeout( () => { setMaps( prev => prev.map( x => x.name === actualMap.name ? { ...actualMap, visited: false } : x ) ) }, 300000 )
+                return { ...actualMap, visitedMap: mapaRef.current, actual: false, visited: true }
+            }
+            if(mapInfo.name===newMap.name)
+            {
+                return { ...newMap, visited: false, actual: true };
+            }
+            return mapInfo
+        } ) )
+
+        console.log("Seteados los mapas references, ahora vamos a ejecutar el newMap.load.");
+
+        if( newMap.visited && newMap.visitedMap!==undefined )
+        {
+            const oldPlayer = newMap.visitedMap.flat().find( x => x.type === 'Player' );
+            if( oldPlayer && 'data' in oldPlayer )
+            {
+                setPlayer( prev => ({ ...prev, data: { x: oldPlayer.data.x, y: oldPlayer.data.y } } ) )
+            }
+            return setMapa(newMap.visitedMap ?? mapaRef.current);
+        }
+        return newMap.load();
+    }
+
     const startGame = (): void =>
     {
         setEvents( [] );
-        loadFarmMap();
-        // loadGame();
+        setMaps( [
+            { name: 'Caves', load: loadCaveMap, actual: true, visited: false },
+            { name: 'Mines', load: loadMinesMap, actual: false, visited: false }
+        ])
+        loadCaveMap(true);
         setPlayer( prev => ({ ...prev, hp: player.maxHp }) );
         setGame(true);
         setTimeout(() => gridRef.current?.focus(), 0);

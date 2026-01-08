@@ -11,6 +11,8 @@ import bandagesImg from './bandages.png';
 import aloeImg from './aloe.png';
 
 import tpImg from './portal.png';
+import mapTpImg from './mapTeleport.png';
+
 import fireImg from './fuego.PNG';
 import fountainImg from './fountain.png';
 
@@ -55,7 +57,8 @@ export {
     healing, clawHit, redClawHit,
     goblinImg, hGoblinImg, snsGoblinImg,
     potionImg, bandagesImg, aloeImg,
-    tpImg, fireImg, fountainImg,
+    tpImg, mapTpImg,
+    fireImg, fountainImg,
     trapImg, pTrapImg,
     wallImg, torchdWallImg,
     rockyWall1, rockyWall2, rockyWall3,
