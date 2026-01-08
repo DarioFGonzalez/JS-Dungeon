@@ -156,6 +156,7 @@ export interface Enemy
     defense: deffenseInfo,
     pattern: string,
     patrolId?: ReturnType<typeof setInterval>,
+    activePatrol?: boolean,
     drops: dropInfo[]
 }
 

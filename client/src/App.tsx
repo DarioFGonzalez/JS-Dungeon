@@ -2074,6 +2074,9 @@ const App = () =>
             {
                 let flag = true;
 
+                const thisMob = findThisEnemy( id, mapaRef.current );
+                if(!thisMob || !thisMob.entity.activePatrol ) return;
+
                 setMapa( prev =>
                 {
                     if(flag)
@@ -2085,7 +2088,7 @@ const App = () =>
                     let aux = prev.map( x => [ ...x ] );
                     
                     const data = findThisEnemy( id, aux );
-                    if(!data) return prev;
+                    if(!data || !data.entity.activePatrol ) return prev;
 
                     const { x: mobX, y: mobY, entity: mob } = data;
 
@@ -2095,7 +2098,7 @@ const App = () =>
                 } );
             }, 1000 );
 
-            return { ...thisEntity, id, patrolId };
+            return { ...thisEntity, id, patrolId, activePatrol: true };
         }
         
         return { ...thisEntity, id: crypto.randomUUID() } as Types.Gear | Types.Enemy | Types.Item;
@@ -2115,10 +2118,25 @@ const App = () =>
         {
             if(mapInfo.name===actualMap.name)
             {
-                setTimeout( () => { setMaps( prev => prev.map( x => x.name === actualMap.name ? { ...actualMap, visited: false } : x ) ) }, 300000 )
-                return { ...actualMap, visitedMap: mapaRef.current, actual: false, visited: true }
+                const patrolsOff = mapaRef.current.map( fila => fila.map( entidad =>
+                {
+                    if( entidad.type === 'Enemy' && 'activePatrol' in entidad && entidad.activePatrol )
+                    {
+                        return { ...entidad, activePatrol: false };
+                    }
+                    else
+                    {
+                        return entidad;
+                    }
+                } ) );
+
+                setTimeout( () => {
+                    setMaps( prev => prev.map( x => x.name === actualMap.name ? { ...actualMap, visited: false } : x ) ) }
+                , 300000 )
+
+                return { ...actualMap, visitedMap: patrolsOff, actual: false, visited: true }
             }
-            if(mapInfo.name===newMap.name)
+            if( mapInfo.name===newMap.name )
             {
                 return { ...newMap, visited: false, actual: true };
             }
@@ -2134,7 +2152,20 @@ const App = () =>
             {
                 setPlayer( prev => ({ ...prev, data: { x: oldPlayer.data.x, y: oldPlayer.data.y } } ) )
             }
-            return setMapa(newMap.visitedMap ?? mapaRef.current);
+
+            const patrolsOn = newMap.visitedMap.map( fila => fila.map( entidad =>
+            {
+                if( entidad.type === 'Enemy' && 'activePatrol' in entidad && !entidad.activePatrol )
+                {
+                    return { ...entidad, activePatrol: true };
+                }
+                else
+                {
+                    return entidad;
+                }
+            } ) );
+
+            return setMapa( patrolsOn );
         }
         return newMap.load();
     }
