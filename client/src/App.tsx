@@ -361,6 +361,7 @@ const App = () =>
         if(flag)
         {
             damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+            manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
             thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
             flag=false;
         }
@@ -571,6 +572,7 @@ const App = () =>
     const hurtPlayer = ( dmg: number, dot: number, times: number, aliment: string ): void =>
     {
         let flag = true;
+
         setPlayer( prev =>
         {
             if(flag)
@@ -680,19 +682,18 @@ const App = () =>
             let dmgId = setInterval( () =>
             {
                 let flag = true;
-                setPlayer( prev =>
+                setPlayer( prevData =>
                 {
                     if(flag)
                     {
                         flag = false;
-                        return prev;
+                        return prevData;
                     }
 
-                    const aux = { ...prev};
+                    const aux = { ...prevData };
 
                     queueLog(`Daño por ${estado}: ${dot}`, color);
-                    
-                    if( aux.hp - dot <= 0 || !game)
+                    if( aux.hp - dot <= 0 )
                     {
                         stopGame();
 
@@ -1059,10 +1060,8 @@ const App = () =>
                     }
                 case 'Map teleport':
                     {
-                        console.log("Quise entrar a un Map teleport: ", tile);
                         if('content' in tile)
                         {
-                            console.log("Obviamente tenía 'content' in tile- y su tile.content es: ", tile.content);
                             swapMap(tile.content)
                         }
                         break;
@@ -1215,6 +1214,16 @@ const App = () =>
 
         const damage = attk.dmg;
 
+        let sparks: Record<number, string> =
+        {
+            0: icons.sparks1,
+            1: icons.sparks2,
+            2: icons.sparks3 
+        };
+        const randomNumber = Math.floor( Math.random() * 3 );
+
+        manageVisualAnimation( 'visual', x, y, sparks[randomNumber], 900 );
+
         if(thisOre.hp - damage <= 0)
         {
             const randomValue = Math.floor( Math.random() * 3 ) + 1;
@@ -1254,10 +1263,8 @@ const App = () =>
         let x = player.data.x + dx;
         let y = player.data.y + dy;
 
-        manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
-        
         const objective = aux[x][y];
-
+        
         switch(objective.type)
         {
             case 'Enemy':
@@ -2107,12 +2114,10 @@ const App = () =>
     const swapMap = ( mapName: string ): void =>
     {
         const newMap = maps.find( x => x.name === mapName );
-        console.log( "Una vez dentro, encontré este como el mapa nuevo: ", newMap );
         if(!newMap) return setMapa(mapaRef.current);
 
         const actualMap = maps.find( x => x.actual );
         if(!actualMap) return setMapa(mapaRef.current);
-        console.log( "Y este como el mapa actual: ", actualMap );
 
         setMaps( prev => prev.map( mapInfo =>
         {
@@ -2142,8 +2147,6 @@ const App = () =>
             }
             return mapInfo
         } ) )
-
-        console.log("Seteados los mapas references, ahora vamos a ejecutar el newMap.load.");
 
         if( newMap.visited && newMap.visitedMap!==undefined )
         {

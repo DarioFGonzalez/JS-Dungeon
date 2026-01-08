@@ -2,6 +2,10 @@ import healing from './heal.png';
 import clawHit from './claws.PNG';
 import redClawHit from './clawsRed.png';
 
+import sparks1 from './sparks1.png';
+import sparks2 from './sparks2.png';
+import sparks3 from './sparks3.png';
+
 import goblinImg from './sGoblin.PNG';
 import hGoblinImg from './dnsGoblin.PNG';
 import snsGoblinImg from './snsGoblin.png';
@@ -55,6 +59,7 @@ import heroRight from './heroRight.png';
 
 export {
     healing, clawHit, redClawHit,
+    sparks1, sparks2, sparks3,
     goblinImg, hGoblinImg, snsGoblinImg,
     potionImg, bandagesImg, aloeImg,
     tpImg, mapTpImg,
