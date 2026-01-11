@@ -7,12 +7,13 @@ import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
 import * as Items from './components/data/items';
 import * as Tiles from './components/data/tiles';
-import { allObjects, rockyWalls, allTiles, allNodes, silverNodes, copperNodes } from './components/data/tiles';
+import { allNodes, allObjects, allTiles, copperNodes, rockyWalls, silverNodes } from './components/data/tiles';
 
 import './App.css';
 
 import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import GearTab from './components/GearTab/GearTab';
+import InventoryTab from './components/InventoryTab/InventoryTab';
 
 const allIcons = Object.values(icons);
 
@@ -26,7 +27,7 @@ const emptyVisualGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(ma
 
 type CellContent = Types.Player | Types.Enemy | Types.Trap | Types.Item | Types.Gear | Types.Environment | Types.Node;
 
-const emptyDelayedLog = { status: false, message: '', color: 'white' };    
+const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
 const App = () =>
 {
@@ -863,7 +864,7 @@ const App = () =>
         return { item: material, id: crypto.randomUUID(), quantity, selected: false };
     }
 
-    const addToEquippeable = ( gear: Types.Gear, lootBag: boolean, quantity?: number ) =>
+    const addToEquippeable = ( gear: Types.Gear, lootBag: boolean, quantity?: number ): void =>
     {
         if(!lootBag) queueLog(`${gear.name} agregado a la mochila.`, 'orange');
 
@@ -912,8 +913,11 @@ const App = () =>
         else
         {
             setPlayer( prev => ( { ...prev, inventory: prev.inventory.map( object =>
-                object.item.name===item.name
-                ? { ...object, quantity: object.quantity + quantity } : object ) } ) );
+            {
+                return object.item.name===item.name
+                ? { ...object, quantity: object.quantity + quantity } : object
+            }
+            ) } ) );
         }
     }
 
@@ -980,7 +984,7 @@ const App = () =>
         } );
     }
 
-    const touchFountain = ( symbol: string ) =>
+    const touchFountain = ( symbol: string ): void =>
     {
         let flag = true;
         setPlayer( playerInfo =>
@@ -1008,8 +1012,9 @@ const App = () =>
         lootContent.forEach( drop =>
         {
             handleEventLogs(`- ${drop.quantity} x ${drop.item.name}`, 'khaki' );
+            if(drop.item.type==='Ore') stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true, drop.quantity )
             if(drop.item.type==='Item') stepOnItem( drop.item as Types.Item, drop.quantity, undefined, undefined, undefined, true );
-            if(drop.item.type==='Gear') stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
+            if(drop.item.type==='Gear' || drop.item.type==='Tool') stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
         } );
         handleEventLogs(`La bolsa contenía:`, 'orange')
     }
@@ -1196,8 +1201,6 @@ const App = () =>
 
     const hitOre = ( x: number, y: number ): void =>
     {
-        let flag = true;
-
         const thisTool = player.hotBar.Equippeable.find( item => item.item.type==='Tool' && item.equiped );
         if(!thisTool) return ;
 
@@ -1871,10 +1874,10 @@ const App = () =>
         auxiliar[1][11] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[3][14] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[5][1] = createEntity( 'Node', 'Copper' );
-        auxiliar[6][15] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[6][15] = createEntity( 'Enemie', 'Miner Goblin' );
         auxiliar[9][15] = createEntity( 'Node', 'Copper' );
         auxiliar[10][1] = createEntity( 'Enemie', 'Goblin' );
-        auxiliar[11][9] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[11][9] = createEntity( 'Enemie', 'Miner Goblin' );
         auxiliar[12][8] = createEntity( 'Node', 'Copper' );
         auxiliar[14][11] = createEntity( 'Node', 'Copper' );
         auxiliar[15][3] = player;
@@ -2293,6 +2296,12 @@ return(
           </div>
 
           {showInventory && (
+            <InventoryTab
+                inventory={player.inventory}
+                onClose={() => setShowInventory(false)}
+            />
+            )}
+          {/* {showInventory && (
             <div className="inventory-popup">
               <p>Inventario:</p>
               <ul className="inventory-list">
@@ -2303,7 +2312,7 @@ return(
                 ))}
               </ul>
             </div>
-          )}
+          )} */}
 
         </div>
 

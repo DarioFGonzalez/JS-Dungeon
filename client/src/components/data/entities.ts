@@ -1,7 +1,8 @@
 import * as icons from '../../Icons/index';
 import * as Types from '../types/global';
-import * as Items from './items';
 import * as Gear from './gear';
+import * as Items from './items';
+import * as Material from './materials';
 
 export const maxHp = 10;
 
@@ -94,7 +95,7 @@ export const heavyEnemy: Types.Enemy =
     drops: [ { item: Items.Potion, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
 }
 
-const agileEnemy: Types.Enemy =
+export const agileEnemy: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
@@ -114,6 +115,26 @@ const agileEnemy: Types.Enemy =
     drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]
 };
 
+export const minerEnemy: Types.Enemy =
+{
+    type: 'Enemy',
+    id: '0',
+    name: 'Miner Goblin',
+    hp: 3,
+    maxHp: 3,
+    symbol: icons.minerGoblin,
+    data: { x: 0, y: 0 },
+    aliments:
+    {
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
+    attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
+    defense: { Armor: 0, Toughness: 1 },
+    pattern: 'random',
+    drops: [ { item: Material.CopperOre, chance: 85, quantity: 1 }, { item: Gear.CopperPickaxe, chance: 99, quantity: 1 } ]
+};
+
 export const allEnemies: Types.Enemy[] = [
-    enemy, heavyEnemy, agileEnemy
+    enemy, heavyEnemy, agileEnemy, minerEnemy
 ];
