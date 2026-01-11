@@ -870,13 +870,19 @@ const App = () =>
 
         let item: any;
 
+        
         if( 'durability' in gear )
         {
+            if( player.hotBar.Equippeable.length>=5 ) return ;
+            console.log("Es un gear o tool");
             item = turnToInventoryGear(gear);
         }
         else
         {
             const ownedMaterial = player.hotBar.Equippeable.find( x => x.item.name == gear.name );
+
+            if( !ownedMaterial && player.hotBar.Equippeable.length>=5 ) return ;
+
             if( quantity )
             {
                 if( ownedMaterial && ownedMaterial.quantity )
@@ -894,7 +900,7 @@ const App = () =>
                 }
             }
         }
-
+        console.log("Acá está lo que va a agregar a la hotbar: ", item);
 
         setPlayer( playerInfo => ( { ...playerInfo, hotBar: { ...playerInfo.hotBar,
         Equippeable: [ ...playerInfo.hotBar.Equippeable, item ] } } ) );
