@@ -1,0 +1,128 @@
+.gearTab {
+  width: 100%;
+  min-height: 335px;
+}
+
+.gearGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gearCard {
+  position: relative;
+  padding: 6px 8px 6px 56px;
+  border-radius: 12px;
+  overflow: hidden;
+  animation: fadeInUp 0.3s ease forwards;
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+.weaponCard {
+  background-color: rgba(180, 40, 40, 0.35);
+}
+
+.weaponCard.equipped {
+  background-color: rgba(220, 60, 60, 0.75);
+}
+
+.charmCard {
+  background-color: rgba(40, 40, 160, 0.35);
+}
+
+.charmCard.equipped {
+  background-color: rgba(80, 80, 220, 0.75);
+}
+
+.toolCard {
+  background-color: rgba(100, 100, 100, 0.747);
+}
+
+.toolCard.equipped {
+  background-color: rgb(0, 0, 0);
+}
+
+.oreCard {
+  background-color: rgba(120, 80, 40, 0.35);
+}
+
+.oreCard.equipped {
+  background-color: rgba(180, 120, 60, 0.75);
+}
+
+.selected {
+  box-shadow: 0 0 0 2px #00ffff inset;
+}
+
+.onCooldown {
+  filter: grayscale(1);
+}
+
+.itemIcon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100%;
+  max-height: 100%;
+  aspect-ratio: 1 / 1;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.gearName {
+  font-weight: bold;
+  margin-bottom: 2px;
+  margin-left: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.gearStatsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.gearStat {
+  font-size: 0.85rem;
+}
+
+.heartsDisplay {
+  font-size: 0.85rem;
+}
+
+.cdOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  animation: cooldown var(--cd-time) linear forwards;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+@keyframes cooldown {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

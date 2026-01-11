@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player } from '../types/global';
-import './GearTab.css';
+import styles from './GearTab.module.css';
 import DurabilityBar from './DurabilityBar/DurabilityBar';
 
 interface GearTabProps {
@@ -17,62 +17,88 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
     } else {
       hearts = '🖤'.repeat(thing.item.durability);
     }
-    return <span className="hearts-display">{hearts}</span>;
+    return <span className={styles.heartsDisplay}>{hearts}</span>;
   };
 
   const statusVector: Record<string, string> = {
-    'bleed': '🩸',
-    'poison': '💚',
-    'fire': '🔥'
+    bleed: '🩸',
+    poison: '💚',
+    fire: '🔥'
   };
 
-  const slotClassMap: Record<string, string> =
-  {
-    weapon: 'weapon-card',
-    charm: 'charm-card',
-    tool: 'tool-card',
-    ore: 'ore-card'
+  const slotClassMap: Record<string, string> = {
+    weapon: styles.weaponCard,
+    charm: styles.charmCard,
+    tool: styles.toolCard,
+    ore: styles.oreCard
   };
-
 
   return (
-    <div className="gear-tab">
-      <div className="gear-grid">
-        {player.hotBar.Equippeable.map((x, y) => {
-        return(
-          <div 
+    <div className={styles.gearTab}>
+      <div className={styles.gearGrid}>
+        {player.hotBar.Equippeable.map((x, y) => (
+          <div
             key={y}
             className={`
-              ${x?.item.slot ? slotClassMap[x?.item.slot] : ''} 
-              ${x.equiped ? 'equipped' : ''} 
-              ${x.selected ? 'selected' : ''} 
-              ${x.onCd ? 'on-cooldown' : ''}
+              ${styles.gearCard}
+              ${x.item.slot ? slotClassMap[x.item.slot] : ''}
+              ${x.equiped ? styles.equipped : ''}
+              ${x.selected ? styles.selected : ''}
+              ${x.onCd ? styles.onCooldown : ''}
             `}
-            style={{ 
-              animationDelay: `${y * 0.06}s`,
+            style={{
               ['--cd-time' as any]: `${x.item.attackStats?.cd || 0}ms`
             }}
           >
-            <div className="gear-name">{x.item.name}</div>
-            <div className="gear-stats-row">
-              {x.item.attackStats && <div className="gear-stat"> {x.item.slot=='weapon'?'🗡':'⛏'} {x.item.attackStats?.dmg}</div>}
-              {x.item.defenseStats && <div className="gear-stat">🛡 +{x.item.defenseStats?.def}</div>}
-              <div className="gear-stat">
-                {(x?.item.slot === 'weapon' || x?.item.slot === 'tool') && x.durability && x.item.durability &&
-                <DurabilityBar actual={x.durability} total={x.item.durability} slot={x.item.slot}/>}
-                {x?.item.slot === 'charm' && renderTalismanHp(x)}
-                {x?.item.slot === 'ore' && <div className="gear-stat">[{x.quantity}]</div>}
-              </div>
-              {(x.item.attackStats?.aliment && x.item.attackStats?.aliment!=='none') && (
-                <div className="gear-stat">
-                  {statusVector[x.item.attackStats?.aliment]}
-                  ({(x.item.attackStats?.DoT || 0) * (x.item.attackStats?.times || 0)})
+            <div
+              className={styles.itemIcon}
+              style={{ backgroundImage: `url(${x.item.symbol})` }}
+            />
+
+            <div className={styles.gearName}>{x.item.name}</div>
+
+            <div className={styles.gearStatsRow}>
+              {x.item.attackStats && (
+                <div className={styles.gearStat}>
+                  {x.item.slot === 'weapon' ? '🗡' : '⛏'} {x.item.attackStats.dmg}
                 </div>
               )}
+
+              {x.item.defenseStats && (
+                <div className={styles.gearStat}>
+                  🛡 +{x.item.defenseStats.def}
+                </div>
+              )}
+
+              {(x.item.slot === 'weapon' || x.item.slot === 'tool') &&
+                x.durability !== undefined &&
+                x.item.durability !== undefined && (
+                  <DurabilityBar
+                    actual={x.durability}
+                    total={x.item.durability}
+                    slot={x.item.slot}
+                  />
+                )}
+
+              {x.item.slot === 'charm' && renderTalismanHp(x)}
+
+              {x.item.slot === 'ore' && (
+                <div className={styles.gearStat}>[{x.quantity}]</div>
+              )}
+
+              {x.item.attackStats?.aliment &&
+                x.item.attackStats.aliment !== 'none' && (
+                  <div className={styles.gearStat}>
+                    {statusVector[x.item.attackStats.aliment]}
+                    ({(x.item.attackStats.DoT || 0) *
+                      (x.item.attackStats.times || 0)})
+                  </div>
+                )}
             </div>
-            {x.onCd && <div className="cd-overlay"></div>}
+
+            {x.onCd && <div className={styles.cdOverlay} />}
           </div>
-        )})}
+        ))}
       </div>
     </div>
   );

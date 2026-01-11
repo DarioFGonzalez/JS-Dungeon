@@ -4,6 +4,33 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.1.0] - 2025-01-11
+
+### Added
+- **Mejoras visuales sustanciales en GearTab**:
+  - Íconos de equipamiento visibles de forma permanente.
+  - Codificación por colores según tipo de ítem para rápida identificación.
+  - Visualización de cooldown mediante animación gráfica.
+  - Indicador de durabilidad representado como barra de vida.
+- **Nuevo enemigo: Goblin Minero**:
+  - Diseñado específicamente para dropear herramientas de minería, alineando narrativa y loot.
+- **Nuevos íconos de recursos**:
+  - Incorporación de íconos de minerales (ore) con coherencia visual respecto al resto del HUD.
+- **Componente `DurabilityBar`**:
+  - Implementación de barra visual reutilizable para representar desgaste de ítems equipables.
+
+### Changed
+- **GearTab migrado a CSS Modules**:
+  - El archivo `GearTab.css` fue convertido a `GearTab.module.css` para evitar colisiones de estilos y facilitar escalabilidad futura.
+- **Ajustes de layout y espaciado del equipo**:
+  - Refinamiento de padding, proporciones y jerarquía visual para priorizar legibilidad y comprensión inmediata.
+- **Enfoque de diseño UX**:
+  - Se prioriza la comprensión del estado del jugador sin recurrir a tutoriales intrusivos, textos explicativos o guías externas.
+
+### Notes
+- Este release marca oficialmente el pasaje a una **versión jugable (v0.1.0)**:
+  - El jugador puede combatir, lootear, equiparse y morir dentro de un loop funcional.
+- El foco del proyecto se desplazó momentaneamente de validación técnica a **claridad visual, experiencia de usuario y legibilidad sistémica**.
 
 ## [v0.0.99+] - 2025-12-26
 

@@ -1,5 +1,52 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 18: Coherencia visual (user friendly). 🌈👾
+
+🗓️ *2025-01-11*
+
+`Diseño, colores, espacios y bonitura.` ✨
+
+**¡Feliz año nuevo!** 🥳🎉
+
+Okey, mi objetivo principal considerando que ya tengo un 'juego jugable' (Puedo pegar, puedo lootear, puedo farmear...) es tener un **'juego ENTENDIBLE'**.
+
+Quiero que el jugador se siente, avance por el juego y vaya entendiendo sin yo tener que ponerle carteles, tutoriales, guías y textos que le corten la experiencia.
+
+Con eso en mente, agregué mas vida al GearTab encargado de mostrar tu equipo disponible:
+- Ícono del objeto visible.
+- Colores para distinguir tipos de equipamiento. 
+- Cooldown con animación visual.
+- Durabilidad visible (barra de vida).
+
+<p align="center">
+  <img src="image-2.png" alt="GearTab looks" width="250" height='250' />
+  <br />
+  <em>Nuevas visuales para el equipo.</em>
+</p>
+
+---
+
+### 🛠️ Cambios técnicos:
+
+Agregué un par de cambios visuales, nada de gameplay- funciones o referencias.
+
+**GearTab.module.css** <- Convertí el css del GearTab en .module para no generar conflictos en caso que escale mas la aplicación.
+
+**Nuevos íconos** y **Nuevo enemigo** <- Agregué nuevos íconos, como el del ore - y un nuevo enemigo, el goblin minero, para que dropée de forma no tan inesperada 'Copper pickaxe'... no tenía mucho sentido que un goblin 'guerrero' dropée un pico de mineria.
+
+**DurabilityBar.tsx** <- Agregué la 'barra de vida' a modo de durabilidad para mayor claridad visual, es mas fácil de entender una barra de vida que un 10/10 y 'usá tu imaginación'.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+Tengo queee... reparar mi intento de inventario- mas bien reposicionarlo- ahora mismo tocando la I se abre toda una interfaz que tengo planeada usar para crafting y demás-- con los items apretados en el fondo.
+
+-Voy a poner los items de inventario siempre visibles en la parte inferior
+-¡¡CRAFTING!! Quiero agregar Crafting, darle un uso a los minerales.
+- Quizá incluso un sistema de mejoras con joyas o items.
+
+---
 
 ## 🔹 Paso 17: Re-definiendo la base.
 
