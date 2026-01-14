@@ -470,7 +470,7 @@ const App = () =>
                             return prev;
                         }
 
-                        const aux = prev.map( fila => [ ...fila ] );
+                        const aux = mapaRef.current.map( fila => [ ...fila ] );
                         const dmgIntervalMonster = findThisEnemy( id, aux );
                         
                         if(!dmgIntervalMonster) return prev;
@@ -2101,7 +2101,7 @@ const App = () =>
                         return prev;
                     }
 
-                    let aux = prev.map( x => [ ...x ] );
+                    let aux = mapaRef.current.map( x => [ ...x ] );
                     
                     const data = findThisEnemy( id, aux );
                     if(!data || !data.entity.activePatrol ) return prev;
