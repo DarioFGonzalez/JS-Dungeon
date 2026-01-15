@@ -2095,6 +2095,8 @@ const App = () =>
 
             let flag = true;
 
+            console.log("Patrulla creada para ", entityName, " ID: ", id);
+
             const patrolId = setInterval( () =>
             {
                 // let flag = true;
@@ -2122,6 +2124,8 @@ const App = () =>
                     return aux;
                 } );
             }, 1000 );
+
+            console.log( "patrolId: ", patrolId );
 
             return { ...thisEntity, id, patrolId, activePatrol: true };
         }
