@@ -574,6 +574,8 @@ const App = () =>
     {
         let flag = true;
 
+        console.log("Lastimamos al player por: ", dmg);
+
         setPlayer( prev =>
         {
             if(flag)
