@@ -31,6 +31,8 @@ const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
 const App = () =>
 {
+    const isDev = process.env.NODE_ENV !== 'production';
+
     const gridRef = useRef<HTMLDivElement>(null);
     const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
@@ -303,7 +305,7 @@ const App = () =>
 
         setPlayer( playerInfo =>
         {
-            if(flag)
+            if(flag && isDev)
             {
                 flag = false;
                 return playerInfo;
@@ -317,7 +319,6 @@ const App = () =>
                 const newEquippeables = aux.hotBar.Equippeable.filter( wpn => wpn.id !== equippedWeapon.id );
 
                 queueLog( `[🗡] ¡${equippedWeapon.item.name} se rompió! 💥`, 'orange');
-                flag = false;
 
                 return { ...aux, hotBar: { ...playerInfo.hotBar, Equippeable: newEquippeables }  };
             }
@@ -344,8 +345,6 @@ const App = () =>
 
     const strikeEnemy = ( x: number, y: number ): void =>
     {
-        let flag = true;
-
         const thisWeapon = player.hotBar.Equippeable.find( item => item.item.slot==='weapon' && item.equiped ) || Gear.emptyHanded;
 
         if(thisWeapon.onCd) return ;
@@ -359,13 +358,9 @@ const App = () =>
 
         const damage = attk.dmg- thisEnemy.defense.Armor;
 
-        if(flag)
-        {
-            damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
-            manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
-            thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
-            flag=false;
-        }
+        damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
+        manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
+        thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
     }
 
     const enemyDeath = ( id: string ): CellContent[][] =>
@@ -464,7 +459,7 @@ const App = () =>
 
                     setMapa( prev =>
                     {
-                        if(flag)
+                        if(flag && isDev)
                         {
                             flag = false;
                             return prev;
@@ -578,12 +573,11 @@ const App = () =>
 
         setPlayer( prev =>
         {
-            // if(flag)
-            // {
-            //     console.log("Entró al flag, va a obviar este ciclo");
-            //     flag = false;
-            //     return prev;
-            // }
+            if(flag && isDev)
+            {
+                flag = false;
+                return prev;
+            }
 
             let activeCharm = prev.hotBar.Equippeable.find( item => item.equiped && item.item.slot==='charm' );
             if(activeCharm)
@@ -692,7 +686,7 @@ const App = () =>
                 let flag = true;
                 setPlayer( prevData =>
                 {
-                    if(flag)
+                    if(flag && isDev)
                     {
                         flag = false;
                         return prevData;
@@ -721,7 +715,7 @@ const App = () =>
                         {
                             setPlayer( prev =>
                                 {
-                                    if(flag)
+                                    if(flag && isDev)
                                     {
                                         flag = false;
                                         return prev;
@@ -735,7 +729,7 @@ const App = () =>
                         {
                             setPlayer( prev =>
                                 {
-                                    if(flag)
+                                    if(flag && isDev)
                                     {
                                         flag=false;
                                         return prev;
@@ -749,7 +743,7 @@ const App = () =>
                         {
                             setPlayer( prev =>
                                 {
-                                    if(flag)
+                                    if(flag && isDev)
                                     {
                                         flag=false;
                                         return prev;
@@ -939,11 +933,16 @@ const App = () =>
         let flag = true;
         setPlayer( playerInfo =>
         {
+            if(flag && isDev)
+            {
+                flag=false;
+                return playerInfo;
+            }
             const aux = { ...playerInfo };
             const thisItem = aux.inventory.find( x => x.item.name===item.name ) as Types.InventoryItem;
 
             if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return aux;
-            if(flag)    queueLog(`Usas ${quantity} ${item.name}`, 'lime');
+            queueLog(`Usas ${quantity} ${item.name}`, 'lime');
 
             switch(item.name)
             {
@@ -978,8 +977,6 @@ const App = () =>
                 }
             }
 
-            flag = false;
-
             if(thisItem.quantity - quantity > 0)
             {
                 setTimeout( () =>
@@ -1002,19 +999,21 @@ const App = () =>
         let flag = true;
         setPlayer( playerInfo =>
         {
-            const aux = { ...playerInfo};
-            if(flag)
+            if(flag && isDev)
             {
-                
-                if(aux.aliments.flags.Burning)
-                {
-                    queueLog( 'Tocar la fuente calma tus quemaduras' ,'turquoise' );
-                    cleanse('burn');
-                }
-    
-                inconsecuente( symbol );
-                flag = false;
+                flag=false;
+                return playerInfo;
             }
+            const aux = { ...playerInfo};
+
+            if(aux.aliments.flags.Burning)
+            {
+                queueLog( 'Tocar la fuente calma tus quemaduras' ,'turquoise' );
+                cleanse('burn');
+            }
+
+            inconsecuente( symbol );
+
             return aux;
         } );
     }
@@ -1265,11 +1264,6 @@ const App = () =>
         
         setMapa( aux );
         damageWeapon( thisOre.thoughness, thisTool );
-        // if(flag)
-        // {
-        //     damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
-        //     flag=false;
-        // }
     }
 
     const handleInteraction = ( ): void =>
@@ -1304,6 +1298,12 @@ const App = () =>
 
         setPlayer( playerInfo =>
         {
+            if(flag && isDev)
+            {
+                flag=false;
+                return playerInfo;
+            }
+
             const player = { ...playerInfo };
             const to = navigateHotBarVectors[key];
 
@@ -1325,7 +1325,7 @@ const App = () =>
                 const aux = [ ...player.hotBar.Equippeable];
                 aux[oldIndex] = { ...aux[oldIndex], selected: false };
                 aux[newIndex] = { ...aux[newIndex], selected: true };
-                flag = false;
+
                 return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
             }
 
@@ -2102,7 +2102,7 @@ const App = () =>
 
                 setMapa( prev =>
                 {
-                    if(flag)
+                    if(flag && isDev)
                     {
                         flag = false;
                         return prev;
