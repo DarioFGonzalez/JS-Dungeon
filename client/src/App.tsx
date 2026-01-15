@@ -578,12 +578,12 @@ const App = () =>
 
         setPlayer( prev =>
         {
-            if(flag)
-            {
-                console.log("Entró al flag, va a obviar este ciclo");
-                flag = false;
-                return prev;
-            }
+            // if(flag)
+            // {
+            //     console.log("Entró al flag, va a obviar este ciclo");
+            //     flag = false;
+            //     return prev;
+            // }
 
             let activeCharm = prev.hotBar.Equippeable.find( item => item.equiped && item.item.slot==='charm' );
             if(activeCharm)
