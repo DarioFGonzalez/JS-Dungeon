@@ -2093,9 +2093,11 @@ const App = () =>
         {
             const id = crypto.randomUUID();
 
+            let flag = true;
+
             const patrolId = setInterval( () =>
             {
-                let flag = true;
+                // let flag = true;
 
                 const thisMob = findThisEnemy( id, mapaRef.current );
                 if(!thisMob || !thisMob.entity.activePatrol ) return;
