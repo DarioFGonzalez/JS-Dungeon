@@ -610,6 +610,8 @@ const App = () =>
                 stopGame();
                 return { ...prev, hp: 0 };
             }
+
+            console.log("vida anterior: ", prev.hp, "daño: ", dmg, " estoy devolviendo esto:\n", { ...prev, hp: prev.hp - dmg }, "\ndonde la hp debería tener sustraida el daño ya." );
             
             return { ...prev, hp: prev.hp - dmg };
         });
