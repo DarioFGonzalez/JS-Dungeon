@@ -580,6 +580,7 @@ const App = () =>
         {
             if(flag)
             {
+                console.log("Entró al flag, va a obviar este ciclo");
                 flag = false;
                 return prev;
             }
@@ -617,6 +618,8 @@ const App = () =>
             
             return { ...prev, hp: prev.hp - dmg };
         });
+
+        console.log("Pasé el setPlayer");
 
         let estado = '';
         let color = '';
