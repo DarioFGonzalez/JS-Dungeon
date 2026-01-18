@@ -2023,18 +2023,18 @@ const App = () =>
 
         auxiliar[1][7] = createEntity( 'Equippable', 'Amuleto escudo' );
         auxiliar[1][10] = createEntity( 'Equippable', 'Machete');
-        // auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
         first ? auxiliar[2][2] = player : auxiliar[15][3] = player; 
         auxiliar[2][15] = createEntity( 'Object', 'Box' );
         auxiliar[4][15] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[5][11] = createEntity( 'Enemie', 'Agile Goblin' );
-        // auxiliar[7][2] = createEntity( 'Enemie', 'Agile Goblin' );
-        // auxiliar[8][3] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[7][2] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[8][3] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[9][1] = createEntity( 'Object', 'Teleport' );
         auxiliar[9][11] = createEntity( 'Trap', 'Poison trap' );
         auxiliar[11][16] = createEntity( 'Object', 'Fire' );
         auxiliar[12][15] = createEntity( 'Object', 'Fire' );
-        // auxiliar[14][10] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[14][10] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[14][14] = createEntity( 'Equippable', 'Razor');
         auxiliar[14][15] = createEntity( 'Object', 'Fire' );
         auxiliar[15][16] = createEntity( 'Object', 'Fire' );
@@ -2099,9 +2099,8 @@ const App = () =>
                         flag = false;
                         return prev;
                     }
-                    console.log("Movimiento patrulla de ", thisMob.entity.name, " id ", thisMob.entity.id.slice(0,2));
 
-                    let aux = mapaRef.current.map( x => [ ...x ] );
+                    let aux = prev.map( x => [ ...x ] );
                     
                     const data = findThisEnemy( id, aux );
                     if(!data || !data.entity.activePatrol ) return prev;
