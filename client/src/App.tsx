@@ -950,18 +950,15 @@ const App = () =>
             {
                 case 'Potion':
                 {
-                    if(flag && isDev)
-                    {
-                        heal(3, 0, 0);
-                        manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.healing, 500 );
-                    }
+                    heal(3, 0, 0);
+                    manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.healing, 500 );
                     break;
                 }
                 case 'Bandages':
                 {
                     if(aux.aliments.flags.Bleeding)
                     {
-                        if(flag && isDev) queueLog(`[Frenas el sangrado]`, 'lime');
+                        queueLog(`[Frenas el sangrado]`, 'lime');
                         cleanse('bleed');
                     }
                     manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.bandagesImg, 500 );
@@ -971,7 +968,7 @@ const App = () =>
                 {
                     if(aux.aliments.flags.Burning)
                     {
-                        if(flag && isDev) queueLog(`[Cortas la quemadura]`, 'lime');
+                        queueLog(`[Cortas la quemadura]`, 'lime');
                         cleanse('burn');
                     }
                     manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.aloeImg, 500 );
@@ -1694,7 +1691,7 @@ const App = () =>
                 clearInterval(dmgId);
             }, times*1000)
             setPlayer( prev => manageBuffInstance( 'HotInstances', {dmgId, timerId}, prev, 'add' ) );
-        }
+        };
     }
 
     const nodes: Record< string, Types.Node[] > =
