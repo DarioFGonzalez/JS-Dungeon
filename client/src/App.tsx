@@ -627,7 +627,7 @@ const App = () =>
                     {
                         setPlayer( prev =>
                             {
-                                if(flag)
+                                if(flag && isDev)
                                 {
                                     flag = false;
                                     return prev;
@@ -645,7 +645,7 @@ const App = () =>
                     {
                         setPlayer( prev =>
                         {
-                            if(flag)
+                            if(flag && isDev)
                             {
                                 flag=false;
                                 return prev;
@@ -663,7 +663,7 @@ const App = () =>
                     {
                         setPlayer( prev =>
                         {
-                            if(flag)
+                            if(flag && isDev)
                             {
                                 flag=false;
                                 return prev;
@@ -948,7 +948,7 @@ const App = () =>
             {
                 case 'Potion':
                 {
-                    if(flag)
+                    if(flag && isDev)
                     {
                         heal(3, 0, 0);
                         manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.healing, 500 );
@@ -959,7 +959,7 @@ const App = () =>
                 {
                     if(aux.aliments.flags.Bleeding)
                     {
-                        if(flag) queueLog(`[Frenas el sangrado]`, 'lime');
+                        if(flag && isDev) queueLog(`[Frenas el sangrado]`, 'lime');
                         cleanse('bleed');
                     }
                     manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.bandagesImg, 500 );
@@ -969,7 +969,7 @@ const App = () =>
                 {
                     if(aux.aliments.flags.Burning)
                     {
-                        if(flag) queueLog(`[Cortas la quemadura]`, 'lime');
+                        if(flag && isDev) queueLog(`[Cortas la quemadura]`, 'lime');
                         cleanse('burn');
                     }
                     manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.aloeImg, 500 );
@@ -2093,13 +2093,9 @@ const App = () =>
         {
             const id = crypto.randomUUID();
 
-            let flag = true;
-
-            console.log("Patrulla creada para ", entityName, " ID: ", id);
-
             const patrolId = setInterval( () =>
             {
-                // let flag = true;
+                let flag = true;
 
                 const thisMob = findThisEnemy( id, mapaRef.current );
                 if(!thisMob || !thisMob.entity.activePatrol ) return;
@@ -2112,7 +2108,7 @@ const App = () =>
                         return prev;
                     }
 
-                    let aux = mapaRef.current.map( x => [ ...x ] );
+                    let aux = prev.map( x => [ ...x ] );
                     
                     const data = findThisEnemy( id, aux );
                     if(!data || !data.entity.activePatrol ) return prev;
@@ -2124,8 +2120,6 @@ const App = () =>
                     return aux;
                 } );
             }, 1000 );
-
-            console.log( "patrolId: ", patrolId );
 
             return { ...thisEntity, id, patrolId, activePatrol: true };
         }
