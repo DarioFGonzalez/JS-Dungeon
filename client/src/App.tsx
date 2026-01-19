@@ -27,18 +27,20 @@ const emptyVisualGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(ma
 
 type CellContent = Types.Player | Types.Enemy | Types.Trap | Types.Item | Types.Gear | Types.Environment | Types.Node;
 
-const emptyDelayedLog = { status: false, message: '', color: 'white' };
+// const emptyDelayedLog = { status: false, message: '', color: 'white' };
 
 const App = () =>
 {
     const isDev = process.env.NODE_ENV !== 'production';
 
     const gridRef = useRef<HTMLDivElement>(null);
-    const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
+    const lan = 'es';
+    // const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
     const [ allowed, setAllowed ] = useState<boolean>(true);
-    const [ stun, setStun ] = useState<boolean>(false);
-    const [ patrolsId, setPatrolsId ] = useState<NodeJS.Timer>();
+    const stun:boolean = false;
+    // const [ stun, setStun ] = useState<boolean>(false);
+    // const [ patrolsId, setPatrolsId ] = useState<NodeJS.Timer>();
 
     const [ mapa, setMapa ] = useState<CellContent[][]>( emptyGrid );
 
@@ -48,7 +50,7 @@ const App = () =>
     const mapaRef = useRef( mapa );
     const [ showSlides, setShowSlides ] = useState<boolean>( false );
     const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
-    const currentSlide = Types.slides[slideIndex];
+    // const currentSlide = Types.slides[slideIndex];
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyVisualGrid );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
@@ -60,8 +62,8 @@ const App = () =>
     const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
 
     const [ player, setPlayer ] = useState<Types.Player>( Entities.emptyPlayer );
-    const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
-    const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
+    // const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
+    // const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
 
     const moveSlide = ( where: string ): void =>
     {
@@ -109,7 +111,7 @@ const App = () =>
         let here = [ 0, 0 ];
         let symbol = '';
         let heroIcons = [icons.heroFront, icons.heroBack, icons.heroLeft, icons.heroRight];
-        mapa.forEach( (fila, y) => fila.map( (celda, z) =>
+        mapa.forEach( (fila, y) => fila.forEach( (celda, z) =>
         {
             if( heroIcons.includes(celda.symbol) ) { here=[ y, z ]; symbol=celda.symbol; }
         } ));
@@ -141,7 +143,7 @@ const App = () =>
         }
 
         
-        if(complete==true)
+        if(complete===true)
         {
             setPlayer( prev =>
                 {
@@ -178,7 +180,7 @@ const App = () =>
         const [ tp1X, tp1Y ] = tps[0];
         const [ tp2X, tp2Y ] = tps[1];
 
-        if(auxiliar[tp1X][tp1Y].name == 'Teleport' && auxiliar[tp2X][tp2Y].name == 'Teleport' )
+        if(auxiliar[tp1X][tp1Y].name === 'Teleport' && auxiliar[tp2X][tp2Y].name === 'Teleport' )
         {
             switch(other)
             {
@@ -187,7 +189,7 @@ const App = () =>
                     auxiliar[pX][pY] = emptyTile;
                     auxiliar[newX][newY] = player;
                     setPlayer( prev => ({ ...prev, symbol, data: { x: newX, y: newY } }) );
-                    if( tp1X==newX+x && tp1Y==newY+y )
+                    if( tp1X===newX+x && tp1Y===newY+y )
                     {
                         setResidual( prev => [ ...prev, { entity: Tiles.teleport, coords: [ tp2X, tp2Y ] } ] );
                         auxiliar[tp2X][tp2Y] = Tiles.box;
@@ -202,7 +204,7 @@ const App = () =>
                 }
                 case '':
                 {
-                    if( tp1X==newX && tp1Y==newY )
+                    if( tp1X===newX && tp1Y===newY )
                     {
                         setResidual( prev => [ ...prev, { entity: Tiles.teleport, coords: [ tp2X, tp2Y ] } ] );
                         auxiliar[pX][pY] = emptyTile;
@@ -282,7 +284,7 @@ const App = () =>
             case 'remove':
                 const updatedInstance = prev.buffs.instances[instance].filter( x =>
                     x.dmgId!==thisInstance?.dmgId && x.timerId!==thisInstance?.timerId );
-                const isInstanceEmpty = updatedInstance.length == 0;
+                const isInstanceEmpty = updatedInstance.length === 0;
                 return { ...prev, buffs:
                     { ...prev.buffs, flags: { ...prev.buffs.flags, [flag]: !isInstanceEmpty },
                     instances: { ...prev.buffs.instances, [instance]: updatedInstance } } };
@@ -323,13 +325,13 @@ const App = () =>
                 return { ...aux, hotBar: { ...playerInfo.hotBar, Equippeable: newEquippeables }  };
             }
 
-            let cdTimer = setTimeout( ()=> { setPlayer( all =>
+            setTimeout( ()=> { setPlayer( all =>
             {
-                const stillThere = all.hotBar.Equippeable.find( w => w.id == weapon.id );
+                const stillThere = all.hotBar.Equippeable.find( w => w.id === weapon.id );
                 if(stillThere)
                 {
                     return { ...all, hotBar: { ...all.hotBar, Equippeable: all.hotBar.Equippeable.map(
-                        item => item.id == stillThere.id ? { ...stillThere, onCd: false } : item 
+                        item => item.id === stillThere.id ? { ...stillThere, onCd: false } : item 
                     ) } };
                 }
                 return all;
@@ -360,7 +362,7 @@ const App = () =>
 
         damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
         manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
-        thisWeapon!=Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
+        thisWeapon!==Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
     }
 
     const enemyDeath = ( id: string ): CellContent[][] =>
@@ -435,7 +437,7 @@ const App = () =>
         }
         else
         {
-            if(dot!=0 && entity.defense.Immunity!=aliment)
+            if(dot!==0 && entity.defense.Immunity!==aliment)
             {
                 const alimentVector =
                 {
@@ -444,12 +446,12 @@ const App = () =>
                     'burn': 'BurnInstances'
                 } as const;
                 
-                const alimentTag =
-                {
-                    'poison': { aliment: '[Envenenado]', color: 'lime' },
-                    'bleed': { aliment: '[Sangrando]', color: 'red' },
-                    'burn': { aliment: '[Quemándose]', color: 'orange' }
-                };
+                // const alimentTag =
+                // {
+                //     'poison': { aliment: '[Envenenado]', color: 'lime' },
+                //     'bleed': { aliment: '[Sangrando]', color: 'red' },
+                //     'burn': { aliment: '[Quemándose]', color: 'orange' }
+                // };
 
                 type AlimentKey = keyof typeof alimentVector;
                  
@@ -465,7 +467,7 @@ const App = () =>
                             return prev;
                         }
 
-                        const aux = mapaRef.current.map( fila => [ ...fila ] );
+                        const aux = prev.map( fila => [ ...fila ] );
                         const dmgIntervalMonster = findThisEnemy( id, aux );
                         
                         if(!dmgIntervalMonster) return prev;
@@ -536,7 +538,7 @@ const App = () =>
                         aux[x][y] = manageDotInstance(
                             alimentVector[aliment as AlimentKey], { dmgId, timerId }, entity, 'add' );
                         
-                        const tag = alimentTag[aliment as AlimentKey];
+                        // const tag = alimentTag[aliment as AlimentKey];
                         return aux;
                     } );
                 }
@@ -551,7 +553,7 @@ const App = () =>
                 return aux;
             } );
 
-            lan=='es'
+            lan==='es'
             ? queueLog(`Golpeaste a ${entity.name} por ${dmg} de daño. [${entity.hp - dmg}/${entity.maxHp}]. ${tag.aliment}`, tag.color)
             : queueLog(`You HIT ${entity.name} by ${dmg} damage. [${entity.hp- dmg}/${entity.maxHp}]`, 'khaki');
 
@@ -618,7 +620,7 @@ const App = () =>
         let estado = '';
         let color = '';
 
-        if(dot!=0)
+        if(dot!==0)
         {
             let flag=true;
             switch(aliment)
@@ -835,7 +837,7 @@ const App = () =>
     {
         if( player.hotBar.Equippeable.length >= 6 )
         {
-            if(!lootBag && x !== undefined && y != undefined && symbol != undefined )
+            if(!lootBag && x !== undefined && y !== undefined && symbol !== undefined )
             {
                 setResidual( prev => [ ...prev, { entity: tile, coords: [ x, y ] } ] );
                 moveHere( x, y, symbol, true );
@@ -880,7 +882,7 @@ const App = () =>
         }
         else
         {
-            const ownedMaterial = player.hotBar.Equippeable.find( x => x.item.name == gear.name );
+            const ownedMaterial = player.hotBar.Equippeable.find( x => x.item.name === gear.name );
 
             if( !ownedMaterial && player.hotBar.Equippeable.length>=5 ) return ;
 
@@ -1146,13 +1148,13 @@ const App = () =>
         setDelayedLog( list => [ ...list, { message, color } ] );
     }
 
-    const playerVectors: Record<string, [number, number]> = //non
-    {
-        ship_up: [-1, 0],
-        ship_down: [1, 0],
-        ship_left: [0, -1],
-        ship_right: [0, 1]
-    }
+    // const playerVectors: Record<string, [number, number]> = //non
+    // {
+    //     ship_up: [-1, 0],
+    //     ship_down: [1, 0],
+    //     ship_left: [0, -1],
+    //     ship_right: [0, 1]
+    // }
 
     const navigateHotBarVectors: Record<string, number> =
     {
@@ -1311,9 +1313,9 @@ const App = () =>
             {
                 const oldIndex = player.hotBar.Equippeable.findIndex( item => item.selected );
 
-                if(oldIndex==-1)
+                if(oldIndex===-1)
                 {
-                    const aux = player.hotBar.Equippeable.map( ( x, y ) => y==0 ? {...x, selected: true } : x );
+                    const aux = player.hotBar.Equippeable.map( ( x, y ) => y===0 ? {...x, selected: true } : x );
                     return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
                 }
 
@@ -1341,7 +1343,7 @@ const App = () =>
             const Equippeables = aux.hotBar.Equippeable;
 
             const selected = Equippeables.find( x => x.selected );
-            if(!selected || selected.item.slot=='ore') return playerInfo;
+            if(!selected || selected.item.slot==='ore') return playerInfo;
 
             const toReplace = Equippeables.find( x => x.equiped && x.item.slot === selected.item.slot )
 
@@ -1465,30 +1467,30 @@ const App = () =>
         return mapaState;
     }
 
-    const finishDoT = <T extends Types.WithAliments>( aliment: keyof Types.AlimentInstances, info: T, all?: boolean ): void =>
-    {
-        if(all)
-        {
-            for( const key in info.aliments.instances )
-            {
-                const instances = info.aliments.instances[key as keyof typeof info.aliments.instances];
+    // const finishDoT = <T extends Types.WithAliments>( aliment: keyof Types.AlimentInstances, info: T, all?: boolean ): void =>
+    // {
+    //     if(all)
+    //     {
+    //         for( const key in info.aliments.instances )
+    //         {
+    //             const instances = info.aliments.instances[key as keyof typeof info.aliments.instances];
 
-                instances.forEach( ids =>
-                {
-                    clearInterval(ids.dmgId);
-                    clearTimeout(ids.timerId);
-                } );
-            }
-        }
-        else
-        {
-            info.aliments.instances[aliment?aliment:'BleedInstances'].forEach( ids =>
-            {
-                clearInterval(ids.dmgId);
-                clearTimeout(ids.timerId);
-            } );
-        }
-    }
+    //             instances.forEach( ids =>
+    //             {
+    //                 clearInterval(ids.dmgId);
+    //                 clearTimeout(ids.timerId);
+    //             } );
+    //         }
+    //     }
+    //     else
+    //     {
+    //         info.aliments.instances[aliment?aliment:'BleedInstances'].forEach( ids =>
+    //         {
+    //             clearInterval(ids.dmgId);
+    //             clearTimeout(ids.timerId);
+    //         } );
+    //     }
+    // }
 
     const finishBuff = ( buff: keyof Types.BuffInstances, info: Types.Player, cleanse?: boolean ): void =>
     {
@@ -1542,7 +1544,7 @@ const App = () =>
             case 'remove':
                 const updatedInstance = prev.aliments.instances[instance].filter( x =>
                     x.dmgId!==newInstance?.dmgId && x.timerId!==newInstance?.timerId );
-                const isInstanceEmpty = updatedInstance.length == 0;
+                const isInstanceEmpty = updatedInstance.length === 0;
                 return { ...prev, aliments:
                     { ...prev.aliments, flags: { ...prev.aliments.flags, [flag]: !isInstanceEmpty }, instances:
                         { ...prev.aliments.instances, [instance]: updatedInstance } } };
@@ -1560,113 +1562,113 @@ const App = () =>
 
     const cleanse = ( aliment: string, ID: string = '' ): void =>
     {
-        switch( aliment )
-        {
-            case 'bleed':
-            {
-                if(ID)
-                {
-                    setEnemies( prevEnemies =>
-                    {
-                        const aux = [ ...prevEnemies];
-                        return aux.map( mob =>
-                        {
-                            if( mob.id!==ID ) return mob;
-                            finishDoT( 'BleedInstances',  mob );
-                            return manageDotInstance( 'BleedInstances', undefined, mob, 'clean' );
-                        } );
-                    } );
-                }
-                else
-                {
-                    setPlayer( playerInfo =>
-                    {
-                        const aux = { ...playerInfo };
-                        finishDoT( 'BleedInstances', aux );
-                        return manageDotInstance('BleedInstances', undefined, aux, 'clean')
-                    } );
-                }
-                break;
-            }
-            case 'poison':
-            {
-                if(ID)
-                {
-                    setEnemies( prevEnemies =>
-                    {
-                        const aux = [ ...prevEnemies];
-                        return aux.map( mob =>
-                        {
-                            if( mob.id!==ID ) return mob;
-                            finishDoT( 'PoisonInstances',  mob );
-                            return manageDotInstance( 'PoisonInstances', undefined, mob, 'clean' );
-                        } );
-                    } );
-                }
-                else
-                {
-                    setPlayer( playerInfo =>
-                    {
-                        const aux = { ...playerInfo };
-                        finishDoT( 'PoisonInstances', aux );
-                        return manageDotInstance('PoisonInstances', undefined, aux, 'clean')
-                    } );
-                }
-                break;
-            }
-            case 'burn':
-            {
-                if(ID)
-                {
-                    setEnemies( prevEnemies =>
-                    {
-                        const aux = [ ...prevEnemies];
-                        return aux.map( mob =>
-                        {
-                            if( mob.id!==ID ) return mob;
-                            finishDoT( 'BurnInstances',  mob );
-                            return manageDotInstance( 'BurnInstances', undefined, mob, 'clean' );
-                        } );
-                    } );
-                }
-                else
-                {
-                    setPlayer( playerInfo =>
-                    {
-                        const aux = { ...playerInfo };
-                        finishDoT( 'BurnInstances', aux );
-                        return manageDotInstance('BurnInstances', undefined, aux, 'clean')
-                    } );
-                }
-                break;
-            }
-            case 'all':
-            {
-                if(ID)
-                {
-                    setEnemies( prevEnemies =>
-                    {
-                        const aux = [ ...prevEnemies];
-                        return aux.map( mob =>
-                        {
-                            if( mob.id!==ID ) return mob;
-                            finishDoT( 'BleedInstances',  mob, true );
-                            return manageDotInstance( 'BleedInstances', undefined, mob, 'restart' );
-                        } );
-                    } );
-                }
-                else
-                {
-                    setPlayer( playerInfo =>
-                    {
-                        const aux = { ...playerInfo };
-                        finishDoT( 'BleedInstances', aux, true );
-                        return manageDotInstance('BleedInstances', undefined, aux, 'restart')
-                    } );
-                }
-                break;
-            }
-        }
+        // switch( aliment )
+        // {
+        //     case 'bleed':
+        //     {
+        //         if(ID)
+        //         {
+        //             setEnemies( prevEnemies =>
+        //             {
+        //                 const aux = [ ...prevEnemies];
+        //                 return aux.map( mob =>
+        //                 {
+        //                     if( mob.id!==ID ) return mob;
+        //                     finishDoT( 'BleedInstances',  mob );
+        //                     return manageDotInstance( 'BleedInstances', undefined, mob, 'clean' );
+        //                 } );
+        //             } );
+        //         }
+        //         else
+        //         {
+        //             setPlayer( playerInfo =>
+        //             {
+        //                 const aux = { ...playerInfo };
+        //                 finishDoT( 'BleedInstances', aux );
+        //                 return manageDotInstance('BleedInstances', undefined, aux, 'clean')
+        //             } );
+        //         }
+        //         break;
+        //     }
+        //     case 'poison':
+        //     {
+        //         if(ID)
+        //         {
+        //             setEnemies( prevEnemies =>
+        //             {
+        //                 const aux = [ ...prevEnemies];
+        //                 return aux.map( mob =>
+        //                 {
+        //                     if( mob.id!==ID ) return mob;
+        //                     finishDoT( 'PoisonInstances',  mob );
+        //                     return manageDotInstance( 'PoisonInstances', undefined, mob, 'clean' );
+        //                 } );
+        //             } );
+        //         }
+        //         else
+        //         {
+        //             setPlayer( playerInfo =>
+        //             {
+        //                 const aux = { ...playerInfo };
+        //                 finishDoT( 'PoisonInstances', aux );
+        //                 return manageDotInstance('PoisonInstances', undefined, aux, 'clean')
+        //             } );
+        //         }
+        //         break;
+        //     }
+        //     case 'burn':
+        //     {
+        //         if(ID)
+        //         {
+        //             setEnemies( prevEnemies =>
+        //             {
+        //                 const aux = [ ...prevEnemies];
+        //                 return aux.map( mob =>
+        //                 {
+        //                     if( mob.id!==ID ) return mob;
+        //                     finishDoT( 'BurnInstances',  mob );
+        //                     return manageDotInstance( 'BurnInstances', undefined, mob, 'clean' );
+        //                 } );
+        //             } );
+        //         }
+        //         else
+        //         {
+        //             setPlayer( playerInfo =>
+        //             {
+        //                 const aux = { ...playerInfo };
+        //                 finishDoT( 'BurnInstances', aux );
+        //                 return manageDotInstance('BurnInstances', undefined, aux, 'clean')
+        //             } );
+        //         }
+        //         break;
+        //     }
+        //     case 'all':
+        //     {
+        //         if(ID)
+        //         {
+        //             setEnemies( prevEnemies =>
+        //             {
+        //                 const aux = [ ...prevEnemies];
+        //                 return aux.map( mob =>
+        //                 {
+        //                     if( mob.id!==ID ) return mob;
+        //                     finishDoT( 'BleedInstances',  mob, true );
+        //                     return manageDotInstance( 'BleedInstances', undefined, mob, 'restart' );
+        //                 } );
+        //             } );
+        //         }
+        //         else
+        //         {
+        //             setPlayer( playerInfo =>
+        //             {
+        //                 const aux = { ...playerInfo };
+        //                 finishDoT( 'BleedInstances', aux, true );
+        //                 return manageDotInstance('BleedInstances', undefined, aux, 'restart')
+        //             } );
+        //         }
+        //         break;
+        //     }
+        // }
     }
 
     const heal = ( healing: number, HoT: number, times: number ): void =>
@@ -1721,8 +1723,8 @@ const App = () =>
                 if(mapa[y][x].type==='Wall')
                 {
                     if(
-                        mapa[y-1][x]==emptyTile || mapa[y+1][x]==emptyTile ||
-                        mapa[y][x-1]==emptyTile || mapa[y][x+1]==emptyTile
+                        mapa[y-1][x]===emptyTile || mapa[y+1][x]===emptyTile ||
+                        mapa[y][x-1]===emptyTile || mapa[y][x+1]===emptyTile
                     )
                     {
                         wallCoords.push( {x, y} );
@@ -1797,7 +1799,7 @@ const App = () =>
                         auxiliar[i][j] = addWall('Rocky');
                     }
                 }
-                if(i==4)
+                if(i===4)
                 {
                     if( [4, 8, 9, 11, 12, 13, 15].includes(j) )
                     {
