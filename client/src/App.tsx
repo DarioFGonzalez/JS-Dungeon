@@ -939,35 +939,12 @@ const App = () =>
             if( !thisItem || thisItem.onCd ) return aux;
             queueLog(`Usas ${thisItem.item.name}`, 'lime');
 
-            switch(thisItem.item.name)
-            {
-                case 'Potion':
-                {
-                    heal(3, 0, 0);
-                    manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.healing, 500 );
-                    break;
-                }
-                case 'Bandages':
-                {
-                    if(aux.aliments.flags.Bleeding)
-                    {
-                        queueLog(`[Frenas el sangrado]`, 'lime');
-                        cleanse('bleed');
-                    }
-                    manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.bandagesImg, 500 );
-                    break;
-                }
-                case 'Aloe leaf':
-                {
-                    if(aux.aliments.flags.Burning)
-                    {
-                        queueLog(`[Cortas la quemadura]`, 'lime');
-                        cleanse('burn');
-                    }
-                    manageVisualAnimation( 'visual', aux.data.x, aux.data.y, icons.aloeImg, 500 );
-                    break;
-                }
-            }
+            let item = thisItem.item;
+
+            if(item.heal) heal( item.heal, 0, 0 );
+            if(item.cleanse) cleanse( item.cleanse );
+
+            manageVisualAnimation( 'visual', aux.data.x, aux.data.y, item.symbol, 500 );
 
             if(thisItem.quantity - 1 > 0)
             {

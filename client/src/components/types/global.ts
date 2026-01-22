@@ -84,9 +84,10 @@ export interface Item
     type: 'Item',
     name: string,
     symbol: string,
-    hotkey: string,
     id: string,
     desc: string,
+    cleanse?: string,
+    heal?: number,
     cd: number
 };
 

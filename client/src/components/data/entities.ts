@@ -92,7 +92,7 @@ export const heavyEnemy: Types.Enemy =
     attack: { Instant: 3, DoT: 1, Times: 4, Aliment: 'bleed' },
     defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
     pattern: 'vertical',
-    drops: [ { item: Items.Potion, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
+    drops: [ { item: Items.Antidote, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
 }
 
 export const agileEnemy: Types.Enemy =

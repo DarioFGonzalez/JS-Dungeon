@@ -29,7 +29,6 @@ export default function InventoryTab({ inventory, onClose }: InventoryTabProps) 
             >
               <img src={inv.item.symbol} alt={inv.item.name} />
               <div className={styles.qty}>{inv.quantity}</div>
-              <div className={styles.hotkey}>{inv.item.hotkey}</div>
             </div>
           ))}
 
