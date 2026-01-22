@@ -15,7 +15,7 @@ export type Residual = { entity: allEntities, coords: number[] };
 export type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, cd: number };
 export type deffenseStats = { def?: number, immunity?: string, hp?: number };
 
-export type InventoryItem = { item: Item, quantity: number, onCd: boolean };
+export type InventoryItem = { item: Item, quantity: number, onCd: boolean, selected: boolean };
 export type InventoryGear = { id: string, item: Gear, durability?: number, onCd?: boolean, quantity?: number, equiped?: boolean, selected: boolean };
 export type InventoryMaterial = { id: string, item: Material, selected: boolean };
 export type inventory = InventoryItem[];

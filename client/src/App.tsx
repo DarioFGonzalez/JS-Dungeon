@@ -12,6 +12,7 @@ import { allNodes, allObjects, allTiles, copperNodes, rockyWalls, silverNodes } 
 import './App.css';
 
 import ConsoleTab from './components/ConsoleTab/ConsoleTab';
+import ConsumablesTab from './components/ConsumablesTab/ConsumablesTab';
 import GearTab from './components/GearTab/GearTab';
 import InventoryTab from './components/InventoryTab/InventoryTab';
 
@@ -917,7 +918,7 @@ const App = () =>
         if(!lootBag) queueLog(`Recogiste ${quantity} ${item.name}.`, 'lime');
         if(!thisItem)
         {
-            setPlayer( prev => ( { ...prev, inventory: [ ...prev.inventory, { item: item, quantity: quantity, onCd: false } ] } ) );
+            setPlayer( prev => ( { ...prev, inventory: [ ...prev.inventory, { item: item, quantity: quantity, onCd: false, selected: false } ] } ) );
         }
         else
         {
@@ -930,7 +931,7 @@ const App = () =>
         }
     }
 
-    const consumeItem = ( item: Types.Item, quantity: number ): void =>
+    const consumeItem = (): void =>
     {
         let flag = true;
         setPlayer( playerInfo =>
@@ -940,13 +941,14 @@ const App = () =>
                 flag=false;
                 return playerInfo;
             }
+
             const aux = { ...playerInfo };
-            const thisItem = aux.inventory.find( x => x.item.name===item.name ) as Types.InventoryItem;
+            const thisItem = aux.inventory.find( x => x.selected ) as Types.InventoryItem;
 
-            if( !thisItem || thisItem.quantity < quantity || thisItem.onCd ) return aux;
-            queueLog(`Usas ${quantity} ${item.name}`, 'lime');
+            if( !thisItem || thisItem.onCd ) return aux;
+            queueLog(`Usas ${thisItem.item.name}`, 'lime');
 
-            switch(item.name)
+            switch(thisItem.item.name)
             {
                 case 'Potion':
                 {
@@ -976,7 +978,7 @@ const App = () =>
                 }
             }
 
-            if(thisItem.quantity - quantity > 0)
+            if(thisItem.quantity - 1 > 0)
             {
                 setTimeout( () =>
                 {
@@ -984,7 +986,7 @@ const App = () =>
                 }, thisItem.item.cd)
 
                 return {...aux, inventory: aux.inventory.map( z =>
-                    'quantity' in z && z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - quantity, onCd: true } : z ) };
+                    'quantity' in z && z.item.name === thisItem.item.name ? { ...z, quantity: z.quantity - 1, onCd: true } : z ) };
             }
             else
             {
@@ -1160,6 +1162,13 @@ const App = () =>
         'delete': 0
     };
 
+    const navigateConsumablesVectors: Record<string, number> =
+    {
+        'arrowleft': -1,
+        'arrowright': 1,
+        'delete': 0
+    };
+
     const directionFromVector = ( symbol: string ): [number, number] =>
     {
         switch( symbol )
@@ -1332,6 +1341,47 @@ const App = () =>
         } );
     }
 
+    const navigateConsumables = ( key: string ): void =>
+    {
+        let flag = true;
+
+        setPlayer( playerInfo =>
+        {
+            if(flag && isDev)
+            {
+                flag=false;
+                return playerInfo;
+            }
+
+            const player = { ...playerInfo };
+            const to = navigateConsumablesVectors[key];
+
+            if(to!==0)
+            {
+                const oldIndex = player.inventory.findIndex( item => item.selected );
+
+                if(oldIndex===-1)
+                {
+                    const aux = player.inventory.map( ( x, y ) => y===0 ? {...x, selected: true } : x );
+                    return { ...player, inventory: aux };
+                }
+
+                const max = player.inventory.length - 1;
+                const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
+                
+                if(oldIndex===newIndex) return playerInfo;
+    
+                const aux = [ ...player.inventory ];
+                aux[oldIndex] = { ...aux[oldIndex], selected: false };
+                aux[newIndex] = { ...aux[newIndex], selected: true };
+
+                return { ...player, inventory: aux };
+            }
+
+            return { ...player, inventory: player.inventory.filter( x => !x.selected ) };
+        } );
+    }
+
     const swapGear = (): void =>
     {
         setPlayer( playerInfo =>
@@ -1400,19 +1450,13 @@ const App = () =>
                 case 'arrowdown':
                     navigateHotbar(key);
                 break;
-
-                case 'k':   //bandages
-                consumeItem(Items.Bandages, 2);
-                break;
-                case 'o':   //poción
-                consumeItem(Items.Potion, 1);
-                break;
-                case 'p':   //Aloe
-                consumeItem(Items.Aloe, 1);
+                case 'arrowleft':
+                case 'arrowright':
+                    navigateConsumables(key);
                 break;
 
                 case 'q':   //renew (HoT)
-                heal(0,1,5);
+                consumeItem();
                 break;
 
                 case 'i':   //abrir inventario
@@ -2351,6 +2395,8 @@ return(
         </div>}
 
         <GearTab player={player} />
+
+        {game && <ConsumablesTab  player={player} />}
 
         <ConsoleTab events={events} />
 

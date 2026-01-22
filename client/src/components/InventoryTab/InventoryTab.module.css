@@ -9,21 +9,21 @@
 }
 
 .window {
-  width: 480px;
-  height: 360px; /* 6 cards de alto */
+  width: 100px;
+  height: 100px; /* 6 cards de alto */
   background: #1b1b1b;
   border: 2px solid #555;
   border-radius: 8px;
   display: flex;
-  flex-direction: column;
-  padding: 8px;
+  flex-direction: row;
+  padding: 2px;
   box-shadow: 0 0 20px black;
 }
 
 .menuColumn {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  gap: 2px;
   flex: 1;
 }
 
@@ -42,7 +42,7 @@
 .itemsRow {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  gap: 2px;
   margin-top: 6px;
 }
 

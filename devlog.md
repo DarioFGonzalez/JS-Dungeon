@@ -1,5 +1,38 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 19: Parches necesarios 🚑👩‍💻
+
+🗓️ 2025-01-20
+
+`¿Cómo que no funciona el demo jugable?` 👀
+
+**Resumen**: Refactoricé gran parte de mi código, saqué los errores esLint y mejoré las flags para diferenciar entre local y deploy. La demo funciona otra vez: minar, matar, equipar, DoT- todo al 100%.
+
+[Link al Demo](https://js-dungeon.vercel.app/) 👾✨
+
+No podía avanzar sabiendo que el demo no funcionaba, de paso me saqué de encima cosas que estaba 'dejando pasar' pero que tarde o temprano iban a explotarme en la cara.
+
+Con un código mas limpio, estable y funcional. Puedo seguir avanzando. 
+
+<p align="center">
+  <img src="image-2.png" alt="GearTab looks" width="250" height='250' />
+  <br />
+  <em>Nuevas visuales para el equipo.</em>
+</p>
+
+---
+
+### 🛠️ Cambios técnicos:
+
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+
+
+---
+
 ## 🔹 Paso 18: Coherencia visual (user friendly). 🌈👾
 
 🗓️ *2025-01-11*
