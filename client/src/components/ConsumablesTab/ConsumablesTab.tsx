@@ -12,9 +12,9 @@ const ConsumablesTab: React.FC<ConsumableTabProps> = ({ player }) => {
   return (
     <div className={styles.consumablesWrapper}>
       <div className={styles.itemsRow}>
-        {player.inventory.slice(0, 6).map((inv) => (
+        {player.inventory.slice(0, 6).map((inv, index) => (
           <div
-            key={inv.item.id}
+            key={index}
             className={`${styles.itemSlot} ${inv.selected ? styles.selected : ''}`}
           >
             <img src={inv.item.symbol} alt="" />

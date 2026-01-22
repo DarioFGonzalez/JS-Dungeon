@@ -572,8 +572,6 @@ const App = () =>
     {
         let flag = true;
 
-        console.log("Lastimamos al player por: ", dmg);
-
         setPlayer( prev =>
         {
             if(flag && isDev)
@@ -610,13 +608,9 @@ const App = () =>
                 stopGame();
                 return { ...prev, hp: 0 };
             }
-
-            console.log("vida anterior: ", prev.hp, "daño: ", dmg, " estoy devolviendo esto:\n", { ...prev, hp: prev.hp - dmg }, "\ndonde la hp debería tener sustraida el daño ya." );
             
             return { ...prev, hp: prev.hp - dmg };
         });
-
-        console.log("Pasé el setPlayer");
 
         let estado = '';
         let color = '';
@@ -878,7 +872,6 @@ const App = () =>
         if( 'durability' in gear )
         {
             if( player.hotBar.Equippeable.length>=5 ) return ;
-            console.log("Es un gear o tool");
             item = turnToInventoryGear(gear);
         }
         else
@@ -904,7 +897,6 @@ const App = () =>
                 }
             }
         }
-        console.log("Acá está lo que va a agregar a la hotbar: ", item);
 
         setPlayer( playerInfo => ( { ...playerInfo, hotBar: { ...playerInfo.hotBar,
         Equippeable: [ ...playerInfo.hotBar.Equippeable, item ] } } ) );
@@ -1166,7 +1158,7 @@ const App = () =>
     {
         'arrowleft': -1,
         'arrowright': 1,
-        'delete': 0
+        'backspace': 0
     };
 
     const directionFromVector = ( symbol: string ): [number, number] =>
@@ -1452,6 +1444,7 @@ const App = () =>
                 break;
                 case 'arrowleft':
                 case 'arrowright':
+                case 'backspace':
                     navigateConsumables(key);
                 break;
 
@@ -1508,30 +1501,30 @@ const App = () =>
         return mapaState;
     }
 
-    // const finishDoT = <T extends Types.WithAliments>( aliment: keyof Types.AlimentInstances, info: T, all?: boolean ): void =>
-    // {
-    //     if(all)
-    //     {
-    //         for( const key in info.aliments.instances )
-    //         {
-    //             const instances = info.aliments.instances[key as keyof typeof info.aliments.instances];
+    const finishDoT = <T extends Types.WithAliments>( aliment: keyof Types.AlimentInstances, info: T, all?: boolean ): void =>
+    {
+        if(all)
+        {
+            for( const key in info.aliments.instances )
+            {
+                const instances = info.aliments.instances[key as keyof typeof info.aliments.instances];
 
-    //             instances.forEach( ids =>
-    //             {
-    //                 clearInterval(ids.dmgId);
-    //                 clearTimeout(ids.timerId);
-    //             } );
-    //         }
-    //     }
-    //     else
-    //     {
-    //         info.aliments.instances[aliment?aliment:'BleedInstances'].forEach( ids =>
-    //         {
-    //             clearInterval(ids.dmgId);
-    //             clearTimeout(ids.timerId);
-    //         } );
-    //     }
-    // }
+                instances.forEach( ids =>
+                {
+                    clearInterval(ids.dmgId);
+                    clearTimeout(ids.timerId);
+                } );
+            }
+        }
+        else
+        {
+            info.aliments.instances[aliment?aliment:'BleedInstances'].forEach( ids =>
+            {
+                clearInterval(ids.dmgId);
+                clearTimeout(ids.timerId);
+            } );
+        }
+    }
 
     const finishBuff = ( buff: keyof Types.BuffInstances, info: Types.Player, cleanse?: boolean ): void =>
     {
@@ -1603,113 +1596,113 @@ const App = () =>
 
     const cleanse = ( aliment: string, ID: string = '' ): void =>
     {
-        // switch( aliment )
-        // {
-        //     case 'bleed':
-        //     {
-        //         if(ID)
-        //         {
-        //             setEnemies( prevEnemies =>
-        //             {
-        //                 const aux = [ ...prevEnemies];
-        //                 return aux.map( mob =>
-        //                 {
-        //                     if( mob.id!==ID ) return mob;
-        //                     finishDoT( 'BleedInstances',  mob );
-        //                     return manageDotInstance( 'BleedInstances', undefined, mob, 'clean' );
-        //                 } );
-        //             } );
-        //         }
-        //         else
-        //         {
-        //             setPlayer( playerInfo =>
-        //             {
-        //                 const aux = { ...playerInfo };
-        //                 finishDoT( 'BleedInstances', aux );
-        //                 return manageDotInstance('BleedInstances', undefined, aux, 'clean')
-        //             } );
-        //         }
-        //         break;
-        //     }
-        //     case 'poison':
-        //     {
-        //         if(ID)
-        //         {
-        //             setEnemies( prevEnemies =>
-        //             {
-        //                 const aux = [ ...prevEnemies];
-        //                 return aux.map( mob =>
-        //                 {
-        //                     if( mob.id!==ID ) return mob;
-        //                     finishDoT( 'PoisonInstances',  mob );
-        //                     return manageDotInstance( 'PoisonInstances', undefined, mob, 'clean' );
-        //                 } );
-        //             } );
-        //         }
-        //         else
-        //         {
-        //             setPlayer( playerInfo =>
-        //             {
-        //                 const aux = { ...playerInfo };
-        //                 finishDoT( 'PoisonInstances', aux );
-        //                 return manageDotInstance('PoisonInstances', undefined, aux, 'clean')
-        //             } );
-        //         }
-        //         break;
-        //     }
-        //     case 'burn':
-        //     {
-        //         if(ID)
-        //         {
-        //             setEnemies( prevEnemies =>
-        //             {
-        //                 const aux = [ ...prevEnemies];
-        //                 return aux.map( mob =>
-        //                 {
-        //                     if( mob.id!==ID ) return mob;
-        //                     finishDoT( 'BurnInstances',  mob );
-        //                     return manageDotInstance( 'BurnInstances', undefined, mob, 'clean' );
-        //                 } );
-        //             } );
-        //         }
-        //         else
-        //         {
-        //             setPlayer( playerInfo =>
-        //             {
-        //                 const aux = { ...playerInfo };
-        //                 finishDoT( 'BurnInstances', aux );
-        //                 return manageDotInstance('BurnInstances', undefined, aux, 'clean')
-        //             } );
-        //         }
-        //         break;
-        //     }
-        //     case 'all':
-        //     {
-        //         if(ID)
-        //         {
-        //             setEnemies( prevEnemies =>
-        //             {
-        //                 const aux = [ ...prevEnemies];
-        //                 return aux.map( mob =>
-        //                 {
-        //                     if( mob.id!==ID ) return mob;
-        //                     finishDoT( 'BleedInstances',  mob, true );
-        //                     return manageDotInstance( 'BleedInstances', undefined, mob, 'restart' );
-        //                 } );
-        //             } );
-        //         }
-        //         else
-        //         {
-        //             setPlayer( playerInfo =>
-        //             {
-        //                 const aux = { ...playerInfo };
-        //                 finishDoT( 'BleedInstances', aux, true );
-        //                 return manageDotInstance('BleedInstances', undefined, aux, 'restart')
-        //             } );
-        //         }
-        //         break;
-        //     }
-        // }
+        switch( aliment )
+        {
+            case 'bleed':
+            {
+                if(ID)
+                {
+                    // setEnemies( prevEnemies =>
+                    // {
+                    //     const aux = [ ...prevEnemies];
+                    //     return aux.map( mob =>
+                    //     {
+                    //         if( mob.id!==ID ) return mob;
+                    //         finishDoT( 'BleedInstances',  mob );
+                    //         return manageDotInstance( 'BleedInstances', undefined, mob, 'clean' );
+                    //     } );
+                    // } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'BleedInstances', aux );
+                        return manageDotInstance('BleedInstances', undefined, aux, 'clean')
+                    } );
+                }
+                break;
+            }
+            case 'poison':
+            {
+                if(ID)
+                {
+                    // setEnemies( prevEnemies =>
+                    // {
+                    //     const aux = [ ...prevEnemies];
+                    //     return aux.map( mob =>
+                    //     {
+                    //         if( mob.id!==ID ) return mob;
+                    //         finishDoT( 'PoisonInstances',  mob );
+                    //         return manageDotInstance( 'PoisonInstances', undefined, mob, 'clean' );
+                    //     } );
+                    // } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'PoisonInstances', aux );
+                        return manageDotInstance('PoisonInstances', undefined, aux, 'clean')
+                    } );
+                }
+                break;
+            }
+            case 'burn':
+            {
+                if(ID)
+                {
+                    // setEnemies( prevEnemies =>
+                    // {
+                    //     const aux = [ ...prevEnemies];
+                    //     return aux.map( mob =>
+                    //     {
+                    //         if( mob.id!==ID ) return mob;
+                    //         finishDoT( 'BurnInstances',  mob );
+                    //         return manageDotInstance( 'BurnInstances', undefined, mob, 'clean' );
+                    //     } );
+                    // } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'BurnInstances', aux );
+                        return manageDotInstance('BurnInstances', undefined, aux, 'clean')
+                    } );
+                }
+                break;
+            }
+            case 'all':
+            {
+                if(ID)
+                {
+                    // setEnemies( prevEnemies =>
+                    // {
+                    //     const aux = [ ...prevEnemies];
+                    //     return aux.map( mob =>
+                    //     {
+                    //         if( mob.id!==ID ) return mob;
+                    //         finishDoT( 'BleedInstances',  mob, true );
+                    //         return manageDotInstance( 'BleedInstances', undefined, mob, 'restart' );
+                    //     } );
+                    // } );
+                }
+                else
+                {
+                    setPlayer( playerInfo =>
+                    {
+                        const aux = { ...playerInfo };
+                        finishDoT( 'BleedInstances', aux, true );
+                        return manageDotInstance('BleedInstances', undefined, aux, 'restart')
+                    } );
+                }
+                break;
+            }
+        }
     }
 
     const heal = ( healing: number, HoT: number, times: number ): void =>
