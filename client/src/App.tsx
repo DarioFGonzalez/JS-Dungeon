@@ -867,18 +867,17 @@ const App = () =>
         if(!lootBag) queueLog(`${gear.name} agregado a la mochila.`, 'orange');
 
         let item: any;
-
         
         if( 'durability' in gear )
         {
-            if( player.hotBar.Equippeable.length>=5 ) return ;
+            if( player.hotBar.Equippeable.length>4 ) return ;
             item = turnToInventoryGear(gear);
         }
         else
         {
             const ownedMaterial = player.hotBar.Equippeable.find( x => x.item.name === gear.name );
 
-            if( !ownedMaterial && player.hotBar.Equippeable.length>=5 ) return ;
+            if( !ownedMaterial && player.hotBar.Equippeable.length>4 ) return ;
 
             if( quantity )
             {
@@ -1017,9 +1016,9 @@ const App = () =>
         lootContent.forEach( drop =>
         {
             handleEventLogs(`- ${drop.quantity} x ${drop.item.name}`, 'khaki' );
-            if(drop.item.type==='Ore') stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true, drop.quantity )
-            if(drop.item.type==='Item') stepOnItem( drop.item as Types.Item, drop.quantity, undefined, undefined, undefined, true );
-            if(drop.item.type==='Gear' || drop.item.type==='Tool') stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
+            if(drop.item.type==='Ore' && player.hotBar.Equippeable.length<=5) stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true, drop.quantity )
+            if(drop.item.type==='Item' && player.inventory.length<=6) stepOnItem( drop.item as Types.Item, drop.quantity, undefined, undefined, undefined, true );
+            if( (drop.item.type==='Gear' || drop.item.type==='Tool') && player.hotBar.Equippeable.length<=5 ) stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
         } );
         handleEventLogs(`La bolsa contenía:`, 'orange')
     }

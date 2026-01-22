@@ -1,8 +1,7 @@
 .gearTab {
   width: 100%;
-  /* Único cambio: ajustado para el layout de la columna lateral */
   flex: 0 0 335px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .gearGrid {
@@ -18,6 +17,9 @@
   overflow: hidden;
   animation: fadeInUp 0.3s ease forwards;
   background-color: rgba(0, 0, 0, 0.35);
+  height: 60px;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .weaponCard {
@@ -65,9 +67,8 @@
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-  height: 100%;
-  max-height: 100%;
-  aspect-ratio: 1 / 1;
+  height: 40px;
+  width: 40px;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
