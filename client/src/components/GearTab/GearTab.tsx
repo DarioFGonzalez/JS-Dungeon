@@ -1,7 +1,7 @@
 import React from 'react';
 import { Player } from '../types/global';
-import styles from './GearTab.module.css';
 import DurabilityBar from './DurabilityBar/DurabilityBar';
+import styles from './GearTab.module.css';
 
 interface GearTabProps {
   player: Player;
@@ -36,7 +36,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
   return (
     <div className={styles.gearTab}>
       <div className={styles.gearGrid}>
-        {player.hotBar.Equippeable.map((x, y) => (
+        {player.hotBar.Equippeable.map((x: any, y: number) => (
           <div
             key={y}
             className={`
@@ -54,22 +54,18 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
               className={styles.itemIcon}
               style={{ backgroundImage: `url(${x.item.symbol})` }}
             />
-
             <div className={styles.gearName}>{x.item.name}</div>
-
             <div className={styles.gearStatsRow}>
               {x.item.attackStats && (
                 <div className={styles.gearStat}>
                   {x.item.slot === 'weapon' ? '🗡' : '⛏'} {x.item.attackStats.dmg}
                 </div>
               )}
-
               {x.item.defenseStats && (
                 <div className={styles.gearStat}>
                   🛡 +{x.item.defenseStats.def}
                 </div>
               )}
-
               {(x.item.slot === 'weapon' || x.item.slot === 'tool') &&
                 x.durability !== undefined &&
                 x.item.durability !== undefined && (
@@ -79,23 +75,18 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
                     slot={x.item.slot}
                   />
                 )}
-
               {x.item.slot === 'charm' && renderTalismanHp(x)}
-
               {x.item.slot === 'ore' && (
                 <div className={styles.gearStat}>[{x.quantity}]</div>
               )}
-
               {x.item.attackStats?.aliment &&
                 x.item.attackStats.aliment !== 'none' && (
                   <div className={styles.gearStat}>
                     {statusVector[x.item.attackStats.aliment]}
-                    ({(x.item.attackStats.DoT || 0) *
-                      (x.item.attackStats.times || 0)})
+                    ({(x.item.attackStats.DoT || 0) * (x.item.attackStats.times || 0)})
                   </div>
                 )}
             </div>
-
             {x.onCd && <div className={styles.cdOverlay} />}
           </div>
         ))}

@@ -112,7 +112,7 @@ export const agileEnemy: Types.Enemy =
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { Armor: 1, Toughness: 3 },
     pattern: 'random',
-    drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]
+    drops: [ { item: Items.Bandages, chance: 99, quantity: 1 }, { item: Items.Aloe, chance: 99, quantity: 1 } ]
 };
 
 export const minerEnemy: Types.Enemy =

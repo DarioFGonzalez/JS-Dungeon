@@ -6,7 +6,6 @@ html, body {
   color: var(--font-color);
   font-family: sans-serif;
   overflow: hidden;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,34 +18,29 @@ html, body {
   --bg-color: #111;
   --accent-bg: #1a1a1a;
   --font-color: #ccc;
-  --log-window-height: 265px; /* Nueva variable para la altura del log window */
+  --log-window-height: 265px;
 }
 
 .visual-text {
   font-size: 1rem;
   font-weight: bold;
   color: khaki;
-  text-shadow:
-    1px 1px 0 black,
-    -1px 1px 0 black,
-    1px -1px 0 black,
-    -1px -1px 0 black;
+  text-shadow: 1px 1px 0 black, -1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black;
 }
 
-body
-{
+body {
   margin: 0;
-  background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);  color: var(--font-color);
+  background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+  color: var(--font-color);
   font-family: sans-serif;
   overflow: hidden;
 }
 
 .game-container {
-
-  max-height: 650px;
-  max-width: 950px;
+  height: 650px; /* FIJO para evitar desbordamiento */
+  width: 918px;  /* 650px mapa + gap + 260px columna */
+  display: flex;
   overflow: hidden;
-  flex-direction: column;
   box-sizing: border-box;
 }
 
@@ -65,9 +59,9 @@ body
 .grid-layout {
   flex: 1 1 auto;
   min-height: 0;
-  max-height: 649px;
+  max-height: 650px;
   display: grid;
-  grid-template-columns: 2.5fr 1fr;
+  grid-template-columns: 650px 260px; /* MEDIDAS EXACTAS: Elimina scroll del mapa */
   gap: var(--hud-gap);
   overflow: hidden;
 }
@@ -83,10 +77,8 @@ body
 .map-container {
   background: #222;
   flex: 1 1 auto;
-  min-height: 0;
-  max-height: 650px;
   position: relative;
-  overflow: auto;
+  overflow: hidden; /* ELIMINA SCROLL INTERNO: El mapa ahora calza justo */
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
   border: var(--border);
 }
@@ -109,7 +101,6 @@ body
   align-items: center;
 }
 
-/* Visual layer encima del mapa */
 .visuals-layer {
   position: absolute;
   top: 0;
@@ -119,33 +110,7 @@ body
   height: 100%;
 }
 
-.h-img
-{
-  max-height: 200px;
-  max-width: 300px;
-  top: 50%;
-  left: 50%;
-}
-
-.help-layer
-{
-  height: 250px;
-  width: 350px;
-  align-content: center;
-  text-align: center;
-  position: absolute;
-  top: 30%;
-  left: 25%;
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-@keyframes fadeIn
-{
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* Corazones flotantes arriba, sobre el mapa */
+/* Corazones flotantes restaurados sobre el mapa */
 .hearts-floating {
   position: absolute;
   top: 0.25rem;
@@ -160,109 +125,46 @@ body
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
 }
 
-.h-text {
-  position: absolute;
-  top: 38rem;
-  left: 20rem;
-  z-index: 1000;
-  display: flex;
-  gap: 0.25rem;
-  pointer-events: none;
-  background-color: rgba(0, 0, 0, 0.705);
-  border-radius: 6px;
-  padding: 0.2rem 0.5rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-}
-
-.start-popup {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  background-color: rgba(34, 34, 34, 0.75);
-  border: var(--border);
-  border-radius: 6px;
-  padding: 0.5rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-  max-height: 25vh;
-  overflow-y: auto;
-  font-size: 0.85rem;
-  pointer-events: auto;
-}
-
-.inventory-popup {
-  position: absolute;
-  bottom: 0.25rem;
-  left: 0.5rem;
-  z-index: 1000;
-  background-color: rgba(34, 34, 34, 0.75);
-  border: var(--border);
-  border-radius: 6px;
-  padding: 0.5rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-  max-height: 25vh;
-  overflow-y: auto;
-  font-size: 0.85rem;
-  pointer-events: auto;
-}
-
-.inventory-list {
-  list-style: none;
-  margin: 0;
-  padding-left: 1rem;
-}
-
-/* GEAR COLUMN: ancho fijo, flex columna */
+/* GEAR COLUMN */
 .gear-column {
   width: 260px;
   min-width: 260px;
   max-width: 260px;
   height: 650px;
   display: flex;
-  flex-direction: column; /* Organiza los hijos en columna */
+  flex-direction: column; 
   background: var(--accent-bg);
   border: var(--border);
-  overflow: hidden; /* Oculta el overflow, ya que los hijos gestionarán su propio scroll */
-  position: relative; /* Mantener por si hay otros elementos absolutamente posicionados */
+  overflow: hidden;
   box-sizing: border-box;
-
-  /* --- CAMBIO CLAVE AQUÍ: No más padding-bottom, el log-window es parte del flujo flex --- */
 }
 
-/* Contenedor fijo para botones START/STOP */
+/* 1. GearControls */
 .gear-controls {
+  flex: 0 0 36px;
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0;
-  margin: 0;
-  height: 36px;
   background: #222;
   border-bottom: var(--border);
-  flex-shrink: 0; /* No se encogerá */
   align-items: center;
 }
 
-/* Botones START/STOP tamaño fijo */
-.gear-controls button {
-  padding: 0.25rem 0.75rem;
-  font-size: 0.85rem;
-  height: 28px;
-  min-width: 60px;
-  margin: 0;
-  flex-shrink: 0;
+/* 2. GearTab + Consumables: Ajuste para que quepan 5 tarjetas */
+.gear-column > :nth-child(2) { 
+  flex: 0 0 400px; /* Altura suficiente para Gear y Pociones */
+  overflow-y: hidden; /* Evita el scroll interno en las tarjetas */
+  padding: 0.5rem;
+  padding-bottom: 0;
+  box-sizing: border-box;
 }
 
-/* GearTab ocupa el espacio que queda y es scrollable */
-.gear-column > :nth-child(2) { /* Este selector apunta al GearTab component */
-  flex: 1 1 auto; /* Permite que este elemento crezca y ocupe el espacio disponible */
-  overflow-y: auto; /* Permite scroll si el contenido es demasiado largo */
-  padding: 0.5rem;
-  /* --- CAMBIO CLAVE AQUÍ: Eliminamos el padding-bottom fijo,
-     el log-window-floating ya no es absolute en este contexto --- */
-  padding-bottom: 0; /* Aseguramos que no haya padding extra */
-  box-sizing: border-box;
+/* 3. Log Window: Ocupa todo el resto, eliminando el hueco rojo */
+.gear-column > :nth-child(3) {
+  flex: 1; 
+  min-height: 0;
+  overflow: hidden;
+  border-top: var(--border);
 }
 
 .button-ui {
@@ -273,9 +175,6 @@ body
   color: var(--font-color);
   cursor: pointer;
   transition: background 0.2s ease;
-}
-.button-ui:hover {
-  background: #444;
 }
 
 .death-overlay {
@@ -289,4 +188,37 @@ body
   font-size: 2rem;
   color: red;
   text-shadow: 0 0 4px black;
+}
+
+/* 1. Contenedor de botones (Start/Stop) */
+.gear-controls {
+  flex: 0 0 36px; /* Altura fija */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #222;
+  border-bottom: var(--border);
+}
+
+/* 2. GearTab + Consumables (La zona de tarjetas y pociones) */
+/* Usamos este selector para que afecte al componente que sigue a los controles */
+.gear-column > :nth-child(2) {
+  flex: 0 0 auto; /* Que ocupe solo lo que necesita el contenido */
+  max-height: 380px; /* Suficiente para 5 tarjetas y slots de pociones */
+  overflow-y: hidden; 
+  padding: 0.5rem;
+  padding-bottom: 0;
+  box-sizing: border-box;
+}
+
+/* 3. Console / Log Window (El que habia desaparecido) */
+/* Este selector fuerza al tercer hijo a ocupar TODO el espacio sobrante */
+.gear-column > :nth-child(3) {
+  flex: 1 1 auto; 
+  min-height: 0; /* Permite que el flexbox lo reduzca si es necesario */
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.3); /* Un fondo leve para ver que está ahí */
+  border-top: var(--border);
+  overflow: hidden;
 }

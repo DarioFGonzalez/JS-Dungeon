@@ -1,6 +1,8 @@
 .gearTab {
   width: 100%;
-  min-height: 335px;
+  /* Único cambio: ajustado para el layout de la columna lateral */
+  flex: 0 0 335px;
+  overflow-y: auto;
 }
 
 .gearGrid {
