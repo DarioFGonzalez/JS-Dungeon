@@ -9,6 +9,13 @@ interface ConsumableTabProps {
 const ConsumablesTab: React.FC<ConsumableTabProps> = ({ player }) => {
   const selectedItem = player.inventory.find(inv => inv.selected);
 
+  const statusVector: Record<string, string> = {
+    bleed: '🩸',
+    poison: '💚',
+    burn: '🔥',
+    heal: '💖'
+  };
+
   return (
     <div className={styles.consumablesWrapper}>
       <div className={styles.itemsRow}>
@@ -27,7 +34,7 @@ const ConsumablesTab: React.FC<ConsumableTabProps> = ({ player }) => {
         ))}
       </div>
       <div className={styles.itemLabel}>
-        {selectedItem ? selectedItem.item.name.toUpperCase() : ""}
+        {selectedItem ? selectedItem.item.name.toUpperCase() + ' ' + ( selectedItem.item.cleanse!==undefined ? `(${statusVector[selectedItem.item.cleanse]})` : selectedItem.item.heal ? '(💖)' : '' )  : ""}
       </div>
     </div>
   );
