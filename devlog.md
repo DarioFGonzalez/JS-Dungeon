@@ -10,26 +10,39 @@
 
 [Link al Demo](https://js-dungeon.vercel.app/) 👾✨
 
-No podía avanzar sabiendo que el demo no funcionaba, de paso me saqué de encima cosas que estaba 'dejando pasar' pero que tarde o temprano iban a explotarme en la cara.
-
-Con un código mas limpio, estable y funcional. Puedo seguir avanzando. 
-
-<p align="center">
-  <img src="image-2.png" alt="GearTab looks" width="250" height='250' />
-  <br />
-  <em>Nuevas visuales para el equipo.</em>
-</p>
+Aproveché para ajustar tamaños mínimos y máximos de la consola, el equipo y los consumibles. Agregué el nombre y un hint a que hacen los items para que se expliquen solos- entre otras cosas para emparejar y emprolijar el proyecto.
 
 ---
 
 ### 🛠️ Cambios técnicos:
 
+-Refactoricé el código para que las flags detecten si están en deploy o localhost.
+
+-Eliminé/corregí todos los warning esLint.
+
+-Consumibles eliminables con 'backspace'.
+
+-Consola/GearTab/ConsumablesTab con max-height cosa que todos entren en orden.
 
 ---
 
 ### 👾 Futuro próximo / Ideas sueltas 🎯
 
+Siempre me termino encontrando con algo que reparar/optimizar a mitad de camino de mi objetivo real. 😅✨
 
+Ahora que todo está estable, tengo antidotos- minería- combate- curación- drops y todo lo demás podría...
+
+- Darle un uso a los minerales.
+- Agregar otro mapa.
+- Meter items interactivos. <--
+
+--> Dícese, estaba pensando hacer un ítem (consumible) que sea una `Bomba`💣. Como las de bomberman, que uno deja atras y al rato explota- suena exageradamente sencillo y de paso podría ponerle reglas raras como que:
+
+**`[Se puedan empujar]`** Eso reemplazaría las cajas, que están super olvidadas.
+
+**`[Exploten al contacto]`** Cuando un enemigo las toca explotan, cortar patrullas, preparar emboscadas... 🤤✨
+
+**`[Crear bombas con distintas cualidades]`** Bomba que ***congele***, bomba que ***envenene***, bomba ***incendiaria***...
 
 ---
 
