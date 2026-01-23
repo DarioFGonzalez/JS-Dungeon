@@ -4,6 +4,33 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.1.1] - 2025-01-20
+
+### Changed
+- **Refactor general del código base**:
+  - Limpieza completa de warnings de ESLint para garantizar builds limpios en entornos CI/CD.
+  - Ajuste y estandarización del uso de comparaciones estrictas (`===`, `!==`) y callbacks correctos en colecciones.
+- **Gestión de entorno (local vs deploy)**:
+  - Refactor de flags internas para detectar correctamente ejecución en `localhost` o entorno de producción (Vercel).
+  - Eliminación de comportamientos inconsistentes entre builds locales y remotos.
+- **Ajustes de layout y constraints visuales**:
+  - Definición de `min-height` y `max-height` en consola de eventos, GearTab y pestaña de consumibles para asegurar orden visual y evitar desbordes.
+  - Refinamiento del espaciado general para mejorar legibilidad y coherencia del HUD.
+
+### Fixed
+- **Demo jugable restaurada**:
+  - Corrección de errores que impedían el correcto funcionamiento del loop principal en producción.
+  - Verificación completa de sistemas clave: minería, combate, equipamiento, daño en el tiempo (DoT) y drops.
+- **Consumo y descarte de ítems**:
+  - Corrección del manejo de consumibles, permitiendo su eliminación mediante la tecla `Backspace` sin generar estados inválidos.
+- **Estabilidad general del build**:
+  - El proyecto vuelve a compilar correctamente en Vercel sin errores ni warnings tratados como fallos.
+
+### Notes
+- Esta versión funciona como **parche de estabilización** posterior al release jugable inicial.
+- El foco estuvo puesto en **robustez técnica, consistencia entre entornos y limpieza estructural**, más que en la incorporación de contenido nuevo.
+- Con este parche, la demo vuelve a ser una referencia confiable del estado real del proyecto.
+
 ## [v0.1.0] - 2025-01-11
 
 ### Added
