@@ -28,8 +28,6 @@ const emptyVisualGrid = Array.from( {length: mapSize}, ()=> Array.from( Array(ma
 
 type CellContent = Types.Player | Types.Enemy | Types.Trap | Types.Item | Types.Gear | Types.Environment | Types.Node;
 
-// const emptyDelayedLog = { status: false, message: '', color: 'white' };
-
 const App = () =>
 {
     const isDev = process.env.NODE_ENV !== 'production';
@@ -169,7 +167,7 @@ const App = () =>
         }
 
         return undefined;
-    }
+    };
 
     const handleTp = ( x: number, y: number, symbol: string, other: string ): void =>
     {
@@ -1115,14 +1113,6 @@ const App = () =>
         setDelayedLog( list => [ ...list, { message, color } ] );
     }
 
-    // const playerVectors: Record<string, [number, number]> = //non
-    // {
-    //     ship_up: [-1, 0],
-    //     ship_down: [1, 0],
-    //     ship_left: [0, -1],
-    //     ship_right: [0, 1]
-    // }
-
     const navigateHotBarVectors: Record<string, number> =
     {
         'arrowup': -1,
@@ -1156,36 +1146,31 @@ const App = () =>
 
     const manageVisualAnimation = ( type: string, x: number, y: number, icon: string, time: number ): void =>
     {
-        setPlayer( playerInfo =>
+        setVisuals( visualsMap =>
         {
-            setVisuals( visualsMap =>
+            const aux = [ ...visualsMap ];
+            switch(type)
             {
-                const aux = [ ...visualsMap ];
-                switch(type)
-                {
-                    case 'visual':
-                        aux[x][y] = icon;
-                        break;
-                    case 'damage':
-                        aux[x][y] = { color: 'crimson', text: icon };
-                        break;
-                    }
-                    return aux;
-                } );
-
-            setTimeout( () =>
-            {
-                setVisuals( prev=>
-                {
-                    const aux = [ ...prev ];
-                    aux[x][y] = '';
-                    return aux;
-                } );
-            }, time);
-
-            return playerInfo;
+                case 'visual':
+                    aux[x][y] = icon;
+                    break;
+                case 'damage':
+                    aux[x][y] = { color: 'crimson', text: icon };
+                    break;
+            }
+            return aux;
         } );
-    }
+
+        setTimeout( () =>
+        {
+            setVisuals( prev=>
+            {
+                const aux = [ ...prev ];
+                aux[x][y] = '';
+                return aux;
+            } );
+        }, time);
+    };
 
     const hitOre = ( x: number, y: number ): void =>
     {

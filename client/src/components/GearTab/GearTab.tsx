@@ -36,11 +36,12 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
   return (
     <div className={styles.gearTab}>
       <div className={styles.gearGrid}>
-        {player.hotBar.Equippeable.map((x: any, y: number) => (
+        {player.hotBar.Equippeable.map((x: any) => (
           <div
-            key={y}
+            key={x.id} 
             className={`
               ${styles.gearCard}
+              ${styles.lootFeedback}
               ${x.item.slot ? slotClassMap[x.item.slot] : ''}
               ${x.equiped ? styles.equipped : ''}
               ${x.selected ? styles.selected : ''}

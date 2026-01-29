@@ -17,16 +17,50 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.innerFlash {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: flashGold 0.5s ease-out forwards;
+}
+
+@keyframes flashGold {
+  0% { background-color: rgba(255, 215, 0, 0.4); }
+  100% { background-color: transparent; }
+}
+
+.itemIcon {
+  width: 26px;
+  height: 26px;
+  image-rendering: pixelated;
+  position: absolute;
+}
+
+.grayed {
+  filter: grayscale(1) brightness(0.4);
+  z-index: 1;
+}
+
+.cdAnimation {
+  z-index: 2;
+  animation: fillUp var(--cd-time) linear forwards;
+}
+
+@keyframes fillUp {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
 }
 
 .selected {
-  border-color: #00ffff;
-}
-
-.itemSlot img {
-  width: 28px;
-  height: 28px;
-  image-rendering: pixelated;
+  border-color: #00ffff !important;
+  box-shadow: inset 0 0 4px rgba(0, 255, 255, 0.4);
+  z-index: 10;
 }
 
 .qty {
@@ -35,6 +69,8 @@
   right: 2px;
   font-size: 10px;
   color: #fff;
+  z-index: 6;
+  text-shadow: 1px 1px 1px black;
 }
 
 .hotkey {
@@ -43,11 +79,14 @@
   left: 2px;
   font-size: 10px;
   color: #00ffff;
+  z-index: 6;
 }
 
 .itemLabel {
   text-align: center;
   min-height: 20px;
-  font-size: 12px;
+  font-size: 11px;
+  margin-top: 4px;
   color: #888;
+  font-family: monospace;
 }

@@ -15,51 +15,46 @@
   padding: 6px 8px 6px 56px;
   border-radius: 12px;
   overflow: hidden;
-  animation: fadeInUp 0.3s ease forwards;
   background-color: rgba(0, 0, 0, 0.35);
   height: 60px;
   flex-shrink: 0;
   box-sizing: border-box;
 }
 
-.weaponCard {
-  background-color: rgba(180, 40, 40, 0.35);
+/* Animación de entrada en capa aparte para NO romper nada del padre */
+.lootFeedback::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: goldPulseEffect 0.8s ease-out forwards;
 }
 
-.weaponCard.equipped {
-  background-color: rgba(220, 60, 60, 0.75);
+@keyframes goldPulseEffect {
+  0% { background-color: transparent; transform: scale(1); }
+  40% { background-color: rgba(255, 215, 0, 0.15); transform: scale(1.03); border: 1px solid rgba(255, 215, 0, 0.4); }
+  100% { background-color: transparent; transform: scale(1); }
 }
 
-.charmCard {
-  background-color: rgba(40, 40, 160, 0.35);
-}
+.weaponCard { background-color: rgba(180, 40, 40, 0.35); }
+.weaponCard.equipped { background-color: rgba(220, 60, 60, 0.75); }
+.charmCard { background-color: rgba(40, 40, 160, 0.35); }
+.charmCard.equipped { background-color: rgba(80, 80, 220, 0.75); }
+.toolCard { background-color: rgba(100, 100, 100, 0.747); }
+.toolCard.equipped { background-color: rgb(0, 0, 0); }
+.oreCard { background-color: rgba(120, 80, 40, 0.35); }
+.oreCard.equipped { background-color: rgba(180, 120, 60, 0.75); }
 
-.charmCard.equipped {
-  background-color: rgba(80, 80, 220, 0.75);
-}
-
-.toolCard {
-  background-color: rgba(100, 100, 100, 0.747);
-}
-
-.toolCard.equipped {
-  background-color: rgb(0, 0, 0);
-}
-
-.oreCard {
-  background-color: rgba(120, 80, 40, 0.35);
-}
-
-.oreCard.equipped {
-  background-color: rgba(180, 120, 60, 0.75);
-}
-
+/* SELECCIÓN (Cyan) - REESTABLECIDO */
 .selected {
-  box-shadow: 0 0 0 2px #00ffff inset;
+  box-shadow: 0 0 0 2px #00ffff inset !important;
+  z-index: 5;
 }
 
+/* COOLDOWN (Gris) - REESTABLECIDO */
 .onCooldown {
-  filter: grayscale(1);
+  filter: grayscale(1) !important;
 }
 
 .itemIcon {
@@ -93,13 +88,8 @@
   z-index: 1;
 }
 
-.gearStat {
-  font-size: 0.85rem;
-}
-
-.heartsDisplay {
-  font-size: 0.85rem;
-}
+.gearStat { font-size: 0.85rem; }
+.heartsDisplay { font-size: 0.85rem; }
 
 .cdOverlay {
   position: absolute;
@@ -111,21 +101,6 @@
 }
 
 @keyframes cooldown {
-  from {
-    clip-path: inset(0 0 0 0);
-  }
-  to {
-    clip-path: inset(0 0 100% 0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 0 100% 0); }
 }

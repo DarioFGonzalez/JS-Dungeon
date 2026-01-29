@@ -23,18 +23,47 @@ const ConsumablesTab: React.FC<ConsumableTabProps> = ({ player }) => {
           <div
             key={index}
             className={`${styles.itemSlot} ${inv.selected ? styles.selected : ''}`}
+            style={{ ['--cd-time' as any]: `${inv.item.cd}ms` }}
           >
-            <img src={inv.item.symbol} alt="" />
-            <div className={styles.qty}>{inv.quantity}</div>
+            <div key={inv.quantity} className={styles.innerFlash}>
+              {inv.onCd ? (
+                <>
+                  <img 
+                    src={inv.item.symbol} 
+                    className={`${styles.itemIcon} ${styles.grayed}`} 
+                    alt="" 
+                  />
+                  <img 
+                    src={inv.item.symbol} 
+                    className={`${styles.itemIcon} ${styles.cdAnimation}`} 
+                    alt="" 
+                  />
+                </>
+              ) : (
+                <img 
+                  src={inv.item.symbol} 
+                  className={styles.itemIcon} 
+                  alt="" 
+                />
+              )}
+
+              <div className={styles.qty}>{inv.quantity}</div>
+            </div>
+
             {inv.selected && <div className={styles.hotkey}>Q</div>}
           </div>
         ))}
+
         {Array.from({ length: Math.max(0, 6 - player.inventory.length) }).map((_, i) => (
-          <div key={i} className={styles.itemSlot} />
+          <div key={`empty-${i}`} className={styles.itemSlot} />
         ))}
       </div>
+
       <div className={styles.itemLabel}>
-        {selectedItem ? selectedItem.item.name.toUpperCase() + ' ' + ( selectedItem.item.cleanse!==undefined ? `(${statusVector[selectedItem.item.cleanse]})` : selectedItem.item.heal ? '(💖)' : '' )  : ""}
+        {selectedItem 
+          ? selectedItem.item.name.toUpperCase() + ' ' + 
+            (selectedItem.item.cleanse ? `(${statusVector[selectedItem.item.cleanse]})` : selectedItem.item.heal ? '(💖)' : '') 
+          : ""}
       </div>
     </div>
   );
