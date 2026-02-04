@@ -14,7 +14,6 @@ import './App.css';
 import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import ConsumablesTab from './components/ConsumablesTab/ConsumablesTab';
 import GearTab from './components/GearTab/GearTab';
-import InventoryTab from './components/InventoryTab/InventoryTab';
 
 const allIcons = Object.values(icons);
 
@@ -2236,128 +2235,87 @@ const App = () =>
         return poison + bleed + burn;
     }
 
-return(
+return (
   <div className="game-container">
-
     <div className="grid-layout">
-        
       <div className="map-zone">
-
         <div className="map-container" style={{ position: 'relative' }}>
-
-            {player.hp <= 0 && (
-            <div className="death-overlay">
-                <h2>MORISTE</h2>
+          {player.hp <= 0 && (
+            <div className="death-overlay map-appear-animation">
+              <h2>MORISTE</h2>
             </div>
-)}
+          )}
 
-          <div className="columna-wrapper">
-
-            <div
-              onKeyDown={handleMovement}
-              ref={gridRef}
-              tabIndex={0}
-            >
-              {mapa.map((fila, x) => (
-                <div key={x} className="fila">
-                  {fila.map((celda, y) =>
-                    celda.symbol===''
-                    ? ( <label key={y} className="celda">{celda.symbol}</label>)
-                    : ( <img src={celda.symbol} alt={'main_map'} key={y} className="celda" /> )
-                  )}
+          {game && (
+            <div className="map-appear-animation" style={{ height: '100%', width: '100%' }}>
+              <div className="columna-wrapper">
+                <div
+                  onKeyDown={handleMovement}
+                  ref={gridRef}
+                  tabIndex={0}
+                >
+                  {mapa.map((fila, x) => (
+                    <div key={x} className="fila">
+                      {fila.map((celda, y) =>
+                        celda.symbol === ''
+                          ? (<label key={y} className="celda">{celda.symbol}</label>)
+                          : (<img src={celda.symbol} onClick={() => console.log(celda)} alt={'main_map'} key={y} className="celda" />)
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            <div className="visuals-layer">
-              {visuals.map((fila, x) => (
-                <div key={x} className="fila">
-                  {fila.map((celda, y) => {
-                    if (typeof celda === 'string') {
-                        return allIcons.includes(celda) ? (
-                        <img src={celda} alt={'visual'} key={y} className="celda" />
-                        ) : (
-                        <label key={y} className="celda">{celda}</label>
-                        );
-                    } else {
-                        return (
-                        <label
-                            key={y}
-                            className="celda visual-text"
-                            style={{ color: celda.color || 'white' }}
-                        >
-                            {celda.text}
-                        </label>
-                        ); }
-                    })}
-
+                <div className="visuals-layer">
+                  {visuals.map((fila, x) => (
+                    <div key={x} className="fila">
+                      {fila.map((celda, y) => {
+                        if (typeof celda === 'string') {
+                          return allIcons.includes(celda) ? (
+                            <img src={celda} alt={'visual'} key={y} className="celda" />
+                          ) : (
+                            <label key={y} className="celda">{celda}</label>
+                          );
+                        } else {
+                          return (
+                            <label
+                              key={y}
+                              className="celda visual-text"
+                              style={{ color: celda.color || 'white' }}
+                            >
+                              {celda.text}
+                            </label>
+                          );
+                        }
+                      })}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <div className="hearts-floating">
+                {renderHp()} {renderAliments()}
+              </div>
+
+              <div className="h-text">
+                Apretá H para ver los controles [V0.0.98]
+              </div>
             </div>
+          )}
 
-          </div>
-
-          <div className="hearts-floating">
-            {renderHp()} {renderAliments()}
-          </div>
-
-          <div className="h-text">
-           Apretá H para ver los controles [V0.0.98]
-          </div>
-
-          {showInventory && (
-            <InventoryTab
-                inventory={player.inventory}
-                onClose={() => setShowInventory(false)}
-            />
-            )}
-          {/* {showInventory && (
-            <div className="inventory-popup">
-              <p>Inventario:</p>
-              <ul className="inventory-list">
-                {player.inventory.map((x, y) => (
-                  <li key={y}>
-                    {x.item.name} — {x.item.desc} - {`Tenés ${x.quantity}`} {`(${x.item.hotkey})`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )} */}
-
+            { !game && (
+            <div className="start-popup">
+                <button className='button-ui' onClick={startGame}>START</button>
+            </div> )}
         </div>
-
-        {showSlides &&
-        <div className='help-layer'>
-            <button className='absolute top-0 left-0' onClick={()=> {setShowSlides( false );setTimeout(() => gridRef.current?.focus(), 0); } }> X </button>
-            {/* <p> {slides[slideIndex].text} </p> */}
-            { Types.slides[slideIndex].img && <img className= 'h-img' alt='slide' src={Types.slides[slideIndex].img}/> }
-            <button onClick={()=> moveSlide('previous')}> anterior </button>
-            { Types.slides[slideIndex].text &&
-            <a href={Types.slides[slideIndex].text} target="_blank" rel="noopener noreferrer">
-                <button> ¡Repo! </button>
-            </a>}
-            <button onClick={()=> moveSlide('next')}> siguiente </button>
-        </div>}
-
       </div>
 
       <div className="gear-column">
 
-        {!game && <div className="start-popup">
-          {!game && <button className='button-ui' onClick={startGame}>START</button>}
-          {/* {game && <button onClick={stopGame}>STOP</button>} */}
-        </div>}
-
         <GearTab player={player} />
-
-        {game && <ConsumablesTab  player={player} />}
-
+        <ConsumablesTab player={player} />
         <ConsoleTab events={events} />
-
       </div>
-
     </div>
-
   </div>
 );
 

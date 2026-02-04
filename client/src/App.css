@@ -18,7 +18,6 @@ html, body {
   --bg-color: #111;
   --accent-bg: #1a1a1a;
   --font-color: #ccc;
-  --log-window-height: 265px;
 }
 
 .visual-text {
@@ -37,23 +36,11 @@ body {
 }
 
 .game-container {
-  height: 650px; /* FIJO para evitar desbordamiento */
-  width: 918px;  /* 650px mapa + gap + 260px columna */
+  height: 650px;
+  width: 918px;
   display: flex;
   overflow: hidden;
   box-sizing: border-box;
-}
-
-.top-bar {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  background: rgba(34, 34, 34, 0.7);
-  border: var(--border);
-  padding: 0.5rem;
-  border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-  user-select: none;
 }
 
 .grid-layout {
@@ -61,12 +48,11 @@ body {
   min-height: 0;
   max-height: 650px;
   display: grid;
-  grid-template-columns: 650px 260px; /* MEDIDAS EXACTAS: Elimina scroll del mapa */
+  grid-template-columns: 650px 260px;
   gap: var(--hud-gap);
   overflow: hidden;
 }
 
-/* MAPA + INVENTARIO */
 .map-zone {
   display: flex;
   flex-direction: column;
@@ -78,8 +64,7 @@ body {
   background: #222;
   flex: 1 1 auto;
   position: relative;
-  overflow: hidden; /* ELIMINA SCROLL INTERNO: El mapa ahora calza justo */
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
   border: var(--border);
 }
 
@@ -110,7 +95,6 @@ body {
   height: 100%;
 }
 
-/* Corazones flotantes restaurados sobre el mapa */
 .hearts-floating {
   position: absolute;
   top: 0.25rem;
@@ -125,7 +109,6 @@ body {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
 }
 
-/* GEAR COLUMN */
 .gear-column {
   width: 260px;
   min-width: 260px;
@@ -139,42 +122,9 @@ body {
   box-sizing: border-box;
 }
 
-/* 1. GearControls */
-.gear-controls {
-  flex: 0 0 36px;
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  background: #222;
-  border-bottom: var(--border);
-  align-items: center;
-}
-
-/* 2. GearTab + Consumables: Ajuste para que quepan 5 tarjetas */
-.gear-column > :nth-child(2) { 
-  flex: 0 0 400px; /* Altura suficiente para Gear y Pociones */
-  overflow-y: hidden; /* Evita el scroll interno en las tarjetas */
-  padding: 0.5rem;
-  padding-bottom: 0;
-  box-sizing: border-box;
-}
-
-/* 3. Log Window: Ocupa todo el resto, eliminando el hueco rojo */
-.gear-column > :nth-child(3) {
-  flex: 1; 
-  min-height: 0;
-  overflow: hidden;
-  border-top: var(--border);
-}
-
-.button-ui {
-  background: #333;
-  border: var(--border);
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  color: var(--font-color);
-  cursor: pointer;
-  transition: background 0.2s ease;
+.gear-column > * {
+  margin: 0;
+  padding: 0;
 }
 
 .death-overlay {
@@ -187,38 +137,62 @@ body {
   align-items: center;
   font-size: 2rem;
   color: red;
-  text-shadow: 0 0 4px black;
 }
 
-/* 1. Contenedor de botones (Start/Stop) */
-.gear-controls {
-  flex: 0 0 36px; /* Altura fija */
+.h-text {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  font-size: 10px;
+  color: #555;
+}
+
+.start-popup {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5000;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #222;
-  border-bottom: var(--border);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border-radius: 8px;
+  border: var(--border);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
 }
 
-/* 2. GearTab + Consumables (La zona de tarjetas y pociones) */
-/* Usamos este selector para que afecte al componente que sigue a los controles */
-.gear-column > :nth-child(2) {
-  flex: 0 0 auto; /* Que ocupe solo lo que necesita el contenido */
-  max-height: 380px; /* Suficiente para 5 tarjetas y slots de pociones */
-  overflow-y: hidden; 
-  padding: 0.5rem;
-  padding-bottom: 0;
-  box-sizing: border-box;
+.button-ui {
+  background: #333;
+  border: var(--border);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  color: #00ffff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
 }
 
-/* 3. Console / Log Window (El que habia desaparecido) */
-/* Este selector fuerza al tercer hijo a ocupar TODO el espacio sobrante */
-.gear-column > :nth-child(3) {
-  flex: 1 1 auto; 
-  min-height: 0; /* Permite que el flexbox lo reduzca si es necesario */
-  display: flex;
-  flex-direction: column;
-  background: rgba(0, 0, 0, 0.3); /* Un fondo leve para ver que está ahí */
-  border-top: var(--border);
-  overflow: hidden;
+.button-ui:hover {
+  background: #444;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+@keyframes mapArrival {
+  0% {
+    opacity: 0;
+    filter: blur(10px) brightness(0.5);
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: scale(1);
+  }
+}
+
+.map-appear-animation {
+  animation: mapArrival 0.6s ease-out forwards;
 }
