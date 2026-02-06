@@ -1,0 +1,109 @@
+.gearTab {
+  width: 100%;
+  height: 335px;
+  min-height: 335px;
+  max-height: 335px;
+  background-color: blue;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.gearGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gearCard {
+  position: relative;
+  padding: 6px 8px 6px 56px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.35);
+  height: 60px;
+  min-height: 60px;
+  max-height: 60px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.lootFeedback::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: goldPulseEffect 0.8s ease-out forwards;
+}
+
+@keyframes goldPulseEffect {
+  0% { background-color: transparent; transform: scale(1); }
+  40% { background-color: rgba(255, 215, 0, 0.15); transform: scale(1.03); border: 1px solid rgba(255, 215, 0, 0.4); }
+  100% { background-color: transparent; transform: scale(1); }
+}
+
+.weaponCard { background-color: rgba(180, 40, 40, 0.35); }
+.weaponCard.equipped { background-color: rgba(220, 60, 60, 0.75); }
+.charmCard { background-color: rgba(40, 40, 160, 0.35); }
+.charmCard.equipped { background-color: rgba(80, 80, 220, 0.75); }
+.toolCard { background-color: rgba(100, 100, 100, 0.747); }
+.toolCard.equipped { background-color: rgb(0, 0, 0); }
+.oreCard { background-color: rgba(120, 80, 40, 0.35); }
+.oreCard.equipped { background-color: rgba(180, 120, 60, 0.75); }
+
+.selected {
+  box-shadow: 0 0 0 2px #00ffff inset !important;
+  z-index: 5;
+}
+
+.onCooldown {
+  filter: grayscale(1) !important;
+}
+
+.itemIcon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 40px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.gearName {
+  font-weight: bold;
+  margin-bottom: 2px;
+  margin-left: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.gearStatsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.gearStat { font-size: 0.85rem; }
+
+.cdOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  animation: cooldown var(--cd-time) linear forwards;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+@keyframes cooldown {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 0 0 100%); }
+}

@@ -7,6 +7,7 @@ import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
 import * as Items from './components/data/items';
 import * as Tiles from './components/data/tiles';
+import * as Recipes from './components/data/recipes';
 import { allNodes, allObjects, allTiles, copperNodes, rockyWalls, silverNodes } from './components/data/tiles';
 
 import './App.css';
@@ -14,6 +15,7 @@ import './App.css';
 import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import ConsumablesTab from './components/ConsumablesTab/ConsumablesTab';
 import GearTab from './components/GearTab/GearTab';
+import CraftingTab from './components/CraftingTab/CraftingTab';
 
 const allIcons = Object.values(icons);
 
@@ -35,6 +37,10 @@ const App = () =>
     const lan = 'es';
     // const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
+
+    type posibleMenus = 'Gear' | 'Crafting';
+    const [ selectedMenu, setSelectedMenu ] = useState<posibleMenus>( 'Gear' );
+
     const [ allowed, setAllowed ] = useState<boolean>(true);
     const stun:boolean = false;
     // const [ stun, setStun ] = useState<boolean>(false);
@@ -46,10 +52,11 @@ const App = () =>
     const [ maps, setMaps ] = useState<listOfMaps[]>([]);
 
     const mapaRef = useRef( mapa );
-    const [ showSlides, setShowSlides ] = useState<boolean>( false );
-    const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
+    // const [ showSlides, setShowSlides ] = useState<boolean>( false );
+    // const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
     // const currentSlide = Types.slides[slideIndex];
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyVisualGrid );
+    const [ recipes, setRecipes ] = useState<Types.recipe[]>( Object.values( Recipes ) );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
     
@@ -63,16 +70,16 @@ const App = () =>
     // const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
     // const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
 
-    const moveSlide = ( where: string ): void =>
-    {
-        if(where==='next')
-        {
-            setSlideIndex( prev => ( prev + 1 ) % Types.slides.length );
-            return ;
-        }
-        setSlideIndex( prev => ( prev - 1 + Types.slides.length ) % Types.slides.length );
-        return ;
-    }
+    // const moveSlide = ( where: string ): void =>
+    // {
+    //     if(where==='next')
+    //     {
+    //         setSlideIndex( prev => ( prev + 1 ) % Types.slides.length );
+    //         return ;
+    //     }
+    //     setSlideIndex( prev => ( prev - 1 + Types.slides.length ) % Types.slides.length );
+    //     return ;
+    // }
 
     const handleEventLogs = ( event: string, color: string ): void =>
     {
@@ -1116,7 +1123,8 @@ const App = () =>
     {
         'arrowup': -1,
         'arrowdown': 1,
-        'delete': 0
+        'delete': 0,
+        'enter': 9
     };
 
     const navigateConsumablesVectors: Record<string, number> =
@@ -1334,6 +1342,45 @@ const App = () =>
         } );
     }
 
+    const navigateCraftingMenu = ( key: string ): void =>
+    {
+        let flag = true;
+
+        setRecipes( oldRecipes =>
+        {
+            if(flag && isDev)
+            {
+                flag=false;
+                return oldRecipes;
+            }
+
+            let aux = oldRecipes.map( x => ({...x}) );
+            const to = navigateHotBarVectors[key];
+
+            const oldIndex = aux.findIndex( recipe => recipe.selected );
+
+            if(oldIndex===-1)
+            {
+                return aux.map( ( x, y ) => y===0 ? {...x, selected: true } : x );
+            }
+
+            const max = oldRecipes.length - 1;
+            const newIndex = oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
+            
+            if(oldIndex===newIndex) return oldRecipes;
+
+            aux[oldIndex] = { ...aux[oldIndex], selected: false };
+            aux[newIndex] = { ...aux[newIndex], selected: true };
+
+            return aux;
+        } );
+    }
+
+    const craftItem = (): void =>
+    {
+        console.log("Craft item");
+    }
+
     const swapGear = (): void =>
     {
         setPlayer( playerInfo =>
@@ -1397,35 +1444,58 @@ const App = () =>
 
             switch(key)
             {
-                case 'delete':
                 case 'arrowup':
                 case 'arrowdown':
-                    navigateHotbar(key);
-                break;
+                case 'delete':
+
+                    switch(selectedMenu)
+                    {
+                        case 'Gear':
+                            navigateHotbar(key);
+                            break;
+                        case 'Crafting':
+                            console.log("Moviendome en el crafting tab.");
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
+
                 case 'arrowleft':
                 case 'arrowright':
                 case 'backspace':
                     navigateConsumables(key);
-                break;
+                    break;
 
-                case 'q':   //renew (HoT)
-                consumeItem();
-                break;
+                case 'q':
+                    consumeItem();
+                    break;
+                case 'e':
+                    selectedMenu==='Gear' ? swapGear() : craftItem();
+                    break;
 
                 case 'i':   //abrir inventario
-                setShowInventory(prev => !prev);
-                break;
+                    setShowInventory(prev => !prev);
+                    break;
 
-                case 'h':   //ayuda
-                setShowSlides( prev => !prev );
-                break;
+                case 'tab':
+                    event.preventDefault();
+                    setSelectedMenu( prev =>
+                    {
+                        if(prev==='Gear') return 'Crafting';
+                        return 'Gear';
+                    } );
+                    break;
+
+                // case 'h':   //ayuda
+                // setShowSlides( prev => !prev );
+                // break;
 
                 case 'enter':
                 handleInteraction();
                 break;
-                case 'e':
-                swapGear();
-                break;
+
                 default:
                     break;
             }
@@ -2240,78 +2310,81 @@ return (
     <div className="grid-layout">
       <div className="map-zone">
         <div className="map-container" style={{ position: 'relative' }}>
-          {player.hp <= 0 && (
+          
+            {player.hp <= 0 && (
             <div className="death-overlay map-appear-animation">
-              <h2>MORISTE</h2>
+            <h2>MORISTE</h2>
             </div>
-          )}
+            )}
 
-          {game && (
+            {game && (
             <div className="map-appear-animation" style={{ height: '100%', width: '100%' }}>
-              <div className="columna-wrapper">
-                <div
-                  onKeyDown={handleMovement}
-                  ref={gridRef}
-                  tabIndex={0}
-                >
-                  {mapa.map((fila, x) => (
-                    <div key={x} className="fila">
-                      {fila.map((celda, y) =>
-                        celda.symbol === ''
-                          ? (<label key={y} className="celda">{celda.symbol}</label>)
-                          : (<img src={celda.symbol} onClick={() => console.log(celda)} alt={'main_map'} key={y} className="celda" />)
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="visuals-layer">
-                  {visuals.map((fila, x) => (
-                    <div key={x} className="fila">
-                      {fila.map((celda, y) => {
-                        if (typeof celda === 'string') {
-                          return allIcons.includes(celda) ? (
-                            <img src={celda} alt={'visual'} key={y} className="celda" />
-                          ) : (
-                            <label key={y} className="celda">{celda}</label>
-                          );
-                        } else {
-                          return (
-                            <label
-                              key={y}
-                              className="celda visual-text"
-                              style={{ color: celda.color || 'white' }}
-                            >
-                              {celda.text}
-                            </label>
-                          );
-                        }
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="hearts-floating">
-                {renderHp()} {renderAliments()}
-              </div>
-
-              <div className="h-text">
-                Apretá H para ver los controles [V0.0.98]
-              </div>
+            <div className="columna-wrapper">
+            <div
+            onKeyDown={handleMovement}
+            ref={gridRef}
+            tabIndex={0}
+            >
+            {mapa.map((fila, x) => (
+            <div key={x} className="fila">
+                {fila.map((celda, y) =>
+                celda.symbol === ''
+                    ? (<label key={y} className="celda">{celda.symbol}</label>)
+                    : (<img src={celda.symbol} onClick={() => console.log(celda)} alt={'main_map'} key={y} className="celda" />)
+                )}
             </div>
-          )}
+            ))}
+            </div>
+
+            <div className="visuals-layer">
+            {visuals.map((fila, x) => (
+            <div key={x} className="fila">
+                {fila.map((celda, y) => {
+                if (typeof celda === 'string') {
+                    return allIcons.includes(celda) ? (
+                    <img src={celda} alt={'visual'} key={y} className="celda" />
+                    ) : (
+                    <label key={y} className="celda">{celda}</label>
+                    );
+                } else {
+                    return (
+                    <label
+                        key={y}
+                        className="celda visual-text"
+                        style={{ color: celda.color || 'white' }}
+                    >
+                        {celda.text}
+                    </label>
+                    );
+                }
+                })}
+            </div>
+            ))}
+            </div>
+            </div>
+
+            <div className="hearts-floating">
+            {renderHp()} {renderAliments()}
+            </div>
+
+            <div className="h-text">
+            Apretá H para ver los controles [V0.0.98]
+            </div>
+            </div>
+            )}
 
             { !game && (
             <div className="start-popup">
                 <button className='button-ui' onClick={startGame}>START</button>
             </div> )}
+
         </div>
       </div>
 
       <div className="gear-column">
 
-        <GearTab player={player} />
+        { selectedMenu==='Gear' && <GearTab player={player} />}
+        { selectedMenu==='Crafting' && <CraftingTab player={player} />}
         <ConsumablesTab player={player} />
         <ConsoleTab events={events} />
       </div>

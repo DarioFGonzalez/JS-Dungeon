@@ -13,7 +13,7 @@ export const CopperOre: Types.Gear =
 
 export const SilverOre: Types.Gear =
 {
-    type: 'ore',
+    type: 'Ore',
     name: 'Silver Ore',
     symbol: icons.silverOre,
     slot: 'ore',

@@ -108,7 +108,7 @@ export interface Gear
 
 export interface Material
 {
-    type: 'Ore',
+    type: 'Ore' | 'Reagent',
     name: string,
     symbol: string,
     id: string,
@@ -200,3 +200,16 @@ export const slides: slideItem[] =
         text: 'https://github.com/DarioFGonzalez/JS-Dungeon'
     }
 ];
+
+export type recipeMaterial =
+{
+    material: Gear,
+    quantity: number
+};
+
+export interface recipe
+{
+    item: Gear,
+    ingredients: recipeMaterial[],
+    selected: boolean
+};
