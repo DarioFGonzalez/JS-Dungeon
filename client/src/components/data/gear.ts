@@ -14,7 +14,7 @@ export const Fists: Types.Gear =
     equippeable: true
 }
 
-export const Sword1: Types.Gear =
+export const Dagger1: Types.Gear =
 {
     type: 'Gear',
     name: 'Razor',
@@ -27,7 +27,7 @@ export const Sword1: Types.Gear =
     equippeable: true
 }
 
-export const Dagger1: Types.Gear =
+export const Sword1: Types.Gear =
 {
     type: 'Gear',
     name: 'Machete',

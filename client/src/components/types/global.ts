@@ -207,7 +207,7 @@ export type recipeMaterial =
     quantity: number
 };
 
-export interface recipe
+export interface Recipe
 {
     item: Gear,
     ingredients: recipeMaterial[],

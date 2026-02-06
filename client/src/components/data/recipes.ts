@@ -1,8 +1,8 @@
-import { recipe } from '../types/global';
+import { Recipe } from '../types/global';
 import { Dagger1, Sword1, CopperPickaxe } from '../data/gear';
 import { CopperOre, SilverOre } from '../data/materials';
 
-export const daggerRecipe: recipe = {
+export const daggerRecipe: Recipe = {
     item: Dagger1,
     ingredients:[
     {
@@ -12,7 +12,7 @@ export const daggerRecipe: recipe = {
     selected: false
 }
 
-export const cPickaxeRecipe: recipe = {
+export const cPickaxeRecipe: Recipe = {
     item: CopperPickaxe,
     ingredients:[
         {
@@ -23,7 +23,7 @@ export const cPickaxeRecipe: recipe = {
     selected: false
 }
 
-export const macheteRecipe: recipe = {
+export const macheteRecipe: Recipe = {
     item: Sword1,
     ingredients:[
         {

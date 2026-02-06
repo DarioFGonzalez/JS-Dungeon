@@ -56,7 +56,7 @@ const App = () =>
     // const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
     // const currentSlide = Types.slides[slideIndex];
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyVisualGrid );
-    const [ recipes, setRecipes ] = useState<Types.recipe[]>( Object.values( Recipes ) );
+    const [ recipes, setRecipes ] = useState<Types.Recipe[]>( Object.values( Recipes ) );
     
     const [ tps, setTps ] = useState<Types.ArrayOfCoords>([]);
     
@@ -1454,7 +1454,7 @@ const App = () =>
                             navigateHotbar(key);
                             break;
                         case 'Crafting':
-                            console.log("Moviendome en el crafting tab.");
+                            navigateCraftingMenu(key);
                             break;
                         default:
                             break;
@@ -2384,7 +2384,7 @@ return (
       <div className="gear-column">
 
         { selectedMenu==='Gear' && <GearTab player={player} />}
-        { selectedMenu==='Crafting' && <CraftingTab player={player} />}
+        { selectedMenu==='Crafting' && <CraftingTab recipes={recipes} player={player}/>}
         <ConsumablesTab player={player} />
         <ConsoleTab events={events} />
       </div>
