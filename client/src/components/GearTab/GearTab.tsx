@@ -77,7 +77,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
                   />
                 )}
               {x.item.slot === 'charm' && renderTalismanHp(x)}
-              {x.item.slot === 'ore' && (
+              {(x.item.slot === 'Ore' || x.item.slot === 'Reagent') && (
                 <div className={styles.gearStat}>[{x.quantity}]</div>
               )}
               {x.item.attackStats?.aliment &&

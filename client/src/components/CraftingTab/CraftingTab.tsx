@@ -1,5 +1,5 @@
-import React from 'react';
-import { Recipe, Player } from '../types/global';
+import React, { useEffect, useState } from 'react';
+import { Recipe, Player, InventoryGear } from '../types/global';
 import styles from './CraftingTab.module.css';
 
 interface CraftingTabProps {
@@ -8,6 +8,12 @@ interface CraftingTabProps {
 }
 
 const CraftingTab: React.FC<CraftingTabProps> = ({ recipes, player }) => {
+  const [ materials, setMaterials ] = useState<InventoryGear[]>();
+
+  useEffect( ()=>{
+    setMaterials( player.hotBar.Equippeable.filter( x => x.item.type === 'Ore' || x.item.type === 'Reagent' ) )
+  }, [player.hotBar]);
+
   return (
     <div className={styles.gearTab}>
       <div className={styles.gearGrid}>

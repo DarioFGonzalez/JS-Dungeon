@@ -46,8 +46,8 @@
 .weaponCard.equipped { background-color: rgba(220, 60, 60, 0.75); }
 .charmCard { background-color: rgba(40, 40, 160, 0.35); }
 .charmCard.equipped { background-color: rgba(80, 80, 220, 0.75); }
-.toolCard { background-color: rgba(100, 100, 100, 0.747); }
-.toolCard.equipped { background-color: rgb(0, 0, 0); }
+.toolCard { background-color: rgba(97, 69, 46, 0.747); }
+.toolCard.equipped { background-color: rgb(179, 120, 10); }
 .oreCard { background-color: rgba(120, 80, 40, 0.35); }
 .oreCard.equipped { background-color: rgba(180, 120, 60, 0.75); }
 

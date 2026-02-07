@@ -135,6 +135,26 @@ export const minerEnemy: Types.Enemy =
     drops: [ { item: Material.CopperOre, chance: 85, quantity: 1 }, { item: Gear.CopperPickaxe, chance: 99, quantity: 1 } ]
 };
 
+export const vScorpion: Types.Enemy =
+{
+    type: 'Enemy',
+    id: '0',
+    name: 'Venomous Scorpion',
+    hp: 5,
+    maxHp: 5,
+    symbol: icons.pScorpion,
+    data: { x: 0, y: 0 },
+    aliments:
+    {
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
+    attack: { Instant: 1, DoT: 1, Times: 5, Aliment: 'poison' },
+    defense: { Armor: 0, Toughness: 1 },
+    pattern: 'random',
+    drops: [ { item: Material.PoisonClaw, chance: 99, quantity: 1 } ]
+};
+
 export const allEnemies: Types.Enemy[] = [
-    enemy, heavyEnemy, agileEnemy, minerEnemy
+    enemy, heavyEnemy, agileEnemy, minerEnemy, vScorpion
 ];

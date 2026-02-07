@@ -852,7 +852,7 @@ const App = () =>
         {
             addToEquippeable( tile, lootBag?lootBag:false, quantity );
             return ;
-        }        
+        }
         addToEquippeable( tile, lootBag?lootBag:false );
     }
 
@@ -997,7 +997,7 @@ const App = () =>
         lootContent.forEach( drop =>
         {
             handleEventLogs(`- ${drop.quantity} x ${drop.item.name}`, 'khaki' );
-            if(drop.item.type==='Ore' && player.hotBar.Equippeable.length<=5) stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true, drop.quantity )
+            if((drop.item.type==='Ore' || drop.item.type==='Reagent') && player.hotBar.Equippeable.length<=5) stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true, drop.quantity )
             if(drop.item.type==='Item' && player.inventory.length<=6) stepOnItem( drop.item as Types.Item, drop.quantity, undefined, undefined, undefined, true );
             if( (drop.item.type==='Gear' || drop.item.type==='Tool') && player.hotBar.Equippeable.length<=5 ) stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
         } );
@@ -1378,7 +1378,50 @@ const App = () =>
 
     const craftItem = (): void =>
     {
-        console.log("Craft item");
+        let flag = true;
+
+        setPlayer( prevInfo =>
+        {
+            if(flag && isDev)
+            {
+                flag = false;
+                return prevInfo; 
+            }
+
+            let deepCopy = structuredClone(prevInfo);
+            let materials = deepCopy.hotBar.Equippeable.filter( (slot: Types.InventoryGear) => !slot.item.equippeable );
+
+            let selectedRecipe = recipes.find( recipe => recipe.selected );
+            if(!selectedRecipe) return prevInfo;
+
+            let ingredientsConfirmed = [];
+            let requiredIngredients = selectedRecipe.ingredients;
+            for( let i=0; i<requiredIngredients.length; i++)
+            {
+                for( let j=0; j<materials.length; j++)
+                {
+                    if( requiredIngredients[i].material.name===materials[j].item.name )
+                    {
+                        let quantity = materials[j].quantity;
+                        if(quantity!==undefined)
+                        {
+                            if(requiredIngredients[i].quantity<=quantity)
+                            {
+                                ingredientsConfirmed.push( '👍' );
+                            }
+                        }
+                    }
+                }
+            }
+            if(requiredIngredients.length===ingredientsConfirmed.length)
+            {
+                console.log('Crafteable, procedemos a craftearlo');
+                return prevInfo;
+            }
+
+            console.log("Faltan ingredientes, salimos sin hacer nada");
+            return prevInfo;
+        } );
     }
 
     const swapGear = (): void =>
@@ -1955,7 +1998,7 @@ const App = () =>
         auxiliar[5][1] = createEntity( 'Node', 'Copper' );
         auxiliar[6][15] = createEntity( 'Enemie', 'Miner Goblin' );
         auxiliar[9][15] = createEntity( 'Node', 'Copper' );
-        auxiliar[10][1] = createEntity( 'Enemie', 'Goblin' );
+        auxiliar[10][1] = createEntity( 'Enemie', 'Venomous Scorpion' );
         auxiliar[11][9] = createEntity( 'Enemie', 'Miner Goblin' );
         auxiliar[12][8] = createEntity( 'Node', 'Copper' );
         auxiliar[14][11] = createEntity( 'Node', 'Copper' );
@@ -2099,6 +2142,8 @@ const App = () =>
         auxiliar[1][10] = createEntity( 'Equippable', 'Machete');
         auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
         first ? auxiliar[2][2] = player : auxiliar[15][3] = player; 
+        auxiliar[1][2] = createEntity( 'Equippable', 'Machete' );
+        auxiliar[2][4] = createEntity( 'Enemie', 'Venomous Scorpion' );
         auxiliar[2][15] = createEntity( 'Object', 'Box' );
         auxiliar[4][15] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[5][11] = createEntity( 'Enemie', 'Agile Goblin' );
@@ -2330,7 +2375,7 @@ return (
                 {fila.map((celda, y) =>
                 celda.symbol === ''
                     ? (<label key={y} className="celda">{celda.symbol}</label>)
-                    : (<img src={celda.symbol} onClick={() => console.log(celda)} alt={'main_map'} key={y} className="celda" />)
+                    : (<img src={celda.symbol} onClick={() => (celda)} alt={'main_map'} key={y} className="celda" />)
                 )}
             </div>
             ))}
