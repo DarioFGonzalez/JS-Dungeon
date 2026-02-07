@@ -23,8 +23,9 @@ const CraftingTab: React.FC<CraftingTabProps> = ({ recipes, player }) => {
             key={index}
             className={`
               ${styles.gearCard}
-              ${styles.lootFeedback}
               ${recipe.selected ? styles.selected : ''}
+              ${recipe.crafted ? styles.crafted : ''}
+              ${recipe.failed ? styles.craftNegated : ''}
             `}
           >
             <div className={styles.iconSection}>

@@ -211,5 +211,7 @@ export interface Recipe
 {
     item: Gear,
     ingredients: recipeMaterial[],
-    selected: boolean
+    crafted: boolean,
+    selected: boolean,
+    failed: boolean
 };

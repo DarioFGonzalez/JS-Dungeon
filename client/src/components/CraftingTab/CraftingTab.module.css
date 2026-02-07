@@ -110,6 +110,40 @@
   z-index: 5;
 }
 
+.crafted {
+  position: relative;
+  z-index: 5;
+  animation: craftSuccessFlash 1.5s ease-out forwards;
+}
+
+@keyframes craftSuccessFlash {
+  0% {
+    background-color: rgba(217, 255, 0, 0.6);
+    box-shadow: 0 0 15px rgba(217, 255, 0, 0.5) inset;
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0px rgba(217, 255, 0, 0) inset;
+  }
+}
+
+.craftNegated {
+  position: relative;
+  z-index: 5;
+  animation: craftFailedFlash 1.5s ease-out forwards;
+}
+
+@keyframes craftFailedFlash {
+  0% {
+    background-color: rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) inset;
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0px rgba(217, 255, 0, 0) inset;
+  }
+}
+
 .lootFeedback::after {
   content: '';
   position: absolute;

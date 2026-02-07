@@ -1413,23 +1413,61 @@ const App = () =>
                         {
                             const usedMaterial = selectedRecipe.ingredients.find( (x: Types.recipeMaterial) => x.material.name===slot.item.name );
                             if(!usedMaterial) return slot;
-                            console.log("Encontré el material a usar en esta posición, tengo ", slot.quantity??0, " y debo usar ", usedMaterial.quantity);
-                            console.log("Debería devolver un : ", (slot.quantity ?? 0) - usedMaterial.quantity, " como cantidad final.");
                             return { ...slot, quantity: (slot.quantity ?? 0) - usedMaterial.quantity }
                         }
                         return slot;
                     });
 
-                    console.log("Este es el deepCopy so far: ", deepCopy.hotBar.Equippeable);
+                    setRecipes( (oldData: Types.Recipe[] ) =>
+                    {
+                        let aux = oldData.map( x =>
+                        {
+                            if(x.selected)
+                            {
+                                setTimeout( () =>
+                                    {
+                                        setRecipes( oldData =>
+                                        {
+                                          let aux = oldData.map( y => y.item.name===x.item.name ? { ...y, crafted: false } : y )
+                                          return aux;  
+                                        } )
+                                    }, 1500 );
+                                return { ...x, crafted: true };
+                            }
+                            return x;
+                        } );
+                        return aux;
+                    } );
 
                     deepCopy.hotBar.Equippeable = deepCopy.hotBar.Equippeable.filter( ( slot: Types.InventoryGear ) => slot.item.equippeable || (slot.quantity!==undefined && slot.quantity>0) );
 
                     return deepCopy;
                 }
-
+ 
                 return prevInfo;
             }
 
+            setRecipes( (oldData: Types.Recipe[] ) =>
+            {
+                let aux = oldData.map( x =>
+                {
+                    if(x.selected)
+                    {
+                        setTimeout( () =>
+                            {
+                                setRecipes( oldData =>
+                                {
+                                    let aux = oldData.map( y => y.item.name===x.item.name ? { ...y, failed: false } : y )
+                                    return aux;  
+                                } )
+                            }, 500 );
+                        return { ...x, failed: true };
+                    }
+                    return x;
+                } );
+                return aux;
+            } );
+            
             return prevInfo;
         } );
     }

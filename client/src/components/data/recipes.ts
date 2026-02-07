@@ -9,7 +9,9 @@ export const daggerRecipe: Recipe = {
         material: CopperOre,
         quantity: 3
     },],
-    selected: false
+    crafted: false,
+    selected: false,
+    failed: false
 }
 
 export const cPickaxeRecipe: Recipe = {
@@ -20,7 +22,9 @@ export const cPickaxeRecipe: Recipe = {
             quantity: 2
         }
     ],
-    selected: false
+    crafted: false,
+    selected: false,
+    failed: false
 }
 
 export const macheteRecipe: Recipe = {
@@ -35,5 +39,7 @@ export const macheteRecipe: Recipe = {
             quantity: 1
         }
     ],
-    selected: false
+    crafted: false,
+    selected: false,
+    failed: false
 }
