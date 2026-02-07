@@ -62,7 +62,7 @@ const App = () =>
     
     const [ residual, setResidual ] = useState<Types.Residual[]>( [] );
 
-    const [ showInventory, setShowInventory ] = useState<boolean>( false );
+    // const [ showInventory, setShowInventory ] = useState<boolean>( false );
     const [ events, setEvents ] = useState<Types.eventLog[]>( [] );
     const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
 
@@ -1394,32 +1394,42 @@ const App = () =>
             let selectedRecipe = recipes.find( recipe => recipe.selected );
             if(!selectedRecipe) return prevInfo;
 
-            let ingredientsConfirmed = [];
-            let requiredIngredients = selectedRecipe.ingredients;
-            for( let i=0; i<requiredIngredients.length; i++)
+            const canCraft = selectedRecipe.ingredients.every( ingredient =>
             {
-                for( let j=0; j<materials.length; j++)
+                const found = materials.find( (material: Types.InventoryGear) => material.item.name===ingredient.material.name );
+                if(!found) return false;
+
+                return found && ( (found.quantity ?? 0) >= ingredient.quantity );
+            } );
+            
+            if( canCraft )
+            {
+                if(deepCopy.hotBar.Equippeable.length<5)
                 {
-                    if( requiredIngredients[i].material.name===materials[j].item.name )
+                    deepCopy.hotBar.Equippeable.push(turnToInventoryGear(selectedRecipe.item));
+                    deepCopy.hotBar.Equippeable = deepCopy.hotBar.Equippeable.map( (slot: Types.InventoryGear) =>
                     {
-                        let quantity = materials[j].quantity;
-                        if(quantity!==undefined)
+                        if(selectedRecipe!==undefined)
                         {
-                            if(requiredIngredients[i].quantity<=quantity)
-                            {
-                                ingredientsConfirmed.push( '👍' );
-                            }
+                            const usedMaterial = selectedRecipe.ingredients.find( (x: Types.recipeMaterial) => x.material.name===slot.item.name );
+                            if(!usedMaterial) return slot;
+                            console.log("Encontré el material a usar en esta posición, tengo ", slot.quantity??0, " y debo usar ", usedMaterial.quantity);
+                            console.log("Debería devolver un : ", (slot.quantity ?? 0) - usedMaterial.quantity, " como cantidad final.");
+                            return { ...slot, quantity: (slot.quantity ?? 0) - usedMaterial.quantity }
                         }
-                    }
+                        return slot;
+                    });
+
+                    console.log("Este es el deepCopy so far: ", deepCopy.hotBar.Equippeable);
+
+                    deepCopy.hotBar.Equippeable = deepCopy.hotBar.Equippeable.filter( ( slot: Types.InventoryGear ) => slot.item.equippeable || (slot.quantity!==undefined && slot.quantity>0) );
+
+                    return deepCopy;
                 }
-            }
-            if(requiredIngredients.length===ingredientsConfirmed.length)
-            {
-                console.log('Crafteable, procedemos a craftearlo');
+
                 return prevInfo;
             }
 
-            console.log("Faltan ingredientes, salimos sin hacer nada");
             return prevInfo;
         } );
     }
@@ -1518,9 +1528,9 @@ const App = () =>
                     selectedMenu==='Gear' ? swapGear() : craftItem();
                     break;
 
-                case 'i':   //abrir inventario
-                    setShowInventory(prev => !prev);
-                    break;
+                // case 'i':   //abrir inventario
+                //     setShowInventory(prev => !prev);
+                //     break;
 
                 case 'tab':
                     event.preventDefault();
@@ -2318,7 +2328,7 @@ const App = () =>
         findPlayer();
         cleanse('all');
         setTimeout( () => { cleanse('all') }, 50 );
-        setShowInventory(false);
+        // setShowInventory(false);
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player.data.x][player.data.y] = emptyTile;
         setMapa(auxiliar);

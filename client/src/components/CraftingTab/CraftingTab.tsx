@@ -19,7 +19,7 @@ const CraftingTab: React.FC<CraftingTabProps> = ({ recipes, player }) => {
       <div className={styles.gearGrid}>
         {recipes.map((recipe, index) => (
           <div
-            onClick={()=>console.log(recipe)}
+            onClick={()=>console.log(materials)}
             key={index}
             className={`
               ${styles.gearCard}
