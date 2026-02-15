@@ -1,74 +1,79 @@
 .inspectorContainer {
   width: 260px;
-  background: rgba(0, 0, 0, 0.98);
+  background: rgba(0, 0, 0, 0.95);
   border: 2px solid #00ffff;
-  border-radius: 4px;
   font-family: 'Courier New', monospace;
   color: white;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* El secreto: padding inferior real para que el borde no toque el texto */
+  padding-bottom: 8px; 
+  height: auto;
+  box-sizing: border-box;
 }
 
 .header {
   display: flex;
   align-items: center;
-  padding: 6px 8px;
-  gap: 10px;
-  background: #111;
-}
-
-.mainIcon { width: 32px; height: 32px; image-rendering: pixelated; }
-.name { color: #00ffff; font-size: 16px; font-weight: bold; }
-.kills { font-size: 10px; color: #666; }
-
-.hearts {
-  padding: 2px 8px;
-  font-size: 16px;
-  background: #000;
-  border-bottom: 1px solid #222;
-}
-
-.statsRow {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  padding: 6px 10px;
   background: #111;
   border-bottom: 1px solid #333;
 }
 
-.statCol {
+.mainIcon { width: 28px; height: 28px; image-rendering: pixelated; }
+.name { color: #00ffff; font-size: 15px; font-weight: bold; }
+.kills { font-size: 10px; color: #666; margin-left: auto; }
+
+.heartsArea {
+  padding: 6px 10px;
+  font-size: 16px; /* Tamaño humano para los corazones */
+  line-height: 1.2;
+  word-break: break-all;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  background: #0a0a0a;
+  margin-bottom: 4px;
+}
+
+.statBox {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 0;
+  padding: 6px 0;
   border-right: 1px solid #222;
 }
 
-.statCol:last-child { border-right: none; }
-.statLabel { font-size: 9px; color: #555; font-weight: bold; line-height: 1; }
-.statVal { font-size: 13px; margin-top: 2px; line-height: 1; }
+.statBox:last-child { border-right: none; }
+.label { font-size: 10px; color: #aaa; font-weight: bold; margin-bottom: 2px; }
+.val { font-size: 13px; color: #fff; font-weight: bold; }
 
 .lootArea {
-  padding: 4px;
-}
-
-.lootList {
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
-.lootItem {
-  display: grid;
-  grid-template-columns: 24px 1fr 45px;
+.lootRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  /* Quitamos bordes internos pesados que roban espacio */
+}
+
+.lootLeft {
+  display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 6px;
-  border-radius: 2px;
 }
 
 .itemIcon { width: 20px; height: 20px; image-rendering: pixelated; }
 .itemName { font-size: 14px; color: #eee; }
-.itemChance { font-size: 14px; text-align: right; font-weight: bold; }
+.itemChance { font-size: 13px; font-weight: bold; }
 
-.lockedCol { display: flex; flex-direction: column; align-items: center; padding: 4px 0; background: #080808; opacity: 0.2; }
-.lockedArea { height: 40px; background: #080808; opacity: 0.1; }
+/* Para cuando no hay datos */
+.locked { opacity: 0.15; display: flex; flex-direction: column; align-items: center; padding: 6px 0; border-right: 1px solid #222; }

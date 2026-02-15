@@ -12,7 +12,7 @@ import { allNodes, allObjects, allTiles, copperNodes, rockyWalls, silverNodes } 
 
 import './App.css';
 
-import ConsoleTab from './components/ConsoleTab/ConsoleTab';
+// import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import ConsumablesTab from './components/ConsumablesTab/ConsumablesTab';
 import GearTab from './components/GearTab/GearTab';
 import CraftingTab from './components/CraftingTab/CraftingTab';
@@ -65,8 +65,8 @@ const App = () =>
     const [ residual, setResidual ] = useState<Types.Residual[]>( [] );
 
     // const [ showInventory, setShowInventory ] = useState<boolean>( false );
-    const [ events, setEvents ] = useState<Types.eventLog[]>( [] );
-    const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
+    // const [ events, setEvents ] = useState<Types.eventLog[]>( [] );
+    // const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
 
     const [ player, setPlayer ] = useState<Types.Player>( Entities.emptyPlayer );
     const [ bestiary, setBestiary ] = useState<Types.BestiaryItem[]>( [] );
@@ -85,35 +85,35 @@ const App = () =>
     //     return ;
     // }
 
-    const handleEventLogs = ( event: string, color: string ): void =>
-    {
-        setEvents( eventos =>
-        {
-            const aux = [ ...eventos ];
-            if(aux.length>=6)
-            {
-                aux.pop();
-            }
-            aux.unshift( {message: event, color: color} );
-            return aux;
-        } );
-    }
+    // const handleEventLogs = ( event: string, color: string ): void =>
+    // {
+    //     setEvents( eventos =>
+    //     {
+    //         const aux = [ ...eventos ];
+    //         if(aux.length>=6)
+    //         {
+    //             aux.pop();
+    //         }
+    //         aux.unshift( {message: event, color: color} );
+    //         return aux;
+    //     } );
+    // }
 
     useEffect( () =>
     {
         mapaRef.current = mapa;
     }, [ mapa ] );
 
-    useEffect( () =>
-    {
-        if(delayedLog.length===0) return;
+    // useEffect( () =>
+    // {
+    //     if(delayedLog.length===0) return;
 
-        const [ actual, ...rest ] = delayedLog;
-        handleEventLogs( actual.message, actual.color );
-        const timeId = setTimeout( () => { setDelayedLog( rest ); }, 50 );
+    //     const [ actual, ...rest ] = delayedLog;
+    //     // handleEventLogs( actual.message, actual.color );
+    //     const timeId = setTimeout( () => { setDelayedLog( rest ); }, 50 );
 
-        return () => clearTimeout( timeId );
-    }, [ delayedLog ] );    //Cola de eventos en log
+    //     return () => clearTimeout( timeId );
+    // }, [ delayedLog ] );    //Cola de eventos en log
 
     const findPlayer = (): void =>
     {
@@ -1024,15 +1024,15 @@ const App = () =>
 
     const checkLootBag = ( lootContent: Types.lootBagItem[] ): void =>
     {
-        handleEventLogs(`------------------------`, 'orange' );
+        // handleEventLogs(`------------------------`, 'orange' );
         lootContent.forEach( drop =>
         {
-            handleEventLogs(`- ${drop.quantity} x ${drop.item.name}`, 'khaki' );
+            // handleEventLogs(`- ${drop.quantity} x ${drop.item.name}`, 'khaki' );
             if((drop.item.type==='Ore' || drop.item.type==='Reagent') && player.hotBar.Equippeable.length<=5) stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true, drop.quantity )
             if(drop.item.type==='Item' && player.inventory.length<=6) stepOnItem( drop.item as Types.Item, drop.quantity, undefined, undefined, undefined, true );
             if( (drop.item.type==='Gear' || drop.item.type==='Tool') && player.hotBar.Equippeable.length<=5 ) stepOnGear( drop.item as Types.Gear, undefined, undefined, undefined, true );
         } );
-        handleEventLogs(`La bolsa contenía:`, 'orange')
+        // handleEventLogs(`La bolsa contenía:`, 'orange')
     }
         
     const movePlayer = ( x: number, y: number, symbol: string ): void =>
@@ -1148,7 +1148,7 @@ const App = () =>
 
     const queueLog = ( message: string, color: string ): void =>
     {
-        setDelayedLog( list => [ ...list, { message, color } ] );
+        // setDelayedLog( list => [ ...list, { message, color } ] );
     }
 
     const navigateHotBarVectors: Record<string, number> =
@@ -2402,7 +2402,7 @@ const App = () =>
 
     const startGame = (): void =>
     {
-        setEvents( [] );
+        // setEvents( [] );
         setMaps( [
             { name: 'Caves', load: loadCaveMap, actual: false, visited: false },
             { name: 'Mines', load: loadMinesMap, actual: true, visited: false }

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import * as Types from '../types/global';
 import styles from './InspectorTab.module.css';
 
 interface InspectorTabProps {
   entity: Types.Enemy;
-  bestiary: { name: string; quantity: number }[];
+  bestiary: Types.BestiaryItem[];
   onClose: () => void;
 }
 
@@ -13,7 +13,7 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
   const kills = beastEntry ? beastEntry.quantity : 0;
 
   useEffect(() => {
-    const timer = setTimeout(() => onClose(), 3000);
+    const timer = setTimeout(() => onClose(), 6000);
     return () => clearTimeout(timer);
   }, [entity, onClose]);
 
@@ -34,48 +34,48 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
         <img src={entity.symbol} className={styles.mainIcon} alt="" />
         <div className={styles.titleInfo}>
           <div className={styles.name}>{entity.name}</div>
-          <div className={styles.kills}>KILLS: {kills}</div>
+          <div className={styles.kills}>ELIMINADOS: {kills}</div>
         </div>
       </div>
 
-      <div className={styles.hearts}>
+      <div className={styles.heartsArea}>
         {'❤️'.repeat(Math.max(0, entity.hp))}
-        <span style={{ opacity: 0.2 }}>{'🖤'.repeat(Math.max(0, entity.maxHp - entity.hp))}</span>
+        <span className={styles.empty}>{'🖤'.repeat(Math.max(0, entity.maxHp - entity.hp))}</span>
       </div>
 
-      <div className={styles.statsRow}>
-        <div className={kills >= 1 ? styles.statCol : styles.lockedCol}>
-          <span className={styles.statLabel}>ARM</span>
-          <span className={styles.statVal}>🛡️{entity.defense.armor ?? 0}</span>
+      <div className={styles.statsGrid}>
+        <div className={kills >= 1 ? styles.statBox : styles.locked}>
+          <span className={styles.label}>ARM</span>
+          <span className={styles.val}>🛡️{entity.defense.armor ?? 0}</span>
         </div>
-        <div className={kills >= 2 ? styles.statCol : styles.lockedCol}>
-          <span className={styles.statLabel}>TGH</span>
-          <span className={styles.statVal}>{(entity.defense.toughness ?? 0) > 0 ? `🔨${entity.defense.toughness}` : '🍃'}</span>
+        <div className={kills >= 2 ? styles.statBox : styles.locked}>
+          <span className={styles.label}>TGH</span>
+          <span className={styles.val}>🔨{entity.defense.toughness ?? 0}</span>
         </div>
-        <div className={kills >= 2 ? styles.statCol : styles.lockedCol}>
-          <span className={styles.statLabel}>RAW</span>
-          <span className={styles.statVal}>💥{entity.attack.Instant ?? 0}</span>
+        <div className={kills >= 2 ? styles.statBox : styles.locked}>
+          <span className={styles.label}>RAW</span>
+          <span className={styles.val}>💥{entity.attack.Instant ?? 0}</span>
         </div>
-        <div className={kills >= 1 ? styles.statCol : styles.lockedCol}>
-          <span className={styles.statLabel}>ELM</span>
-          <span className={styles.statVal}>
-            {entity.attack.Aliment ? statusIcons[entity.attack.Aliment] : '👊'}
+        <div className={kills >= 1 ? styles.statBox : styles.locked}>
+          <span className={styles.label}>ELM</span>
+          <span className={styles.val}>
+            {entity.attack.Aliment ? (statusIcons[entity.attack.Aliment] || '✨') : '👊'}
           </span>
         </div>
       </div>
 
       <div className={kills >= 3 ? styles.lootArea : styles.lockedArea}>
-        <div className={styles.lootList}>
-          {entity.drops.map((drop, i) => (
-            <div key={i} className={styles.lootItem}>
+        {entity.drops.map((drop, i) => (
+          <div key={i} className={styles.lootRow}>
+            <div className={styles.lootLeft}>
               <img src={drop.item.symbol} className={styles.itemIcon} alt="" />
               <span className={styles.itemName}>{drop.item.name}</span>
-              <span className={styles.itemChance} style={{ color: getChanceColor(drop.chance) }}>
-                {drop.chance}%
-              </span>
             </div>
-          ))}
-        </div>
+            <span className={styles.itemChance} style={{ color: getChanceColor(drop.chance) }}>
+              {drop.chance}%
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
