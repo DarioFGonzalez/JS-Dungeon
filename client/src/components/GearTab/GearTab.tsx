@@ -1,7 +1,8 @@
 import React from 'react';
-import { Player } from '../types/global';
+import { Player, InventoryGear } from '../types/global';
 import DurabilityBar from './DurabilityBar/DurabilityBar';
 import styles from './GearTab.module.css';
+
 
 interface GearTabProps {
   player: Player;
@@ -36,9 +37,9 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
   return (
     <div className={styles.gearTab}>
       <div className={styles.gearGrid}>
-        {player.hotBar.Equippeable.map((x: any) => (
+        {player.hotBar.Equippeable.map((x: InventoryGear) => (
           <div
-            key={x.id} 
+            key={x.id}
             className={`
               ${styles.gearCard}
               ${styles.lootFeedback}
@@ -56,6 +57,14 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
               style={{ backgroundImage: `url(${x.item.symbol})` }}
             />
             <div className={styles.gearName}>{x.item.name}</div>
+
+            {x.selected && (
+              <>
+                { !(x.item.type==='Ore' || x.item.type==='Reagent') && <div className={styles.hotkeyEquip}>E</div>}
+                <div className={styles.hotkeyDel}>Del</div>
+              </>
+            )}
+
             <div className={styles.gearStatsRow}>
               {x.item.attackStats && (
                 <div className={styles.gearStat}>

@@ -1,0 +1,74 @@
+.inspectorContainer {
+  width: 260px;
+  background: rgba(0, 0, 0, 0.98);
+  border: 2px solid #00ffff;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: white;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  gap: 10px;
+  background: #111;
+}
+
+.mainIcon { width: 32px; height: 32px; image-rendering: pixelated; }
+.name { color: #00ffff; font-size: 16px; font-weight: bold; }
+.kills { font-size: 10px; color: #666; }
+
+.hearts {
+  padding: 2px 8px;
+  font-size: 16px;
+  background: #000;
+  border-bottom: 1px solid #222;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #111;
+  border-bottom: 1px solid #333;
+}
+
+.statCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+  border-right: 1px solid #222;
+}
+
+.statCol:last-child { border-right: none; }
+.statLabel { font-size: 9px; color: #555; font-weight: bold; line-height: 1; }
+.statVal { font-size: 13px; margin-top: 2px; line-height: 1; }
+
+.lootArea {
+  padding: 4px;
+}
+
+.lootList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lootItem {
+  display: grid;
+  grid-template-columns: 24px 1fr 45px;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 6px;
+  border-radius: 2px;
+}
+
+.itemIcon { width: 20px; height: 20px; image-rendering: pixelated; }
+.itemName { font-size: 14px; color: #eee; }
+.itemChance { font-size: 14px; text-align: right; font-weight: bold; }
+
+.lockedCol { display: flex; flex-direction: column; align-items: center; padding: 4px 0; background: #080808; opacity: 0.2; }
+.lockedArea { height: 40px; background: #080808; opacity: 0.1; }

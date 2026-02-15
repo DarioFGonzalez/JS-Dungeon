@@ -70,7 +70,7 @@ export const enemy: Types.Enemy =
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
     attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
-    defense: { Armor: 0, Toughness: 1 },
+    defense: { armor: 0, toughness: 1 },
     pattern: 'horizontal',
     drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]
 }
@@ -90,7 +90,7 @@ export const heavyEnemy: Types.Enemy =
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
     attack: { Instant: 3, DoT: 1, Times: 4, Aliment: 'bleed' },
-    defense: { Armor: 1, Toughness: 3, Immunity: 'bleed' },
+    defense: { armor: 1, toughness: 3, immunity: 'bleed' },
     pattern: 'vertical',
     drops: [ { item: Items.Antidote, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
 }
@@ -110,7 +110,7 @@ export const agileEnemy: Types.Enemy =
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
-    defense: { Armor: 1, Toughness: 3 },
+    defense: { armor: 1, toughness: 3 },
     pattern: 'random',
     drops: [ { item: Items.Bandages, chance: 99, quantity: 1 }, { item: Items.Aloe, chance: 99, quantity: 1 } ]
 };
@@ -130,7 +130,7 @@ export const minerEnemy: Types.Enemy =
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
-    defense: { Armor: 0, Toughness: 1 },
+    defense: { armor: 0, toughness: 1 },
     pattern: 'random',
     drops: [ { item: Material.CopperOre, chance: 85, quantity: 1 }, { item: Gear.CopperPickaxe, chance: 99, quantity: 1 } ]
 };
@@ -150,7 +150,7 @@ export const vScorpion: Types.Enemy =
         instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
     },
     attack: { Instant: 1, DoT: 1, Times: 5, Aliment: 'poison' },
-    defense: { Armor: 0, Toughness: 1 },
+    defense: { armor: 0, toughness: 1 },
     pattern: 'random',
     drops: [ { item: Material.PoisonClaw, chance: 99, quantity: 1 } ]
 };

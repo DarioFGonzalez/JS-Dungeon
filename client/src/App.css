@@ -27,14 +27,6 @@ html, body {
   text-shadow: 1px 1px 0 black, -1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black;
 }
 
-body {
-  margin: 0;
-  background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
-  color: var(--font-color);
-  font-family: sans-serif;
-  overflow: hidden;
-}
-
 .game-container {
   height: 650px;
   width: 918px;
@@ -68,6 +60,29 @@ body {
   border: var(--border);
 }
 
+.damage-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1500;
+  box-shadow: inset 0 0 50px rgba(255, 0, 0, 0);
+  transition: box-shadow 0.3s ease;
+}
+
+.damage-vignette.active {
+  animation: damageFlash 0.4s ease-out;
+}
+
+@keyframes damageFlash {
+  0% {
+    box-shadow: inset 0 0 80px rgba(255, 0, 0, 0.8), 
+                inset 0 0 20px rgba(255, 0, 0, 1);
+  }
+  100% {
+    box-shadow: inset 0 0 50px rgba(255, 0, 0, 0);
+  }
+}
+
 .columna-wrapper {
   height: 100%;
   width: 650px;
@@ -99,7 +114,7 @@ body {
   position: absolute;
   top: 0.25rem;
   left: 0.5rem;
-  z-index: 1000;
+  z-index: 1600;
   display: flex;
   gap: 0.25rem;
   pointer-events: none;
@@ -120,11 +135,6 @@ body {
   border: var(--border);
   overflow: hidden;
   box-sizing: border-box;
-}
-
-.gear-column > * {
-  margin: 0;
-  padding: 0;
 }
 
 .death-overlay {
@@ -175,22 +185,9 @@ body {
   transition: all 0.2s ease;
 }
 
-.button-ui:hover {
-  background: #444;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-}
-
 @keyframes mapArrival {
-  0% {
-    opacity: 0;
-    filter: blur(10px) brightness(0.5);
-    transform: scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0) brightness(1);
-    transform: scale(1);
-  }
+  0% { opacity: 0; filter: blur(10px) brightness(0.5); transform: scale(0.98); }
+  100% { opacity: 1; filter: blur(0) brightness(1); transform: scale(1); }
 }
 
 .map-appear-animation {

@@ -29,7 +29,7 @@ export type alimentIds = { dmgId: ReturnType<typeof setInterval>, timerId: Retur
 export type HotBarItems = { Equippeable: InventoryGear[] }
 
 export type attackInfo = { Instant: number, DoT: number, Times: number, Aliment: string, Attacked?: boolean };
-export type deffenseInfo = { Armor: number, Toughness: number, Immunity?: string };
+export type deffenseInfo = { armor: number, toughness: number, immunity?: string };
 export type dropInfo = { item: Item | Gear | Material, chance: number, quantity: number };
 
 export type lootBagItem = { item: Item | Gear, quantity: number };
@@ -73,7 +73,7 @@ export interface Node
     name: string,
     mineral: string,
     symbol: string,
-    thoughness: number,
+    toughness: number,
     maxHp: number,
     hp: number,
     drops: dropInfo[]
@@ -215,3 +215,9 @@ export interface Recipe
     selected: boolean,
     failed: boolean
 };
+
+export type BestiaryItem =
+{
+    name: string,
+    quantity: number
+}

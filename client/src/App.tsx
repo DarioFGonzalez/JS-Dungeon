@@ -16,6 +16,7 @@ import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import ConsumablesTab from './components/ConsumablesTab/ConsumablesTab';
 import GearTab from './components/GearTab/GearTab';
 import CraftingTab from './components/CraftingTab/CraftingTab';
+import InspectorTab from './components/InspectorTab/InspectorTab';
 
 const allIcons = Object.values(icons);
 
@@ -37,6 +38,7 @@ const App = () =>
     const lan = 'es';
     // const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
+    const [isTakingDamage, setIsTakingDamage] = useState(false);
 
     type posibleMenus = 'Gear' | 'Crafting';
     const [ selectedMenu, setSelectedMenu ] = useState<posibleMenus>( 'Gear' );
@@ -67,6 +69,8 @@ const App = () =>
     const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
 
     const [ player, setPlayer ] = useState<Types.Player>( Entities.emptyPlayer );
+    const [ bestiary, setBestiary ] = useState<Types.BestiaryItem[]>( [] );
+    const [ inspectedCreature, setInspectedCreature] = useState<Types.Enemy | null>( );
     // const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
     // const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
 
@@ -363,11 +367,11 @@ const App = () =>
         const attk = thisWeapon.item.attackStats;
         if(!attk) return ;
 
-        const damage = attk.dmg- thisEnemy.defense.Armor;
+        const damage = attk.dmg- thisEnemy.defense.armor;
 
         damageEnemy( thisEnemy.id, damage>=0?damage:0, attk?.DoT, attk?.times, attk?.aliment );
         manageVisualAnimation( 'visual', x, y, icons.redClawHit, 200 );
-        thisWeapon!==Gear.emptyHanded && damageWeapon( thisEnemy.defense.Toughness, thisWeapon );
+        thisWeapon!==Gear.emptyHanded && damageWeapon( thisEnemy.defense.toughness, thisWeapon );
     }
 
     const enemyDeath = ( id: string ): CellContent[][] =>
@@ -438,11 +442,24 @@ const App = () =>
                 aux[mobX][mobY]= emptyTile;     
                 return aux;
             } );
+
+            setBestiary( prevData =>
+            {
+                let aux = prevData.map( beast => ( { ...beast } ) );
+                let beastIndex = aux.findIndex( beast => beast.name === entity.name );
+                if(beastIndex===-1)
+                {
+                    return [ ...aux, { name: entity.name, quantity: 1 } ];
+                }
+                aux[beastIndex].quantity++;
+                return aux;
+            } );
+
             return ;
         }
         else
         {
-            if(dot!==0 && entity.defense.Immunity!==aliment)
+            if(dot!==0 && entity.defense.immunity!==aliment)
             {
                 const alimentVector =
                 {
@@ -762,6 +779,10 @@ const App = () =>
 
         };
 
+        setIsTakingDamage(true);
+
+        setTimeout( () => { setIsTakingDamage(false) }, 400);
+
         return ;
     };
     
@@ -856,9 +877,9 @@ const App = () =>
         addToEquippeable( tile, lootBag?lootBag:false );
     }
 
-    const turnToInventoryGear = ( gear: Types.Gear ): Types.InventoryGear =>
+    const turnToInventoryGear = ( gear: Types.Gear, equip: boolean = false ): Types.InventoryGear =>
     {
-        return { item: gear, id: crypto.randomUUID(), durability: gear.durability, onCd: false, equiped: false, selected: false };
+        return { item: gear, id: crypto.randomUUID(), durability: gear.durability, onCd: false, equiped: equip, selected: false };
     }
 
     const turnToInventoryMaterial = ( material: Types.Gear, quantity: number ): Types.InventoryGear =>
@@ -875,7 +896,10 @@ const App = () =>
         if( 'durability' in gear )
         {
             if( player.hotBar.Equippeable.length>4 ) return ;
-            item = turnToInventoryGear(gear);
+
+            const hasEquippedWeapon = player.hotBar.Equippeable.some( slot => slot.item.slot==='weapon' && slot.equiped );
+
+            item = turnToInventoryGear(gear, !hasEquippedWeapon);
         }
         else
         {
@@ -901,8 +925,15 @@ const App = () =>
             }
         }
 
+        let selected = false;
+
+        if(player.hotBar.Equippeable.length===0)
+        {
+            selected = true;
+        }
+
         setPlayer( playerInfo => ( { ...playerInfo, hotBar: { ...playerInfo.hotBar,
-        Equippeable: [ ...playerInfo.hotBar.Equippeable, item ] } } ) );
+        Equippeable: [ ...playerInfo.hotBar.Equippeable, { ...item, selected } ] } } ) );
         
         return ;
     }
@@ -1052,6 +1083,7 @@ const App = () =>
                     {
                         if('content' in tile)
                         {
+                            console.log("Pisé un map teleport que lleva a ", tile.content );
                             swapMap(tile.content)
                         }
                         break;
@@ -1231,7 +1263,7 @@ const App = () =>
         }
         
         setMapa( aux );
-        damageWeapon( thisOre.thoughness, thisTool );
+        damageWeapon( thisOre.toughness, thisTool );
     }
 
     const handleInteraction = ( ): void =>
@@ -1297,7 +1329,26 @@ const App = () =>
                 return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
             }
 
-            return { ...player, hotBar: { ...player.hotBar, Equippeable: player.hotBar.Equippeable.filter( x => !x.selected ) } };
+            let equippeables = player.hotBar.Equippeable;
+
+            if(equippeables.length>1)
+            {
+                let selectedAt = equippeables.findIndex( x => x.selected );
+                if(selectedAt===0)
+                {
+                    equippeables[1].selected = true;
+                    equippeables = equippeables.slice(1);
+                }
+                else
+                {
+                    equippeables[selectedAt-1].selected = true;
+                    equippeables = [ ...equippeables.slice(0, selectedAt),
+                                     ...equippeables.slice(selectedAt+1) ];
+                }
+                return { ...player, hotBar: { ...player.hotBar, Equippeable: equippeables } };
+            }
+            return { ...player, hotBar: { ...player.hotBar, Equippeable: [] } };
+
         } );
     }
 
@@ -1912,7 +1963,7 @@ const App = () =>
         return walls[type][randomIndex];
     }
 
-    const loadMinesMap = (): void =>
+    const loadMinesMap = ( first: boolean = false ): void =>
     {
         let auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
         
@@ -2050,7 +2101,7 @@ const App = () =>
         auxiliar[11][9] = createEntity( 'Enemie', 'Miner Goblin' );
         auxiliar[12][8] = createEntity( 'Node', 'Copper' );
         auxiliar[14][11] = createEntity( 'Node', 'Copper' );
-        auxiliar[15][3] = player;
+        first ? auxiliar[2][2] = player : auxiliar[15][3] = player;
         auxiliar[15][5] = createEntity( 'Tool', 'Copper Pickaxe' );
         auxiliar[15][10] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[15][13] = createEntity( 'Node', 'Silver' );
@@ -2060,12 +2111,12 @@ const App = () =>
         auxiliar = addNodes( auxiliar, [ {node: 'Copper', quantity: 2} ] );
 
         setPlayer( prev => (
-        { ...prev, data: { x: 15, y: 3 } } ) );
+        { ...prev, data: { x: 2, y: 2 } } ) );
 
         setMapa(auxiliar);
     }
 
-    const loadCaveMap = ( first?: boolean ): void =>
+    const loadCaveMap = ( first: boolean = false ): void =>
     {
         const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)        //Por columna
@@ -2187,11 +2238,11 @@ const App = () =>
         auxiliar[mapSize-1][mapSize-1] = Tiles.torchedWall;
 
         auxiliar[1][7] = createEntity( 'Equippable', 'Amuleto escudo' );
-        auxiliar[1][10] = createEntity( 'Equippable', 'Machete');
+        auxiliar[1][10] = createEntity( 'Equippable', 'Club');
         auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
         first ? auxiliar[2][2] = player : auxiliar[15][3] = player; 
-        auxiliar[1][2] = createEntity( 'Equippable', 'Machete' );
-        auxiliar[2][4] = createEntity( 'Enemie', 'Venomous Scorpion' );
+        auxiliar[1][2] = createEntity( 'Equippable', 'Club' );
+        auxiliar[2][4] = createEntity( 'Enemie', 'Agile Goblin' );
         auxiliar[2][15] = createEntity( 'Object', 'Box' );
         auxiliar[4][15] = createEntity( 'Enemie', 'Hobgoblin' );
         auxiliar[5][11] = createEntity( 'Enemie', 'Agile Goblin' );
@@ -2289,6 +2340,7 @@ const App = () =>
     const swapMap = ( mapName: string ): void =>
     {
         const newMap = maps.find( x => x.name === mapName );
+        console.log("Encontró: ", newMap);
         if(!newMap) return setMapa(mapaRef.current);
 
         const actualMap = maps.find( x => x.actual );
@@ -2352,10 +2404,11 @@ const App = () =>
     {
         setEvents( [] );
         setMaps( [
-            { name: 'Caves', load: loadCaveMap, actual: true, visited: false },
-            { name: 'Mines', load: loadMinesMap, actual: false, visited: false }
+            { name: 'Caves', load: loadCaveMap, actual: false, visited: false },
+            { name: 'Mines', load: loadMinesMap, actual: true, visited: false }
         ])
-        loadCaveMap(true);
+        loadMinesMap(true);
+        // loadCaveMap(true);
         setPlayer( prev => ({ ...prev, hp: player.maxHp }) );
         setGame(true);
         setTimeout(() => gridRef.current?.focus(), 0);
@@ -2398,88 +2451,107 @@ const App = () =>
         return poison + bleed + burn;
     }
 
+    const checkEntity = ( entity: any ): void =>
+    {
+        console.log( 'Clickeaste: ', entity );
+        if( 'type' in entity && entity.type === 'Enemy' )
+        {
+            setInspectedCreature( entity as Types.Enemy );
+        }
+        return ;
+    }
+
 return (
   <div className="game-container">
     <div className="grid-layout">
       <div className="map-zone">
         <div className="map-container" style={{ position: 'relative' }}>
           
-            {player.hp <= 0 && (
+          <div className={`damage-vignette ${isTakingDamage ? 'active' : ''}`} />
+
+          {player.hp <= 0 && (
             <div className="death-overlay map-appear-animation">
-            <h2>MORISTE</h2>
+              <h2>MORISTE</h2>
             </div>
-            )}
+          )}
 
-            {game && (
+          {game && (
             <div className="map-appear-animation" style={{ height: '100%', width: '100%' }}>
-            <div className="columna-wrapper">
-            <div
-            onKeyDown={handleMovement}
-            ref={gridRef}
-            tabIndex={0}
-            >
-            {mapa.map((fila, x) => (
-            <div key={x} className="fila">
-                {fila.map((celda, y) =>
-                celda.symbol === ''
-                    ? (<label key={y} className="celda">{celda.symbol}</label>)
-                    : (<img src={celda.symbol} onClick={() => (celda)} alt={'main_map'} key={y} className="celda" />)
-                )}
-            </div>
-            ))}
-            </div>
+              <div className="columna-wrapper">
+                <div
+                  onKeyDown={handleMovement}
+                  ref={gridRef}
+                  tabIndex={0}
+                >
+                  {mapa.map((fila, x) => (
+                    <div key={x} className="fila">
+                      {fila.map((celda, y) =>
+                        celda.symbol === ''
+                          ? (<label key={y} className="celda">{celda.symbol}</label>)
+                          : (<img src={celda.symbol} onClick={() => checkEntity(celda)} alt={'main_map'} key={y} className="celda" />)
+                      )}
+                    </div>
+                  ))}
+                </div>
 
-            <div className="visuals-layer">
-            {visuals.map((fila, x) => (
-            <div key={x} className="fila">
-                {fila.map((celda, y) => {
-                if (typeof celda === 'string') {
-                    return allIcons.includes(celda) ? (
-                    <img src={celda} alt={'visual'} key={y} className="celda" />
-                    ) : (
-                    <label key={y} className="celda">{celda}</label>
-                    );
-                } else {
-                    return (
-                    <label
-                        key={y}
-                        className="celda visual-text"
-                        style={{ color: celda.color || 'white' }}
-                    >
-                        {celda.text}
-                    </label>
-                    );
-                }
-                })}
-            </div>
-            ))}
-            </div>
-            </div>
+                <div className="visuals-layer">
+                  {visuals.map((fila, x) => (
+                    <div key={x} className="fila">
+                      {fila.map((celda, y) => {
+                        if (typeof celda === 'string') {
+                          return allIcons.includes(celda) ? (
+                            <img src={celda} alt={'visual'} key={y} className="celda" />
+                          ) : (
+                            <label key={y} className="celda">{celda}</label>
+                          );
+                        } else {
+                          return (
+                            <label
+                              key={y}
+                              className="celda visual-text"
+                              style={{ color: celda.color || 'white' }}
+                            >
+                              {celda.text}
+                            </label>
+                          );
+                        }
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            <div className="hearts-floating">
-            {renderHp()} {renderAliments()}
-            </div>
+              <div className="hearts-floating">
+                {renderHp()} {renderAliments()}
+              </div>
 
-            <div className="h-text">
-            Apretá H para ver los controles [V0.0.98]
+              <div className="h-text">
+                Apretá H para ver los controles [V0.0.98]
+              </div>
             </div>
-            </div>
-            )}
+          )}
 
-            { !game && (
+          {!game && (
             <div className="start-popup">
-                <button className='button-ui' onClick={startGame}>START</button>
-            </div> )}
+              <button className='button-ui' onClick={startGame}>START</button>
+            </div>
+          )}
 
         </div>
       </div>
 
       <div className="gear-column">
-
-        { selectedMenu==='Gear' && <GearTab player={player} />}
-        { selectedMenu==='Crafting' && <CraftingTab recipes={recipes} player={player}/>}
+        {selectedMenu === 'Gear' && <GearTab player={player} />}
+        {selectedMenu === 'Crafting' && <CraftingTab recipes={recipes} player={player} />}
         <ConsumablesTab player={player} />
-        <ConsoleTab events={events} />
+        {inspectedCreature && (
+        <InspectorTab 
+            entity={inspectedCreature} 
+            bestiary={bestiary} 
+            onClose={() => setInspectedCreature(null)} 
+        />
+        )}
+        {/* <ConsoleTab events={events} /> */}
       </div>
     </div>
   </div>

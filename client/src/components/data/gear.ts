@@ -22,7 +22,7 @@ export const Dagger1: Types.Gear =
     id: '',
     slot: 'weapon',
     desc: '+1 DMG',
-    attackStats: { dmg: 1, DoT: 1, times: 5, cd: 1000, aliment: 'bleed' },
+    attackStats: { dmg: 1, DoT: 3, times: 2, cd: 1000, aliment: 'bleed' },
     durability: 10,
     equippeable: true
 }
@@ -30,7 +30,7 @@ export const Dagger1: Types.Gear =
 export const Sword1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Machete',
+    name: 'Club',
     symbol: icons.sword1Img,
     id: '',
     slot: 'weapon',

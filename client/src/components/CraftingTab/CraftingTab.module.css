@@ -105,6 +105,10 @@
   font-weight: bold;
 }
 
+.insufficient {
+  color: #ff4d4d !important;
+}
+
 .selected {
   box-shadow: 0 0 0 2px #00ffff inset !important;
   z-index: 5;

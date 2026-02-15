@@ -19,7 +19,6 @@ const CraftingTab: React.FC<CraftingTabProps> = ({ recipes, player }) => {
       <div className={styles.gearGrid}>
         {recipes.map((recipe, index) => (
           <div
-            onClick={()=>console.log(materials)}
             key={index}
             className={`
               ${styles.gearCard}
@@ -41,12 +40,19 @@ const CraftingTab: React.FC<CraftingTabProps> = ({ recipes, player }) => {
               </div>
 
               <div className={styles.materialsRow}>
-                {recipe.ingredients?.map((mat, i) => (
-                  <div key={i} className={styles.materialCell}>
-                    <span className={styles.matName}>{mat.material.name}</span>
-                    <span className={styles.matQty}>({mat.quantity})</span>
-                  </div>
-                ))}
+                {recipe.ingredients?.map((mat, i) => {
+                  const playerMat = materials?.find(m => m.item.name === mat.material.name);
+                  const hasEnough = playerMat && (playerMat.quantity ?? 0) >= mat.quantity;
+
+                  return (
+                    <div key={i} className={styles.materialCell}>
+                      <span className={styles.matName}>{mat.material.name}</span>
+                      <span className={`${styles.matQty} ${!hasEnough ? styles.insufficient : ''}`}>
+                        ({mat.quantity})
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

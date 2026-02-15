@@ -90,7 +90,7 @@ export const copperNode1: Node =
     mineral: 'Copper',
     name: 'Copper Node 1',
     symbol: Icons.copperVein1,
-    thoughness: 1,
+    toughness: 1,
     maxHp: 2,
     hp: 2,
     drops: [ { item: Material.CopperOre, chance: 90, quantity: 1 } ]
@@ -103,7 +103,7 @@ export const copperNode2: Node =
     mineral: 'Copper',
     name: 'Copper Node 2',
     symbol: Icons.copperVein2,
-    thoughness: 1,
+    toughness: 1,
     maxHp: 2,
     hp: 2,
     drops: [ { item: Material.CopperOre, chance: 85, quantity: 1 } ]
@@ -116,7 +116,7 @@ export const copperNode3: Node =
     mineral: 'Copper',
     name: 'Copper Node 3',
     symbol: Icons.copperVein3,
-    thoughness: 1,
+    toughness: 1,
     maxHp: 2,
     hp: 2,
     drops: [ { item: Material.CopperOre, chance: 65, quantity: 2 } ]
@@ -129,7 +129,7 @@ export const silverNode1: Node =
     mineral: 'Silver',
     name: 'Silver Node 1',
     symbol: Icons.silverVein1,
-    thoughness: 1,
+    toughness: 1,
     maxHp: 3,
     hp: 3,
     drops: [ { item: Material.SilverOre, chance: 90, quantity: 1 } ]
@@ -142,7 +142,7 @@ export const silverNode2: Node =
     mineral: 'Silver',
     name: 'Silver Node 2',
     symbol: Icons.silverVein2,
-    thoughness: 1,
+    toughness: 1,
     maxHp: 3,
     hp: 3,
     drops: [ { item: Material.SilverOre, chance: 85, quantity: 1 } ]
@@ -155,7 +155,7 @@ export const silverNode3: Node =
     mineral: 'Silver',
     name: 'Silver Node 3',
     symbol: Icons.silverVein3,
-    thoughness: 1,
+    toughness: 1,
     maxHp: 3,
     hp: 3,
     drops: [ { item: Material.SilverOre, chance: 65, quantity: 2 } ]
