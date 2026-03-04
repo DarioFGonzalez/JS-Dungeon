@@ -1963,7 +1963,7 @@ const App = () =>
         return walls[type][randomIndex];
     }
 
-    const loadMinesMap = ( first: boolean = false ): void =>
+    const loadMinesMap = ( spawnMap: boolean = false ): void =>
     {
         let auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
         
@@ -2101,7 +2101,7 @@ const App = () =>
         auxiliar[11][9] = createEntity( 'Enemie', 'Miner Goblin' );
         auxiliar[12][8] = createEntity( 'Node', 'Copper' );
         auxiliar[14][11] = createEntity( 'Node', 'Copper' );
-        first ? auxiliar[2][2] = player : auxiliar[15][3] = player;
+        spawnMap ? auxiliar[2][2] = player : auxiliar[15][3] = player;
         auxiliar[15][5] = createEntity( 'Tool', 'Copper Pickaxe' );
         auxiliar[15][10] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[15][13] = createEntity( 'Node', 'Silver' );
@@ -2111,12 +2111,12 @@ const App = () =>
         auxiliar = addNodes( auxiliar, [ {node: 'Copper', quantity: 2} ] );
 
         setPlayer( prev => (
-        { ...prev, data: { x: 2, y: 2 } } ) );
+        { ...prev, data: spawnMap ? { x: 2, y: 2 } : { x: 15, y: 3 } } ) );
 
         setMapa(auxiliar);
     }
 
-    const loadCaveMap = ( first: boolean = false ): void =>
+    const loadCaveMap = ( spawnMap: boolean = false ): void =>
     {
         const auxiliar: CellContent[][] = Array.from( {length: mapSize}, ()=> Array.from( Array(mapSize), ()=> emptyTile ) );  //Vacía el mapa
         for(let i=0; i<mapSize; i++)        //Por columna
@@ -2240,7 +2240,7 @@ const App = () =>
         auxiliar[1][7] = createEntity( 'Equippable', 'Amuleto escudo' );
         auxiliar[1][10] = createEntity( 'Equippable', 'Club');
         auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
-        first ? auxiliar[2][2] = player : auxiliar[15][3] = player; 
+        spawnMap ? auxiliar[2][2] = player : auxiliar[15][3] = player; 
         auxiliar[1][2] = createEntity( 'Equippable', 'Club' );
         auxiliar[2][4] = createEntity( 'Enemie', 'Agile Goblin' );
         auxiliar[2][15] = createEntity( 'Object', 'Box' );
@@ -2263,7 +2263,7 @@ const App = () =>
         setTps( [ [9, 1], [16, 16] ] );
                 
         setPlayer( prev => (
-        { ...prev, data: first ? { x: 2, y: 2 } : { x: 15, y: 3 } } ) );
+        { ...prev, data: spawnMap ? { x: 2, y: 2 } : { x: 15, y: 3 } } ) );
 
         setMapa(auxiliar);
     }

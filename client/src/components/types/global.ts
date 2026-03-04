@@ -133,7 +133,7 @@ export interface Player
 
 export interface Trap
 {
-    type: 'Trap', //agregado
+    type: 'Trap',
     id: string,
     name: string,
     symbol: string,

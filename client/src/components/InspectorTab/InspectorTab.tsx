@@ -25,7 +25,7 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
   };
 
   const statusIcons: Record<string, string> = {
-    Poisoned: '💚', Bleeding: '🩸', Burning: '🔥'
+    poison: '💚', bleed: '🩸', burn: '🔥', none: '👊'
   };
 
   return (
