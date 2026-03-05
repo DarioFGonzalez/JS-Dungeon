@@ -72,7 +72,7 @@ export const enemy: Types.Enemy =
     attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { armor: 0, toughness: 1 },
     pattern: 'horizontal',
-    drops: [ { item: Items.Potion, chance: 99, quantity: 5 }, { item: Gear.Necklace1, chance: 99, quantity: 1 } ]
+    drops: [ { item: Items.Potion, chance: 10, quantity: 3 }, { item: Gear.Necklace1, chance: 5, quantity: 1 } ]
 }
 
 export const heavyEnemy: Types.Enemy =
@@ -92,7 +92,7 @@ export const heavyEnemy: Types.Enemy =
     attack: { Instant: 3, DoT: 1, Times: 4, Aliment: 'bleed' },
     defense: { armor: 1, toughness: 3, immunity: 'bleed' },
     pattern: 'vertical',
-    drops: [ { item: Items.Antidote, chance: 99, quantity: 2 }, { item: Gear.Dagger1, chance: 99, quantity: 1 }, { item: Items.Bandages, chance: 50, quantity: 2 } ]
+    drops: [ { item: Items.Antidote, chance: 15, quantity: 1 }, { item: Gear.Dagger1, chance: 5, quantity: 1 }, { item: Items.Bandages, chance: 25, quantity: 2 } ]
 }
 
 export const agileEnemy: Types.Enemy =
@@ -112,7 +112,7 @@ export const agileEnemy: Types.Enemy =
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { armor: 1, toughness: 3 },
     pattern: 'random',
-    drops: [ { item: Items.Bandages, chance: 99, quantity: 1 }, { item: Items.Aloe, chance: 99, quantity: 1 } ]
+    drops: [ { item: Items.Aloe, chance: 35, quantity: 1 } ]
 };
 
 export const minerEnemy: Types.Enemy =
@@ -132,7 +132,7 @@ export const minerEnemy: Types.Enemy =
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { armor: 0, toughness: 1 },
     pattern: 'random',
-    drops: [ { item: Material.CopperOre, chance: 85, quantity: 1 }, { item: Gear.CopperPickaxe, chance: 99, quantity: 1 } ]
+    drops: [ { item: Material.CopperOre, chance: 45, quantity: 1 }, { item: Gear.CopperPickaxe, chance: 15, quantity: 1 } ]
 };
 
 export const vScorpion: Types.Enemy =

@@ -6,16 +6,16 @@ import * as icons from './Icons/index';
 import * as Entities from './components/data/entities';
 import * as Gear from './components/data/gear';
 import * as Items from './components/data/items';
-import * as Tiles from './components/data/tiles';
 import * as Recipes from './components/data/recipes';
+import * as Tiles from './components/data/tiles';
 import { allNodes, allObjects, allTiles, copperNodes, rockyWalls, silverNodes } from './components/data/tiles';
 
 import './App.css';
 
 // import ConsoleTab from './components/ConsoleTab/ConsoleTab';
 import ConsumablesTab from './components/ConsumablesTab/ConsumablesTab';
-import GearTab from './components/GearTab/GearTab';
 import CraftingTab from './components/CraftingTab/CraftingTab';
+import GearTab from './components/GearTab/GearTab';
 import InspectorTab from './components/InspectorTab/InspectorTab';
 
 const allIcons = Object.values(icons);
@@ -2240,7 +2240,7 @@ const App = () =>
         auxiliar[1][7] = createEntity( 'Equippable', 'Amuleto escudo' );
         auxiliar[1][10] = createEntity( 'Equippable', 'Club');
         auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
-        spawnMap ? auxiliar[2][2] = player : auxiliar[15][3] = player; 
+        spawnMap ? auxiliar[2][2] = player : auxiliar[15][3] = player;
         auxiliar[1][2] = createEntity( 'Equippable', 'Club' );
         auxiliar[2][4] = createEntity( 'Enemie', 'Agile Goblin' );
         auxiliar[2][15] = createEntity( 'Object', 'Box' );
@@ -2402,7 +2402,6 @@ const App = () =>
 
     const startGame = (): void =>
     {
-        // setEvents( [] );
         setMaps( [
             { name: 'Caves', load: loadCaveMap, actual: false, visited: false },
             { name: 'Mines', load: loadMinesMap, actual: true, visited: false }
@@ -2419,7 +2418,6 @@ const App = () =>
         findPlayer();
         cleanse('all');
         setTimeout( () => { cleanse('all') }, 50 );
-        // setShowInventory(false);
         const auxiliar = mapa.map(fila => [...fila]);
         auxiliar[player.data.x][player.data.y] = emptyTile;
         setMapa(auxiliar);
