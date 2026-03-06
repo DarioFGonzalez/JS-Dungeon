@@ -2560,13 +2560,12 @@ return (
         {selectedMenu === 'Crafting' && <CraftingTab recipes={recipes} player={player} />}
         <ConsumablesTab player={player} />
         {inspectedCreature && (
-        <InspectorTab 
-            entity={inspectedCreature} 
-            bestiary={bestiary} 
-            onClose={() => setInspectedCreature(null)} 
+        <InspectorTab
+            entity={inspectedCreature}
+            bestiary={bestiary}
+            onClose={() => setInspectedCreature(null)}
         />
         )}
-        {/* <ConsoleTab events={events} /> */}
       </div>
     </div>
   </div>
