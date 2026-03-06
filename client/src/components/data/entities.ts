@@ -80,8 +80,8 @@ export const heavyEnemy: Types.Enemy =
     type: 'Enemy',
     id: '0',
     name: 'Hobgoblin',
-    hp: 20,
-    maxHp: 20,
+    hp: 11,
+    maxHp: 11,
     symbol: icons.hGoblinImg,
     data: { x: 0, y: 0 },
     aliments:

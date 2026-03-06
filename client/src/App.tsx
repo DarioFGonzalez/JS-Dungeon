@@ -99,6 +99,23 @@ const App = () =>
     //     } );
     // }
 
+    useEffect(() => {
+    const handleBlur = () => {
+    if (game && gridRef.current) {
+        setTimeout(() => {
+        gridRef.current?.focus();
+        }, 0);
+    }
+    };
+
+  const gridElement = gridRef.current;
+  gridElement?.addEventListener('blur', handleBlur);
+
+  return () => {
+    gridElement?.removeEventListener('blur', handleBlur);
+  };
+}, [game]);
+
     useEffect( () =>
     {
         mapaRef.current = mapa;
