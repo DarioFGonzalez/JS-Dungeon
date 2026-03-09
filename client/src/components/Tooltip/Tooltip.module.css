@@ -1,0 +1,14 @@
+.tooltip {
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid #00ffff;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  z-index: 10000;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  max-width: 300px;
+  white-space: nowrap;
+}

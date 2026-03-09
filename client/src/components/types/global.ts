@@ -143,6 +143,12 @@ export interface Trap
     toDisarm?: Item[]
 }
 
+export type patrolInfo =
+{
+    pattern: string,
+    moveSpeed: number
+}
+
 export interface Enemy
 {
     type: 'Enemy', //agregado
@@ -155,7 +161,7 @@ export interface Enemy
     aliments: Aliments,
     attack: attackInfo,
     defense: deffenseInfo,
-    pattern: string,
+    patrol: patrolInfo,
     patrolId?: ReturnType<typeof setInterval>,
     activePatrol?: boolean,
     drops: dropInfo[]

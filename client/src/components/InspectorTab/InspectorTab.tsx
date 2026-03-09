@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Tooltip from '../Tooltip/Tooltip';
 import * as Types from '../types/global';
 import styles from './InspectorTab.module.css';
 
@@ -40,21 +41,34 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
     required: number;
     label: string;
     value: React.ReactNode;
-  }) => (
-    <div className={styles.statWrapper}>
-      <div className={unlocked ? styles.statBox : styles.locked}>
-        <span className={styles.label}>{label}</span>
-        <span className={styles.val}>{value}</span>
-      </div>
-      {!unlocked && (
-        <div className={styles.statLockOverlay}>
-          <span className={styles.statLockLabel}>{label}</span>
-          <span className={styles.statLockIcon}>🔒</span>
-          <span className={styles.statLockRequirement}>{required} 💀</span>
+  }) =>
+  {
+    let tooltipContent: Record<string, string> =
+    {
+      'ARMADURA': 'Daño fijo bloqueado',
+      'DUREZA': 'Daño que recibe el arma',
+      'DAÑO': 'Daño causado por la criatura',
+      'ESTADO': 'Plaga recibida al ser golpeado'
+    }
+
+    return(
+    <Tooltip content={tooltipContent[label]}>
+      <div className={styles.statWrapper}>
+        <div className={unlocked ? styles.statBox : styles.locked}>
+          <span className={styles.label}>{label}</span>
+          <span className={styles.val}>{value}</span>
         </div>
-      )}
-    </div>
+        {!unlocked && (
+          <div className={styles.statLockOverlay}>
+            <span className={styles.statLockLabel}>{label}</span>
+            <span className={styles.statLockIcon}>🔒</span>
+            <span className={styles.statLockRequirement}>{required} 💀</span>
+          </div>
+        )}
+      </div>
+    </Tooltip>
   );
+}
 
   return (
     <div className={styles.inspectorContainer}>
@@ -106,18 +120,20 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
 
       <div className={kills >= 3 ? styles.lootArea : styles.lockedArea}>
         {entity.drops.map((drop, i) => (
-          <div key={i} className={styles.lootRow}>
-            <div className={styles.lootLeft}>
-              <img src={drop.item.symbol} className={styles.itemIcon} alt="" />
-              <span className={styles.itemName}>{drop.item.name}</span>
+          <Tooltip content={kills < 3 ? '????' : drop.item.desc}>
+            <div key={i} className={styles.lootRow}>
+              <div className={styles.lootLeft}>
+                <img src={drop.item.symbol} className={styles.itemIcon} alt="" />
+                <span className={styles.itemName}>{drop.item.name}</span>
+              </div>
+              <span
+                className={styles.itemChance}
+                style={{ color: getChanceColor(drop.chance) }}
+              >
+                {drop.chance}%
+              </span>
             </div>
-            <span
-              className={styles.itemChance}
-              style={{ color: getChanceColor(drop.chance) }}
-            >
-              {drop.chance}%
-            </span>
-          </div>
+          </Tooltip>
         ))}
         {kills < 3 && (
           <div className={styles.lootOverlay}>

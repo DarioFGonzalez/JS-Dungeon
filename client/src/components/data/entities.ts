@@ -71,7 +71,7 @@ export const enemy: Types.Enemy =
     },
     attack: { Instant: 2, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { armor: 0, toughness: 1 },
-    pattern: 'horizontal',
+    patrol: { pattern: 'horizontal', moveSpeed: 1000 },
     drops: [ { item: Items.Potion, chance: 10, quantity: 3 }, { item: Gear.Necklace1, chance: 5, quantity: 1 } ]
 }
 
@@ -79,7 +79,7 @@ export const heavyEnemy: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Hobgoblin',
+    name: 'Goblin veterano',
     hp: 11,
     maxHp: 11,
     symbol: icons.hGoblinImg,
@@ -91,7 +91,7 @@ export const heavyEnemy: Types.Enemy =
     },
     attack: { Instant: 3, DoT: 1, Times: 4, Aliment: 'bleed' },
     defense: { armor: 1, toughness: 3, immunity: 'bleed' },
-    pattern: 'vertical',
+    patrol: { pattern: 'vertical', moveSpeed: 2000 },
     drops: [ { item: Items.Antidote, chance: 15, quantity: 1 }, { item: Gear.Dagger1, chance: 5, quantity: 1 }, { item: Items.Bandages, chance: 25, quantity: 2 } ]
 }
 
@@ -99,7 +99,7 @@ export const agileEnemy: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Agile Goblin',
+    name: 'Goblin veloz',
     hp: 5,
     maxHp: 5,
     symbol: icons.snsGoblinImg,
@@ -111,7 +111,7 @@ export const agileEnemy: Types.Enemy =
     },
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { armor: 1, toughness: 3 },
-    pattern: 'random',
+    patrol: { pattern: 'random', moveSpeed: 500 },
     drops: [ { item: Items.Aloe, chance: 35, quantity: 1 } ]
 };
 
@@ -119,7 +119,7 @@ export const minerEnemy: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Miner Goblin',
+    name: 'Goblin minero',
     hp: 3,
     maxHp: 3,
     symbol: icons.minerGoblin,
@@ -131,7 +131,7 @@ export const minerEnemy: Types.Enemy =
     },
     attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { armor: 0, toughness: 1 },
-    pattern: 'random',
+    patrol: { pattern: 'random', moveSpeed: 1000 },
     drops: [ { item: Material.CopperOre, chance: 45, quantity: 1 }, { item: Gear.CopperPickaxe, chance: 15, quantity: 1 } ]
 };
 
@@ -139,7 +139,7 @@ export const vScorpion: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Venomous Scorpion',
+    name: 'Escorpión venenoso',
     hp: 5,
     maxHp: 5,
     symbol: icons.pScorpion,
@@ -151,7 +151,7 @@ export const vScorpion: Types.Enemy =
     },
     attack: { Instant: 1, DoT: 1, Times: 5, Aliment: 'poison' },
     defense: { armor: 0, toughness: 1 },
-    pattern: 'random',
+    patrol: { pattern: 'random', moveSpeed: 750 },
     drops: [ { item: Material.PoisonClaw, chance: 99, quantity: 1 } ]
 };
 

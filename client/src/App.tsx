@@ -1670,8 +1670,8 @@ const App = () =>
 
     const patrolMovement = ( x: number, y: number, entity: Types.Enemy, mapaState: CellContent[][] ): CellContent[][] =>
     {
-        const direcciones = patrolDirections[entity.pattern];
-        const direccion = direcciones[Math.floor(Math.random()*direcciones.length)];
+        const direcciones = patrolDirections[entity.patrol.pattern];
+        let direccion = direcciones[Math.floor(Math.random()*direcciones.length)];
 
         const newX = x + direccion[0];
         const newY = y + direccion[1];
@@ -1680,11 +1680,24 @@ const App = () =>
         {
             mapaState[x][y] = emptyTile;
             mapaState[newX][newY] = entity;
+
+            return mapaState;
         };
 
         if( mapaState[newX][newY].type === 'Player' )
         {
             hurtPlayer( entity.attack.Instant, entity.attack.DoT, entity.attack.Times, entity.attack.Aliment );
+            return mapaState;
+        };
+
+        direccion = direcciones[Math.floor(Math.random()*direcciones.length)];
+
+        if( mapaState[newX][newY]===emptyTile )
+        {
+            mapaState[x][y] = emptyTile;
+            mapaState[newX][newY] = entity;
+
+            return mapaState;
         };
 
         return mapaState;
@@ -2109,13 +2122,13 @@ const App = () =>
             }
         }
 
-        auxiliar[1][11] = createEntity( 'Enemie', 'Hobgoblin' );
-        auxiliar[3][14] = createEntity( 'Enemie', 'Hobgoblin' );
+        auxiliar[1][11] = createEntity( 'Enemie', 'Goblin veterano' );
+        auxiliar[3][14] = createEntity( 'Enemie', 'Goblin veterano' );
         auxiliar[5][1] = createEntity( 'Node', 'Copper' );
-        auxiliar[6][15] = createEntity( 'Enemie', 'Miner Goblin' );
+        auxiliar[6][15] = createEntity( 'Enemie', 'Goblin minero' );
         auxiliar[9][15] = createEntity( 'Node', 'Copper' );
-        auxiliar[10][1] = createEntity( 'Enemie', 'Venomous Scorpion' );
-        auxiliar[11][9] = createEntity( 'Enemie', 'Miner Goblin' );
+        auxiliar[10][1] = createEntity( 'Enemie', 'Escorpión venenoso' );
+        auxiliar[11][9] = createEntity( 'Enemie', 'Goblin minero' );
         auxiliar[12][8] = createEntity( 'Node', 'Copper' );
         auxiliar[14][11] = createEntity( 'Node', 'Copper' );
         spawnMap ? auxiliar[2][2] = player : auxiliar[15][3] = player;
@@ -2256,14 +2269,14 @@ const App = () =>
 
         auxiliar[1][7] = createEntity( 'Equippable', 'Amuleto escudo' );
         auxiliar[1][10] = createEntity( 'Equippable', 'Club');
-        auxiliar[1][11] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[1][11] = createEntity( 'Enemie', 'Goblin veloz' );
         spawnMap ? auxiliar[2][2] = player : auxiliar[15][3] = player;
         auxiliar[1][2] = createEntity( 'Equippable', 'Club' );
-        auxiliar[2][4] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[2][4] = createEntity( 'Enemie', 'Goblin veloz' );
         auxiliar[2][15] = createEntity( 'Object', 'Box' );
-        auxiliar[4][15] = createEntity( 'Enemie', 'Hobgoblin' );
-        auxiliar[5][11] = createEntity( 'Enemie', 'Agile Goblin' );
-        auxiliar[7][2] = createEntity( 'Enemie', 'Agile Goblin' );
+        auxiliar[4][15] = createEntity( 'Enemie', 'Goblin veterano' );
+        auxiliar[5][11] = createEntity( 'Enemie', 'Goblin veloz' );
+        auxiliar[7][2] = createEntity( 'Enemie', 'Goblin veloz' );
         auxiliar[8][3] = createEntity( 'Enemie', 'Goblin' );
         auxiliar[9][1] = createEntity( 'Object', 'Teleport' );
         auxiliar[9][11] = createEntity( 'Trap', 'Poison trap' );
@@ -2316,7 +2329,7 @@ const App = () =>
 
         if( type==='Node' ) return thisEntity as Types.Node;
 
-        if( type==='Enemie' && 'pattern' in thisEntity && (thisEntity.pattern!=='none' || undefined) )
+        if( type==='Enemie' && 'patrol' in thisEntity && (thisEntity.patrol.pattern!=='none' || undefined) )
         {
             const id = crypto.randomUUID();
 
@@ -2346,7 +2359,7 @@ const App = () =>
 
                     return aux;
                 } );
-            }, 1000 );
+            }, thisEntity.patrol.moveSpeed );
 
             return { ...thisEntity, id, patrolId, activePatrol: true };
         }
