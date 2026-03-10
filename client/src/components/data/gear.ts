@@ -1,5 +1,5 @@
-import * as Types from '../types/global';
 import * as icons from '../../Icons/index';
+import * as Types from '../types/global';
 
 export const Fists: Types.Gear =
 {
@@ -21,7 +21,7 @@ export const Dagger1: Types.Gear =
     symbol: icons.dagger1Img,
     id: '',
     slot: 'weapon',
-    desc: '+1 DMG',
+    desc: 'Cuchillo dentado, provoca sangrado.',
     attackStats: { dmg: 1, DoT: 3, times: 2, cd: 1000, aliment: 'bleed' },
     durability: 10,
     equippeable: true
@@ -34,7 +34,7 @@ export const Sword1: Types.Gear =
     symbol: icons.sword1Img,
     id: '',
     slot: 'weapon',
-    desc: '+8 DMG',
+    desc: 'Maza lenta, pero poderosa.',
     attackStats: { dmg: 8, DoT: 0, times: 0, aliment: 'none', cd: 2500 },
     durability: 20,
     equippeable: true
@@ -47,7 +47,7 @@ export const Necklace1: Types.Gear =
     symbol: icons.necklaceImg,
     id: '',
     slot: 'charm',
-    desc: '+5 Shield',
+    desc: 'Protege del daño hasta romperse.',
     durability: 5,
     equippeable: true
 }
@@ -79,7 +79,7 @@ export const CopperPickaxe: Types.Gear =
     symbol: icons.copperPickaxe,
     id: '',
     slot: 'tool',
-    desc: 'Useful to mine ores',
+    desc: 'Necesario para picar minerales.',
     attackStats: { dmg: 1, cd: 4000 },
     durability: 5,
     equippeable: true

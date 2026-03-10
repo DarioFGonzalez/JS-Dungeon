@@ -4,7 +4,7 @@ import * as Types from '../types/global';
 import styles from './InspectorTab.module.css';
 
 interface InspectorTabProps {
-  entity: Types.Enemy;
+  entity: Types.Enemy |Types.Trap;
   bestiary: Types.BestiaryItem[];
   onClose: () => void;
 }
@@ -12,9 +12,10 @@ interface InspectorTabProps {
 const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }) => {
   const beastEntry = bestiary.find(b => b.name === entity.name);
   const kills = beastEntry ? beastEntry.quantity : 0;
+  let enemy = entity.type;
 
   useEffect(() => {
-    const timer = setTimeout(() => onClose(), 1156000);
+    const timer = setTimeout(() => onClose(), 20000);
     return () => clearTimeout(timer);
   }, [entity, onClose]);
 
@@ -80,15 +81,17 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
         </div>
       </div>
 
-      <div className={styles.heartsArea}>
-        {'❤️'.repeat(Math.max(0, entity.hp))}
-        <span className={styles.empty}>
-          {'🖤'.repeat(Math.max(0, entity.maxHp - entity.hp))}
-        </span>
-      </div>
+      {entity.type==='Enemy' &&
+        <div className={styles.heartsArea}>
+          {'❤️'.repeat(Math.max(0, entity.hp))}
+          <span className={styles.empty}>
+            {'🖤'.repeat(Math.max(0, entity.maxHp - entity.hp))}
+          </span>
+        </div>
+      }
 
       <div className={styles.statsGrid}>
-        <StatCell
+        {('defense' in entity && entity.defense) && (<><StatCell
           unlocked={kills >= 1}
           required={1}
           label="ARMADURA"
@@ -99,15 +102,15 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
           required={2}
           label="DUREZA"
           value={`🔨${entity.defense.toughness ?? 0}`}
-        />
+        /></>)}
         <StatCell
-          unlocked={kills >= 2}
+          unlocked={enemy==='Trap' ? true : kills >= 2}
           required={2}
           label="DAÑO"
           value={`💥${entity.attack.Instant ?? 0}`}
         />
         <StatCell
-          unlocked={kills >= 1}
+          unlocked={enemy==='Trap' ? true : kills >= 1}
           required={1}
           label="ESTADO"
           value={
@@ -119,7 +122,7 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
       </div>
 
       <div className={kills >= 3 ? styles.lootArea : styles.lockedArea}>
-        {entity.drops.map((drop, i) => (
+        {'drops' in entity && entity.drops.map((drop, i) => (
           <Tooltip content={kills < 3 ? '????' : drop.item.desc}>
             <div key={i} className={styles.lootRow}>
               <div className={styles.lootLeft}>
@@ -135,7 +138,7 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
             </div>
           </Tooltip>
         ))}
-        {kills < 3 && (
+        {enemy==='Enemy' && kills < 3 && (
           <div className={styles.lootOverlay}>
             <span className={styles.lootLockLabel}>DROPS</span>
             <span className={styles.lootLockIcon}>🔒</span>

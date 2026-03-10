@@ -36,7 +36,6 @@ const App = () =>
 
     const gridRef = useRef<HTMLDivElement>(null);
     const lan = 'es';
-    // const [ lan, setLan ] = useState<'es'|'en'>( 'es' );
     const [ game, setGame ] = useState<boolean>(false);
     const [isTakingDamage, setIsTakingDamage] = useState(false);
 
@@ -45,8 +44,6 @@ const App = () =>
 
     const [ allowed, setAllowed ] = useState<boolean>(true);
     const stun:boolean = false;
-    // const [ stun, setStun ] = useState<boolean>(false);
-    // const [ patrolsId, setPatrolsId ] = useState<NodeJS.Timer>();
 
     const [ mapa, setMapa ] = useState<CellContent[][]>( emptyGrid );
 
@@ -54,9 +51,7 @@ const App = () =>
     const [ maps, setMaps ] = useState<listOfMaps[]>([]);
 
     const mapaRef = useRef( mapa );
-    // const [ showSlides, setShowSlides ] = useState<boolean>( false );
-    // const [ slideIndex, setSlideIndex ] = useState<number> ( 0 );
-    // const currentSlide = Types.slides[slideIndex];
+
     const [ visuals, setVisuals ] = useState<Types.VisualCell[][]>( emptyVisualGrid );
     const [ recipes, setRecipes ] = useState<Types.Recipe[]>( Object.values( Recipes ) );
     
@@ -64,56 +59,20 @@ const App = () =>
     
     const [ residual, setResidual ] = useState<Types.Residual[]>( [] );
 
-    // const [ showInventory, setShowInventory ] = useState<boolean>( false );
-    // const [ events, setEvents ] = useState<Types.eventLog[]>( [] );
-    // const [ delayedLog, setDelayedLog ] = useState<Types.eventLog[]>( [] );
-
     const [ player, setPlayer ] = useState<Types.Player>( Entities.emptyPlayer );
     const [ bestiary, setBestiary ] = useState<Types.BestiaryItem[]>( [] );
     const [ inspectedCreature, setInspectedCreature] = useState<Types.Enemy | null>( );
-    // const [ enemies, setEnemies ] = useState<Types.Enemy[]>( [] );
-    // const [ traps, setTraps ] = useState<Types.Trap[]>( [] );
 
-    // const moveSlide = ( where: string ): void =>
-    // {
-    //     if(where==='next')
-    //     {
-    //         setSlideIndex( prev => ( prev + 1 ) % Types.slides.length );
-    //         return ;
-    //     }
-    //     setSlideIndex( prev => ( prev - 1 + Types.slides.length ) % Types.slides.length );
-    //     return ;
-    // }
+useEffect(() => {
+  if (!game) return;
 
-    // const handleEventLogs = ( event: string, color: string ): void =>
-    // {
-    //     setEvents( eventos =>
-    //     {
-    //         const aux = [ ...eventos ];
-    //         if(aux.length>=6)
-    //         {
-    //             aux.pop();
-    //         }
-    //         aux.unshift( {message: event, color: color} );
-    //         return aux;
-    //     } );
-    // }
-
-    useEffect(() => {
-    const handleBlur = () => {
-    if (game && gridRef.current) {
-        setTimeout(() => {
-        gridRef.current?.focus();
-        }, 0);
+  const interval = setInterval(() => {
+    if (gridRef.current && document.activeElement !== gridRef.current) {
+      gridRef.current.focus();
     }
-    };
+  }, 250);
 
-  const gridElement = gridRef.current;
-  gridElement?.addEventListener('blur', handleBlur);
-
-  return () => {
-    gridElement?.removeEventListener('blur', handleBlur);
-  };
+  return () => clearInterval(interval);
 }, [game]);
 
     useEffect( () =>
@@ -2481,8 +2440,7 @@ const App = () =>
 
     const checkEntity = ( entity: any ): void =>
     {
-        console.log( 'Clickeaste: ', entity );
-        if( 'type' in entity && entity.type === 'Enemy' )
+        if( 'type' in entity && (entity.type === 'Enemy' || entity.type === 'Trap') )
         {
             setInspectedCreature( entity as Types.Enemy );
         }
