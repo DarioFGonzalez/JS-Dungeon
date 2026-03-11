@@ -1,5 +1,51 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 20: 
+
+🗓️ 2025-01-20
+
+`Necesito que el juego sea mas intuitivo...`🤔⏳ `¡Ya sé!` 🤩✨
+
+Tratando de hacer el juego mas "jugar y entender", menos "tengo que leerme el tutorial o no entiendo nada" es que implementé el slideShow, que eran unas placas que pasaban cuando tocabas la *'H'*. También intenté con la consola de eventos `<ConsoleTab/>` diciendo que encontrabas del piso, cuando te hacían daño, que tipo de daño--- todos intentos por que al jugador se le haga mas entendible el mundo (Dícese, intuitivo).
+
+***Pegué volantazo*** 🛑✋
+
+Probando por otro lado, saqué la consola de comandos
+
+---
+
+### 🛠️ Cambios técnicos:
+
+-Refactoricé el código para que las flags detecten si están en deploy o localhost.
+
+-Eliminé/corregí todos los warning esLint.
+
+-Consumibles eliminables con 'backspace'.
+
+-Consola/GearTab/ConsumablesTab con max-height cosa que todos entren en orden.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+Siempre me termino encontrando con algo que reparar/optimizar a mitad de camino de mi objetivo real. 😅✨
+
+Ahora que todo está estable, tengo antidotos- minería- combate- curación- drops y todo lo demás podría...
+
+- Darle un uso a los minerales.
+- Agregar otro mapa.
+- Meter items interactivos. <--
+
+--> Dícese, estaba pensando hacer un ítem (consumible) que sea una `Bomba`💣. Como las de bomberman, que uno deja atras y al rato explota- suena exageradamente sencillo y de paso podría ponerle reglas raras como que:
+
+**`[Se puedan empujar]`** Eso reemplazaría las cajas, que están super olvidadas.
+
+**`[Exploten al contacto]`** Cuando un enemigo las toca explotan, cortar patrullas, preparar emboscadas... 🤤✨
+
+**`[Crear bombas con distintas cualidades]`** Bomba que ***congele***, bomba que ***envenene***, bomba ***incendiaria***...
+
+---
+
 ## 🔹 Paso 19: Parches necesarios 🚑👩‍💻
 
 🗓️ 2025-01-20

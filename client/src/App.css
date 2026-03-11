@@ -192,8 +192,9 @@ html, body {
 
 .map-appear-animation {
   animation: mapArrival 0.6s ease-out forwards;
+  outline: none;
 }
 
-[tabindex="0"]:focus {
+.map-appear-animation:focus {
   outline: none;
 }
