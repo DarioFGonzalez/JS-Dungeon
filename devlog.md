@@ -1,8 +1,8 @@
 # DevLog - Diario de Combate
 
-## 🔹 Paso 20: 
+## 🔹 Paso 21: Jubilando la consola de eventos, por algo mucho mejor 😎👌✨
 
-🗓️ 2025-01-20
+🗓️ 2025-03-14
 
 `Necesito que el juego sea mas intuitivo...`🤔⏳ `¡Ya sé!` 🤩✨
 
@@ -10,39 +10,110 @@ Tratando de hacer el juego mas "jugar y entender", menos "tengo que leerme el tu
 
 ***Pegué volantazo*** 🛑✋
 
-Probando por otro lado, saqué la consola de comandos
+Saqué la consola de comandos, la reemplazé por una información mas visual:
+
+**```[InspectorTab]```**
+Cuando clickeamos entidades del mapa, nos aparece información relevante de las mismas.
+
+![alt text](client/src/images/image-3.png)
+
+**``[ToolTip]``** Pasar el mouse muestra un pequeño texto descriptivo. ¡Cero adivinanzas!
+
+![alt text](client/src/images/image-4.png)
+
+**``[Desbloqueables]``** No toda la información está disponible ni bien entrás. Tenés que matar x cantidad de esa criatura para ir desbloqueando toda la información.
+
+![alt text](client/src/images/image-5.png)
+
+Los detalles de la consola de inspección estuvieron buenos. El blur cuando está bloqueado, los colores para el % de drop rate de los items, pensar el texto para explicar "armadura", "dureza", ... lindo viaje. 😃✨
+
+¡Ah! Agregué mas detalle a las patrullas, ahora puedo hacer que caminen a la velocidad que quiera. 😁
+
+Por eso el Goblin veloz se mueve muy rápido, aunque sea frágil- y el veterano muy lento, pero pega como tren sin frenos (+ sangrado).
+
+Eso le agrega mas vida al juego, explorá buscando mas criaturas- farmealas para ver sus drops- ahora que sabés que tira, fijate rutas- recordá zonas- farmea materiales o utilizables. ¡Vida, aventura, dungeon crawler!. 🐱‍🐉🔥🎉
 
 ---
 
 ### 🛠️ Cambios técnicos:
 
--Refactoricé el código para que las flags detecten si están en deploy o localhost.
+- Agregué <InspectorTab>, <ToolTip> y <StatCell> para hacer la experiencia de juego mas intuitiva.
 
--Eliminé/corregí todos los warning esLint.
+- Configuré el estilado para los elementos bloqueados, el 'bestiary' para seguir las kills de monstruos y el comportamiento entre componentes.
 
--Consumibles eliminables con 'backspace'.
-
--Consola/GearTab/ConsumablesTab con max-height cosa que todos entren en orden.
+- El foco NO puede salir del contenedor principal (mapa grande) para evitar que el usuario, por clickear fuera del mapa, pierda control del tablero.
 
 ---
 
 ### 👾 Futuro próximo / Ideas sueltas 🎯
 
-Siempre me termino encontrando con algo que reparar/optimizar a mitad de camino de mi objetivo real. 😅✨
+Tengo un juego mas intuitivo, puedo craftear, puedo farmear drops de bichos- mhmmh...
 
-Ahora que todo está estable, tengo antidotos- minería- combate- curación- drops y todo lo demás podría...
+De meterle cosas, podría meterle infinidad de contenido extra: Magias, Armas a distancia, patrullas mas avanzadas, **Bosses**, bichos con habilidades--- UFF...
 
-- Darle un uso a los minerales.
-- Agregar otro mapa.
-- Meter items interactivos. <--
+Pero siendo `objetivo`, ahora que tengo un juego "jugable"- con todas las piezas sobre el tablero para armar algo... debería armar algo. ☝😅✨
 
---> Dícese, estaba pensando hacer un ítem (consumible) que sea una `Bomba`💣. Como las de bomberman, que uno deja atras y al rato explota- suena exageradamente sencillo y de paso podría ponerle reglas raras como que:
+Supongo que el parche que viene sería de:
 
-**`[Se puedan empujar]`** Eso reemplazaría las cajas, que están super olvidadas.
+- Balance de armas y amuletos.
+- Balance de drops y drop-chance.
+- Creación de nuevos mapas.
+- ...dije que no iba a agregar nada nuevo, pero... 👉👈
 
-**`[Exploten al contacto]`** Cuando un enemigo las toca explotan, cortar patrullas, preparar emboscadas... 🤤✨
+En realidad me muero de ganas de implementar un sistema de mejoras para el equipo... 🤤✨
 
-**`[Crear bombas con distintas cualidades]`** Bomba que ***congele***, bomba que ***envenene***, bomba ***incendiaria***...
+[ Mazo ] ➡ [ Mazo +1 ] ➡ [ Mazo +2 ] ➡ [ Mazo ⭐ ]
+
+Ir usando gemas, catalizadores, cada vez mas probabilidades de fallas la mejora, crear un sistema simplejo para que el jugador **quiera** salir a farmear esas cosas ⭐✨
+
+Primero: balance. Después, quizás otro mapa. Recién ahí, experimentar con mejoras. Pero cada cosa en su momento, cuando tenga sentido y armonía con el resto."
+
+---
+
+## 🔹 Paso 20: ¡CRAFTING! 💥🔨
+
+`Ok, tengo todos estos minerales... ¿Ahora qué?` 🤔❔ `¡CRAFTING!`🤩✨
+
+¡Una de las cosas que mas me tenía embobado! Después de pensar que poner o como contarlo, me di cuenta que me iría por el tecnisismo y la complejamente simple manera que encontré de hacer que esto funcione- pero eso no es divertido ni bitacora-likey. Así que va el resúmen: 👓📖
+
+Creé una especie de GearTab (inventario de equipo) secundario, hice que al tocar TAB cambies entre estos dos y las teclas que tocás respondan a cual está visible. 🏹🔁🔨
+
+Las recetas se fijan tu inventario para ver que tenés encima y te muestran que podés crearte. Con la E, que antes equipabas/desequipabas cosas, ahora creás la receta que estás seleccionando. 🔪✅
+
+Checkeo y descuento de materiales, agregar el item creado, actualizar el cue visual a ver si podés crearte algo con lo que te quedó. Todo funcional ✨🔨 
+
+![alt text](client/src/images/image-6.png)
+
+---
+
+### 🛠️ Cambios técnicos:
+
+ ``<CraftingTab>``
+
+**Checkea lista de recetas y las muestra en esta pestaña.**
+
+Por ahora: **un array fijo con recetas**.
+Más adelante puedo hacer que interactúen de **otras maneras** con las recetas:
+
+-> Que tengas la receta aprendida.
+
+-> Que la receta sea un consumible. (x cantidad de usos)
+
+-> Que tengas recetas depende tu clase, tus stats, tus... asdfasdfad 🤤✨ 
+
+***...eso que dije no tuvo nada que ver con 'Cambios técnicos'*** 😅💦
+
+- **Agregado** componente para mostrar las recetas
+- **Creadas** funciones para checkear materiales, compararlos con recetas disponibles, quitar materiales requeridos para la receta y entregar item.
+- Suena a poco, pero crear todo para que sea escalable a futuro lleva su tiempo 🤓✨
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+Parado donde estoy, entiendo todo. Sé que hace mi juego, como hacerlo, que tocar... pero creo que necesito hacerlo más `intuitivo`.
+
+El siguiente paso va a ser agregar mas cue visuales, mas datos fáciles de leer, una interfaz mas amigable- mas "probá, tocá, rompé, está todo ahí." 👾🔥
 
 ---
 
@@ -158,7 +229,7 @@ para avanzar de verdad no necesitaba un “motor de mapas”… necesitaba una h
 Excel, casillas perfectamente cuadradas, un mapa 18×18, leyendas a un costado y libertad total para experimentar ideas sin pelearme con el código base. Rústico, directo y absurdamente efectivo.
 
 <p align="center">
-  <img src="image.png" alt="JS Map Creator" width="480" />
+  <img src="client/src/images/image.png" alt="JS Map Creator" width="480" />
   <br />
   <em>JS Map Creator (Excel-based, 18×18 grid)</em>
 </p>

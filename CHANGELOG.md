@@ -4,6 +4,42 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.1.3] - 2025-03-14
+
+### Added
+- Nuevo componente `<InspectorTab>` que muestra información detallada de entidades al hacer clic sobre ellas en el mapa. Incluye estadísticas clave (ARMADURA, DUREZA, DAÑO, ESTADO), drops y sistema de desbloqueo progresivo según kills.
+- Sistema de Tooltips implementado con componente `<Tooltip>` reutilizable que muestra descripciones contextuales al pasar el mouse sobre elementos del InspectorTab y otros sectores clave de la interfaz.
+- Sistema de Bestiario: nuevo estado local `bestiary` que registra la cantidad de enemigos eliminados por especie, utilizado para desbloquear información adicional en el InspectorTab de forma progresiva.
+- Estilado de elementos bloqueados: se agregó blur, overlay y candados visuales para estadísticas y drops aún no desbloqueados, mejorando la claridad de progresión.
+- Colores dinámicos para drop rates: los porcentajes de drop ahora se renderizan con un gradiente HSL que va del rojo (baja probabilidad) al verde (alta), facilitando la lectura rápida.
+- Velocidades individuales de patrullas: las patrullas ahora pueden configurarse con distintos `moveSpeed`, permitiendo comportamientos diferenciados (Goblin veloz vs. Goblin veterano).
+
+### Changed
+- Refactor del sistema de patrullaje: cada enemigo maneja su propio intervalo de movimiento, con control individual y limpieza adecuada al morir o cambiar de mapa.
+- Enfoque UX: se reemplazó la consola de eventos textual (`<ConsoleTab>`) por feedback visual directo en el InspectorTab y tooltips, priorizando la comprensión inmediata sobre la lectura de logs.
+- Mecánica de inspección: ahora cualquier entidad del mapa puede ser inspeccionada mediante clic, unificando la experiencia de reconocimiento de enemigos, trampas y objetos.
+
+### Fixed
+- Pérdida de foco del contenedor principal: se implementó un sistema de reenfoque automático mediante intervalos y detección de eventos, asegurando que el mapa retenga el foco incluso si el usuario clickea fuera del área de juego.
+- Estabilidad visual del overlay de drops: corregido el posicionamiento del overlay de bloqueo en el área de drops cuando el bestiario no alcanza el mínimo de kills requerido.
+
+## [v0.1.2] - 2025-03-10
+
+### Added
+- Nuevo componente `<CraftingTab>` que lista recetas disponibles y permite crear items a partir de materiales en el inventario.
+- Sistema de recetas: implementado array tipado de recetas con ingredientes, cantidades y resultado. Por ahora fijo, pero diseñado para ser extensible (recetas aprendidas, consumibles, condicionales).
+- Navegación por pestañas: se agregó la tecla TAB para alternar entre `<GearTab>` (equipo) y `<CraftingTab>` (fabricación), compartiendo la misma zona de interfaz y lógica de navegación vertical (↑↓).
+- Función `craftItem()`: lógica completa de verificación de materiales, descuento de ingredientes, creación del item resultante y actualización visual del inventario.
+- Feedback visual de crafting: al seleccionar una receta y presionar E, se ejecuta el craft. Si los materiales son insuficientes, se muestra un indicador visual de error temporal.
+
+### Changed
+- Unificación de navegación: los hooks de navegación (`navigateHotbar`, `navigateCraftingMenu`) ahora responden al mismo conjunto de teclas según la pestaña activa, simplificando el manejo de eventos.
+- Estandarización de `setPlayer` en crafting: las actualizaciones de inventario post-craft utilizan la misma lógica que el resto del sistema, asegurando consistencia y evitando efectos secundarios.
+
+### Fixed
+- Overflow en zona de recetas: se ajustaron estilos para que la lista de recetas se desplace verticalmente sin romper el layout cuando hay más items de los que entran en pantalla.
+- Bug de selección múltiple: corregido error que permitía tener más de una receta seleccionada simultáneamente tras ciertos cambios de pestaña.
+
 ## [v0.1.1] - 2025-01-20
 
 ### Changed
