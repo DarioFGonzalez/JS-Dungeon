@@ -1,73 +1,75 @@
 # JS-Dungeon 🐉
 
-*Un RPG retro hecho con JavaScript Vanilla, a puro amor por los juegos clásicos.*
-
-Inspirado en juegos retro RPG, JS-Dungeon es un homenaje al rol viejo con una arquitectura moderna y extensible. Todo hecho desde cero, sin frameworks, sin atajos.
+### Un RPG retro hecho con JavaScript Vanilla.  
+Porque a veces lo mejor es no depender de frameworks y demostrar que entendés el lenguaje de verdad.
 
 ---
 
-## 🎮 ¿Qué podés encontrar?
+## ⚔️ ¿Qué es esto?
 
-- Mapa tipo grid y movimiento libre
-- Combate básico funcional
-- Sistema de loot
-- Interfaz custom sin dependencias externas
-- Código modular, pensado para escalar
+JS-Dungeon es un **dungeon crawler en tiempo real** (explorás, looteás, farmeas, peleas...) construido desde cero, sin engines, sin librerías externas, pura lógica y uso eficiente de las herramientas que ofrece vanilla JS/TS.
+
+No es un proyecto de bootcamp. Es mi laboratorio personal: Se me ocurren nuevas features, exploro mis herramientas- creo nuevas- refactorizo antiguas- replantéo arquitectura y planeo para escalabilidad. Desarrollo. ✨
+
+---
+
+## 🧠 ¿Qué tiene adentro?
+
+- ✅ **Lógica de combate, looteo y crafting** — todo casero, todo funcional
+- ✅ **Sistema de estados alterados (DoT)**: veneno, sangrado, quemadura. ¡Ticks independientes y todo!
+- ✅ **Patrullas con IA configurable**: velocidad, patrón, agresividad
+- ✅ **Bestiario que registra tus kills** y desbloquea información de forma progresiva
+- ✅ **Tooltips contextuales** que explican cada estadística sin romper la inmersión
+- ✅ **Inspector de criaturas** con stats, daños y lista de drops con % y color según rareza
+- ✅ **Inventario + equipamiento + crafting** — todo escalable, pensado y preparado para crecer
+- ✅ **Doble mapa (Mines / Caves)** apuntando a tener muchos más, darle vida
+- ✅ **Código tipado (TypeScript), modular y con docs**. Para que el código trabaje conmigo y no en mi contra. 😅
 
 ---
 
 ## 🧱 Tecnologías
 
-- `JavaScript` (Vanilla, sin frameworks)
-- `HTML5` + `CSS3` con diseño responsivo básico
-- Arquitectura sin una sola librería externas
+`JavaScript` · `TypeScript` · `React` · `HTML5` · `CSS3` · `Git` · `GitHub` · `Vercel`
 
 ---
 
-## 🧪 ¿Está terminado?
+## 🧪 Estado del proyecto
 
-Para nada.
-Este proyecto es un constante crecimiento, mientras avanzo- voy descubriendo nuevas ideas- encontrando la forma de aplicarlas, probando y encontrando otra idea todavía más divertida que la anterior. ¡Evolución!.
+**Vivo, estable y en constante evolución.**  
+Ahora estoy puliendo la experiencia: que el juego se explique solo, sin tutoriales externos.
 
-En la hoja de ruta:
-- Inventario funcional
-- Magias, habilidades, pasivas
-- DoT, Buffs, Debuffs
-- IA básica y patrones de enemigos
-- Guardado de progreso
-- Loot, farming, grinding
+### ✨ Lo último que se sumó:
+- Tooltips informativos en cada estadística
+- Inspector de enemigos con desbloqueables por kills
+- Velocidades individuales de patrullas (Goblin veloz ≠ Goblin veterano)
+- El foco ya no se pierde al clickear fuera del mapa
 
----
-
-## 🧠 ¿Por qué hacer esto?
-
-Porque *"hacer un juego completo"* es el sueño de muchos devs, pero también una excusa perfecta para aprender, frustrarse, refactorizar y crecer.
-
-**JS-Dungeon** no es solo un juego, es un laboratorio.
-Cada sistema está pensado para *ser escalable, entendible y divertido de programar.*
+### 🧭 Hoja de ruta (próximos pasos):
+- Balance de armas, drops y enemigos
+- Nuevos mapas con objetivos concretos
+- Sistema de mejoras de equipo ([ Mazo ] ➡ [ Mazo +1 ] ➡ [ Mazo ⭐ ])
+- ¡Más adelante: magias, bosses y área de efecto!
 
 ---
 
-## 🔎 ¿Querés ver el backstage?
+## 🔎 Backstage
 
-- [📄 CHANGELOG.md](./CHANGELOG.md) – Registro técnico por versión (estilo profesional).
-- [🧠 devlog.md](./devlog.md) – Bitácora informal con decisiones, ideas, errores y catarsis del dev.
+- 📄 [CHANGELOG.md](./CHANGELOG.md) — Registro técnico por versión (estilo profesional).
+- 🧠 [devlog.md](./devlog.md) — Bitácora informal con decisiones, ideas, errores y catarsis del dev.
 
 ---
 
-## 🚀 Demo
+## 🚀 Demo en vivo
 
-¡Deployed DEMO! `[v0.0.98]`
-
-[ ⚔ JS-Dungeon ⚔ ](https://js-dungeon.vercel.app)
-
-Amo programar, amo crear y romperme la cabeza con código. ¡Gracias por interesarte en mi proyecto!
-
-Tu feedback positivo o "negativo", bugs, errores o sugerencias voy a usarlos para ser mejor dev.
+[➡️ JUGAR AHORA (desplegado en Vercel)](https://js-dungeon.vercel.app)
 
 ---
 
 ## 📜 Licencia
 
-Este proyecto está bajo licencia MIT.
-Podés leer los detalles en el archivo [LICENSE](./LICENSE).
+MIT. Podés leer los detalles en el archivo [LICENSE](./LICENSE).
+
+---
+
+*¿Feedback, bugs o sugerencias? Me sirven para ser mejor dev.  
+Amo programar, amo crear y romperme la cabeza con código. Gracias por llegar hasta acá.*
