@@ -1,29 +1,37 @@
-# JS-Dungeon 🐉
+# 🎮 JS-Dungeon
 
-### Un RPG retro hecho con JavaScript Vanilla.  
-Porque a veces lo mejor es no depender de frameworks y demostrar que entendés el lenguaje de verdad.
+> *Un RPG retro construido desde cero con JavaScript Vanilla + TypeScript. Porque a veces lo mejor es no depender de frameworks y demostrar que entendés el lenguaje de verdad.*
+
+<p align="center">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
+</p>
 
 ---
 
 ## ⚔️ ¿Qué es esto?
 
-JS-Dungeon es un **dungeon crawler en tiempo real** (explorás, looteás, farmeas, peleas...) construido desde cero, sin engines, sin librerías externas, pura lógica y uso eficiente de las herramientas que ofrece vanilla JS/TS.
+JS-Dungeon es un **dungeon crawler en tiempo real** (explorás, looteás, farmeas, peleás...) construido desde cero, sin engines, sin librerías externas, pura lógica y uso eficiente de las herramientas que ofrece vanilla JS/TS.
 
-No es un proyecto de bootcamp. Es mi laboratorio personal: Se me ocurren nuevas features, exploro mis herramientas- creo nuevas- refactorizo antiguas- replantéo arquitectura y planeo para escalabilidad. Desarrollo. ✨
+No es un proyecto de bootcamp. Es mi laboratorio personal: Se me ocurren nuevas features, exploro mis herramientas, creo nuevas, refactorizo antiguas, replanteo arquitectura y planeo escalabilidad. Desarrollo. ✨
 
 ---
 
 ## 🧠 ¿Qué tiene adentro?
 
-- ✅ **Lógica de combate, looteo y crafting** — todo casero, todo funcional
-- ✅ **Sistema de estados alterados (DoT)**: veneno, sangrado, quemadura. ¡Ticks independientes y todo!
-- ✅ **Patrullas con IA configurable**: velocidad, patrón, agresividad
-- ✅ **Bestiario que registra tus kills** y desbloquea información de forma progresiva
-- ✅ **Tooltips contextuales** que explican cada estadística sin romper la inmersión
-- ✅ **Inspector de criaturas** con stats, daños y lista de drops con % y color según rareza
-- ✅ **Inventario + equipamiento + crafting** — todo escalable, pensado y preparado para crecer
-- ✅ **Doble mapa (Mines / Caves)** apuntando a tener muchos más, darle vida
-- ✅ **Código tipado (TypeScript), modular y con docs**. Para que el código trabaje conmigo y no en mi contra. 😅
+| Feature | Estado |
+|---------|--------|
+| ⚔️ Combate, looteo y crafting | ✅ Funcional |
+| 🩸 Sistema de estados alterados (veneno, sangrado, quemadura) | ✅ Con ticks independientes |
+| 🤖 IA de patrullas configurable (velocidad, patrón, agresividad) | ✅ |
+| 📖 Bestiario con desbloqueo progresivo | ✅ |
+| 🔍 Inspector de criaturas con stats y drops | ✅ |
+| 🎒 Inventario + equipamiento + crafting | ✅ Escalable |
+| 🗺️ Mapas (Mines / Caves) | ✅ |
+| 📝 Código tipado (TypeScript) | ✅ |
 
 ---
 
@@ -61,7 +69,7 @@ Ahora estoy puliendo la experiencia: que el juego se explique solo, sin tutorial
 
 ## 🚀 Demo en vivo
 
-[➡️ JUGAR AHORA (desplegado en Vercel)](https://js-dungeon.vercel.app)
+[![Vercel](https://img.shields.io/badge/Play_Now-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://js-dungeon.vercel.app)
 
 ---
 
