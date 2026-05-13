@@ -1660,9 +1660,14 @@ const App = () => {
 
       if (canCraft) {
         if (deepCopy.hotBar.Equippeable.length < 5) {
-          deepCopy.hotBar.Equippeable.push(
-            turnToInventoryGear(selectedRecipe.item),
-          );
+          if(selectedRecipe.item.type==='Item') {
+            addToInventory(selectedRecipe.item as Types.Item,selectedRecipe.quantity||1)
+
+          } else {
+            deepCopy.hotBar.Equippeable.push(
+              turnToInventoryGear(selectedRecipe.item)
+            );
+          }
           deepCopy.hotBar.Equippeable = deepCopy.hotBar.Equippeable.map(
             (slot: Types.InventoryGear) => {
               if (selectedRecipe !== undefined) {

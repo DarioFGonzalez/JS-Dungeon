@@ -1,6 +1,6 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "js-dungeon",
+  "version": "0.1.3",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -23,11 +23,30 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "keywords": [
+    "retro",
+    "gaming",
+    "react",
+    "typescript",
+    "javascript",
+    "game engine",
+    "engine"
+  ],
+  "author": {
+    "name": "Dario Fernando Gonzalez",
+    "email": "dario.zerobyte@gmail.com",
+    "url": "https://github.com/DarioFGonzalez"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
     ]
+  },
+  "license": "IMT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DarioFGonzalez/JS-Dungeon"
   },
   "browserslist": {
     "production": [

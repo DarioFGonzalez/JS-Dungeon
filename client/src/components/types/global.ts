@@ -1,4 +1,5 @@
 import * as images from '../../images/index';
+import { Consumables } from '../data/items';
 
 export type VisualCell = string | {
   text: string;
@@ -215,8 +216,9 @@ export type recipeMaterial =
 
 export interface Recipe
 {
-    item: Gear,
+    item: Gear | Item,
     ingredients: recipeMaterial[],
+    quantity?: number,
     crafted: boolean,
     selected: boolean,
     failed: boolean

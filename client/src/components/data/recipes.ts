@@ -1,6 +1,7 @@
 import { Recipe } from '../types/global';
 import { Dagger1, Sword1, CopperPickaxe } from '../data/gear';
-import { CopperOre, SilverOre } from '../data/materials';
+import { CopperOre, PoisonClaw, SilverOre } from '../data/materials';
+import { Antidote } from './items';
 
 export const daggerRecipe: Recipe = {
     item: Dagger1,
@@ -39,6 +40,20 @@ export const macheteRecipe: Recipe = {
             quantity: 1
         }
     ],
+    crafted: false,
+    selected: false,
+    failed: false
+}
+
+export const antidoteRecipe: Recipe = {
+    item: Antidote,
+    ingredients:[
+        {
+            material: PoisonClaw,
+            quantity: 1
+        }
+    ],
+    quantity: 1,
     crafted: false,
     selected: false,
     failed: false
