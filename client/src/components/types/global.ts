@@ -6,7 +6,7 @@ export type VisualCell = string | {
   color?: string;
 };
 
-type allEntities = Gear | Enemy | Player | Item | Material |Environment; 
+type allEntities = Gear | Enemy | Player | Item | Material |Environment | Node | Trap | Projectile; 
 
 export type locationData = { x: number, y: number };
 export type Coords = [ number, number ];
@@ -152,7 +152,7 @@ export type patrolInfo =
 
 export interface Enemy
 {
-    type: 'Enemy', //agregado
+    type: 'Enemy',
     id: string,
     name: string,
     hp: number,
@@ -166,6 +166,16 @@ export interface Enemy
     patrolId?: ReturnType<typeof setInterval>,
     activePatrol?: boolean,
     drops: dropInfo[]
+}
+
+export interface Projectile
+{
+    type: 'Projectile',
+    id?: ReturnType<typeof setInterval>,
+    name: string,
+    symbol: string,
+    data: locationData,
+    attack: attackInfo,
 }
 
 export interface slideItem

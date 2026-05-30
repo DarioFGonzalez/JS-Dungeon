@@ -24,6 +24,7 @@ import ConsumablesTab from "./components/ConsumablesTab/ConsumablesTab";
 import CraftingTab from "./components/CraftingTab/CraftingTab";
 import GearTab from "./components/GearTab/GearTab";
 import InspectorTab from "./components/InspectorTab/InspectorTab";
+import { basicArrowClass } from "./components/data/projectiles";
 
 const allIcons = Object.values(icons);
 
@@ -45,6 +46,7 @@ type CellContent =
   | Types.Trap
   | Types.Item
   | Types.Gear
+  | Types.Projectile
   | Types.Environment
   | Types.Node;
 
@@ -74,17 +76,18 @@ const App = () => {
   const [maps, setMaps] = useState<listOfMaps[]>([]);
 
   const mapaRef = useRef(mapa);
-
+  
   const [visuals, setVisuals] = useState<Types.VisualCell[][]>(emptyVisualGrid);
   const [recipes, setRecipes] = useState<Types.Recipe[]>(
     Object.values(Recipes),
   );
-
+  
   const [tps, setTps] = useState<Types.ArrayOfCoords>([]);
-
+  
   const [residual, setResidual] = useState<Types.Residual[]>([]);
-
+  
   const [player, setPlayer] = useState<Types.Player>(Entities.emptyPlayer);
+  const playerRef = useRef(player);
   const [bestiary, setBestiary] = useState<Types.BestiaryItem[]>([]);
   const [inspectedCreature, setInspectedCreature] =
     useState<Types.Enemy | null>();
@@ -104,6 +107,10 @@ const App = () => {
   useEffect(() => {
     mapaRef.current = mapa;
   }, [mapa]);
+
+  useEffect(() => {
+    playerRef.current = player;
+  }, [player]);
 
   const findPlayer = (): void => {
     let here = [0, 0];
@@ -128,6 +135,26 @@ const App = () => {
       data: { x: here[0], y: here[1] },
     }));
   };
+
+  const returnPlayer = (): { x: number; y: number; icon: string } => {
+    let here = [0, 0];
+    let heroIcons = [
+      icons.heroFront,
+      icons.heroBack,
+      icons.heroLeft,
+      icons.heroRight,
+    ];
+    const actualMap = mapaRef.current;
+    
+    actualMap.forEach((fila, y) =>
+      fila.forEach((celda, z) => {
+        if (heroIcons.includes(celda.symbol)) {
+          here = [y, z];
+        }
+      }),
+    );
+    return { x: here[0], y: here[1], icon: actualMap[here[0]][here[1]].symbol };
+  }
 
   const inconsecuente = (symbol: string): void => {
     const auxiliar = mapa.map((fila) => [...fila]);
@@ -442,7 +469,7 @@ const App = () => {
   const strikeEnemy = (x: number, y: number): void => {
     const thisWeapon =
       player.hotBar.Equippeable.find(
-        (item) => item.item.slot === "weapon" && item.equiped,
+        (item) => (item.item.slot === "weapon" || "ranged") && item.equiped,
       ) || Gear.emptyHanded;
 
     if (thisWeapon.onCd) return;
@@ -1476,6 +1503,76 @@ const App = () => {
     damageWeapon(thisOre.toughness, thisTool);
   };
 
+  const shootProjectile = (): void => {
+    const distance = 10; // esto va a venir del arco
+    let traveledDistance = 1;
+    const { x, y, icon } = returnPlayer();
+    const [dx, dy] = directionFromVector(icon);
+
+    let actualX = x + dx;
+    let actualY = y + dy;
+
+    let firstIteration = true;
+    let thisProjectile: Types.Projectile = new basicArrowClass( 'up', { x: actualX, y: actualY }, 1 );
+
+    const projectileId = setInterval( () => {
+      if(firstIteration) {
+        thisProjectile.id = projectileId;
+      }
+      
+      const aux = mapaRef.current.map( x => [...x] );
+      const objective = aux[actualX]?.[actualY];
+
+
+      console.log(thisProjectile);
+      switch(objective.type) {
+        case 'Tile': {
+          thisProjectile.data = {x: actualX, y: actualY};
+          aux[actualX][actualY] = thisProjectile;
+          break;
+        }
+        case 'Enemy': {
+          const { Instant, DoT, Times, Aliment } = thisProjectile.attack;
+            damageEnemy(objective.id||'ID', Instant, DoT, Times, Aliment);
+          break;
+        }
+        case 'Node':
+        case 'Tool':
+        case 'Wall': {
+          clearInterval(thisProjectile.id);
+          break;
+        }
+        case 'player': {
+          return;
+        }
+        default:
+          break;
+        }
+
+        if(!firstIteration) {
+          aux[actualX - dx][actualY - dy] = emptyTile;
+        }
+
+        firstIteration = false;
+
+        actualX += dx;
+        actualY += dy;
+
+        setMapa(aux);
+
+        traveledDistance++;
+
+        if(traveledDistance===distance) {
+          clearInterval(thisProjectile.id);
+          setTimeout( () => {
+            const aux = mapaRef.current.map( x => [...x] );
+            aux[thisProjectile.data.x][thisProjectile.data.y] = emptyTile;
+            setMapa(aux);
+          }, 50);
+        }
+    }, 50);
+  }
+
   const handleInteraction = (): void => {
     const aux = mapa.map((fila) => [...fila]);
     const [dx, dy] = directionFromVector(player.symbol);
@@ -1483,6 +1580,8 @@ const App = () => {
     let y = player.data.y + dy;
 
     const objective = aux[x][y];
+
+    console.log(objective);
 
     switch (objective.type) {
       case "Enemy": {
@@ -1869,6 +1968,10 @@ const App = () => {
         // case 'h':   //ayuda
         // setShowSlides( prev => !prev );
         // break;
+
+        case 'f':
+          shootProjectile();
+          break;
 
         case "enter":
           handleInteraction();
