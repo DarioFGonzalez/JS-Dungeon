@@ -469,7 +469,7 @@ const App = () => {
   const strikeEnemy = (x: number, y: number): void => {
     const thisWeapon =
       player.hotBar.Equippeable.find(
-        (item) => (item.item.slot === "weapon" || "ranged") && item.equiped,
+        (item) => (item.item.slot === "weapon" || item.item.slot === "ranged") && item.equiped,
       ) || Gear.emptyHanded;
 
     if (thisWeapon.onCd) return;
@@ -545,171 +545,134 @@ const App = () => {
   ): void => {
     let tag = { aliment: "", color: "khaki" };
 
-    const thisMonsterData = findThisEnemy(id, mapa);
-    if (!thisMonsterData) return;
+    setMapa((prev) => {
+      const aux = prev.map((x) => [...x]);
+      const currentMonster = findThisEnemy(id, aux);
+      if (!currentMonster) return aux;
 
-    const { entity } = thisMonsterData;
-    const { x, y } = thisMonsterData;
+      const { x: mobX, y: mobY, entity: mob } = currentMonster;
 
-    if (entity.hp - dmg <= 0) {
-      setMapa((prev) => {
-        const aux = prev.map((x) => [...x]);
-
-        const thisMonster = findThisEnemy(id, aux);
-        if (!thisMonster) return aux;
-
-        const { x: mobX, y: mobY, entity: mob } = thisMonster;
+      if (mob.hp - dmg <= 0) {
         clearInterval(mob.patrolId);
 
         lan === "es"
-          ? queueLog(`${thisMonster.entity.name} murió.`, "crimson")
-          : queueLog(`${thisMonster.entity.name} died.`, "crimson");
+          ? queueLog(`${mob.name} murió.`, "crimson")
+          : queueLog(`${mob.name} died.`, "crimson");
 
-        if (thisMonster.entity.drops.length > 0) {
-          const loot = thisMonster.entity.drops
+        if (mob.drops.length > 0) {
+          const loot = mob.drops
             .filter((drop) => rollDrop(drop.chance))
             .map((drop) => ({ item: drop.item, quantity: drop.quantity }));
           aux[mobX][mobY] = lootBag(loot);
-          return aux;
+        } else {
+          aux[mobX][mobY] = emptyTile;
         }
 
-        aux[mobX][mobY] = emptyTile;
-        return aux;
-      });
+        setTimeout(() => {
+          setBestiary((prevData) => {
+            let bAux = prevData.map((beast) => ({ ...beast }));
+            let beastIndex = bAux.findIndex((beast) => beast.name === mob.name);
+            if (beastIndex === -1) {
+              return [...bAux, { name: mob.name, quantity: 1 }];
+            }
+            bAux[beastIndex].quantity++;
+            return bAux;
+          });
+        }, 0);
 
-      setBestiary((prevData) => {
-        let aux = prevData.map((beast) => ({ ...beast }));
-        let beastIndex = aux.findIndex((beast) => beast.name === entity.name);
-        if (beastIndex === -1) {
-          return [...aux, { name: entity.name, quantity: 1 }];
-        }
-        aux[beastIndex].quantity++;
         return aux;
-      });
+      }
 
-      return;
-    } else {
-      if (dot !== 0 && entity.defense.immunity !== aliment) {
+      aux[mobX][mobY] = { ...mob, hp: mob.hp - dmg };
+
+      lan === "es"
+        ? queueLog(
+            `Golpeaste a ${mob.name} por ${dmg} de daño. [${mob.hp - dmg}/${mob.maxHp}]. ${tag.aliment}`,
+            tag.color,
+          )
+        : queueLog(
+            `You HIT ${mob.name} by ${dmg} damage. [${mob.hp - dmg}/${mob.maxHp}]`,
+            "khaki",
+          );
+
+      if (dot !== 0 && mob.defense.immunity !== aliment) {
         const alimentVector = {
           poison: "PoisonInstances",
           bleed: "BleedInstances",
           burn: "BurnInstances",
         } as const;
 
-        // const alimentTag =
-        // {
-        //     'poison': { aliment: '[Envenenado]', color: 'lime' },
-        //     'bleed': { aliment: '[Sangrando]', color: 'red' },
-        //     'burn': { aliment: '[Quemándose]', color: 'orange' }
-        // };
-
         type AlimentKey = keyof typeof alimentVector;
 
-        let dmgId = setInterval(() => {
-          let flag = true;
+        if (aliment in alimentVector) {
+          setTimeout(() => {
+            let dmgId = setInterval(() => {
+              let flag = true;
 
-          setMapa((prev) => {
-            if (flag && isDev) {
-              flag = false;
-              return prev;
-            }
+              setMapa((prevMap) => {
+                if (flag && isDev) {
+                  flag = false;
+                  return prevMap;
+                }
 
-            const aux = prev.map((fila) => [...fila]);
-            const dmgIntervalMonster = findThisEnemy(id, aux);
+                const dotAux = prevMap.map((fila) => [...fila]);
+                const dmgIntervalMonster = findThisEnemy(id, dotAux);
 
-            if (!dmgIntervalMonster) return prev;
-            const { x, y, entity } = dmgIntervalMonster;
+                if (!dmgIntervalMonster) return prevMap;
+                const { x, y, entity } = dmgIntervalMonster;
 
-            manageVisualAnimation("damage", x, y, dot.toString(), 450);
+                manageVisualAnimation("damage", x, y, dot.toString(), 450);
 
-            if (entity.hp - dot <= 0 || !game) {
-              cleanse("all", id);
-              return enemyDeath(id);
-            }
+                if (entity.hp - dot <= 0 || !game) {
+                  cleanse("all", id);
+                  return enemyDeath(id);
+                }
 
-            aux[x][y] = { ...entity, hp: entity.hp - dot };
+                dotAux[x][y] = { ...entity, hp: entity.hp - dot };
+                return dotAux;
+              });
+            }, 1000);
 
-            return aux;
-          });
-        }, 1000);
+            let timerId = setTimeout(() => {
+              setMapa((prevMap) => {
+                const dotAux = prevMap.map((cell) => [...cell]);
+                const timeoutMonster = findThisEnemy(id, dotAux);
+                if (!timeoutMonster) return prevMap;
 
-        let timerId = setTimeout(() => {
-          setMapa((prev) => {
-            const aux = prev.map((cell) => [...cell]);
+                const { x, y, entity } = timeoutMonster;
 
-            const timeoutMonster = findThisEnemy(id, aux);
-            if (!timeoutMonster) return prev;
+                dotAux[x][y] = manageDotInstance(
+                  alimentVector[aliment as AlimentKey],
+                  { dmgId, timerId },
+                  entity,
+                  "remove",
+                );
+                return dotAux;
+              });
+              clearInterval(dmgId);
+            }, times * 1000);
 
-            const { x, y, entity } = timeoutMonster;
+            setMapa((prevMap) => {
+              const dotAux = prevMap.map((cell) => [...cell]);
+              const dotInstanceMonster = findThisEnemy(id, dotAux);
+              if (!dotInstanceMonster) return dotAux;
 
-            if (aliment in alimentVector) {
-              aux[x][y] = manageDotInstance(
+              const { x, y, entity } = dotInstanceMonster;
+
+              dotAux[x][y] = manageDotInstance(
                 alimentVector[aliment as AlimentKey],
                 { dmgId, timerId },
                 entity,
-                "remove",
+                "add",
               );
-            }
-
-            return aux;
-            /*switch(aliment)   // LEGACY CODE, POR SI ACASO.
-                        {
-                            case 'poison':
-                                {
-                                    aux[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'remove');
-                                    break;
-                                }
-                            case 'bleed':
-                                {
-                                    aux[x][y] = manageDotInstance("BleedInstances", {dmgId, timerId}, entity, 'remove');
-                                    break;
-                                }
-                            case 'burn':
-                                {
-                                    aux[x][y] = manageDotInstance("PoisonInstances", {dmgId, timerId}, entity, 'remove');
-                                    break;
-                                }
-                            default:
-                                break;
-                        }*/
-          });
-
-          clearInterval(dmgId);
-        }, times * 1000);
-
-        if (aliment in alimentVector) {
-          setMapa((prev) => {
-            const aux = prev.map((cell) => [...cell]);
-            aux[x][y] = manageDotInstance(
-              alimentVector[aliment as AlimentKey],
-              { dmgId, timerId },
-              entity,
-              "add",
-            );
-
-            // const tag = alimentTag[aliment as AlimentKey];
-            return aux;
-          });
+              return dotAux;
+            });
+          }, 0);
         }
       }
 
-      setMapa((prev) => {
-        const aux = prev.map((x) => [...x]);
-
-        aux[x][y] = { ...entity, hp: entity.hp - dmg };
-        return aux;
-      });
-
-      lan === "es"
-        ? queueLog(
-            `Golpeaste a ${entity.name} por ${dmg} de daño. [${entity.hp - dmg}/${entity.maxHp}]. ${tag.aliment}`,
-            tag.color,
-          )
-        : queueLog(
-            `You HIT ${entity.name} by ${dmg} damage. [${entity.hp - dmg}/${entity.maxHp}]`,
-            "khaki",
-          );
-    }
+      return aux;
+    });
   };
 
   const damageCharm = (charm: Types.InventoryGear, dmg: number) => {
@@ -1504,7 +1467,7 @@ const App = () => {
   };
 
   const shootProjectile = (): void => {
-    const distance = 10; // esto va a venir del arco
+    const distance = 4;
     let traveledDistance = 1;
     const { x, y, icon } = returnPlayer();
     const [dx, dy] = directionFromVector(icon);
@@ -1513,65 +1476,73 @@ const App = () => {
     let actualY = y + dy;
 
     let firstIteration = true;
-    let thisProjectile: Types.Projectile = new basicArrowClass( 'up', { x: actualX, y: actualY }, 1 );
+    let thisProjectile: Types.Projectile = new basicArrowClass(
+      "up",
+      { x: actualX, y: actualY },
+      1,
+    );
 
-    const projectileId = setInterval( () => {
-      if(firstIteration) {
+    const { Instant, DoT, Aliment, Times } = thisProjectile.attack;
+
+    const projectileId = setInterval(() => {
+      if (firstIteration) {
         thisProjectile.id = projectileId;
       }
-      
-      const aux = mapaRef.current.map( x => [...x] );
+
+      const aux = mapaRef.current.map((x) => [...x]);
       const objective = aux[actualX]?.[actualY];
 
-
-      console.log(thisProjectile);
-      switch(objective.type) {
-        case 'Tile': {
-          thisProjectile.data = {x: actualX, y: actualY};
+      switch (objective.type) {
+        case "Tile": {
+          thisProjectile.data = { x: actualX, y: actualY };
           aux[actualX][actualY] = thisProjectile;
           break;
         }
-        case 'Enemy': {
-          const { Instant, DoT, Times, Aliment } = thisProjectile.attack;
-            damageEnemy(objective.id||'ID', Instant, DoT, Times, Aliment);
-          break;
+        case "Enemy": {
+          clearInterval(thisProjectile.id);
+          if (!firstIteration) {
+            aux[actualX - dx][actualY - dy] = emptyTile;
+          }
+          setMapa(aux);
+          damageEnemy(objective.id || "", Instant, DoT, Times, Aliment);
+          return;
         }
-        case 'Node':
-        case 'Tool':
-        case 'Wall': {
+        case "Node":
+        case "Object":
+        case "Wall": {
           clearInterval(thisProjectile.id);
           break;
         }
-        case 'player': {
+        case "player": {
           return;
         }
         default:
           break;
-        }
+      }
 
-        if(!firstIteration) {
-          aux[actualX - dx][actualY - dy] = emptyTile;
-        }
+      if (!firstIteration) {
+        aux[actualX - dx][actualY - dy] = emptyTile;
+      }
 
-        firstIteration = false;
+      firstIteration = false;
 
-        actualX += dx;
-        actualY += dy;
+      actualX += dx;
+      actualY += dy;
 
-        setMapa(aux);
+      setMapa(aux);
 
-        traveledDistance++;
+      traveledDistance++;
 
-        if(traveledDistance===distance) {
-          clearInterval(thisProjectile.id);
-          setTimeout( () => {
-            const aux = mapaRef.current.map( x => [...x] );
-            aux[thisProjectile.data.x][thisProjectile.data.y] = emptyTile;
-            setMapa(aux);
-          }, 50);
-        }
+      if (traveledDistance === distance) {
+        clearInterval(thisProjectile.id);
+        setTimeout(() => {
+          const aux = mapaRef.current.map((x) => [...x]);
+          aux[thisProjectile.data.x][thisProjectile.data.y] = emptyTile;
+          setMapa(aux);
+        }, 50);
+      }
     }, 50);
-  }
+  };
 
   const handleInteraction = (): void => {
     const aux = mapa.map((fila) => [...fila]);
@@ -1585,6 +1556,7 @@ const App = () => {
 
     switch (objective.type) {
       case "Enemy": {
+        console.log("Golpear gil")
         strikeEnemy(x, y);
         break;
       }
@@ -2852,6 +2824,7 @@ const App = () => {
   };
 
   const checkEntity = (entity: any): void => {
+    console.log(entity);
     if (
       "type" in entity &&
       (entity.type === "Enemy" || entity.type === "Trap")
