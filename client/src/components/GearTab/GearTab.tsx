@@ -29,6 +29,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
 
   const slotClassMap: Record<string, string> = {
     weapon: styles.weaponCard,
+    ranged: styles.rangedCard,
     charm: styles.charmCard,
     tool: styles.toolCard,
     ore: styles.oreCard
@@ -39,6 +40,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
       <div className={styles.gearGrid}>
         {player.hotBar.Equippeable.map((x: InventoryGear) => (
           <div
+          onClick={()=>console.log(x)}
             key={x.id}
             className={`
               ${styles.gearCard}

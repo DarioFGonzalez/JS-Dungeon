@@ -40,6 +40,19 @@ export const Sword1: Types.Gear =
     equippeable: true
 }
 
+export const Bow1: Types.Gear =
+{
+    type: 'Gear',
+    name: 'Wooden bow',
+    symbol: icons.pDummy,
+    id: '',
+    slot: 'ranged',
+    desc: 'An old bow, made out of wood and poor handicraft',
+    attackStats: { dmg: 1, range: 3, cd: 1000 },
+    durability: 25,
+    equippeable: true
+}
+
 export const Necklace1: Types.Gear =
 {
     type: 'Gear',
@@ -66,7 +79,7 @@ export const Necklace2: Types.Gear =
 }
 
 export const Equippables: Types.Gear[] = [
-    Fists, Sword1, Dagger1, Necklace1, Necklace2
+    Fists, Sword1, Dagger1, Bow1, Necklace1, Necklace2
 ];
 
 export const emptyHanded = { id: '', item: Fists, durability: 999, onCd: false, equiped: true, selected: true };

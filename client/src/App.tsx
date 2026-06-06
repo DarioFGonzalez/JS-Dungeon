@@ -24,7 +24,7 @@ import ConsumablesTab from "./components/ConsumablesTab/ConsumablesTab";
 import CraftingTab from "./components/CraftingTab/CraftingTab";
 import GearTab from "./components/GearTab/GearTab";
 import InspectorTab from "./components/InspectorTab/InspectorTab";
-import { basicArrowClass } from "./components/data/projectiles";
+import { basicArrowClass, fireArrowClass } from "./components/data/projectiles";
 
 const allIcons = Object.values(icons);
 
@@ -477,6 +477,12 @@ const App = () => {
     const thisEnemy = mapa[x][y] as Types.Enemy;
 
     if (!thisEnemy) return;
+    if(thisWeapon.item.slot==='ranged') {
+      
+      
+      shootProjectile()
+      return ;
+    }
 
     const attk = thisWeapon.item.attackStats;
     if (!attk) return;
@@ -492,7 +498,9 @@ const App = () => {
     );
     manageVisualAnimation("visual", x, y, icons.redClawHit, 200);
     thisWeapon !== Gear.emptyHanded &&
-      damageWeapon(thisEnemy.defense.toughness, thisWeapon);
+    damageWeapon(thisEnemy.defense.toughness, thisWeapon);
+
+    return ;
   };
 
   const enemyDeath = (id: string): CellContent[][] => {
@@ -1466,21 +1474,42 @@ const App = () => {
     damageWeapon(thisOre.toughness, thisTool);
   };
 
+  const createProjectile = (type: string, x: number, y: number, bowDamage: number ): Types.Projectile => {
+    let thisProjectile: Types.Projectile;
+
+    switch(type) {
+      case 'normal': {  
+        thisProjectile = new basicArrowClass( "up", { x, y }, bowDamage );
+        break;
+      }
+      case 'fire': {
+        thisProjectile = new fireArrowClass( "up", { x, y }, bowDamage );
+        break;
+      }
+      default: {
+        thisProjectile = new basicArrowClass( "up", { x, y }, bowDamage); // manejar después
+      }
+    }
+
+    return thisProjectile;
+  }
+
   const shootProjectile = (): void => {
-    const distance = 4;
+    const equippedBow = playerRef.current.hotBar.Equippeable.find(
+      (item) => item.equiped && item.item.slot === "ranged",
+    );
+    if(!equippedBow) return;
+    
     let traveledDistance = 1;
     const { x, y, icon } = returnPlayer();
     const [dx, dy] = directionFromVector(icon);
-
+    
     let actualX = x + dx;
     let actualY = y + dy;
 
+    let thisProjectile = createProjectile('normal', actualX, actualY, equippedBow.item.attackStats?.dmg as number);
+
     let firstIteration = true;
-    let thisProjectile: Types.Projectile = new basicArrowClass(
-      "up",
-      { x: actualX, y: actualY },
-      1,
-    );
 
     const { Instant, DoT, Aliment, Times } = thisProjectile.attack;
 
@@ -1504,19 +1533,11 @@ const App = () => {
             aux[actualX - dx][actualY - dy] = emptyTile;
           }
           setMapa(aux);
-          damageEnemy(objective.id || "", Instant, DoT, Times, Aliment);
-          return;
-        }
-        case "Node":
-        case "Object":
-        case "Wall": {
-          clearInterval(thisProjectile.id);
-          break;
-        }
-        case "player": {
+          damageEnemy(objective.id && typeof objective.id === "string" ? objective.id : "4", Instant, DoT, Times, Aliment);
           return;
         }
         default:
+          clearInterval(thisProjectile.id);
           break;
       }
 
@@ -1533,7 +1554,7 @@ const App = () => {
 
       traveledDistance++;
 
-      if (traveledDistance === distance) {
+      if (traveledDistance === equippedBow.item.attackStats?.range) {
         clearInterval(thisProjectile.id);
         setTimeout(() => {
           const aux = mapaRef.current.map((x) => [...x]);
@@ -2581,6 +2602,7 @@ const App = () => {
     auxiliar[15][16] = createEntity("Object", "Fire");
     auxiliar[16][16] = createEntity("Object", "Teleport");
 
+    auxiliar[15][4] = createEntity('Equippable', 'Wooden bow');
     auxiliar[15][2] = createEntity("Object", "Map teleport", ["Mines"]);
 
     setTps([

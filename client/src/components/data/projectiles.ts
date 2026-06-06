@@ -1,15 +1,14 @@
 import * as icons from '../../Icons/projectileIcons';
 import * as Types from '../types/global';
 
-export const basicArrow: Types.Projectile = {
-    type: 'Projectile',
-    name: 'Basic Arrow',
-    symbol: icons.basicArrowImg,
-    data: { x: 0, y: 0 },
-    attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' }
+const basicArrowIcon: Record<string, string> = {
+    up: icons.basicArrowImg,
+    down: icons.basicArrowImg,
+    left: icons.basicArrowImg,
+    right: icons.basicArrowImg
 }
 
-const arrowIconDirection: Record<string, string> = {
+const fireArrowIcon: Record<string, string> = {
     up: icons.basicArrowImg,
     down: icons.basicArrowImg,
     left: icons.basicArrowImg,
@@ -18,16 +17,31 @@ const arrowIconDirection: Record<string, string> = {
 
 export class basicArrowClass implements Types.Projectile
 {
-    type: 'Projectile' = 'Projectile';
+    type = 'Arrow';
     id?: ReturnType<typeof setInterval>;
     name: string = 'Basic Arrow';
     symbol: string;
     data: Types.locationData;
     attack: Types.attackInfo = { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' };
 
-    constructor( direction: string, data: Types.locationData, attack: number ) {
+    constructor( direction: string, data: Types.locationData, bowAttack: number ) {
         this.data = data;
-        this.attack.Instant += attack;
-        this.symbol = arrowIconDirection[direction];
+        this.attack.Instant += bowAttack;
+        this.symbol = basicArrowIcon[direction];
+    }
+}
+
+export class fireArrowClass implements Types.Projectile {
+    type = 'Arrow';
+    id?: ReturnType<typeof setInterval>;
+    name: string = 'Fire Arrow';
+    symbol: string;
+    data: Types.locationData;
+    attack: Types.attackInfo = { Instant: 1, DoT: 2, Times: 1, Aliment: 'none' };
+
+    constructor( direction: string, data: Types.locationData, bowAttack: number ) {
+        this.data = data;
+        this.attack.Instant += bowAttack;
+        this.symbol = fireArrowIcon[direction];
     }
 }
