@@ -24,7 +24,7 @@ import ConsumablesTab from "./components/ConsumablesTab/ConsumablesTab";
 import CraftingTab from "./components/CraftingTab/CraftingTab";
 import GearTab from "./components/GearTab/GearTab";
 import InspectorTab from "./components/InspectorTab/InspectorTab";
-import { basicArrowClass, fireArrowClass } from "./components/data/projectiles";
+import { basicArrowClass, fireArrowClass, poisonArrowClass } from "./components/data/projectiles";
 
 const allIcons = Object.values(icons);
 
@@ -477,12 +477,6 @@ const App = () => {
     const thisEnemy = mapa[x][y] as Types.Enemy;
 
     if (!thisEnemy) return;
-    if(thisWeapon.item.slot==='ranged') {
-      
-      
-      shootProjectile()
-      return ;
-    }
 
     const attk = thisWeapon.item.attackStats;
     if (!attk) return;
@@ -552,6 +546,7 @@ const App = () => {
     aliment: string = "",
   ): void => {
     let tag = { aliment: "", color: "khaki" };
+    console.log(dmg, dot, times, aliment);
 
     setMapa((prev) => {
       const aux = prev.map((x) => [...x]);
@@ -1359,7 +1354,7 @@ const App = () => {
   const navigateHotBarVectors: Record<string, number> = {
     arrowup: -1,
     arrowdown: 1,
-    delete: 0,
+    x: 0,
     enter: 9,
   };
 
@@ -1383,6 +1378,21 @@ const App = () => {
         return [0, 0];
     }
   };
+
+  const playerFacing = (symbol: string): string => {
+    switch (symbol) {
+      case icons.heroBack:
+        return "up";
+      case icons.heroFront:
+        return "down";
+      case icons.heroLeft:
+        return "left";
+      case icons.heroRight:
+        return "right";
+      default:
+        return "up";
+    }
+  }
 
   const manageVisualAnimation = (
     type: string,
@@ -1479,15 +1489,19 @@ const App = () => {
 
     switch(type) {
       case 'normal': {  
-        thisProjectile = new basicArrowClass( "up", { x, y }, bowDamage );
+        thisProjectile = new basicArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
         break;
       }
       case 'fire': {
-        thisProjectile = new fireArrowClass( "up", { x, y }, bowDamage );
+        thisProjectile = new fireArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
+        break;
+      }
+      case 'poison': {
+        thisProjectile = new poisonArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
         break;
       }
       default: {
-        thisProjectile = new basicArrowClass( "up", { x, y }, bowDamage); // manejar después
+        thisProjectile = new basicArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage); // manejar después
       }
     }
 
@@ -1498,20 +1512,23 @@ const App = () => {
     const equippedBow = playerRef.current.hotBar.Equippeable.find(
       (item) => item.equiped && item.item.slot === "ranged",
     );
-    if(!equippedBow) return;
+    if(!equippedBow || equippedBow.onCd) return;
     
-    let traveledDistance = 1;
+    let traveledDistance = 0;
     const { x, y, icon } = returnPlayer();
     const [dx, dy] = directionFromVector(icon);
     
     let actualX = x + dx;
     let actualY = y + dy;
 
-    let thisProjectile = createProjectile('normal', actualX, actualY, equippedBow.item.attackStats?.dmg as number);
+    let thisProjectile = createProjectile('poison', actualX, actualY, equippedBow.item.attackStats?.dmg as number);
 
     let firstIteration = true;
 
+    damageWeapon(thisProjectile.toughness, equippedBow);
+
     const { Instant, DoT, Aliment, Times } = thisProjectile.attack;
+    console.log("Attack stats: ", thisProjectile.attack);
 
     const projectileId = setInterval(() => {
       if (firstIteration) {
@@ -1533,7 +1550,11 @@ const App = () => {
             aux[actualX - dx][actualY - dy] = emptyTile;
           }
           setMapa(aux);
-          damageEnemy(objective.id && typeof objective.id === "string" ? objective.id : "4", Instant, DoT, Times, Aliment);
+          let thisMonster = objective as Types.Enemy;
+
+          const realDamage = Instant - thisMonster.defense.armor;
+
+          damageEnemy(objective.id as string , realDamage, DoT, Times, Aliment);
           return;
         }
         default:
@@ -1573,11 +1594,8 @@ const App = () => {
 
     const objective = aux[x][y];
 
-    console.log(objective);
-
     switch (objective.type) {
       case "Enemy": {
-        console.log("Golpear gil")
         strikeEnemy(x, y);
         break;
       }
@@ -1919,7 +1937,7 @@ const App = () => {
       switch (key) {
         case "arrowup":
         case "arrowdown":
-        case "delete":
+        case "x":
           switch (selectedMenu) {
             case "Gear":
               navigateHotbar(key);
@@ -2466,6 +2484,7 @@ const App = () => {
     auxiliar[12][8] = createEntity("Node", "Copper");
     auxiliar[14][11] = createEntity("Node", "Copper");
     spawnMap ? (auxiliar[2][2] = player) : (auxiliar[15][3] = player);
+    auxiliar[2][3] = createEntity("Equippable", "Wooden bow");
     auxiliar[15][5] = createEntity("Tool", "Copper Pickaxe");
     auxiliar[15][10] = createEntity("Enemie", "Goblin");
     auxiliar[15][13] = createEntity("Node", "Silver");

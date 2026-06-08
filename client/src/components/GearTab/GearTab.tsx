@@ -35,6 +35,14 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
     ore: styles.oreCard
   };
 
+  const meleeOrRanged = ( item: InventoryGear ): boolean => {
+    if(item.item.slot==='weapon' || item.item.slot==='ranged') {
+      return true;
+    }
+
+    return false;
+  };
+
   return (
     <div className={styles.gearTab}>
       <div className={styles.gearGrid}>
@@ -63,14 +71,14 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
             {x.selected && (
               <>
                 { !(x.item.type==='Ore' || x.item.type==='Reagent') && <div className={styles.hotkeyEquip}>E</div>}
-                <div className={styles.hotkeyDel}>Del</div>
+                <div className={styles.hotkeyDel}>X</div>
               </>
             )}
 
             <div className={styles.gearStatsRow}>
               {x.item.attackStats && (
                 <div className={styles.gearStat}>
-                  {x.item.slot === 'weapon' ? '🗡' : '⛏'} {x.item.attackStats.dmg}
+                  {meleeOrRanged(x) ? '🗡' : '⛏'} {x.item.attackStats.dmg}
                 </div>
               )}
               {x.item.defenseStats && (
@@ -78,13 +86,13 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
                   🛡 +{x.item.defenseStats.def}
                 </div>
               )}
-              {(x.item.slot === 'weapon' || x.item.slot === 'tool') &&
+              {(meleeOrRanged(x) || x.item.slot === 'tool') &&
                 x.durability !== undefined &&
                 x.item.durability !== undefined && (
                   <DurabilityBar
                     actual={x.durability}
                     total={x.item.durability}
-                    slot={x.item.slot}
+                    slot={x.item.slot as string}
                   />
                 )}
               {x.item.slot === 'charm' && renderTalismanHp(x)}

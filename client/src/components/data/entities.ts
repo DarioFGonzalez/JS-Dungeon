@@ -16,6 +16,7 @@ export const emptyPlayer: Types.Player =
     symbol: icons.heroFront,
     data: { x: 0, y: 0 },
     inventory: [],
+    quiver: [],
     hotBar: { Equippeable: [ ] },
     aliments:
     {

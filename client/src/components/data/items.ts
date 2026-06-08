@@ -1,4 +1,5 @@
 import * as icons from '../../Icons/index';
+import * as arrows from '../../Icons/projectileIcons';
 import * as Types from '../types/global';
 
 export const Aloe: Types.Item =
@@ -48,3 +49,11 @@ export const Antidote: Types.Item =
 export const Consumables: Types.Item[] = [
     Potion, Bandages, Aloe, Antidote
 ];
+
+export const basicArrow: Types.Item = {
+    type: 'Arrow',
+    name: 'Basic arrow',
+    symbol: arrows.arrowUp,
+    id: '',
+    desc: 'An ordinary arrow, nothing special about it.'
+}

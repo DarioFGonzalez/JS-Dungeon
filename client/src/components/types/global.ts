@@ -16,7 +16,7 @@ export type Residual = { entity: allEntities, coords: number[] };
 export type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, range?: number, cd: number };
 export type deffenseStats = { def?: number, immunity?: string, hp?: number };
 
-export type quiverItem = { arrow: Projectile, quantity: number, selected: boolean };
+export type quiverItem = { arrow: string, quantity: number, selected: boolean };
 export type quiver = quiverItem[];
 export type InventoryItem = { item: Item, quantity: number, onCd: boolean, selected: boolean };
 export type InventoryGear = { id: string, item: Gear, durability?: number, onCd?: boolean, quantity?: number, equiped?: boolean, selected: boolean };
@@ -84,14 +84,14 @@ export interface Node
 
 export interface Item
 {
-    type: 'Item',
+    type: string,
     name: string,
     symbol: string,
     id: string,
     desc: string,
     cleanse?: string,
     heal?: number,
-    cd: number
+    cd?: number
 };
 
 export interface Gear
@@ -129,6 +129,7 @@ export interface Player
     symbol: string,
     data: locationData,
     inventory: inventory,
+    quiver: quiver,
     hotBar: HotBarItems,
     aliments: Aliments,
     buffs: Buffs
@@ -178,6 +179,7 @@ export interface Projectile
     symbol: string,
     data: locationData,
     attack: attackInfo,
+    toughness: number
 }
 
 export interface slideItem
