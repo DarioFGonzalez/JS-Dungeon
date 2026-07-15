@@ -24,7 +24,7 @@ import ConsumablesTab from "./components/ConsumablesTab/ConsumablesTab";
 import CraftingTab from "./components/CraftingTab/CraftingTab";
 import GearTab from "./components/GearTab/GearTab";
 import InspectorTab from "./components/InspectorTab/InspectorTab";
-import { basicArrowClass, fireArrowClass, poisonArrowClass } from "./components/data/projectiles";
+import { ArrowClass } from "./components/data/projectiles";
 
 const allIcons = Object.values(icons);
 
@@ -1060,7 +1060,7 @@ const App = () => {
       if (player.hotBar.Equippeable.length > 4) return;
 
       const hasEquippedWeapon = player.hotBar.Equippeable.some(
-        (slot) => slot.item.slot === "weapon" && slot.equiped,
+        (slot) => slot.item.slot === gear.slot && slot.equiped,
       );
 
       item = turnToInventoryGear(gear, !hasEquippedWeapon);
@@ -1484,36 +1484,43 @@ const App = () => {
     damageWeapon(thisOre.toughness, thisTool);
   };
 
-  const createProjectile = (type: string, x: number, y: number, bowDamage: number ): Types.Projectile => {
-    let thisProjectile: Types.Projectile;
-
-    switch(type) {
-      case 'normal': {  
-        thisProjectile = new basicArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
-        break;
-      }
-      case 'fire': {
-        thisProjectile = new fireArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
-        break;
-      }
-      case 'poison': {
-        thisProjectile = new poisonArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
-        break;
-      }
-      default: {
-        thisProjectile = new basicArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage); // manejar después
-      }
-    }
-
-    return thisProjectile;
+  const createProjectile= (Ammo: Types.Ammo, x: number, y: number, bowDamage: number ): Types.Projectile => {
+    const facing = playerFacing(playerRef.current.symbol);
+  
+    return new ArrowClass(Ammo, facing, {x, y}, bowDamage);
   }
+
+  // const createProjectile = (type: string, x: number, y: number, bowDamage: number ): Types.Projectile => {
+  //   let thisProjectile: Types.Projectile;
+    
+
+    // switch(type) {
+    //   case 'normal': {  
+    //     thisProjectile = new basicArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
+    //     break;
+    //   }
+    //   case 'fire': {
+    //     thisProjectile = new fireArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
+    //     break;
+    //   }
+    //   case 'poison': {
+    //     thisProjectile = new poisonArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage );
+    //     break;
+    //   }
+    //   default: {
+    //     thisProjectile = new basicArrowClass( playerFacing(playerRef.current.symbol), { x, y }, bowDamage); // manejar después
+    //   }
+    // }
+
+    // return thisProjectile;
+  // };
 
   const shootProjectile = (): void => {
     const equippedBow = playerRef.current.hotBar.Equippeable.find(
-      (item) => item.equiped && item.item.slot === "ranged",
+      (item) => item.equiped && item.item.style === "ranged",
     );
     if(!equippedBow || equippedBow.onCd) return;
-    
+
     let traveledDistance = 0;
     const { x, y, icon } = returnPlayer();
     const [dx, dy] = directionFromVector(icon);
@@ -1521,14 +1528,41 @@ const App = () => {
     let actualX = x + dx;
     let actualY = y + dy;
 
-    let thisProjectile = createProjectile('poison', actualX, actualY, equippedBow.item.attackStats?.dmg as number);
+    const equippedAmmo = playerRef.current.quiver.find( (slot) => (slot.ammo.ammoType === equippedBow.item.ammoType) && slot.selected );
+    if(!equippedAmmo) return;
+
+    let thisProjectile = createProjectile(equippedAmmo.ammo, actualX, actualY, equippedBow.item.attackStats?.dmg as number);
 
     let firstIteration = true;
 
     damageWeapon(thisProjectile.toughness, equippedBow);
 
     const { Instant, DoT, Aliment, Times } = thisProjectile.attack;
-    console.log("Attack stats: ", thisProjectile.attack);
+
+    let flag = true;
+
+    setPlayer( (prev: Types.Player) => {
+      const aux = structuredClone(prev);
+
+      if (flag && isDev) {
+        flag = false;
+        return aux;
+      }
+
+      const newQuantity = equippedAmmo.quantity - 1;
+
+      if(newQuantity <= 0) {
+        return { ...aux, quiver: aux.quiver.filter( (slot: Types.quiverItem) => 
+          slot.ammo.name!==equippedAmmo.ammo.name ) }
+      }
+
+      const newQuiver: Types.quiver = aux.quiver.map( (slot: Types.quiverItem) => 
+        slot.ammo.name === equippedAmmo.ammo.name
+        ? { ...slot, quantity: newQuantity }
+        : slot );
+
+      return { ...aux, quiver: newQuiver }; 
+    } );
 
     const projectileId = setInterval(() => {
       if (firstIteration) {
@@ -1741,6 +1775,117 @@ const App = () => {
     });
   };
 
+  const navigateQuiver = (): void => {
+    let flag = true;
+
+    setPlayer((playerInfo) => {
+      if (flag && isDev) {
+        flag = false;
+        return playerInfo;
+      }
+
+      const player = structuredClone(playerInfo);
+
+      const equippedRangedWeapon = player.hotBar.Equippeable.find( (slot: Types.InventoryGear) => slot.item.style === 'ranged' && slot.equiped );
+      if(!equippedRangedWeapon) return playerInfo;
+
+      const compatibleAmmo = player.quiver.filter( (slot: Types.quiverItem) => slot.ammo.ammoType === equippedRangedWeapon.item.ammoType );
+      if(compatibleAmmo.length===0) return playerInfo;
+
+      console.log("Arma de rango equipada: ", equippedRangedWeapon, "\nMunición compatible encontrada: ", compatibleAmmo );
+
+      const selectedAmmo = compatibleAmmo.find( (slot: Types.quiverItem) => slot.selected );
+      
+      if(!selectedAmmo || compatibleAmmo.length === 1) {
+        return {...player, quiver: player.quiver.map( (x :Types.quiverItem) =>
+          x.ammo.name === compatibleAmmo[0].ammo.name
+          ? { ...x, selected: true }
+          : x ) };
+      }
+
+      const max = compatibleAmmo.length - 1;
+      const oldIndex = compatibleAmmo.findIndex( (slot: Types.quiverItem) => slot.selected );
+      const newIndex = oldIndex + 1 < 0 ? max : oldIndex + 1 > max ? 0 : oldIndex + 1;
+
+      const aux = [...player.quiver ];
+      aux[oldIndex] = { ...aux[oldIndex], selected: false };
+      aux[newIndex] = { ...aux[newIndex], selected: true };
+
+      return { ...player, quiver: aux };
+      // const to = navigateHotBarVectors[key];
+
+      // if (to !== 0) {
+      //   const oldIndex = player.hotBar.Equippeable.findIndex(
+      //     (item) => item.selected,
+      //   );
+
+      //   if (oldIndex === -1) {
+      //     const aux = player.hotBar.Equippeable.map((x, y) =>
+      //       y === 0 ? { ...x, selected: true } : x,
+      //     );
+      //     return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
+      //   }
+
+      //   const max = player.hotBar.Equippeable.length - 1;
+      //   const newIndex =
+      //     oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
+
+      //   if (oldIndex === newIndex) return playerInfo;
+
+      //   const aux = [...player.hotBar.Equippeable];
+      //   aux[oldIndex] = { ...aux[oldIndex], selected: false };
+      //   aux[newIndex] = { ...aux[newIndex], selected: true };
+
+      //   return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
+      // }
+
+      // let equippeables = player.hotBar.Equippeable;
+
+      // if (equippeables.length > 1) {
+      //   let selectedAt = equippeables.findIndex((x) => x.selected);
+      //   if (selectedAt === 0) {
+      //     equippeables[1].selected = true;
+      //     equippeables = equippeables.slice(1);
+      //   } else {
+      //     equippeables[selectedAt - 1].selected = true;
+      //     equippeables = [
+      //       ...equippeables.slice(0, selectedAt),
+      //       ...equippeables.slice(selectedAt + 1),
+      //     ];
+      //   }
+      //   return {
+      //     ...player,
+      //     hotBar: { ...player.hotBar, Equippeable: equippeables },
+      //   };
+      // }
+      // return { ...player, hotBar: { ...player.hotBar, Equippeable: [] } };
+    });
+  };
+
+  const addToQuiver = ( Ammo: Types.Ammo, quantity: number ) => {
+    let flag = true;
+
+    const thisAmmo = player.quiver.find((x) => x.ammo.name === Ammo.name);
+    if (!thisAmmo) {
+      setPlayer((prev) => ({
+        ...prev,
+        quiver: [
+          ...prev.quiver,
+          { ammo: Ammo, quantity: quantity, selected: false },
+        ],
+      }));
+    } else {
+      setPlayer((prev) => ({
+        ...prev,
+        quiver: prev.quiver.map((slot) => {
+          return slot.ammo.name === Ammo.name
+            ? { ...slot, quantity: slot.quantity + quantity }
+            : slot;
+        }),
+      }));
+    }
+  };
+
   const craftItem = (): void => {
     let flag = true;
 
@@ -1770,14 +1915,21 @@ const App = () => {
 
       if (canCraft) {
         if (deepCopy.hotBar.Equippeable.length < 5) {
-          if(selectedRecipe.item.type==='Item') {
-            addToInventory(selectedRecipe.item as Types.Item,selectedRecipe.quantity||1)
+          
+          switch(selectedRecipe.item.type) {
+            case 'Item':
+              addToInventory(selectedRecipe.item as Types.Item,selectedRecipe.quantity || 1)
+              break;
+            case 'Ammo':
+              addToQuiver(selectedRecipe.item as Types.Ammo, selectedRecipe.quantity || 1);
+              break;
+            case 'Gear':
+              deepCopy.hotBar.Equippeable.push( turnToInventoryGear(selectedRecipe.item as Types.Gear) )
+              break;
+            default:
+              break;
+          };
 
-          } else {
-            deepCopy.hotBar.Equippeable.push(
-              turnToInventoryGear(selectedRecipe.item)
-            );
-          }
           deepCopy.hotBar.Equippeable = deepCopy.hotBar.Equippeable.map(
             (slot: Types.InventoryGear) => {
               if (selectedRecipe !== undefined) {
@@ -1964,6 +2116,9 @@ const App = () => {
           selectedMenu === "Gear" ? swapGear() : craftItem();
           break;
 
+        case "r":
+          navigateQuiver();
+          break;
         // case 'i':   //abrir inventario
         //     setShowInventory(prev => !prev);
         //     break;

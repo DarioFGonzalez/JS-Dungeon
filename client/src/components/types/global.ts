@@ -16,7 +16,7 @@ export type Residual = { entity: allEntities, coords: number[] };
 export type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, range?: number, cd: number };
 export type deffenseStats = { def?: number, immunity?: string, hp?: number };
 
-export type quiverItem = { arrow: string, quantity: number, selected: boolean };
+export type quiverItem = { ammo: Ammo, quantity: number, selected: boolean };
 export type quiver = quiverItem[];
 export type InventoryItem = { item: Item, quantity: number, onCd: boolean, selected: boolean };
 export type InventoryGear = { id: string, item: Gear, durability?: number, onCd?: boolean, quantity?: number, equiped?: boolean, selected: boolean };
@@ -101,6 +101,8 @@ export interface Gear
     symbol: string,
     id: string,
     slot?: string,
+    style?: string,
+    ammoType?: string,
     desc: string,
     attackStats?: attackStats,
     defenseStats?: deffenseStats,
@@ -171,13 +173,23 @@ export interface Enemy
     drops: dropInfo[]
 }
 
+export interface Ammo {
+    type: string,
+    ammoType: string,
+    name: string,
+    symbol: string,
+    attack: attackInfo,
+    toughness: number,
+    desc: string
+}
+
 export interface Projectile
 {
     type: string,
-    id?: ReturnType<typeof setInterval>,
     name: string,
-    symbol: string,
+    id?: ReturnType<typeof setInterval>,
     data: locationData,
+    symbol: string,
     attack: attackInfo,
     toughness: number
 }
@@ -230,7 +242,7 @@ export type recipeMaterial =
 
 export interface Recipe
 {
-    item: Gear | Item,
+    item: Gear | Item | Ammo,
     ingredients: recipeMaterial[],
     quantity?: number,
     crafted: boolean,

@@ -50,10 +50,34 @@ export const Consumables: Types.Item[] = [
     Potion, Bandages, Aloe, Antidote
 ];
 
-export const basicArrow: Types.Item = {
-    type: 'Arrow',
+export const basicArrow: Types.Ammo = {
+    type: 'Ammo',
+    ammoType: 'Arrow',
     name: 'Basic arrow',
     symbol: arrows.arrowUp,
-    id: '',
-    desc: 'An ordinary arrow, nothing special about it.'
-}
+    attack: {
+        Instant: 1,
+        DoT: 0,
+        Times: 0,
+        Aliment: 'none',
+        Attacked: false
+    },
+    toughness: 1,
+    desc: 'Flecha básica'
+};
+
+export const poisonArrow: Types.Ammo = {
+    type: 'Ammo',
+    ammoType: 'Arrow',
+    name: 'Poison arrow',
+    symbol: arrows.arrowUp,
+    attack: {
+        Instant: 1,
+        DoT: 1,
+        Times: 3,
+        Aliment: 'poison',
+        Attacked: false
+    },
+    toughness: 2,
+    desc: 'Flecha con punta envenenada'
+};

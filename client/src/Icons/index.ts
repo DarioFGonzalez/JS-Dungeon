@@ -53,6 +53,8 @@ import dagger1Img from './dagger.png';
 import necklaceImg from './necklace.PNG';
 import sword1Img from './sword.png';
 
+import basicBow from './basicBow.png';
+
 import copperPickaxe from './copperPickaxe.png';
 
 import scorpionClaw from './scorpioClaw.png';
@@ -64,5 +66,4 @@ import heroFront from './heroFront.png';
 import heroLeft from './heroLeft.png';
 import heroRight from './heroRight.png';
 
-export { scorpionClaw, pScorpion, aloeImg, antidoteImg, bagImg, bandagesImg, boxImg, clawHit, copperOre, copperPickaxe, copperVein1, copperVein2, copperVein3, dagger1Img, pDummy, fireImg, fountainImg, goblinImg, healing, heroBack, heroFront, heroLeft, heroRight, hGoblinImg, mapTpImg, minerGoblin, necklaceImg, potionImg, pTrapImg, redClawHit, rockyWall1, rockyWall2, rockyWall3, silverOre, silverVein1, silverVein2, silverVein3, snsGoblinImg, sparks1, sparks2, sparks3, sword1Img, tile1, torchdWallImg, tpImg, trapImg, wallImg };
-
+export { scorpionClaw, pScorpion, aloeImg, antidoteImg, bagImg, bandagesImg, boxImg, clawHit, copperOre, copperPickaxe, copperVein1, copperVein2, copperVein3, dagger1Img, pDummy, fireImg, fountainImg, goblinImg, healing, heroBack, heroFront, heroLeft, heroRight, hGoblinImg, mapTpImg, minerGoblin, necklaceImg, potionImg, pTrapImg, redClawHit, rockyWall1, rockyWall2, rockyWall3, silverOre, silverVein1, silverVein2, silverVein3, snsGoblinImg, sparks1, sparks2, sparks3, sword1Img, tile1, torchdWallImg, tpImg, trapImg, wallImg, basicBow };
