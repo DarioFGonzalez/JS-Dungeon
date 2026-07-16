@@ -1,5 +1,76 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 22: Pro-yec-ti-les 🏹🤩
+
+🗓️ 2025-07-16
+
+`Tengo armas cuerpo a cuerpo, pero si me quedo ahí el juego va a ser muy simplón... tengo una idea 😏✨`
+
+Tenemos armas, tenemos creación de equipo, recolección... Necesitaba algo `consumible`, que se necesite en `cantidades` como para alguna forma de ***quemar*** materiales "con sentido" y de esa necesidad re básica para darle mas cuerpo al *chiste* de farmear salió:
+
+*`... y si... ¿Tenés que farmear materiales para craftear FLECHAS?`*
+
+BOOM. 
+
+Cerebro a maquinar, me acordé que mi juego [Space-shooter](https://github.com/DarioFGonzalez/Space-Shooter) tenía una mecánica que podía reciclar, refactorizar y optimizar para crear el sistema de proyectiles. Así que tomando como base el sistema de ***'asteroides'***:
+
+1. Creé mi primer flecha que avanzaba por el mapa
+2. Logré que impacte contra cosas (Paredes, items, `enemigos`...)
+3. Logré que meta efectos de estado, dañe y elimine enemigos.
+
+Ya con esas tres cosas (medio hardcodeadas) pero `FUNCIONALES` arranqué a optimizar y dejar lo más escalable posible.
+
+Dicho eso, dejé todo preparado para meter más tipos de munición. El arma tiene un *`"ammoType"`*, las municiones tienen esta propiedad también. Así que el día de mañana podemos, no se, crear:
+
+```
+const newWeapon: Types.Gear =
+{
+  ... ,
+  slot: 'weapon',         // Un arma
+  style: 'ranged'.        // A distancia
+  ammoType: 'bullets',    // Que pida cualquier munición
+  ...
+}
+```
+```
+const newAmmo: Types.Ammo =
+{
+  type: 'Ammo',           // Y crear munición nueva
+  ammoType: 'bullets',    // Compatible con esa arma
+  attack: { ... } ,       // Y los efectos que querramos
+  ...
+}
+```
+
+Armas de fuego, **ballestas**, **`armas que disparen algún tipo de láser`**... la estructura está creada para que, cuando querramos, el único freno sea la imaginación y el tiempo disponible para balancearlo. 👌😏✨
+
+¡Tenemos sistema de proyectiles y armas a distancia!
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- Agregué un *`quiver`* que permite almacenar distintos tipos de municiones.
+- *`Recetas`* para craftear distintos tipos de municiones.
+- Tocamos la letra *`R`* para navegar entre las distintas municiones.
+- Al disparar, la munición del carcaj disminuye y el arco pierde durabilidad.
+  - 🏹 Distancia que recorre el proyectil depende del arma a distancia utilizada.
+  - 🎯 Daño que recibe el arma depende de la munición utilizada.
+- Arquitectura para meter de más armas a distancia y tipos de munición.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+Vamos con algo más sencillo, creé el sistema de proyectiles y armas a distancia- pero no tiene UX/UI 😅 Ahora mismo creás munición, pero no aparece en ningún lado. Podés cambiar entre la munición compatible para el arma equipada, pero no te das cuenta hasta que disparás. Así que:
+
+- Trabajar en el UX/UI del sistema de munición
+- Hacerlo entendible e intuitivo cosa que no necesitemos un tutorial
+
+Una vez el jugador `vea` la munición que tiene, `entienda` como cambiar de munición y pueda `usar` el sistema de armas a distancia sin problemas... creo que ahí estaría mi victoria para este objetivo. ✨😏🏹
+
+---
+
 ## 🔹 Paso 21: Jubilando la consola de eventos, por algo mucho mejor 😎👌✨
 
 🗓️ 2025-03-14

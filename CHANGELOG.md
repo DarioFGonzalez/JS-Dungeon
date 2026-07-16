@@ -4,6 +4,22 @@ Todas las modificaciones importantes a este proyecto serán documentadas en este
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v0.1.4] - 2025-07-16
+
+### Added
+- Sistema de proyectiles y armas a distancia: implementación inicial de flechas como munición consumible, con soporte para impacto contra entidades, aplicación de efectos de estado y eliminación de enemigos.
+- Arquitectura de municiones: introducción de la propiedad `ammoType` en armas y municiones para definir compatibilidad entre distintos tipos de proyectiles (flechas, balas, etc.).
+- Componente `quiver`: almacenamiento de múltiples tipos de municiones y navegación entre ellas mediante tecla `R`.
+- Recetas de crafteo para municiones: integración con el sistema de crafting para producir flechas y otros proyectiles a partir de materiales recolectados.
+
+### Changed
+- Lógica de disparo: al utilizar munición, el carcaj reduce su cantidad y el arma equipada pierde durabilidad proporcional al tipo de proyectil.
+- Distancia de recorrido de proyectiles: ahora depende del arma a distancia utilizada, diferenciando comportamientos entre distintos equipos.
+
+### Notes
+- Esta versión establece la base para futuras expansiones de armas a distancia (ballestas, armas de fuego, láseres, etc.).
+- El sistema es funcional pero carece de interfaz visual dedicada; se prevé trabajar en UX/UI para mostrar municiones disponibles y facilitar la interacción sin necesidad de tutoriales.
+
 ## [v0.1.3] - 2025-03-14
 
 ### Added
