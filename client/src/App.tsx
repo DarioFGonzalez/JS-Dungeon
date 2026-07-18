@@ -1623,16 +1623,28 @@ const App = () => {
   const handleInteraction = (): void => {
     const aux = mapa.map((fila) => [...fila]);
     const [dx, dy] = directionFromVector(player.symbol);
+    
     let x = player.data.x + dx;
     let y = player.data.y + dy;
 
     const objective = aux[x][y];
+    const equippedWeapon = playerRef.current.hotBar.Equippeable.find( (slot: Types.InventoryGear ) => slot.equiped && slot.item.slot === 'weapon' );
+
+    console.log( "Arma equipada: ", equippedWeapon );
+
+    switch(equippedWeapon?.item.style) {
+      case 'ranged':
+        shootProjectile()
+        break;
+      case 'melee':
+        if(objective.type ==='Enemy') strikeEnemy( x, y );
+        break;
+      default:
+        console.log('Default');
+        break;
+    }
 
     switch (objective.type) {
-      case "Enemy": {
-        strikeEnemy(x, y);
-        break;
-      }
       case "Node": {
         hitOre(x, y);
         break;

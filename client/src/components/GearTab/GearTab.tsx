@@ -28,15 +28,46 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
   };
 
   const slotClassMap: Record<string, string> = {
-    weapon: styles.weaponCard,
-    ranged: styles.rangedCard,
     charm: styles.charmCard,
     tool: styles.toolCard,
     ore: styles.oreCard
   };
 
-  const meleeOrRanged = ( item: InventoryGear ): boolean => {
-    if(item.item.slot==='weapon' || item.item.slot==='ranged') {
+  const weaponClassMap: Record<string, string> = {
+    melee: styles.weaponCard,
+    ranged: styles.rangedCard
+  };
+
+  const attkIcon = ( item: InventoryGear ): string => {
+    switch(item.item.slot) {
+      case 'weapon':
+        const style = item.item.style;
+        if(!style) return 'melee';
+        
+        return weaponClassMap[style] ;
+        break;
+
+      default:
+        const slot = item.item.slot;
+        if(!slot) return 'charm';
+
+        return slotClassMap[slot];
+        break;
+    }
+  }
+
+  const attackIcon = ( item: InventoryGear ): string => {
+    if(item.item.slot === 'tool') return '⛏';
+
+    if(item.item.style === 'melee' ) return '🗡';
+
+    if(item.item.style === 'ranged' ) return '🏹';
+
+    return '🥐';
+  }
+
+  const hasDurability = ( item: InventoryGear ): boolean => {
+    if(item.item.style==='melee' || item.item.style==='ranged' || item.item.style==='tool') {
       return true;
     }
 
@@ -53,7 +84,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
             className={`
               ${styles.gearCard}
               ${styles.lootFeedback}
-              ${x.item.slot ? slotClassMap[x.item.slot] : ''}
+              ${ attkIcon(x) }
               ${x.equiped ? styles.equipped : ''}
               ${x.selected ? styles.selected : ''}
               ${x.onCd ? styles.onCooldown : ''}
@@ -66,6 +97,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
               className={styles.itemIcon}
               style={{ backgroundImage: `url(${x.item.symbol})` }}
             />
+            
             <div className={styles.gearName}>{x.item.name}</div>
 
             {x.selected && (
@@ -78,7 +110,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
             <div className={styles.gearStatsRow}>
               {x.item.attackStats && (
                 <div className={styles.gearStat}>
-                  {meleeOrRanged(x) ? '🗡' : '⛏'} {x.item.attackStats.dmg}
+                  { attackIcon(x) } {x.item.attackStats.dmg}
                 </div>
               )}
               {x.item.defenseStats && (
@@ -86,12 +118,10 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
                   🛡 +{x.item.defenseStats.def}
                 </div>
               )}
-              {(meleeOrRanged(x) || x.item.slot === 'tool') &&
-                x.durability !== undefined &&
-                x.item.durability !== undefined && (
+              {(hasDurability(x) || x.item.slot === 'tool') && (
                   <DurabilityBar
-                    actual={x.durability}
-                    total={x.item.durability}
+                    actual={x.durability || 1}
+                    total={x.item.durability || 1}
                     slot={x.item.slot as string}
                   />
                 )}
