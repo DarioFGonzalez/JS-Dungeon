@@ -1630,11 +1630,11 @@ const App = () => {
     const objective = aux[x][y];
     const equippedWeapon = playerRef.current.hotBar.Equippeable.find( (slot: Types.InventoryGear ) => slot.equiped && slot.item.slot === 'weapon' );
 
-    console.log( "Arma equipada: ", equippedWeapon );
-
     switch(equippedWeapon?.item.style) {
       case 'ranged':
-        shootProjectile()
+        if(objective.type!=='Node' && objective.type!=='Wall') {
+          shootProjectile();
+        }
         break;
       case 'melee':
         if(objective.type ==='Enemy') strikeEnemy( x, y );

@@ -54,7 +54,7 @@ export const basicArrow: Types.Ammo = {
     type: 'Ammo',
     ammoType: 'Arrow',
     name: 'Basic arrow',
-    symbol: arrows.arrowUp,
+    symbol: arrows.basicArrow,
     attack: {
         Instant: 1,
         DoT: 0,
@@ -70,7 +70,7 @@ export const poisonArrow: Types.Ammo = {
     type: 'Ammo',
     ammoType: 'Arrow',
     name: 'Poison arrow',
-    symbol: arrows.arrowUp,
+    symbol: arrows.poisonArrow,
     attack: {
         Instant: 1,
         DoT: 1,

@@ -98,7 +98,7 @@ export const CopperPickaxe: Types.Gear =
     id: '',
     slot: 'tool',
     desc: 'Necesario para picar minerales.',
-    attackStats: { dmg: 1, cd: 4000 },
+    attackStats: { dmg: 1, cd: 1500 },
     durability: 10,
     equippeable: true
 }
