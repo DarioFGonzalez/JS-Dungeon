@@ -54,7 +54,7 @@ const App = () => {
   const isDev = process.env.NODE_ENV !== "production";
 
   const gridRef = useRef<HTMLDivElement>(null);
-  const lan = "es";
+  // const lan = "es";
   const [game, setGame] = useState<boolean>(false);
   const [isTakingDamage, setIsTakingDamage] = useState(false);
 
@@ -1839,8 +1839,6 @@ const App = () => {
       const compatibleAmmo = player.quiver.filter( (slot: Types.quiverItem) => slot.ammo.ammoType === equippedRangedWeapon.item.ammoType );
       if(compatibleAmmo.length===0) return playerInfo;
 
-      console.log("Arma de rango equipada: ", equippedRangedWeapon, "\nMunición compatible encontrada: ", compatibleAmmo );
-
       const selectedAmmo = compatibleAmmo.find( (slot: Types.quiverItem) => slot.selected );
       
       if(!selectedAmmo || compatibleAmmo.length === 1) {
@@ -1859,58 +1857,11 @@ const App = () => {
       aux[newIndex] = { ...aux[newIndex], selected: true };
 
       return { ...player, quiver: aux };
-      // const to = navigateHotBarVectors[key];
-
-      // if (to !== 0) {
-      //   const oldIndex = player.hotBar.Equippeable.findIndex(
-      //     (item) => item.selected,
-      //   );
-
-      //   if (oldIndex === -1) {
-      //     const aux = player.hotBar.Equippeable.map((x, y) =>
-      //       y === 0 ? { ...x, selected: true } : x,
-      //     );
-      //     return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
-      //   }
-
-      //   const max = player.hotBar.Equippeable.length - 1;
-      //   const newIndex =
-      //     oldIndex + to < 0 ? max : oldIndex + to > max ? 0 : oldIndex + to;
-
-      //   if (oldIndex === newIndex) return playerInfo;
-
-      //   const aux = [...player.hotBar.Equippeable];
-      //   aux[oldIndex] = { ...aux[oldIndex], selected: false };
-      //   aux[newIndex] = { ...aux[newIndex], selected: true };
-
-      //   return { ...player, hotBar: { ...player.hotBar, Equippeable: aux } };
-      // }
-
-      // let equippeables = player.hotBar.Equippeable;
-
-      // if (equippeables.length > 1) {
-      //   let selectedAt = equippeables.findIndex((x) => x.selected);
-      //   if (selectedAt === 0) {
-      //     equippeables[1].selected = true;
-      //     equippeables = equippeables.slice(1);
-      //   } else {
-      //     equippeables[selectedAt - 1].selected = true;
-      //     equippeables = [
-      //       ...equippeables.slice(0, selectedAt),
-      //       ...equippeables.slice(selectedAt + 1),
-      //     ];
-      //   }
-      //   return {
-      //     ...player,
-      //     hotBar: { ...player.hotBar, Equippeable: equippeables },
-      //   };
-      // }
-      // return { ...player, hotBar: { ...player.hotBar, Equippeable: [] } };
     });
   };
 
   const addToQuiver = ( Ammo: Types.Ammo, quantity: number ) => {
-    let flag = true;
+    // let flag = true;
 
     const thisAmmo = player.quiver.find((x) => x.ammo.name === Ammo.name);
     if (!thisAmmo) {
