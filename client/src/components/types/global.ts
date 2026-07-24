@@ -107,7 +107,7 @@ export interface Gear
     desc: string,
     attackStats?: attackStats,
     defenseStats?: deffenseStats,
-    buffStats?: '',
+    buffStats?: string,
     durability?: number,
     equippeable?: boolean
 };

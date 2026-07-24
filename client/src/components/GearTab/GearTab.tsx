@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Player, InventoryGear, quiverItem } from '../types/global';
 import DurabilityBar from './DurabilityBar/DurabilityBar';
 import styles from './GearTab.module.css';
-import { arrowUp, reload } from '../../Icons/projectileIcons';
+import { reload } from '../../Icons/projectileIcons';
+import Tooltip from '../Tooltip/Tooltip';
+import GearInspectorTab from '../GearInspectorTab/GearInspectorTab';
 
 interface GearTabProps {
   player: Player;
@@ -97,17 +99,19 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
 
     return (
       <div className={styles.ammoWrapper}>
-        <div className={styles.ammoBg}></div>
-        <div 
-          className={styles.ammoGradient}
-          style={{ background: `radial-gradient(circle, ${ammoColor} 0%, transparent 70%)` }}
-        ></div>
-        <div
-          className={styles.ammoIcon} 
-          style={{ backgroundImage: `url(${ammoSymbol})` }}
-        ></div>
-        <div className={styles.ammoCount}>{equippedAmmo?.quantity ?? 'R'}</div>
-      </div>
+          <Tooltip content={'Hola tarola'}>
+            <div className={styles.ammoBg}></div>
+              <div 
+                className={styles.ammoGradient}
+                style={{ background: `radial-gradient(circle, ${ammoColor} 0%, transparent 70%)` }}
+              ></div>
+              <div
+                className={styles.ammoIcon} 
+                style={{ backgroundImage: `url(${ammoSymbol})` }}
+              ></div>
+            <div className={styles.ammoCount}>{equippedAmmo?.quantity ?? 'R'}</div>
+          </Tooltip>
+        </div>
     );
   };
 
@@ -130,12 +134,13 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
               ['--cd-time' as any]: `${x.item.attackStats?.cd || 0}ms`,
             }}
           >
-            <div
-              className={styles.itemIcon}
-              style={{ backgroundImage: `url(${x.item.symbol})` }}
-            />
-
-            <div className={styles.gearName}>{x.item.name}</div>
+            <GearInspectorTab gear={x} onClose={() => {}}>
+              <div
+                className={styles.itemIcon}
+                style={{ backgroundImage: `url(${x.item.symbol})` }}
+              />
+              <div className={styles.gearName}>{x.item.name}</div>
+            </GearInspectorTab>
 
             {x.selected && (
               <>
