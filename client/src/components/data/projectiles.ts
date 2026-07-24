@@ -28,7 +28,7 @@ const poisonArrowIcon: ArrowIconSet = {
 const arrowIcons: Record<string, Record<string, string>> = {
     none: basicArrowIcon,
     poison: poisonArrowIcon,
-    fire: fireArrowIcon,
+    burn: fireArrowIcon,
 }
 
 export class ArrowClass implements Types.Projectile {
@@ -37,7 +37,7 @@ export class ArrowClass implements Types.Projectile {
     id?: ReturnType<typeof setInterval>;
     data: Types.locationData;
     symbol: string;
-    attack: Types.attackInfo;
+    attackStats: Types.attackStats;
     toughness: number;
 
     constructor(
@@ -47,9 +47,9 @@ export class ArrowClass implements Types.Projectile {
         bowAttack: number
         ) {
         this.name = ammo.name;
-        this.symbol = arrowIcons[ammo.attack.Aliment][direction];
+        this.symbol = arrowIcons[ammo.attackStats?.aliment||'none'][direction];
         this.data = data;
-        this.attack = { ...ammo.attack, Instant: ammo.attack.Instant + bowAttack };
+        this.attackStats = { ...ammo.attackStats, dmg: ammo.attackStats.dmg + bowAttack };
         this.toughness = ammo.toughness;
     }
 };

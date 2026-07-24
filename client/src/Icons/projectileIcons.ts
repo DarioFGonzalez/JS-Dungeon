@@ -1,3 +1,5 @@
+import reload from './reload5.png';
+
 import basicArrow from './bArrow.png';
 import arrowUp from './bArrowUp.png';
 import arrowLeft from './bArrowLeft.png';
@@ -17,6 +19,7 @@ import poisonArrowRight from './pArrowRight.png';
 import poisonArrowDown from './pArrowDown.png';
 
 export {
+    reload,
     basicArrow, arrowUp, arrowLeft, arrowRight, arrowDown,
     fireArrow, fireArrowUp, fireArrowLeft, fireArrowRight, fireArrowDown,
     poisonArrow, poisonArrowUp, poisonArrowLeft, poisonArrowRight, poisonArrowDown

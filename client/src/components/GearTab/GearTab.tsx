@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Player, InventoryGear, quiverItem } from '../types/global';
 import DurabilityBar from './DurabilityBar/DurabilityBar';
 import styles from './GearTab.module.css';
-import { arrowUp } from '../../Icons/projectileIcons';
+import { arrowUp, reload } from '../../Icons/projectileIcons';
 
 interface GearTabProps {
   player: Player;
@@ -74,8 +74,9 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
 
   const ammoColour: Record<string, string> = {
     poison: "#006800",
-    fire: "#af1906",
-    none: "#864c00"
+    burn: "#af1906",
+    none: "#aa9f90",
+    empty: "#0000"
   }
 
   const showAmmo = (): any => {
@@ -91,21 +92,21 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
         slot.selected && slot.ammo.ammoType === equippedRanged?.item.ammoType
     );
 
-    const ammoSymbol = equippedAmmo?.ammo.symbol ?? arrowUp;
-    const ammoColor = ammoColour[equippedAmmo?.ammo.attack.Aliment || "none"];
+    const ammoSymbol = equippedAmmo?.ammo.symbol ?? reload;
+    const ammoColor = ammoColour[equippedAmmo?.ammo.attackStats.aliment || 'empty'];
 
     return (
       <div className={styles.ammoWrapper}>
-        <div className={styles.ammoBg}></div> {/* fondo negro */}
+        <div className={styles.ammoBg}></div>
         <div 
-          className={styles.ammoGradient} 
+          className={styles.ammoGradient}
           style={{ background: `radial-gradient(circle, ${ammoColor} 0%, transparent 70%)` }}
-        ></div> {/* gradiente */}
-        <div 
+        ></div>
+        <div
           className={styles.ammoIcon} 
           style={{ backgroundImage: `url(${ammoSymbol})` }}
-        ></div> {/* ícono */}
-        <div className={styles.ammoCount}>{equippedAmmo?.quantity ?? 0}</div> {/* número */}
+        ></div>
+        <div className={styles.ammoCount}>{equippedAmmo?.quantity ?? 'R'}</div>
       </div>
     );
   };

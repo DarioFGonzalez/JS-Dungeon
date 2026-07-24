@@ -55,15 +55,15 @@ export const basicArrow: Types.Ammo = {
     ammoType: 'Arrow',
     name: 'Basic arrow',
     symbol: arrows.basicArrow,
-    attack: {
-        Instant: 1,
+    attackStats: {
+        dmg: 1,
         DoT: 0,
-        Times: 0,
-        Aliment: 'none',
-        Attacked: false
+        times: 0,
+        aliment: 'none',
+        cd: 0
     },
     toughness: 1,
-    desc: 'Flecha básica'
+    desc: 'Flecha de madera ordinaria.'
 };
 
 export const poisonArrow: Types.Ammo = {
@@ -71,13 +71,29 @@ export const poisonArrow: Types.Ammo = {
     ammoType: 'Arrow',
     name: 'Poison arrow',
     symbol: arrows.poisonArrow,
-    attack: {
-        Instant: 1,
+    attackStats: {
+        dmg: 1,
         DoT: 1,
-        Times: 3,
-        Aliment: 'poison',
-        Attacked: false
+        times: 4,
+        aliment: 'poison',
+        cd: 0
     },
     toughness: 2,
-    desc: 'Flecha con punta envenenada'
+    desc: 'Flecha con punta envenenada.'
 };
+
+export const fireArrow: Types.Ammo = {
+    type: 'Ammo',
+    ammoType: 'Arrow',
+    name: 'Fire Arrow',
+    symbol: arrows.fireArrow,
+    attackStats: {
+        dmg: 0,
+        DoT: 2,
+        times: 2,
+        aliment: 'burn',
+        cd: 0
+    },
+    toughness: 2,
+    desc: 'Flecha envuelta en llamas.'
+}

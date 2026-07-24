@@ -13,7 +13,8 @@ export type Coords = [ number, number ];
 export type ArrayOfCoords = Coords[];
 export type Residual = { entity: allEntities, coords: number[] };
 
-export type attackStats = { dmg: number, DoT?: number, times?: number, aliment?: string, range?: number, cd: number };
+export type attackStats =
+    { dmg: number, DoT?: number, times?: number, aliment?: string, range?: number, cd: number };
 export type deffenseStats = { def?: number, immunity?: string, hp?: number };
 
 export type quiverItem = { ammo: Ammo, quantity: number, selected: boolean };
@@ -178,7 +179,7 @@ export interface Ammo {
     ammoType: string,
     name: string,
     symbol: string,
-    attack: attackInfo,
+    attackStats: attackStats,
     toughness: number,
     desc: string
 }
@@ -190,7 +191,7 @@ export interface Projectile
     id?: ReturnType<typeof setInterval>,
     data: locationData,
     symbol: string,
-    attack: attackInfo,
+    attackStats: attackStats,
     toughness: number
 }
 

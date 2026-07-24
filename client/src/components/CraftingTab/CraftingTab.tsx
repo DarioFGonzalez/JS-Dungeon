@@ -20,6 +20,7 @@ const CraftingTab: React.FC<CraftingTabProps> = ({ recipes, player }) => {
         {recipes.map((recipe, index) => (
           <div
             key={index}
+            onClick={()=>console.log(recipe)}
             className={`
               ${styles.gearCard}
               ${recipe.selected ? styles.selected : ''}

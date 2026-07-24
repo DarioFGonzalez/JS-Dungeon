@@ -503,11 +503,12 @@ const App = () => {
     if (!thisMonster) return mapaRef.current;
 
     const { x, y, entity } = thisMonster;
+
     clearInterval(entity.patrolId);
 
-    lan === "es"
-      ? queueLog(`${thisMonster.entity.name} murió.`, "crimson")
-      : queueLog(`${thisMonster.entity.name} died.`, "crimson");
+    // lan === "es"
+    // ? queueLog(`${thisMonster.entity.name} murió.`, "crimson")
+    // : queueLog(`${thisMonster.entity.name} died.`, "crimson");
 
     if (thisMonster.entity.drops.length > 0) {
       const loot = thisMonster.entity.drops
@@ -545,10 +546,15 @@ const App = () => {
     times: number = 0,
     aliment: string = "",
   ): void => {
-    let tag = { aliment: "", color: "khaki" };
-    console.log(dmg, dot, times, aliment);
+    // let tag = { aliment: "", color: "khaki" };
+    let flag = true;
 
     setMapa((prev) => {
+      if(flag && isDev) {
+        flag = false;
+        return prev;
+      }
+      
       const aux = prev.map((x) => [...x]);
       const currentMonster = findThisEnemy(id, aux);
       if (!currentMonster) return aux;
@@ -558,9 +564,9 @@ const App = () => {
       if (mob.hp - dmg <= 0) {
         clearInterval(mob.patrolId);
 
-        lan === "es"
-          ? queueLog(`${mob.name} murió.`, "crimson")
-          : queueLog(`${mob.name} died.`, "crimson");
+        // lan === "es"
+        //   ? queueLog(`${mob.name} murió.`, "crimson")
+        //   : queueLog(`${mob.name} died.`, "crimson");
 
         if (mob.drops.length > 0) {
           const loot = mob.drops
@@ -572,7 +578,15 @@ const App = () => {
         }
 
         setTimeout(() => {
+          let bFlag = true;
+
           setBestiary((prevData) => {
+            if(bFlag && isDev) {
+              bFlag = false;
+              return prevData;
+            }
+
+            
             let bAux = prevData.map((beast) => ({ ...beast }));
             let beastIndex = bAux.findIndex((beast) => beast.name === mob.name);
             if (beastIndex === -1) {
@@ -588,15 +602,15 @@ const App = () => {
 
       aux[mobX][mobY] = { ...mob, hp: mob.hp - dmg };
 
-      lan === "es"
-        ? queueLog(
-            `Golpeaste a ${mob.name} por ${dmg} de daño. [${mob.hp - dmg}/${mob.maxHp}]. ${tag.aliment}`,
-            tag.color,
-          )
-        : queueLog(
-            `You HIT ${mob.name} by ${dmg} damage. [${mob.hp - dmg}/${mob.maxHp}]`,
-            "khaki",
-          );
+      // lan === "es"
+      //   ? queueLog(
+      //       `Golpeaste a ${mob.name} por ${dmg} de daño. [${mob.hp - dmg}/${mob.maxHp}]. ${tag.aliment}`,
+      //       tag.color,
+      //     )
+      //   : queueLog(
+      //       `You HIT ${mob.name} by ${dmg} damage. [${mob.hp - dmg}/${mob.maxHp}]`,
+      //       "khaki",
+      //     );
 
       if (dot !== 0 && mob.defense.immunity !== aliment) {
         const alimentVector = {
@@ -627,6 +641,27 @@ const App = () => {
                 manageVisualAnimation("damage", x, y, dot.toString(), 450);
 
                 if (entity.hp - dot <= 0 || !game) {
+
+                  setTimeout(() => {
+                    let bFlag = true;
+
+                    setBestiary((prevData) => {
+                      if(bFlag && isDev) {
+                        bFlag = false;
+                        return prevData;
+                      }
+
+                      
+                      let bAux = prevData.map((beast) => ({ ...beast }));
+                      let beastIndex = bAux.findIndex((beast) => beast.name === mob.name);
+                      if (beastIndex === -1) {
+                        return [...bAux, { name: mob.name, quantity: 1 }];
+                      }
+                      bAux[beastIndex].quantity++;
+                      return bAux;
+                    });
+                  }, 0);
+                  
                   cleanse("all", id);
                   return enemyDeath(id);
                 }
@@ -1537,7 +1572,7 @@ const App = () => {
 
     damageWeapon(thisProjectile.toughness, equippedBow);
 
-    const { Instant, DoT, Aliment, Times } = thisProjectile.attack;
+    const { dmg, DoT, aliment, times } = thisProjectile.attackStats;
 
     let flag = true;
 
@@ -1586,9 +1621,9 @@ const App = () => {
           setMapa(aux);
           let thisMonster = objective as Types.Enemy;
 
-          const realDamage = Instant - thisMonster.defense.armor;
+          const realDamage = dmg - thisMonster.defense.armor;
 
-          damageEnemy(objective.id as string , realDamage, DoT, Times, Aliment);
+          damageEnemy(objective.id as string , realDamage, DoT, times, aliment);
           return;
         }
         default:
@@ -2146,10 +2181,6 @@ const App = () => {
         // case 'h':   //ayuda
         // setShowSlides( prev => !prev );
         // break;
-
-        case 'f':
-          shootProjectile();
-          break;
 
         case "enter":
           handleInteraction();
