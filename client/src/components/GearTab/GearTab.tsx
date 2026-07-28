@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Player, InventoryGear, quiverItem } from '../types/global';
+import { Player, InventoryGear, quiverItem, Ammo } from '../types/global';
 import DurabilityBar from './DurabilityBar/DurabilityBar';
 import styles from './GearTab.module.css';
 import { reload } from '../../Icons/projectileIcons';
@@ -81,6 +81,21 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
     empty: "#0000"
   }
 
+  const tooltipAmmoText = ( ammo: Ammo ): string => {
+    let statusDmg;
+    const attStats = ammo.attackStats;
+
+    if(attStats.aliment) {
+      if(attStats.aliment==='none') {
+        statusDmg = '❌';
+      } else {
+        statusDmg = `${statusVector[attStats.aliment]}${attStats.DoT}x${attStats.times}`;
+      }
+    }
+
+    return `${ammo.attackStats.dmg}💥 | ${statusDmg}`
+  }
+
   const showAmmo = (): any => {
     const equippedRanged = player.hotBar.Equippeable.find(
       (gear: InventoryGear) =>
@@ -97,9 +112,11 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
     const ammoSymbol = equippedAmmo?.ammo.symbol ?? reload;
     const ammoColor = ammoColour[equippedAmmo?.ammo.attackStats.aliment || 'empty'];
 
+    console.log(equippedAmmo);
+
     return (
       <div className={styles.ammoWrapper}>
-          <Tooltip content={'Hola tarola'}>
+          <Tooltip content={equippedAmmo ? tooltipAmmoText(equippedAmmo.ammo) : 'Sin flechas'}>
             <div className={styles.ammoBg}></div>
               <div 
                 className={styles.ammoGradient}
