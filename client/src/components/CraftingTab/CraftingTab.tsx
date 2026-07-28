@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Recipe, Player, InventoryGear } from '../types/global';
 import styles from './CraftingTab.module.css';
-import { TypeAssertion } from 'typescript';
 
 interface CraftingTabProps {
   recipes: Recipe[];
