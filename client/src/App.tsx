@@ -78,9 +78,7 @@ const App = () => {
   const mapaRef = useRef(mapa);
   
   const [visuals, setVisuals] = useState<Types.VisualCell[][]>(emptyVisualGrid);
-  const [recipes, setRecipes] = useState<Types.Recipe[]>(
-    Object.values(Recipes),
-  );
+  const [recipes, setRecipes] = useState<Types.Recipe[]>( Object.values(Recipes) );
   
   const [tps, setTps] = useState<Types.ArrayOfCoords>([]);
   
@@ -92,6 +90,35 @@ const App = () => {
   const [inspectedCreature, setInspectedCreature] =
     useState<Types.Enemy | null>();
 
+    useEffect( () => {
+    const recetas = Object.values(Recipes);
+    const deepCopy = structuredClone(playerRef.current);
+
+    let materials = deepCopy.hotBar.Equippeable.filter(
+      (slot: Types.InventoryGear) => !slot.item.equippeable,
+    );
+
+    const crafteableRecipes = recetas.filter( (selectedRecipe: Types.Recipe) => {
+      
+    const allMaterialsHere = selectedRecipe.ingredients.every((ingredient: Types.recipeMaterial) => {
+      const found = materials.find(
+        (material: Types.InventoryGear) =>
+          material.item.name === ingredient.material.name,
+      );
+        if (!found) return false;
+
+        return found && (found.quantity ?? 0) >= ingredient.quantity;
+      });
+
+    return allMaterialsHere;
+
+    } );
+
+    console.log("Recetas crafteables so far: ", crafteableRecipes);
+
+    setRecipes(crafteableRecipes);
+  }, [playerRef.current.hotBar] )
+  
   useEffect(() => {
     if (!game) return;
 
@@ -1922,6 +1949,7 @@ const App = () => {
               addToQuiver(selectedRecipe.item as Types.Ammo, selectedRecipe.quantity || 1);
               break;
             case 'Gear':
+            case 'Tool':
               deepCopy.hotBar.Equippeable.push( turnToInventoryGear(selectedRecipe.item as Types.Gear) )
               break;
             default:

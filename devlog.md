@@ -1,5 +1,53 @@
 # DevLog - Diario de Combate
 
+## 🔹 Paso 23: Inspector de equipo 🔎🎒📖
+
+🗓️ 2025-07-16
+
+`Se está a-complejando el tema de equipo, armas, items... debería meter una manera mas [VISUAL] de ver las estadísticas de un item... ya se ☝🤓✨`
+
+Necesitabamos una manera de ver las estadísticas del equipo, armas, herramientas o cualquier cosa que termináse en nuestro inventario principal- pero el tamaño reducido del componente `GearTab.tsx` no daba, ehhhh, mucho espacio para la creatividad 😅✖
+
+Peleando con pixeles, superposiciones y feng-shui de numeritos pensé: `"Esperá... ¿Qué no había ideado ya una solución a un problema parecido a este?"` 🤔❓
+
+Si, `[ InspectorTab.tsx ]`. 
+
+La idea es la misma, la ejecución tenía que cambiar un poco. Consumir el item en vez de un monstruo, datos base del item en vez de un bestiario- sacar información oculta, quitar contador de kills, refactorización, toqueteo, testeo. 🔧💦
+
+¡Y quedó! Mi creación estaba... ¡¡VIVA!! Ahora, cuando pasemos el mouse sobre un item en el inventario principal (GearTab.tsx) va a aparecer un pop-up con mas información acerca de dicho item. 🔎📃
+
+![alt text](image.png)
+
+Obviamente está en desarrollo, la idea principal funciona- los espacios medio cierran y el concepto cammina. Ahora es ajustar que datos, de que forma, en que formato y demás detalles pero, hey, está vivo y hace el juego mas intuitivo- menos complejo de entender- mas 'sentate, tocá, aprendé sobre la marcha... jugá'. 🎮✨
+
+---
+
+### 🛠️ Cambios técnicos:
+
+- Agregamos el componente `GearInspectorTab.tsx`
+- Refactorizamos `GearTab` para activar `GearInspectorTab` onHover
+- Distingue entre armas a `distancia` y a `melee`.
+- Pendiente: Agregar especificaciones para el resto de objetos inspeccionables.
+
+---
+
+### 👾 Futuro próximo / Ideas sueltas 🎯
+
+*En realidad.
+Escribo esta entrada del devlog.md medio tarde, porque-- sin darme cuenta-- ya estaba trabajando en la otra feature a implementar 😅💦 Entonces:
+
+- Freno. Analizo. Explico/Registro en devlog. Sigo.
+
+Ahora mismo estoy trabajando en un recetario dinámico, ya... casi lo tengo cocinado. ¿Qué es un recetario dinámico? Ahhh ☝😏✨
+
+En vez de mostrar **`TOOoodas`** las recetas que hay, mostramos solo las que podemos craftear con los materiales que tengamos encima. ¡Fácil!
+
+Agregué un lindo efecto scroll-down y estoy refactorizando el GearInspector para mostrar detalles de la receta pre-crear cosas para ver 'que són' jajaja.
+
+Eficiencia en loops, código más limpio, menos estresante para el overall, la rutina. 😃👾
+
+---
+
 ## 🔹 Paso 22: Pro-yec-ti-les 🏹🤩
 
 🗓️ 2025-07-16

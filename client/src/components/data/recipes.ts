@@ -1,21 +1,25 @@
 import { Recipe } from '../types/global';
-import { Dagger1 } from '../data/gear';
-import { CopperOre } from '../data/materials';
-import { basicArrow, fireArrow, poisonArrow } from './items';
+import { Dagger1, Sword1, CopperPickaxe } from '../data/gear';
+import { CopperOre, PoisonClaw, SilverOre } from '../data/materials';
+import { Antidote, basicArrow, fireArrow, poisonArrow } from './items';
 
 export const daggerRecipe: Recipe = {
     item: Dagger1,
     ingredients:[
     {
         material: CopperOre,
-        quantity: 3
-    },],
+        quantity: 2
+    },
+    {
+        material: SilverOre,
+        quantity: 1
+    }
+],
     crafted: false,
     selected: false,
     failed: false
 }
 
-/*
 export const cPickaxeRecipe: Recipe = {
     item: CopperPickaxe,
     ingredients:[
@@ -34,7 +38,7 @@ export const macheteRecipe: Recipe = {
     ingredients:[
         {
             material: CopperOre,
-            quantity: 4
+            quantity: 3
         },
         {
             material: SilverOre,
@@ -59,7 +63,6 @@ export const antidoteRecipe: Recipe = {
     selected: false,
     failed: false
 }
-*/
 
 export const basicArrowRecipe: Recipe = {
     item: basicArrow,
@@ -81,6 +84,10 @@ export const poisonArrowRecipe: Recipe = {
         {
             material: CopperOre,
             quantity: 1
+        },
+        {
+            material: PoisonClaw,
+            quantity: 1
         }
     ],
     quantity: 3,
@@ -94,7 +101,7 @@ export const fireArrowRecipe: Recipe = {
     ingredients: [
         {
             material: CopperOre,
-            quantity: 1
+            quantity: 3
         }
     ],
     quantity: 3,
