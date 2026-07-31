@@ -54,7 +54,37 @@ export const Bow1: Types.Gear =
     ammoType: 'Arrow',
     desc: 'An old bow, made out of wood and poor handicraft',
     attackStats: { dmg: 1, range: 3, cd: 1000 },
-    durability: 25,
+    durability: 8,
+    equippeable: true
+}
+
+export const Bow2: Types.Gear =
+{
+    type: 'Gear',
+    name: 'Long bow',
+    symbol: icons.longBow,
+    id: '',
+    slot: 'weapon',
+    style: 'ranged',
+    ammoType: 'Arrow',
+    desc: 'Accurate and reliable on long distances- yet fragile.',
+    attackStats: { dmg: 1, range: 6, cd: 1500 },
+    durability: 5,
+    equippeable: true
+}
+
+export const Bow3: Types.Gear =
+{
+    type: 'Gear',
+    name: 'Heavy bow',
+    symbol: icons.heavyBow,
+    id: '',
+    slot: 'weapon',
+    style: 'ranged',
+    ammoType: 'Arrow',
+    desc: 'Heavy draw - high impact bow. Short distances only.',
+    attackStats: { dmg: 2, range: 2, cd: 2000 },
+    durability: 7,
     equippeable: true
 }
 
@@ -84,7 +114,7 @@ export const Necklace2: Types.Gear =
 }
 
 export const Equippables: Types.Gear[] = [
-    Fists, Sword1, Dagger1, Bow1, Necklace1, Necklace2
+    Fists, Sword1, Dagger1, Bow1, Bow2, Bow3, Necklace1, Necklace2
 ];
 
 export const emptyHanded = { id: '', item: Fists, durability: 999, onCd: false, equiped: true, selected: true };

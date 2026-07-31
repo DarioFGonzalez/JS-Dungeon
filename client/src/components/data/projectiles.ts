@@ -25,10 +25,18 @@ const poisonArrowIcon: ArrowIconSet = {
     right: icons.poisonArrowRight
 }
 
+const explosiveArrowIcon: ArrowIconSet = {
+    up: icons.explosiveArrowUp,
+    down: icons.explosiveArrowDown,
+    left: icons.explosiveArrowLeft,
+    right: icons.explosiveArrowRight
+}
+
 const arrowIcons: Record<string, Record<string, string>> = {
     none: basicArrowIcon,
     poison: poisonArrowIcon,
     burn: fireArrowIcon,
+    explosive: explosiveArrowIcon,
 }
 
 export class ArrowClass implements Types.Projectile {

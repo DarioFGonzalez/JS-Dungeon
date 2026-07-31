@@ -644,6 +644,7 @@ const App = () => {
           poison: "PoisonInstances",
           bleed: "BleedInstances",
           burn: "BurnInstances",
+          explosive: 'BurnInstances',
         } as const;
 
         type AlimentKey = keyof typeof alimentVector;
@@ -848,6 +849,7 @@ const App = () => {
           });
           break;
         }
+        case 'explosive':
         case "burn": {
           setPlayer((prev) => {
             if (flag && isDev) {
@@ -928,6 +930,7 @@ const App = () => {
             });
             break;
           }
+          case 'explosive':
           case "burn": {
             setPlayer((prev) => {
               if (flag && isDev) {
@@ -2662,6 +2665,8 @@ const App = () => {
     auxiliar[14][11] = createEntity("Node", "Copper");
     spawnMap ? (auxiliar[2][2] = player) : (auxiliar[15][3] = player);
     auxiliar[2][3] = createEntity("Equippable", "Wooden bow");
+    auxiliar[2][4] = createEntity("Equippable", "Long bow");
+    auxiliar[3][3] = createEntity('Equippable', 'Heavy bow')
     auxiliar[15][5] = createEntity("Tool", "Copper Pickaxe");
     auxiliar[15][10] = createEntity("Enemie", "Goblin");
     auxiliar[15][13] = createEntity("Node", "Silver");

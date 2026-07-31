@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as Types from '../types/global';
 import styles from './GearInspectorTab.module.css';
 
-interface InspectorTabProps {
+interface GearInspectorTabProps {
   children: React.ReactNode;
   gear: Types.InventoryGear;
   onClose: () => void;
 }
 
-const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) => {
+const GearInspectorTab: React.FC<GearInspectorTabProps> = ({ children, gear, onClose }) => {
   const [show, setShow] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const rafId = useRef<number | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => onClose(), 20000);
@@ -23,7 +24,12 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) 
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    setPosition({ x: e.clientX, y: e.clientY });
+    if (rafId.current) cancelAnimationFrame(rafId.current);
+    const { clientX, clientY } = e;
+    rafId.current = requestAnimationFrame(() => {
+      setPosition({ x: clientX, y: clientY });
+      rafId.current = null;
+    });
   };
 
   const handleMouseLeave = () => {
@@ -56,7 +62,6 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) 
   };
 
   const StatCell = ({ label, value }: { label: string; value: React.ReactNode }) => {
-
     return (
       <div className={styles.statWrapper}>
         <div className={styles.statBox}>
@@ -67,12 +72,20 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) 
     );
   };
 
-  const statusDmg = ( item: Types.Gear): string => {
-    if(item.attackStats?.DoT) {
-      return `${item.attackStats?.DoT}x${item.attackStats?.times}`
+  const statusDmg = (item: Types.Gear): string => {
+    if (item.attackStats?.DoT) {
+      return `${item.attackStats?.DoT}x${item.attackStats?.times}`;
     }
     return '❌';
-  }
+  };
+
+  const showRange = ( item: Types.Gear): string => {
+    if(item.style==='ranged') {
+      return `${item.attackStats?.range} ${rangeIcons[item.style]}`
+    }
+
+    return '👊';
+  };
 
   return (
     <div
@@ -89,6 +102,7 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) 
             position: 'fixed',
             left: position.x + 15,
             top: position.y + 15,
+            pointerEvents: 'none'
           }}
         >
           <div className={styles.inspectorContainer}>
@@ -96,7 +110,7 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) 
               <img src={gear.item.symbol} className={styles.mainIcon} alt={`${gear.item.name} icon`} />
               <div className={styles.titleInfo}>
                 <div className={styles.name}>{gear.item.name}</div>
-                <div className={styles.kills}>{gear.item.desc}</div>
+                <div className={styles.desc}>{gear.item.desc}</div>
               </div>
             </div>
 
@@ -105,10 +119,10 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) 
             <div className={styles.statsGrid}>
               {gear.item.slot === 'weapon' && (
                 <>
-                  <StatCell label="Damage" value={`💥 ${gear.item.attackStats?.dmg ?? 0}`} />
+                  <StatCell label="Damage" value={`🗡 ${gear.item.attackStats?.dmg ?? 0}`} />
                   <StatCell label="Status" value={statusIcons[gear.item.attackStats?.aliment || 'none']} />
                   <StatCell label="Status dmg" value={statusDmg(gear.item)} />
-                  <StatCell label="Range" value={rangeIcons[gear.item.style || 'none']} />
+                  <StatCell label="Range" value={showRange(gear.item)} />
                 </>
               )}
             </div>
@@ -119,4 +133,4 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ children, gear, onClose }) 
   );
 };
 
-export default InspectorTab;
+export default GearInspectorTab;

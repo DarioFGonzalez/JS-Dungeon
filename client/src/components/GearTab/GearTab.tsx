@@ -32,7 +32,8 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
   const statusVector: Record<string, string> = {
     bleed: '🩸',
     poison: '💚',
-    fire: '🔥',
+    burn: '🔥',
+    explosive: '💥',
   };
 
   const slotClassMap: Record<string, string> = {
@@ -77,6 +78,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
   const ammoColour: Record<string, string> = {
     poison: "#006800",
     burn: "#af1906",
+    explosive: "#b00ab6",
     none: "#aa9f90",
     empty: "#0000"
   }
@@ -93,7 +95,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
       }
     }
 
-    return `${ammo.attackStats.dmg}💥 | ${statusDmg}`
+    return `${ammo.attackStats.dmg}🗡 | ${statusDmg}`
   }
 
   const showAmmo = (): any => {

@@ -63,7 +63,7 @@ export const basicArrow: Types.Ammo = {
         cd: 0
     },
     toughness: 1,
-    desc: 'Flecha de madera ordinaria.'
+    desc: 'Wooden arrow.'
 };
 
 export const poisonArrow: Types.Ammo = {
@@ -74,12 +74,12 @@ export const poisonArrow: Types.Ammo = {
     attackStats: {
         dmg: 1,
         DoT: 1,
-        times: 4,
+        times: 3,
         aliment: 'poison',
         cd: 0
     },
     toughness: 2,
-    desc: 'Flecha con punta envenenada.'
+    desc: 'Poison coated tip arrow.'
 };
 
 export const fireArrow: Types.Ammo = {
@@ -88,12 +88,28 @@ export const fireArrow: Types.Ammo = {
     name: 'Fire Arrow',
     symbol: arrows.fireArrow,
     attackStats: {
-        dmg: 0,
+        dmg: 1,
         DoT: 2,
         times: 2,
         aliment: 'burn',
         cd: 0
     },
-    toughness: 2,
-    desc: 'Flecha envuelta en llamas.'
+    toughness: 3,
+    desc: 'Fire coated arrow.'
+}
+
+export const explosiveArrow: Types.Ammo = {
+    type: 'Ammo',
+    ammoType: 'Arrow',
+    name: 'Explisove Arrow',
+    symbol: arrows.explosiveArrow,
+    attackStats: {
+        dmg: 1,
+        DoT: 5,
+        times: 1,
+        aliment: 'explosive',
+        cd: 0
+    },
+    toughness: 5,
+    desc: 'Explosive-coated tip arrow.'
 }

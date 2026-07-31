@@ -18,9 +18,16 @@ import poisonArrowLeft from './pArrowLeft.png';
 import poisonArrowRight from './pArrowRight.png';
 import poisonArrowDown from './pArrowDown.png';
 
+import explosiveArrow from './eArrow.png';
+import explosiveArrowUp from './eArrowUp.png';
+import explosiveArrowLeft from './eArrowLeft.png';
+import explosiveArrowRight from './eArrowRight.png';
+import explosiveArrowDown from './eArrowDown.png'
+
 export {
     reload,
     basicArrow, arrowUp, arrowLeft, arrowRight, arrowDown,
     fireArrow, fireArrowUp, fireArrowLeft, fireArrowRight, fireArrowDown,
-    poisonArrow, poisonArrowUp, poisonArrowLeft, poisonArrowRight, poisonArrowDown
+    poisonArrow, poisonArrowUp, poisonArrowLeft, poisonArrowRight, poisonArrowDown,
+    explosiveArrow, explosiveArrowUp, explosiveArrowLeft, explosiveArrowRight, explosiveArrowDown
  };
