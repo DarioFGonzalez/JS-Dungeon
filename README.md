@@ -1,6 +1,6 @@
 # 🎮 JS-Dungeon
 
-> *Un RPG retro construido desde cero con JavaScript Vanilla + TypeScript. Porque a veces lo mejor es no depender de frameworks y demostrar que entendés el lenguaje de verdad.*
+> *A scalable, real-time RPG engine built entirely from scratch using Vanilla JavaScript, TypeScript, and React. No canvas, no game engines—just pure state management, complex data structures, and optimized DOM rendering.*
 
 <p align="center">
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
@@ -12,72 +12,75 @@
 
 ---
 
-## ⚔️ ¿Qué es esto?
+## ⚔️ The Architecture Behind the Game
 
-JS-Dungeon es un **dungeon crawler en tiempo real** (explorás, looteás, farmeas, peleás...) construido desde cero, sin engines, sin librerías externas, pura lógica y uso eficiente de las herramientas que ofrece vanilla JS/TS.
+JS-Dungeon is disguised as a retro dungeon crawler, but under the hood, it’s a **complex state machine and architectural sandbox**. 
 
-No es un proyecto de bootcamp. Es mi laboratorio personal: Se me ocurren nuevas features, exploro mis herramientas, creo nuevas, refactorizo antiguas, replanteo arquitectura y planeo escalabilidad. Desarrollo. ✨
+Why build a game in React? Because managing game loops, inventory states, entity pathfinding, and real-time combat is essentially building a highly reactive, client-side database. This project was built to test performance boundaries, design custom data pipelines (like a CSV-to-JSON map parser), and prove that you don't need heavy frameworks to build highly interactive, scalable applications if your core logic is solid.
 
 ---
 
-## 🧠 ¿Qué tiene adentro?
+## 🧠 Technical Highlights / Under the Hood
 
-| Feature | Estado |
+| Core System | Engineering Implementation |
 |---------|--------|
-| ⚔️ Combate, looteo y crafting | ✅ Funcional |
-| 🩸 Sistema de estados alterados (veneno, sangrado, quemadura) | ✅ Con ticks independientes |
-| 🤖 IA de patrullas configurable (velocidad, patrón, agresividad) | ✅ |
-| 📖 Bestiario con desbloqueo progresivo | ✅ |
-| 🔍 Inspector de criaturas con stats y drops | ✅ |
-| 🎒 Inventario + equipamiento + crafting | ✅ Escalable |
-| 🗺️ Mapas (Mines / Caves) | ✅ |
-| 📝 Código tipado (TypeScript) | ✅ |
+| ⚙️ **State Engine** | Centralized, decoupled state management for real-time interactions without redundant re-renders. |
+| 🗺️ **Map Parser Pipeline** | Custom utility that reads raw `.csv` matrix data and dynamically renders coordinate-based map entities. |
+| 🩸 **Event-Driven Combat** | Independent tick handlers managing asynchronous Damage-over-Time (DoT) queues and status effects. |
+| 🤖 **Modular AI Routing** | Configurable entity patrol patterns with individual tick speeds and collision detection. |
+| 🎒 **Relational Inventory** | Scalable data structures linking crafted items, equipment durability, and stats to the player's core UI. |
+| 📝 **Strict Typing** | 100% TypeScript. Explicit interfaces for every world entity, preventing runtime errors in complex logic chains. |
 
 ---
 
-## 🧱 Tecnologías
+## 🧱 Tech Stack
 
 `JavaScript` · `TypeScript` · `React` · `HTML5` · `CSS3` · `Git` · `GitHub` · `Vercel`
 
 ---
 
-## 🧪 Estado del proyecto
+## 🧪 Project Status
 
-**Vivo, estable y en constante evolución.**  
-Ahora estoy puliendo la experiencia: que el juego se explique solo, sin tutoriales externos.
+**Active, stable, and continuously evolving.**  
+Currently focused on UX polish, visual feedback, and refining the underlying architecture to support heavier mechanics without compromising React's rendering performance.
 
-### ✨ Lo último que se sumó:
-- Tooltips informativos en cada estadística
-- Inspector de enemigos con desbloqueables por kills
-- Velocidades individuales de patrullas (Goblin veloz ≠ Goblin veterano)
-- El foco ya no se pierde al clickear fuera del mapa
+### ✨ Latest Features:
+- Context-aware UI: Tooltips, dynamic stat comparisons, and contextual entity inspection.
+- Bestiary data unlocked dynamically via persistent kill-tracker logs.
+- Refactored camera engine: Shifted from static grid views to dynamic player-tracking viewports.
+- Automatic viewport focus locking to ensure seamless keyboard event capturing.
 
-### 🧭 Hoja de ruta (próximos pasos):
-- Balance de armas, drops y enemigos
-- Nuevos mapas con objetivos concretos
-- Sistema de mejoras de equipo ([ Mazo ] ➡ [ Mazo +1 ] ➡ [ Mazo ⭐ ])
-- ¡Más adelante: magias, bosses y área de efecto!
-
----
-
-## 🔎 Backstage
-
-- 📄 [CHANGELOG.md](./CHANGELOG.md) — Registro técnico por versión (estilo profesional).
-- 🧠 [devlog.md](./devlog.md) — Bitácora informal con decisiones, ideas, errores y catarsis del dev.
+### 🧭 Roadmap (Upcoming Milestones):
+- **Data Rebalancing:** Overhauling combat math, drop probabilities, and mob stat scaling.
+- **System Expansion:** Implementing gear upgrade pipelines ([ Mace ] ➡ [ Mace +1 ]).
+- **Advanced Mechanics:** Designing AoE (Area of Effect) logic and modular spellcasting architectures.
 
 ---
 
-## 🚀 Demo en vivo
+## 🔎 Behind the Scenes
+
+Want to see how this was built step-by-step?
+- 📄 [CHANGELOG.md](./CHANGELOG.md) — Technical release notes and structured version history.
+- 🧠 [devlog.md](./devlog.md) — An informal dev diary detailing architectural pivots, debugging nightmares, and engineering breakthroughs.
+
+---
+
+## 🚀 Live Demo
 
 [![Vercel](https://img.shields.io/badge/Play_Now-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://js-dungeon.vercel.app)
 
 ---
 
-## 📜 Licencia
+## 🌐 Languages
 
-MIT. Podés leer los detalles en el archivo [LICENSE](./LICENSE).
+- 🇪🇸 [Versión en Español](./README.es.md)
 
 ---
 
-*¿Feedback, bugs o sugerencias? Me sirven para ser mejor dev.  
-Amo programar, amo crear y romperme la cabeza con código. Gracias por llegar hasta acá.*
+## 📜 License
+
+MIT. Details available in the [LICENSE](./LICENSE) file.
+
+---
+
+*I am a Full-Stack/Backend developer who loves building robust architecture, whether it's a RESTful API or a React-based game engine. Feedback, code reviews, and networking are always welcome.*

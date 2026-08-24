@@ -136,6 +136,26 @@ export const minerEnemy: Types.Enemy =
     drops: [ { item: Material.CopperOre, chance: 45, quantity: 1 }, { item: Gear.CopperPickaxe, chance: 15, quantity: 1 } ]
 };
 
+export const weakEnemy: Types.Enemy =
+{
+    type: 'Enemy',
+    id: '0',
+    name: 'Rookie Goblin',
+    hp: 4,
+    maxHp: 4,
+    symbol: icons.pDummy,
+    data: { x: 0, y: 0 },
+    aliments:
+    {
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
+    attack: { Instant: 1, DoT: 0, Times: 0, Aliment: 'none' },
+    defense: { armor: 0, toughness: 1, immunity: 'none' },
+    patrol: { pattern: 'vertical', moveSpeed: 2000 },
+    drops: [ { item: Gear.Necklace1, chance: 15, quantity: 1 } ]
+}
+
 export const vScorpion: Types.Enemy =
 {
     type: 'Enemy',
@@ -157,5 +177,5 @@ export const vScorpion: Types.Enemy =
 };
 
 export const allEnemies: Types.Enemy[] = [
-    enemy, heavyEnemy, agileEnemy, minerEnemy, vScorpion
+    enemy, weakEnemy, heavyEnemy, agileEnemy, minerEnemy, vScorpion
 ];

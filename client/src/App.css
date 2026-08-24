@@ -12,6 +12,8 @@ html, body {
 }
 
 :root {
+  --pov-x: 13;
+  --pov-y: 13;
   --hud-gap: 0.5rem;
   --hud-padding: 0.5rem;
   --border: 1px solid #444;
@@ -76,29 +78,31 @@ html, body {
 @keyframes damageFlash {
   0% {
     box-shadow: inset 0 0 80px rgba(255, 0, 0, 0.8), 
-                inset 0 0 20px rgba(255, 0, 0, 1);
+                inset 0 0 20px rgba(255, 0, 1, 1);
   }
   100% {
     box-shadow: inset 0 0 50px rgba(255, 0, 0, 0);
   }
 }
 
+.fila {
+  display: flex;
+  line-height: 0;
+}
+
+.celda {
+  width: calc(650px / var(--pov-x));
+  height: calc(650px / var(--pov-y));
+  display: block;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .columna-wrapper {
   height: 100%;
   width: 650px;
   position: relative;
-}
-
-.fila {
-  display: flex;
-}
-
-.celda {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .visuals-layer {

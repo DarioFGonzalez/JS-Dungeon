@@ -16,6 +16,13 @@ export const torchedWall: Environment =
     symbol: Icons.torchdWallImg
 };
 
+export const dungeonTp: Environment =
+{
+    type: 'Teleporter',
+    name: 'dungeonTp',
+    symbol: Icons.dungeonTp,
+}
+
 export const rockyWall1: Environment =
 {
     type: 'Wall',
@@ -62,17 +69,25 @@ export const fountain: Environment =
 
 export const teleport: Environment =
 {
-    type: 'Object',
+    type: 'Teleporter',
     name: 'Teleport',
+    coords: { x: 0, y: 0 },
     symbol: Icons.tpImg
 }
 
 export const mapTeleport: Environment =
 {
-    type: 'Object',
+    type: 'Teleporter',
     name: 'Map teleport',
     symbol: Icons.mapTpImg,
 }
+
+export const sign: Environment = {
+    type: 'Object',
+    name: 'Help sign',
+    content: '',
+    symbol: Icons.sign
+};
 
 export const bag: Environment =
 {
@@ -173,6 +188,12 @@ export const allObjects:  Environment[] =
     fire,
     fountain,
     teleport,
+    sign
+];
+
+export const allTeleporters: Environment[] =
+[
+    dungeonTp,
     mapTeleport
 ];
 

@@ -25,10 +25,13 @@ import CraftingTab from "./components/CraftingTab/CraftingTab";
 import GearTab from "./components/GearTab/GearTab";
 import InspectorTab from "./components/InspectorTab/InspectorTab";
 import { ArrowClass } from "./components/data/projectiles";
+import { loadMap } from "./components/data/maps/maps";
 
 const allIcons = Object.values(icons);
 
-const mapSize = 18;
+const mapSize = 24;
+const PoV = 13;
+const range = Math.floor(PoV / 2);
 
 const emptyTile = { type: "Tile", name: "Void", symbol: "" };
 
@@ -50,7 +53,8 @@ type CellContent =
   | Types.Environment
   | Types.Node;
 
-const App = () => {
+
+  const App = () => {
   const isDev = process.env.NODE_ENV !== "production";
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -69,10 +73,11 @@ const App = () => {
   interface listOfMaps {
     name: string;
     visitedMap?: CellContent[][];
-    load: () => void;
     actual: boolean;
-    visited: boolean;
+    visited?: boolean;
+    timeoutId?: ReturnType<typeof setTimeout>;
   }
+  
   const [maps, setMaps] = useState<listOfMaps[]>([]);
 
   const mapaRef = useRef(mapa);
@@ -80,15 +85,16 @@ const App = () => {
   const [visuals, setVisuals] = useState<Types.VisualCell[][]>(emptyVisualGrid);
   const [recipes, setRecipes] = useState<Types.Recipe[]>( Object.values(Recipes) );
   
-  const [tps, setTps] = useState<Types.ArrayOfCoords>([]);
+  // const [tps, setTps] = useState<Types.ArrayOfCoords>([]);
   
   const [residual, setResidual] = useState<Types.Residual[]>([]);
   
   const [player, setPlayer] = useState<Types.Player>(Entities.emptyPlayer);
   const playerRef = useRef(player);
   const [bestiary, setBestiary] = useState<Types.BestiaryItem[]>([]);
-  const [inspectedCreature, setInspectedCreature] =
-    useState<Types.Enemy | null>();
+  const [inspectedEntityId, setInspectedEntityId] = useState<string | null>(null);
+  const lastInspectedEntityRef = useRef<Types.Enemy | null>(null);  // const [inspectedCreature, setInspectedCreature] =
+  //   useState<Types.Enemy | null>();
 
     useEffect( () => {
     const recetas = Object.values(Recipes);
@@ -113,8 +119,6 @@ const App = () => {
     return allMaterialsHere;
 
     } );
-
-    console.log("Recetas crafteables so far: ", crafteableRecipes);
 
     setRecipes(crafteableRecipes);
   }, [playerRef.current.hotBar] )
@@ -198,7 +202,7 @@ const App = () => {
     complete: boolean,
   ): CellContent[][] => {
     const auxiliar = mapa.map((fila) => [...fila]);
-    const { x: pX, y: pY } = player.data;
+    const { x: pX, y: pY } = playerRef.current.data;
     const thisResidual = residual.find(
       ({ coords }) => coords[0] === pX && coords[1] === pY,
     );
@@ -212,7 +216,13 @@ const App = () => {
     }
 
     if (complete === true) {
+      let flag = true;
+      
       setPlayer((prev) => {
+        if(isDev && flag) {
+          flag = false;
+          return prev;
+        }
         auxiliar[x][y] = { ...prev, symbol, data: { x, y } };
         return { ...prev, symbol, data: { x, y } };
       });
@@ -242,84 +252,84 @@ const App = () => {
     return undefined;
   };
 
-  const handleTp = (
-    x: number,
-    y: number,
-    symbol: string,
-    other: string,
-  ): void => {
-    const auxiliar = mapa.map((fila) => [...fila]);
+  // const handleTp = (
+  //   x: number,
+  //   y: number,
+  //   symbol: string,
+  //   other: string,
+  // ): void => {
+  //   const auxiliar = mapa.map((fila) => [...fila]);
 
-    const { x: pX, y: pY } = player.data;
-    const newX = pX + x;
-    const newY = pY + y;
-    const [tp1X, tp1Y] = tps[0];
-    const [tp2X, tp2Y] = tps[1];
+  //   const { x: pX, y: pY } = player.data;
+  //   const newX = pX + x;
+  //   const newY = pY + y;
+  //   const [tp1X, tp1Y] = tps[0];
+  //   const [tp2X, tp2Y] = tps[1];
 
-    if (
-      auxiliar[tp1X][tp1Y].name === "Teleport" &&
-      auxiliar[tp2X][tp2Y].name === "Teleport"
-    ) {
-      switch (other) {
-        case icons.boxImg: {
-          auxiliar[pX][pY] = emptyTile;
-          auxiliar[newX][newY] = player;
-          setPlayer((prev) => ({
-            ...prev,
-            symbol,
-            data: { x: newX, y: newY },
-          }));
-          if (tp1X === newX + x && tp1Y === newY + y) {
-            setResidual((prev) => [
-              ...prev,
-              { entity: Tiles.teleport, coords: [tp2X, tp2Y] },
-            ]);
-            auxiliar[tp2X][tp2Y] = Tiles.box;
-          } else {
-            setResidual((prev) => [
-              ...prev,
-              { entity: Tiles.teleport, coords: [tp1X, tp1Y] },
-            ]);
-            auxiliar[tp1X][tp1Y] = Tiles.box;
-          }
-          setMapa(auxiliar);
-          break;
-        }
-        case "": {
-          if (tp1X === newX && tp1Y === newY) {
-            setResidual((prev) => [
-              ...prev,
-              { entity: Tiles.teleport, coords: [tp2X, tp2Y] },
-            ]);
-            auxiliar[pX][pY] = emptyTile;
-            auxiliar[tp2X][tp2Y] = player;
-            setPlayer((prev) => ({
-              ...prev,
-              symbol,
-              data: { x: tp2X, y: tp2Y },
-            }));
-            setMapa(auxiliar);
-          } else {
-            setResidual((prev) => [
-              ...prev,
-              { entity: Tiles.teleport, coords: [tp1X, tp1Y] },
-            ]);
-            auxiliar[pX][pY] = emptyTile;
-            auxiliar[tp1X][tp1Y] = player;
-            setPlayer((prev) => ({
-              ...prev,
-              symbol,
-              data: { x: tp1X, y: tp1Y },
-            }));
-            setMapa(auxiliar);
-          }
-          break;
-        }
-      }
-    } else {
-      inconsecuente(symbol);
-    }
-  };
+  //   if (
+  //     auxiliar[tp1X][tp1Y].name === "Teleport" &&
+  //     auxiliar[tp2X][tp2Y].name === "Teleport"
+  //   ) {
+  //     switch (other) {
+  //       case icons.boxImg: {
+  //         auxiliar[pX][pY] = emptyTile;
+  //         auxiliar[newX][newY] = player;
+  //         setPlayer((prev) => ({
+  //           ...prev,
+  //           symbol,
+  //           data: { x: newX, y: newY },
+  //         }));
+  //         if (tp1X === newX + x && tp1Y === newY + y) {
+  //           setResidual((prev) => [
+  //             ...prev,
+  //             { entity: Tiles.teleport, coords: [tp2X, tp2Y] },
+  //           ]);
+  //           auxiliar[tp2X][tp2Y] = Tiles.box;
+  //         } else {
+  //           setResidual((prev) => [
+  //             ...prev,
+  //             { entity: Tiles.teleport, coords: [tp1X, tp1Y] },
+  //           ]);
+  //           auxiliar[tp1X][tp1Y] = Tiles.box;
+  //         }
+  //         setMapa(auxiliar);
+  //         break;
+  //       }
+  //       case "": {
+  //         if (tp1X === newX && tp1Y === newY) {
+  //           setResidual((prev) => [
+  //             ...prev,
+  //             { entity: Tiles.teleport, coords: [tp2X, tp2Y] },
+  //           ]);
+  //           auxiliar[pX][pY] = emptyTile;
+  //           auxiliar[tp2X][tp2Y] = player;
+  //           setPlayer((prev) => ({
+  //             ...prev,
+  //             symbol,
+  //             data: { x: tp2X, y: tp2Y },
+  //           }));
+  //           setMapa(auxiliar);
+  //         } else {
+  //           setResidual((prev) => [
+  //             ...prev,
+  //             { entity: Tiles.teleport, coords: [tp1X, tp1Y] },
+  //           ]);
+  //           auxiliar[pX][pY] = emptyTile;
+  //           auxiliar[tp1X][tp1Y] = player;
+  //           setPlayer((prev) => ({
+  //             ...prev,
+  //             symbol,
+  //             data: { x: tp1X, y: tp1Y },
+  //           }));
+  //           setMapa(auxiliar);
+  //         }
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     inconsecuente(symbol);
+  //   }
+  // };
 
   const pushBox = (x: number, y: number, symbol: string): void => {
     const newX = player.data.x + x;
@@ -339,10 +349,10 @@ const App = () => {
         setMapa(auxiliar);
         break;
       }
-      case "Teleport": {
-        handleTp(x, y, symbol, icons.boxImg);
-        break;
-      }
+      // case "Teleport": {
+      //   handleTp(x, y, symbol, icons.boxImg);
+      //   break;
+      // }
       default:
         inconsecuente(symbol);
         break;
@@ -1319,8 +1329,8 @@ const App = () => {
   const movePlayer = (x: number, y: number, symbol: string): void => {
     const aux = mapaRef.current.map((fila) => [...fila]);
 
-    const newX = player.data.x + x;
-    const newY = player.data.y + y;
+    const newX = Number(player.data.x) + x;
+    const newY = Number(player.data.y) + y;
 
     const tile = aux[newX][newY];
 
@@ -1340,7 +1350,8 @@ const App = () => {
           break;
         }
         case "Teleport": {
-          handleTp(x, y, symbol, "");
+          const thisTp = tile as Types.Environment;
+          moveHere(thisTp.coords?.x || 2, thisTp.coords?.y || 2, symbol, true);
           break;
         }
         case "Fire": {
@@ -1349,13 +1360,6 @@ const App = () => {
         }
         case "Fountain": {
           touchFountain(symbol);
-          break;
-        }
-        case "Map teleport": {
-          if ("content" in tile) {
-            console.log("Pisé un map teleport que lleva a ", tile.content);
-            swapMap(tile.content);
-          }
           break;
         }
         case "Unknown":
@@ -1398,6 +1402,12 @@ const App = () => {
             return playerInfo;
           });
           touchEnemy(symbol, tile as Types.Enemy);
+          break;
+        }
+        case "Teleporter": {
+          if ("content" in tile) {
+            swapMap(tile.content);
+          }
           break;
         }
       }
@@ -1705,7 +1715,6 @@ const App = () => {
         if(objective.type ==='Enemy') strikeEnemy( x, y );
         break;
       default:
-        console.log('Default');
         break;
     }
 
@@ -2549,276 +2558,6 @@ const App = () => {
     return walls[type][randomIndex];
   };
 
-  const loadMinesMap = (spawnMap: boolean = false): void => {
-    let auxiliar: CellContent[][] = Array.from({ length: mapSize }, () =>
-      Array.from(Array(mapSize), () => emptyTile),
-    ); //Vacía el mapa
-
-    for (
-      let i = 0;
-      i < mapSize;
-      i++ //Por columna
-    ) {
-      auxiliar[i][0] = Tiles.rockyWall2;
-      auxiliar[0][i] = Tiles.rockyWall1;
-      auxiliar[i][mapSize - 1] = Tiles.rockyWall1;
-      auxiliar[mapSize - 1][i] = Tiles.rockyWall1;
-
-      if (i % 6 === 0 || i === 0) {
-        auxiliar[i][0] = Tiles.rockyWall3;
-        auxiliar[0][i] = Tiles.rockyWall3;
-        auxiliar[i][mapSize - 1] = Tiles.rockyWall3;
-        auxiliar[mapSize - 1][i] = Tiles.rockyWall3;
-      }
-
-      for (
-        let j = 1;
-        j < mapSize - 1;
-        j++ //Por fila
-      ) {
-        if (i === 1) {
-          if (![3, 7, 11, 15].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 2) {
-          if ([1, 5, 9, 13].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 3) {
-          if ([11, 15].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 4) {
-          if ([4, 8, 9, 11, 12, 13, 15].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 5) {
-          if ([4, 8, 9, 13, 15].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 6) {
-          if ([1, 2, 3, 4, 5, 8, 12, 13, 15].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 7 || i === 8) {
-          if ([1, 8, 11, 12, 13, 15].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 9) {
-          if ([1, 4, 5, 7, 8, 12, 13, 15].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 10) {
-          if ([1, 5, 7, 12, 13].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 11) {
-          if ([1, 4, 5, 7, 12, 13, 16].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 12) {
-          if ([1, 4, 5, 7, 12, 13, 15, 16].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 13) {
-          if ([1, 4, 5, 7, 8, 9, 10, 11, 12, 13].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 14) {
-          if ([5, 7, 12, 13].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 15) {
-          if ([12].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-        if (i === 16) {
-          if ([5, 6, 7, 12, 13].includes(j)) {
-            auxiliar[i][j] = addWall("Rocky");
-          }
-        }
-      }
-    }
-
-    auxiliar[1][11] = createEntity("Enemie", "Goblin veterano");
-    auxiliar[3][14] = createEntity("Enemie", "Goblin veterano");
-    auxiliar[5][1] = createEntity("Node", "Copper");
-    auxiliar[6][15] = createEntity("Enemie", "Goblin minero");
-    auxiliar[9][15] = createEntity("Node", "Copper");
-    auxiliar[10][1] = createEntity("Enemie", "Escorpión venenoso");
-    auxiliar[11][9] = createEntity("Enemie", "Goblin minero");
-    auxiliar[12][8] = createEntity("Node", "Copper");
-    auxiliar[14][11] = createEntity("Node", "Copper");
-    spawnMap ? (auxiliar[2][2] = player) : (auxiliar[15][3] = player);
-    auxiliar[2][3] = createEntity("Equippable", "Wooden bow");
-    auxiliar[2][4] = createEntity("Equippable", "Long bow");
-    auxiliar[3][3] = createEntity('Equippable', 'Heavy bow')
-    auxiliar[15][5] = createEntity("Tool", "Copper Pickaxe");
-    auxiliar[15][10] = createEntity("Enemie", "Goblin");
-    auxiliar[15][13] = createEntity("Node", "Silver");
-
-    auxiliar[15][2] = createEntity("Object", "Map teleport", ["Caves"]);
-
-    auxiliar = addNodes(auxiliar, [{ node: "Copper", quantity: 2 }]);
-
-    setPlayer((prev) => ({
-      ...prev,
-      data: spawnMap ? { x: 2, y: 2 } : { x: 15, y: 3 },
-    }));
-
-    setMapa(auxiliar);
-  };
-
-  const loadCaveMap = (spawnMap: boolean = false): void => {
-    const auxiliar: CellContent[][] = Array.from({ length: mapSize }, () =>
-      Array.from(Array(mapSize), () => emptyTile),
-    ); //Vacía el mapa
-    for (
-      let i = 0;
-      i < mapSize;
-      i++ //Por columna
-    ) {
-      auxiliar[i][0] = Tiles.basicWalls;
-      auxiliar[0][i] = Tiles.basicWalls;
-      auxiliar[i][mapSize - 1] = Tiles.basicWalls;
-      auxiliar[mapSize - 1][i] = Tiles.basicWalls;
-      if (i % 6 === 0 || i === 0) {
-        auxiliar[i][0] = Tiles.torchedWall;
-        auxiliar[0][i] = Tiles.torchedWall;
-        auxiliar[i][mapSize - 1] = Tiles.torchedWall;
-        auxiliar[mapSize - 1][i] = Tiles.torchedWall;
-      }
-      for (
-        let j = 1;
-        j < mapSize - 1;
-        j++ //Por fila
-      ) {
-        if ([1, 2, 3].includes(i)) {
-          if ([4, 8, 12, 13].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 4) {
-          if ([1, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 16].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 5) {
-          if ([10, 12, 13, 14, 16].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 6) {
-          if ([1, 2, 3, 5, 6, 10, 12, 13, 14, 16].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 7) {
-          if ([6, 10].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 8) {
-          if ([6, 10, 12, 13, 14, 15].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 9) {
-          if ([6, 10].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 10) {
-          if ([1, 2, 3, 4, 5, 6, 10, 12, 13, 15, 16].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 11) {
-          if (j === 8) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 12) {
-          if ([8, 10, 11, 16].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 13) {
-          if ([8, 10, 14, 15, 16].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 14) {
-          if ([8, 13, 16].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 15) {
-          if ([8, 10, 13].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-        if (i === 16) {
-          if ([10, 13].includes(j)) {
-            auxiliar[i][j] = Tiles.basicWalls;
-          }
-        }
-      }
-    }
-
-    auxiliar[mapSize - 1][mapSize - 1] = Tiles.torchedWall;
-
-    auxiliar[1][7] = createEntity("Equippable", "Amuleto escudo");
-    auxiliar[1][10] = createEntity("Equippable", "Club");
-    auxiliar[1][11] = createEntity("Enemie", "Goblin veloz");
-    spawnMap ? (auxiliar[2][2] = player) : (auxiliar[15][3] = player);
-    auxiliar[1][2] = createEntity("Equippable", "Club");
-    auxiliar[2][4] = createEntity("Enemie", "Goblin veloz");
-    auxiliar[2][15] = createEntity("Object", "Box");
-    auxiliar[4][15] = createEntity("Enemie", "Goblin veterano");
-    auxiliar[5][11] = createEntity("Enemie", "Goblin veloz");
-    auxiliar[7][2] = createEntity("Enemie", "Goblin veloz");
-    auxiliar[8][3] = createEntity("Enemie", "Goblin");
-    auxiliar[9][1] = createEntity("Object", "Teleport");
-    auxiliar[9][11] = createEntity("Trap", "Poison trap");
-    auxiliar[11][16] = createEntity("Object", "Fire");
-    auxiliar[12][15] = createEntity("Object", "Fire");
-    auxiliar[14][10] = createEntity("Enemie", "Goblin");
-    auxiliar[14][14] = createEntity("Equippable", "Razor");
-    auxiliar[14][15] = createEntity("Object", "Fire");
-    auxiliar[15][16] = createEntity("Object", "Fire");
-    auxiliar[16][16] = createEntity("Object", "Teleport");
-
-    auxiliar[15][4] = createEntity('Equippable', 'Wooden bow');
-    auxiliar[15][2] = createEntity("Object", "Map teleport", ["Mines"]);
-
-    setTps([
-      [9, 1],
-      [16, 16],
-    ]);
-
-    setPlayer((prev) => ({
-      ...prev,
-      data: spawnMap ? { x: 2, y: 2 } : { x: 15, y: 3 },
-    }));
-
-    setMapa(auxiliar);
-  };
-
   const createEntity = (
     type:
       | "Equippable"
@@ -2827,6 +2566,7 @@ const App = () => {
       | "Trap"
       | "Consumable"
       | "Object"
+      | "Teleporter"
       | "Tile"
       | "Node",
     entityName: string,
@@ -2839,6 +2579,7 @@ const App = () => {
       Trap: Entities.allTraps,
       Consumable: Items.Consumables,
       Object: allObjects,
+      Teleporter: Tiles.allTeleporters,
       Tile: allTiles,
       Node: allNodes,
     };
@@ -2859,14 +2600,32 @@ const App = () => {
       ) =>
         x.name === entityName || ("mineral" in x && x.mineral === entityName),
     );
+
     if (!thisEntity)
       throw new Error(`No se encontró la entidad ${entityName} en ${type}`);
 
     if (entityName === "Bag") (thisEntity as Types.Environment).content = loot;
 
-    if (entityName === "Map teleport") {
-      if (loot !== undefined)
+    if (type === "Teleporter") {
+      if (loot !== undefined) {
         return { ...thisEntity, content: loot[0] ?? "" } as Types.Environment;
+      }
+    }
+
+    if( entityName === "Help sign" ) {
+      if (loot !== undefined) {
+        return { ...thisEntity, content: loot[0] } as Types.Environment;
+      }
+      return thisEntity;
+    }
+
+    if (entityName === "Teleport" ) {
+      if( loot !== undefined && loot.length > 1 ) {
+        return { ...thisEntity, coords: { x: loot[0], y: loot[1] } }
+      }
+      else {
+        return thisEntity;
+      }
     }
 
     if (type === "Object" || type === "Tile")
@@ -2915,16 +2674,146 @@ const App = () => {
       | Types.Item;
   };
 
-  const swapMap = (mapName: string): void => {
-    const newMap = maps.find((x) => x.name === mapName);
-    console.log("Encontró: ", newMap);
-    if (!newMap) return setMapa(mapaRef.current);
+  const rareMob = ( args: string ): CellContent => {
+    const [mob, chance] = args.split('-');
 
-    const actualMap = maps.find((x) => x.actual);
+    if( rollDrop(Number(chance)) ) {
+      return createEntity( 'Enemie', mob );
+    }
+
+    return emptyTile;
+  }
+
+  const parseCode = (rawCode: string): { command: string; args: string[] } => {
+    const match = rawCode.trim().match(/^([a-zA-Z0-9_-]+)(?:\((.*)\))?$/);
+
+    if (!match) return { command: rawCode.trim(), args: [] };
+
+    const command = match[1];
+    const args = match[2] ? match[2].split(",").map(arg => arg.trim()) : [];
+
+    return { command, args };
+  };
+
+  type DeferredEffect = (mapa: CellContent[][]) => CellContent[][];
+
+  type DictionaryHandler = (args: string[]) => CellContent | { isDeferred: true; effect: DeferredEffect };
+
+  const dictionary: Record<string, DictionaryHandler | Types.Player> = {
+    "bw": () => addWall("Basic"),
+    "tw": () => Tiles.torchedWall,
+    "rw": () => addWall("Rocky"),
+    "c": () => randomNode('Copper'),
+    "s": () => randomNode('Silver'),
+    "w1": () => createEntity("Equippable", "Wooden bow"),
+    "w2": () => createEntity("Equippable", "Wooden sword"),
+    "e1": () => createEntity("Enemie", "Goblin minero"),
+    "e2": () => createEntity("Enemie", "Goblin veterano"),
+    "e3": () => createEntity("Enemie", "Escorpión venenoso"),
+    "e4": () => createEntity("Enemie", "Goblin"),
+    "e5": () => createEntity("Enemie", "Rookie Goblin"),
+    "t": () => createEntity("Tool", "Copper Pickaxe"),
+    "p": player,
+    "tp": (args) => {
+      const [x, y] = args[0].split('-');
+      return createEntity("Object", "Teleport", [x, y]); 
+    },
+    "mapTp": (args) => {
+      const [style, destination] = args;
+      console.log("Estilo de swapper: ", style, "\nVamos hacia: ", destination);
+      return createEntity("Teleporter", style, [destination])
+    },
+    "sign": (args) => createEntity("Object", "Help sign", [args[0]]),
+    "mob": (args) => rareMob(args[0]),
+    "nodes": (args) => {
+      const mineralsToAdd: Types.mineralsToAdd[] = args.map((arg) => {
+        const [node, qty] = arg.split('-');
+        return { node, quantity: Number(qty) || 1 };
+      });
+
+      return {
+        isDeferred: true,
+        effect: (mapa) => addNodes(mapa, mineralsToAdd),
+      };
+    },
+  };
+
+  const mapReader = async (mapName: string, firstSpawn: boolean = false): Promise<void> => {
+    const mapInfo = await loadMap(mapName);
+
+    let auxiliar: CellContent[][] = Array.from({ length: mapInfo.length }, (_, i) =>
+      Array.from({ length: mapInfo[i].length }, () => emptyTile)
+    );
+
+    const deferredQueue: DeferredEffect[] = [];
+
+    for (let i = 0; i < mapInfo.length; i++) {
+      for (let j = 0; j < mapInfo[i].length; j++) {
+        const rawCode = mapInfo[i][j];
+        if (!rawCode) continue;
+
+        const { command, args } = parseCode(rawCode);
+
+        if (command === 'p') {
+          setPlayer((prev) => ({
+            ...prev,
+            data: { x: i, y: j },
+          }));
+        }
+
+        const entry = dictionary[command];
+
+        if (!entry) {
+          auxiliar[i][j] = emptyTile;
+        } else if (typeof entry === "function") {
+          const result = entry(args);
+
+          if (typeof result === "object" && result !== null && "isDeferred" in result) {
+            deferredQueue.push(result.effect);
+            auxiliar[i][j] = emptyTile;
+          } else {
+            auxiliar[i][j] = result as CellContent;
+          }
+        } else {
+          if(command==='p') {
+            setPlayer( (x: Types.Player) => ({...x, data: { x: i, y: j }}) )
+          }
+          auxiliar[i][j] = entry;
+        }
+      }
+    }
+
+    deferredQueue.forEach((effect) => {
+      auxiliar = effect(auxiliar);
+    });
+
+    setMapa(auxiliar);
+  };
+
+  const swapMap = async (mapName: string) => {
+    const existingMap = maps.find((x: listOfMaps) => x.name === mapName);
+    let newMap = existingMap ?? { name: mapName, actual: true, visited: true };
+
+    const actualMap = maps.find((x: listOfMaps) => x.actual);
+    console.log("Todos los mapas cargados: ", maps, "\nMapa actual: ", actualMap);
     if (!actualMap) return setMapa(mapaRef.current);
 
-    setMaps((prev) =>
-      prev.map((mapInfo) => {
+    let flag = true;
+
+    setMaps((prev: listOfMaps[]) => {
+      if (flag && isDev) {
+        flag = false;
+        return prev;
+      }
+
+      const prevClone = structuredClone(prev);
+      const thisMap = prevClone.find((map: listOfMaps) => map.name === newMap.name);
+
+      if (!thisMap) {
+        prevClone.push(newMap);
+      }
+
+      return prevClone.map((mapInfo: listOfMaps) => {
         if (mapInfo.name === actualMap.name) {
           const patrolsOff = mapaRef.current.map((fila) =>
             fila.map((entidad) => {
@@ -2940,11 +2829,15 @@ const App = () => {
             }),
           );
 
-          setTimeout(() => {
-            setMaps((prev) =>
-              prev.map((x) =>
+          if (mapInfo.timeoutId) {
+            clearTimeout(mapInfo.timeoutId);
+          }
+
+          const timerId = setTimeout(() => {
+            setMaps((prevClone: listOfMaps[]) =>
+              prevClone.map((x: listOfMaps) =>
                 x.name === actualMap.name
-                  ? { ...actualMap, visited: false }
+                  ? { ...x, visitedMap: undefined, visited: false, timeoutId: undefined }
                   : x,
               ),
             );
@@ -2954,28 +2847,33 @@ const App = () => {
             ...actualMap,
             visitedMap: patrolsOff,
             actual: false,
-            visited: true,
+            timeoutId: timerId,
           };
         }
-        if (mapInfo.name === newMap.name) {
-          return { ...newMap, visited: false, actual: true };
-        }
-        return mapInfo;
-      }),
-    );
 
-    if (newMap.visited && newMap.visitedMap !== undefined) {
-      const oldPlayer = newMap.visitedMap
+        if (mapInfo.name === newMap.name) {
+          if (mapInfo.timeoutId) {
+            clearTimeout(mapInfo.timeoutId);
+          }
+          return { ...newMap, actual: true, timeoutId: undefined };
+        }
+
+        return mapInfo;
+      });
+    });
+
+    if (existingMap?.visitedMap !== undefined) {
+      const oldPlayer = existingMap.visitedMap
         .flat()
         .find((x) => x.type === "Player");
       if (oldPlayer && "data" in oldPlayer) {
-        setPlayer((prev) => ({
+        setPlayer((prev: Types.Player) => ({
           ...prev,
           data: { x: oldPlayer.data.x, y: oldPlayer.data.y },
         }));
       }
 
-      const patrolsOn = newMap.visitedMap.map((fila) =>
+      const patrolsOn = existingMap.visitedMap.map((fila) =>
         fila.map((entidad) => {
           if (
             entidad.type === "Enemy" &&
@@ -2991,18 +2889,19 @@ const App = () => {
 
       return setMapa(patrolsOn);
     }
-    return newMap.load();
+
+    return await mapReader(mapName);
   };
 
-  const startGame = (): void => {
-    setMaps([
-      { name: "Caves", load: loadCaveMap, actual: false, visited: false },
-      { name: "Mines", load: loadMinesMap, actual: true, visited: false },
-    ]);
-    loadMinesMap(true);
-    // loadCaveMap(true);
-    setPlayer((prev) => ({ ...prev, hp: player.maxHp }));
+  const startGame = async () => {
+    const initialMapName = 'Mines4';
+
+    setMaps( [ { name: initialMapName, actual: true } ] )
+
+    mapReader(initialMapName);
+
     setGame(true);
+    
     setTimeout(() => gridRef.current?.focus(), 0);
   };
 
@@ -3047,24 +2946,45 @@ const App = () => {
   };
 
   const checkEntity = (entity: any): void => {
-    console.log(entity);
     if (
       "type" in entity &&
-      (entity.type === "Enemy" || entity.type === "Trap")
+      (entity.type === "Enemy" || entity.type === "Trap") &&
+      "id" in entity
     ) {
-      setInspectedCreature(entity as Types.Enemy);
+      setInspectedEntityId(entity.id);
     }
-    return;
   };
+
+  // const checkEntity = (entity: any): void => {
+  //   console.log(entity);
+  //   if (
+  //     "type" in entity &&
+  //     (entity.type === "Enemy" || entity.type === "Trap")
+  //   ) {
+  //     setInspectedCreature(entity as Types.Enemy);
+  //   }
+  //   return;
+  // };
+
+  function isEnvironment(celda: CellContent): celda is Types.Environment {
+    return (celda as Types.Environment).content !== undefined;
+  }
+
+const readContent = (celda: CellContent): string => {
+  if (isEnvironment(celda)) {
+    return celda.content
+      .replace(/\\r\\n|\\n/g, '\n')
+      .replace(/\\t/g, '\t');
+  }
+  return "";
+};
 
   return (
     <div className="game-container">
       <div className="grid-layout">
         <div className="map-zone">
           <div className="map-container" style={{ position: "relative" }}>
-            <div
-              className={`damage-vignette ${isTakingDamage ? "active" : ""}`}
-            />
+            <div className={`damage-vignette ${isTakingDamage ? "active" : ""}`} />
 
             {player.hp <= 0 && (
               <div className="death-overlay map-appear-animation">
@@ -3073,64 +2993,73 @@ const App = () => {
             )}
 
             {game && (
-              <div
-                className="map-appear-animation"
-                style={{ height: "100%", width: "100%" }}
-              >
+              <div className="map-appear-animation" style={{ height: "100%", width: "100%" }}>
                 <div className="columna-wrapper">
                   <div onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
-                    {mapa.map((fila, x) => (
-                      <div key={x} className="fila">
-                        {fila.map((celda, y) =>
-                          celda.symbol === "" ? (
-                            <label key={y} className="celda">
-                              {celda.symbol}
-                            </label>
-                          ) : (
-                            <img
-                              src={celda.symbol}
-                              onClick={() => checkEntity(celda)}
-                              alt={"main_map"}
-                              key={y}
-                              className="celda"
-                            />
-                          ),
-                        )}
-                      </div>
-                    ))}
+                    {Array.from({ length: PoV }, (_, dx) => {
+                      const rowIndex = player.data.x - range + dx;
+                      return (
+                        <div key={dx} className="fila" >
+                          {Array.from({ length: PoV }, (_, dy) => {
+                            const colIndex = player.data.y - range + dy;
+                            const celda = mapa[rowIndex]?.[colIndex];
+                            if (!celda) return <label key={dy} className="celda"></label>;
+                            return celda.symbol === "" ? (
+                              <label key={dy} className="celda">{celda.symbol}</label>
+                            ) : celda.name==='Help sign'
+                            ? (
+                                <img
+                                    src={celda.symbol}
+                                    alt="main_map"
+                                    key={dy}
+                                    className="celda"
+                                    title={readContent(celda).replace(/\\r\\n|\\n/g, '\n')}
+                                  />
+                                )
+                            : (
+                              <img
+                                src={celda.symbol}
+                                onClick={() => checkEntity(celda)}
+                                alt="main_map"
+                                key={dy}
+                                className="celda"
+                              />
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className="visuals-layer">
-                    {visuals.map((fila, x) => (
-                      <div key={x} className="fila">
-                        {fila.map((celda, y) => {
-                          if (typeof celda === "string") {
-                            return allIcons.includes(celda) ? (
-                              <img
-                                src={celda}
-                                alt={"visual"}
-                                key={y}
-                                className="celda"
-                              />
-                            ) : (
-                              <label key={y} className="celda">
-                                {celda}
-                              </label>
-                            );
-                          } else {
+                    {Array.from({ length: PoV }, (_, dx) => {
+                      const rowIndex = player.data.x - range + dx;
+                      return (
+                        <div key={dx} className="fila">
+                          {Array.from({ length: PoV }, (_, dy) => {
+                            const colIndex = player.data.y - range + dy;
+                            const celda = visuals[rowIndex]?.[colIndex];
+                            if (!celda) return <label key={dy} className="celda"></label>;
+                            if (typeof celda === "string") {
+                              return allIcons.includes(celda) ? (
+                                <img src={celda} alt="visual" key={dy} className="celda" />
+                              ) : (
+                                <label key={dy} className="celda">{celda}</label>
+                              );
+                            }
                             return (
                               <label
-                                key={y}
+                                key={dy}
                                 className="celda visual-text"
                                 style={{ color: celda.color || "white" }}
                               >
                                 {celda.text}
                               </label>
                             );
-                          }
-                        })}
-                      </div>
-                    ))}
+                          })}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -3138,9 +3067,6 @@ const App = () => {
                   {renderHp()} {renderAliments()}
                 </div>
 
-                <div className="h-text">
-                  Apretá H para ver los controles [V0.0.98]
-                </div>
               </div>
             )}
 
@@ -3156,21 +3082,41 @@ const App = () => {
 
         <div className="gear-column">
           {selectedMenu === "Gear" && <GearTab player={player} />}
-          {selectedMenu === "Crafting" && (
-            <CraftingTab recipes={recipes} player={player} />
-          )}
+          {selectedMenu === "Crafting" && <CraftingTab recipes={recipes} player={player} />}
           <ConsumablesTab player={player} />
-          {inspectedCreature && (
-            <InspectorTab
-              entity={inspectedCreature}
-              bestiary={bestiary}
-              onClose={() => setInspectedCreature(null)}
-            />
-          )}
+          {inspectedEntityId && (() => {
+            const found = findThisEnemy(inspectedEntityId, mapa);
+
+            if (found) {
+              lastInspectedEntityRef.current = found.entity;
+            }
+
+            const entityToRender = found 
+              ? found.entity 
+              : lastInspectedEntityRef.current 
+                ? { ...lastInspectedEntityRef.current, hp: 0 } 
+                : null;
+
+            if (!entityToRender) {
+              return null;
+            }
+
+            return (
+              <InspectorTab
+                entity={entityToRender}
+                bestiary={bestiary}
+                onClose={() => {
+                  setInspectedEntityId(null);
+                  lastInspectedEntityRef.current = null;
+                }}
+              />
+            );
+          })()}
         </div>
       </div>
     </div>
   );
+
 };
 
 export default App;

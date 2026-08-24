@@ -114,8 +114,6 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
     const ammoSymbol = equippedAmmo?.ammo.symbol ?? reload;
     const ammoColor = ammoColour[equippedAmmo?.ammo.attackStats.aliment || 'empty'];
 
-    console.log(equippedAmmo);
-
     return (
       <div className={styles.ammoWrapper}>
           <Tooltip content={equippedAmmo ? tooltipAmmoText(equippedAmmo.ammo) : 'Sin flechas'}>

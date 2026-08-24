@@ -1,0 +1,24 @@
+﻿rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw
+c;;;sign(Movement:\n\tW\n     A S D);rw;rw;;;sign(Action/Attack:\n     [ENTER]);rw;rw;;sign(Click enemies to inspect them);rw;;;sign(Navigate menus:\n      [ ↑ ]   [ ↓ ]\n   Equip/Craft:\n\t[ E ]);rw;c;;;;w1;rw
+rw;;p;;;;;;;c;rw;;;e5;;;tp(1-21);rw;rw;rw;;;;rw
+rw;;;;;rw;;;;rw;;;;rw;;;;rw;rw;sign(\t\tCrafting menu:\n\t\t[TAB]\nRecipes only appear when you have all the materials needed to craft them);;;;rw
+rw;rw;;rw;rw;rw;rw;rw;t;;;rw;w2;rw;rw;;;rw;rw;rw;;rw;rw;rw
+rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;c;rw;rw;rw;rw;rw;rw;rw;;rw;rw;rw
+rw;rw;rw;;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;;c
+rw;rw;;;;;;;;;;;rw;rw;;;;;rw;rw;;rw;rw;rw
+rw;;;;;;;;;;;;;rw;wr;;;;rw;rw;;;rw;rw
+rw;;;;;;;;;;;;rw;rw;rw;;;;rw;rw;;e4;;rw
+rw;;;;;;;;;;;;rw;rw;;;;;rw;rw;;;;rw
+bw;;;;;;;;;;;;;rw;rw;;;;rw;rw;rw;rw;;c
+tw;;;;;;;;;;;;;;rw;;;;rw;rw;s;rw;;rw
+mapTp(dungeonTp, Mines1);;;;;;;;;;;;;;;;;;rw;c;;rw;;rw
+tw;;;;;;;;;;;;;;rw;;;;rw;rw;;rw;;rw
+bw;;;;;;;;;;;;;rw;rw;rw;;;rw;rw;;rw;;rw
+rw;;;;;;;;;;;;rw;rw;rw;;;;rw;rw;;rw;e5;rw
+rw;;;;;;;;;;;;rw;rw;rw;;;;rw;rw;;;;rw
+rw;;;;;;;;;;;;;;rw;rw;;;rw;rw;;;rw;rw
+rw;rw;;;;;rw;;;;;;rw;rw;rw;rw;;;rw;rw;;rw;;rw
+rw;rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;rw;;;;rw
+rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;rw;rw;;;rw
+rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;rw;rw;tp(16-16);;rw
+rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw

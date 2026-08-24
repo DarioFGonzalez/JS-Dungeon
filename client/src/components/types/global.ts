@@ -67,7 +67,8 @@ export interface Environment
     type: string,
     name: string,
     symbol: string,
-    content?: any
+    content?: any,
+    coords?: { x: number, y: number }
 }
 
 export interface Node

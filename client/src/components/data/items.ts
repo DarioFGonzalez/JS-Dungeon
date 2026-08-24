@@ -110,6 +110,6 @@ export const explosiveArrow: Types.Ammo = {
         aliment: 'explosive',
         cd: 0
     },
-    toughness: 5,
+    toughness: 0,
     desc: 'Explosive-coated tip arrow.'
 }

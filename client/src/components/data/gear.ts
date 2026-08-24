@@ -23,8 +23,8 @@ export const Dagger1: Types.Gear =
     id: '',
     slot: 'weapon',
     style: 'melee',
-    desc: 'Cuchillo dentado, provoca sangrado.',
-    attackStats: { dmg: 1, DoT: 3, times: 2, cd: 1000, aliment: 'bleed' },
+    desc: "Old rusty blade, it's serrated edge causes bleeding.",
+    attackStats: { dmg: 1, DoT: 2, times: 2, cd: 1000, aliment: 'bleed' },
     durability: 10,
     equippeable: true
 }
@@ -32,14 +32,14 @@ export const Dagger1: Types.Gear =
 export const Sword1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Club',
+    name: 'Wooden sword',
     symbol: icons.sword1Img,
     id: '',
     slot: 'weapon',
     style: 'melee',
-    desc: 'Maza lenta, pero poderosa.',
-    attackStats: { dmg: 8, DoT: 0, times: 0, aliment: 'none', cd: 2500 },
-    durability: 20,
+    desc: 'Sword used for practice fencing, pretty harmless.',
+    attackStats: { dmg: 1, DoT: 0, times: 0, aliment: 'none', cd: 2000 },
+    durability: 5,
     equippeable: true
 }
 

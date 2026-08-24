@@ -1,421 +1,311 @@
 # Changelog
 
-Todas las modificaciones importantes a este proyecto serán documentadas en este archivo.
+All notable changes to this project will be documented in this file.
 
-Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [0.1.5] - 2026-08-18
+
+### Added
+- **CSV Dynamic Map Loading Engine (Step 25)**: Integrated the `mapReader` parser utility to import map layouts and world entities directly from raw CSV spreadsheet exports.
+- **Map Instance Caching**: Implemented an in-memory caching mechanism with TTL and unique identifiers to manage visited map instances and optimize runtime rendering performance.
+- **Teleporter Logic Refactor**: Implemented dynamic map transition mechanics using entity IDs and runtime coordinate mapping tied to loaded CSV maps.
+
+### Changed
+- **Dynamic Camera Viewport (Step 24)**: Replaced the rigid 12x12 static viewport with a dynamic camera system centered on player coordinates.
+- **Visual Bestiary Inspector (Steps 21 & 23)**: Deprecated text-console logging in favor of dedicated `<InspectorTab>` and `<GearInspectorTab>` components, displaying drop tables and advanced combat stats scaling with enemy kill counters[cite: 1].
+- **Ranged Combat Decoupling (v0.1.4 / Step 22)**: Decoupled projectile ammo management using a modular `<Quiver>` component, bound to the `R` key for quick-swapping projectiles[cite: 1].
+- **Integrated Crafting Interface (v0.1.2 / Step 20)**: Built an in-game crafting system accessible via `TAB`, featuring real-time resource validation and visual feedback for craft outcomes[cite: 1].
+
+### Fixed
+- **Automated Focus Recovery**: Scheduled background thread task forcing DOM event focus back onto the primary game engine canvas during accidental blur/clicks outside the viewport[cite: 1].
+- **Environment Compatibility**: Normalized asset path references and environment variables to fix build pipeline failures during production deployments on Vercel[cite: 1].
 
 ## [v0.1.4] - 2025-07-16
 
 ### Added
-- Sistema de proyectiles y armas a distancia: implementación inicial de flechas como munición consumible, con soporte para impacto contra entidades, aplicación de efectos de estado y eliminación de enemigos.
-- Arquitectura de municiones: introducción de la propiedad `ammoType` en armas y municiones para definir compatibilidad entre distintos tipos de proyectiles (flechas, balas, etc.).
-- Componente `quiver`: almacenamiento de múltiples tipos de municiones y navegación entre ellas mediante tecla `R`.
-- Recetas de crafteo para municiones: integración con el sistema de crafting para producir flechas y otros proyectiles a partir de materiales recolectados.
+- Projectiles and ranged weapon architecture: Initial implementation of arrows as consumable ammo, supporting collision detection, status effect application, and entity destruction.
+- Ammunition system: Introduced the `ammoType` interface property across weapons and projectiles to strictly enforce compatibility (arrows, bullets, etc.).
+- `<Quiver>` component: Storage system for multiple projectile types with keybinding navigation (`R`).
+- Ammunition crafting recipes: Integrated arrow and projectile production into the core crafting engine using harvested world materials.
 
 ### Changed
-- Lógica de disparo: al utilizar munición, el carcaj reduce su cantidad y el arma equipada pierde durabilidad proporcional al tipo de proyectil.
-- Distancia de recorrido de proyectiles: ahora depende del arma a distancia utilizada, diferenciando comportamientos entre distintos equipos.
+- Ranged firing logic: Depleting ammunition now decrements quiver charges while wearing down weapon durability proportional to projectile tiers.
+- Projectile range scaling: Travel distance is now dynamically derived from the equipped ranged weapon's baseline stats.
 
 ### Notes
-- Esta versión establece la base para futuras expansiones de armas a distancia (ballestas, armas de fuego, láseres, etc.).
-- El sistema es funcional pero carece de interfaz visual dedicada; se prevé trabajar en UX/UI para mostrar municiones disponibles y facilitar la interacción sin necesidad de tutoriales.
+- Lays the core architecture for future ranged weapon expansions (crossbows, firearms, magic catalysts).
+- Fully functional execution, with UI/UX polish planned for inventory ammo displays.
 
 ## [v0.1.3] - 2025-03-14
 
 ### Added
-- Nuevo componente `<InspectorTab>` que muestra información detallada de entidades al hacer clic sobre ellas en el mapa. Incluye estadísticas clave (ARMADURA, DUREZA, DAÑO, ESTADO), drops y sistema de desbloqueo progresivo según kills.
-- Sistema de Tooltips implementado con componente `<Tooltip>` reutilizable que muestra descripciones contextuales al pasar el mouse sobre elementos del InspectorTab y otros sectores clave de la interfaz.
-- Sistema de Bestiario: nuevo estado local `bestiary` que registra la cantidad de enemigos eliminados por especie, utilizado para desbloquear información adicional en el InspectorTab de forma progresiva.
-- Estilado de elementos bloqueados: se agregó blur, overlay y candados visuales para estadísticas y drops aún no desbloqueados, mejorando la claridad de progresión.
-- Colores dinámicos para drop rates: los porcentajes de drop ahora se renderizan con un gradiente HSL que va del rojo (baja probabilidad) al verde (alta), facilitando la lectura rápida.
-- Velocidades individuales de patrullas: las patrullas ahora pueden configurarse con distintos `moveSpeed`, permitiendo comportamientos diferenciados (Goblin veloz vs. Goblin veterano).
+- `<InspectorTab>` component displaying detailed entity metadata upon click interactions. Tracks Armor, Toughness, Base Damage, Statuses, drop chances, and progressive kill unlocks.
+- Contextual Tooltip System: Built a reusable `<Tooltip>` component providing hover descriptions across UI panels and the entity inspector.
+- Bestiary Tracking: Local `bestiary` state tracking kill counts per species to dynamically reveal advanced inspector data.
+- Progression UI Locks: Blur, overlay, and lock badges applied to unrevealed monster stats and drop tables.
+- Dynamic Drop Rate Gradients: Rendered item drop percentages using HSL color interpolation (red for low probabilities to green for high).
+- Individual Entity Tick Rates: Configurable `moveSpeed` attributes on patrol units to allow distinct AI behaviors (e.g., Swift Goblin vs. Tanky Goblin Veteran).
 
 ### Changed
-- Refactor del sistema de patrullaje: cada enemigo maneja su propio intervalo de movimiento, con control individual y limpieza adecuada al morir o cambiar de mapa.
-- Enfoque UX: se reemplazó la consola de eventos textual (`<ConsoleTab>`) por feedback visual directo en el InspectorTab y tooltips, priorizando la comprensión inmediata sobre la lectura de logs.
-- Mecánica de inspección: ahora cualquier entidad del mapa puede ser inspeccionada mediante clic, unificando la experiencia de reconocimiento de enemigos, trampas y objetos.
+- Patrol Engine Refactor: Decoupled move intervals per entity with isolated cleanup execution upon entity death or map switching.
+- UX Focus Shift: Replaced text event logs (`<ConsoleTab>`) with real-time visual feedback in `<InspectorTab>` and contextual tooltips.
+- Unified Entity Inspection: Enabled click-to-inspect on all map tiles, standardizing feedback across monsters, traps, and interactables.
 
 ### Fixed
-- Pérdida de foco del contenedor principal: se implementó un sistema de reenfoque automático mediante intervalos y detección de eventos, asegurando que el mapa retenga el foco incluso si el usuario clickea fuera del área de juego.
-- Estabilidad visual del overlay de drops: corregido el posicionamiento del overlay de bloqueo en el área de drops cuando el bestiario no alcanza el mínimo de kills requerido.
+- Window Focus Loss: Implemented periodic refocus listeners preventing DOM event drops when clicking outside the render area.
+- Drop Overlay Positioning: Corrected layout shifting on locked drop overlays when kill milestones were unmet.
 
 ## [v0.1.2] - 2025-03-10
 
 ### Added
-- Nuevo componente `<CraftingTab>` que lista recetas disponibles y permite crear items a partir de materiales en el inventario.
-- Sistema de recetas: implementado array tipado de recetas con ingredientes, cantidades y resultado. Por ahora fijo, pero diseñado para ser extensible (recetas aprendidas, consumibles, condicionales).
-- Navegación por pestañas: se agregó la tecla TAB para alternar entre `<GearTab>` (equipo) y `<CraftingTab>` (fabricación), compartiendo la misma zona de interfaz y lógica de navegación vertical (↑↓).
-- Función `craftItem()`: lógica completa de verificación de materiales, descuento de ingredientes, creación del item resultante y actualización visual del inventario.
-- Feedback visual de crafting: al seleccionar una receta y presionar E, se ejecuta el craft. Si los materiales son insuficientes, se muestra un indicador visual de error temporal.
+- `<CraftingTab>` panel listing available recipes and resolving material costs from the player's inventory.
+- Typed Recipe Engine: Implemented recipe data structures handling input arrays, quantities, and outcome yields.
+- Dual-Tab Navigation: Added `TAB` key toggling between `<GearTab>` and `<CraftingTab>`, sharing vertical hotbar navigation controls (↑↓).
+- `craftItem()` Handler: Complete item creation handler verifying ingredient costs, inventory deductions, and UI state sync.
+- Crafting Visual Feedback: Triggers transient error states on input shortcut (`E`) when ingredient constraints fail.
 
 ### Changed
-- Unificación de navegación: los hooks de navegación (`navigateHotbar`, `navigateCraftingMenu`) ahora responden al mismo conjunto de teclas según la pestaña activa, simplificando el manejo de eventos.
-- Estandarización de `setPlayer` en crafting: las actualizaciones de inventario post-craft utilizan la misma lógica que el resto del sistema, asegurando consistencia y evitando efectos secundarios.
+- Unified Input Listeners: Streamlined hotkey navigation hooks (`navigateHotbar`, `navigateCraftingMenu`) based on active UI tab state.
+- State Standardization: Standardized inventory state updates using unified `setPlayer` dispatchers post-crafting.
 
 ### Fixed
-- Overflow en zona de recetas: se ajustaron estilos para que la lista de recetas se desplace verticalmente sin romper el layout cuando hay más items de los que entran en pantalla.
-- Bug de selección múltiple: corregido error que permitía tener más de una receta seleccionada simultáneamente tras ciertos cambios de pestaña.
+- Recipe List Overflow: Fixed container layout behavior to allow vertical scrolling when recipes exceed container bounds.
+- Multi-selection State Bug: Resolved a state bug allowing concurrent selection of multiple recipes during tab transitions.
 
 ## [v0.1.1] - 2025-01-20
 
 ### Changed
-- **Refactor general del código base**:
-  - Limpieza completa de warnings de ESLint para garantizar builds limpios en entornos CI/CD.
-  - Ajuste y estandarización del uso de comparaciones estrictas (`===`, `!==`) y callbacks correctos en colecciones.
-- **Gestión de entorno (local vs deploy)**:
-  - Refactor de flags internas para detectar correctamente ejecución en `localhost` o entorno de producción (Vercel).
-  - Eliminación de comportamientos inconsistentes entre builds locales y remotos.
-- **Ajustes de layout y constraints visuales**:
-  - Definición de `min-height` y `max-height` en consola de eventos, GearTab y pestaña de consumibles para asegurar orden visual y evitar desbordes.
-  - Refinamiento del espaciado general para mejorar legibilidad y coherencia del HUD.
+- **Codebase Standardization**:
+  - Resolved all ESLint warnings to guarantee clean CI/CD build pipelines.
+  - Standardized strict equality checks (`===`, `!==`) and array callback routines.
+- **Environment Handling (Local vs. Prod)**:
+  - Refactored internal environment flags to properly detect `localhost` versus production deployments (Vercel).
+  - Eliminated state discrepancies between local dev servers and remote builds.
+- **HUD Layout Constraints**:
+  - Enforced `min-height` and `max-height` constraints across event logs, `<GearTab>`, and consumable slots to prevent visual layout shifts.
 
 ### Fixed
-- **Demo jugable restaurada**:
-  - Corrección de errores que impedían el correcto funcionamiento del loop principal en producción.
-  - Verificación completa de sistemas clave: minería, combate, equipamiento, daño en el tiempo (DoT) y drops.
-- **Consumo y descarte de ítems**:
-  - Corrección del manejo de consumibles, permitiendo su eliminación mediante la tecla `Backspace` sin generar estados inválidos.
-- **Estabilidad general del build**:
-  - El proyecto vuelve a compilar correctamente en Vercel sin errores ni warnings tratados como fallos.
+- **Playable Demo Restoration**:
+  - Resolved main loop errors breaking production builds.
+  - Verified core systems: Mining, Combat, Gear durability, Damage over Time (DoT), and Drop tables.
+- **Item Disposal Logic**:
+  - Fixed consumable drop/delete handlers (`Backspace`), preventing invalid inventory states.
+- **Build Stability**:
+  - Resolved all TypeScript and Vercel build compilation failures.
 
 ### Notes
-- Esta versión funciona como **parche de estabilización** posterior al release jugable inicial.
-- El foco estuvo puesto en **robustez técnica, consistencia entre entornos y limpieza estructural**, más que en la incorporación de contenido nuevo.
-- Con este parche, la demo vuelve a ser una referencia confiable del estado real del proyecto.
+- Stabilizing patch following initial public release.
+- Focused entirely on system architecture, technical debt, and cross-environment stability.
 
 ## [v0.1.0] - 2025-01-11
 
 ### Added
-- **Mejoras visuales sustanciales en GearTab**:
-  - Íconos de equipamiento visibles de forma permanente.
-  - Codificación por colores según tipo de ítem para rápida identificación.
-  - Visualización de cooldown mediante animación gráfica.
-  - Indicador de durabilidad representado como barra de vida.
-- **Nuevo enemigo: Goblin Minero**:
-  - Diseñado específicamente para dropear herramientas de minería, alineando narrativa y loot.
-- **Nuevos íconos de recursos**:
-  - Incorporación de íconos de minerales (ore) con coherencia visual respecto al resto del HUD.
-- **Componente `DurabilityBar`**:
-  - Implementación de barra visual reutilizable para representar desgaste de ítems equipables.
+- **GearTab Visual Overhaul**:
+  - Persistent equipment slot icons.
+  - Color-coded item rarity and type classification.
+  - Cooldown timers visualized via animated overlay graphics.
+  - Integrated visual durability bars.
+- **New Mob Type (Goblin Miner)**:
+  - Enemy designed specifically to drop mining tools, aligning narrative with gameplay loot.
+- **Resource Icons**: Added mineral ore visual assets matching HUD styling.
+- **`DurabilityBar` Component**: Reusable component rendering equipment wear and tear.
 
 ### Changed
-- **GearTab migrado a CSS Modules**:
-  - El archivo `GearTab.css` fue convertido a `GearTab.module.css` para evitar colisiones de estilos y facilitar escalabilidad futura.
-- **Ajustes de layout y espaciado del equipo**:
-  - Refinamiento de padding, proporciones y jerarquía visual para priorizar legibilidad y comprensión inmediata.
-- **Enfoque de diseño UX**:
-  - Se prioriza la comprensión del estado del jugador sin recurrir a tutoriales intrusivos, textos explicativos o guías externas.
+- **CSS Modules Migration**: Converted `GearTab.css` to `GearTab.module.css` to prevent global scope style leakage.
+- **Equipment Layout Spacing**: Improved padding, proportions, and typographic hierarchy across HUD panels.
+- **UX Design Focus**: Prioritized intuitive gameplay feedback without relying on intrusive tutorials or external guides.
 
 ### Notes
-- Este release marca oficialmente el pasaje a una **versión jugable (v0.1.0)**:
-  - El jugador puede combatir, lootear, equiparse y morir dentro de un loop funcional.
-- El foco del proyecto se desplazó momentaneamente de validación técnica a **claridad visual, experiencia de usuario y legibilidad sistémica**.
+- Official transition to a **Playable Demo (v0.1.0)**: Players can combat, loot, equip items, and trigger game-over loops.
 
 ## [v0.0.99+] - 2025-12-26
 
 ### Added
-- **Soporte para creación de mapas externos (Excel-based)**: Se adopta un flujo de trabajo manual para diseño de mapas utilizando una grilla 18×18 con celdas perfectamente cuadradas, permitiendo prototipado rápido y control visual total del layout.
-- **Referencia visual de mapas**: Incorporación de una imagen documentada del mapa base en el repositorio como fuente de verdad para la traducción manual a matriz lógica.
-- **Estructura de mapa orientada a entidades**: Cada posición del mapa representa ahora una entidad completa, facilitando la lectura, transformación y validación de mapas definidos externamente.
+- **Grid-Based External Map Workflow (Excel-driven)**: Adopted a 18x18 grid system for layout designs, enabling rapid prototyping and visual layout control.
+- **Map Visual Reference**: Added base map visual assets to repository documentation as ground truth for logical matrix mapping.
+- **Entity-Oriented Map Matrix**: Refactored grid cells to store complete entity objects instead of primitive types.
 
 ### Changed
-- **Refactor profundo de la lógica base del juego**:
-  - La matriz principal deja de contener valores primitivos o símbolos aislados y pasa a manejar entidades estructuradas.
-  - Se prioriza escalabilidad y coherencia interna por sobre velocidad de implementación.
-- **Gestión de patrullas de enemigos**:
-  - Cada patrulla se maneja de forma individual e independiente.
-  - Se habilita la cancelación segura de intervalos específicos (`clearInterval(id)`), evitando comportamientos zombis o fugas de lógica.
-- **Flujo de desarrollo**:
-  - Se abandona la necesidad de un “motor de mapas” interno en favor de una herramienta externa más simple, flexible y controlable.
+- **Core Engine Architecture**:
+  - Replaced primitive char matrices with fully typed entity objects.
+  - Prioritized internal structural integrity and scalability over quick hacks.
+- **Patrol AI Lifecycle**:
+  - Isolated patrol AI execution per entity instance.
+  - Enabled explicit interval cleanup routines (`clearInterval(id)`), eliminating memory leaks and orphan timers.
+- **Development Tooling**:
+  - Replaced built-in map editor tooling in favor of lightweight external spreadsheet parsers.
 
 ### Fixed
-- Bug crítico relacionado con **muerte por daño en el tiempo (DoT)** que generaba estados inconsistentes al finalizar entidades.
+- Resolved critical DoT execution bug that triggered state inconsistencies upon entity termination.
 
 ### Notes
-- Este release marca un **punto de estabilización estructural** del proyecto.
-- El nuevo flujo de creación de mapas prioriza claridad, control y rapidez iterativa, incluso a costa de automatización temprana.
-- A partir de esta versión, el foco pasa de refactorización interna a **construcción de contenido jugable** con vistas a una demo funcional.
+- Structural stabilization milestone shifting focus from engine refactor to content creation.
 
 ## [v0.0.99] - 2025-06-02
 
 ### Added
-- Cartel fijo en el HUD: *"Apretá H para el tutorial"* agregado al borde superior derecho para mejorar la accesibilidad de los controles.
-- Nueva slide de ayuda: sección "Repositorio" con imagen explicativa y botón que redirige directamente al repositorio de GitHub.
-- Link directo a la demo en Vercel agregado en la sección `DEMO` del `README.md`.
-
-### Notes
-- Esta versión funciona como hotfix visual menor y de accesibilidad. Mejora la entrada de nuevos jugadores y la transparencia del proyecto al brindar acceso visible a documentación y código fuente.
+- HUD Accessibility Banner: Added *"Press H for tutorial"* prompt to top navigation.
+- Help Slides Extension: Added Repository reference slide featuring direct GitHub link integration.
+- `README.md` updates with direct Vercel live demo links.
 
 ## [v0.0.98] - 2025-05-26
 
 ### Added
-- **Sistema de Slides de Ayuda**: Nueva interfaz emergente que explica mecánicas clave del juego. Contiene imágenes creadas manualmente con íconos, textos e indicadores estilizados para mantener coherencia estética con el HUD.
-- **Pantalla de Muerte**: Se implementó una vista clara de *Game Over* que aparece automáticamente cuando el jugador alcanza 0 de hp, brindando cierre visual al combate.
-- **Carpeta unificada de assets visuales (`Images`)**: Nueva estructura de imágenes importables desde `index.ts` para facilitar la organización y reutilización de elementos gráficos.
+- **Help Slides Overlay**: Interactive tutorial overlay rendering custom graphical slide assets.
+- **Game Over Screen**: Implemented formal death state rendering automatically at 0 HP.
+- **Asset Indexing**: Centralized visual asset exports inside a unified `Images/index.ts` directory.
 
 ### Changed
-- **Hotbar de Gear**:
-  - Navegación rediseñada: ahora se utiliza ↑ ↓ en lugar de → ←, respetando la orientación vertical del equipo visible.
-- **Estética del Gear y consola de eventos**:
-  - Se aplicaron cambios de color y contraste para mejorar la legibilidad de los textos y destacar ítems activos o equipados.
-  - Ajustes visuales menores para integrar mejor estos componentes al entorno general del juego.
-- **Formato y consistencia visual de Slides**:
-  - Imágenes de ayuda exportadas desde `Photoshop`, `Figma` y `Paint`, con íconos recortados `manualmente` y ajustados a una paleta y dimensiones coherentes.
-
-### Notes
-- Este parche tuvo como objetivo reforzar la experiencia del jugador mediante feedback visual claro, asistencia contextual (Slides), y mayor cohesión estética entre los elementos interactivos.
-- También sienta las bases para un tutorial inicial o sistema de progresión visual escalable en futuras versiones.
+- **Hotbar Navigation**: Re-mapped gear navigation to vertical orientation (`Up` / `Down` arrow keys).
+- **HUD Contrast**: Adjusted color palettes and typography across event logs and equipment slots.
 
 ## [v0.0.97] - 2025-05-24
 
 ### Added
-- **Indicadores visuales de daño continuo (DoT)**: Ahora los enemigos muestran sobre sí mismos los valores numéricos del daño que están recibiendo con formato claro y legible.
-- **Iconografía de entorno**: Se añadieron nuevas imágenes como antorchas (`torchWallLeft`, `torchWallRight`) que enriquecen la ambientación del mapa.
+- **Visual DoT Indicators**: Dynamic floating damage numbers rendering continuous status damage above entities.
+- **Map Visual Props**: Wall torches and environmental visual variants (`torchWallLeft`, `torchWallRight`).
 
 ### Changed
-- **Overhaul visual del HUD**: 
-  - Rediseño completo del layout de los componentes principales (`mapa`, `GearTab`, `inventory`, `log`, y controles).
-  - Reorganización en un sistema de grilla para mejorar la coherencia visual y la legibilidad.
-- **Estilización de la consola de eventos**:
-  - Reformateo del texto de cada entrada para ajustarse automáticamente al ancho, mejorar la separación visual y eliminar desbordes no deseados.
-  - Se agregaron logs visibles para acciones como el uso de ítems (`onUse`), mejorando la retroalimentación al jugador.
-- **Refactor de elementos de estado del jugador**:
-  - La vida, los efectos de estado (DoT, Buffs), el inventario y el botón de control ahora son **consolas flotantes** visualmente integradas al entorno.
-- **Estética del equipo equipado y seleccionable**:
-  - El equipo seleccionado se resalta visualmente.
-  - Se mejoró la separación entre ítems equipados (`charm`, `weapon`) con fondos diferenciados según tipo.
+- **HUD Layout Overhaul**: Re-architected grid container mechanics for layout alignment.
+- **Event Console Styling**: Added auto-wrapping, overflow handling, and visual event tags (`onUse`).
+- **Player State Floating Consoles**: Refactored HP, active status effects, and inventory panels into floating HUD modules.
 
 ### Fixed
-- **Scroll visual innecesario** en el área de consola de eventos: se eliminó un overflow vertical que causaba desbordes visuales no deseados.
-
-### Notes
-- Esta versión se centró en unificar criterios visuales, ordenar el layout general del juego y preparar el terreno para parches más técnicos. Se buscó evitar superposición de preocupaciones entre parches visuales y lógicos.
-- El `manageVisuals` fue refactorizado para permitir mayor flexibilidad visual sin sobrecargar la lógica del juego.
+- Fixed unconstrained vertical overflow within event log containers.
 
 ## [v0.0.96] - 2025-05-20
 
 ### Added
-- **Sistema de accesorios (Amuletos)**: Se incorporó el primer accesorio funcional (amuletos protectores). Implementación de `damageCharm()` para interceptar daño antes de que afecte la salud del jugador.
-- **Sprites de amuletos**: Se agregó el ícono `necklaceImg` y su integración con la UI general del jugador.
-  
+- **Accessory Engine (Amulets)**: Added protective amulets intercepting damage prior to player health deduction (`damageCharm()`).
+- Added `necklaceImg` sprite assets and UI integrations.
+
 ### Changed
-- **Refactor en `hurtPlayer()`**: Ahora contempla la lógica de accesorios protectores (si están equipados, reciben el daño antes que el jugador).
+- Refactored `hurtPlayer()` to evaluate protective gear logic before reducing base health.
 
 ### Removed
-- **Capas visuales experimentales**: Se eliminaron las funciones `setDamages` y `setHealings` que intentaban separar animaciones de daño y curación en capas independientes. Las pruebas revelaron limitaciones de performance severas en React ante múltiples renderizados concurrentes.
-
-### Notes
-- Se identificó un tope técnico crítico: React no escala bien al intentar simular un motor de rendering con múltiples capas activas en tiempo real. Se decidió priorizar estabilidad y jugabilidad sobre extensibilidad visual.
-- El enfoque a futuro será consolidar una demo funcional con los sistemas actuales, y explorar minijuegos modulares en lugar de un único juego extenso y complejo.
+- **Experimental Multi-Layer Renderer**: Removed multi-layered rendering state experiments due to React re-render performance bottlenecks under continuous load.
 
 ## [v0.0.95] - 2025-05-15
 
 ### Added
-- **Visual Overhaul**: Reemplazo completo del sistema de render ASCII por íconos PNG representativos. Ahora los elementos del mapa (jugador, enemigos, trampas, fuego, paredes) tienen sprites visuales claros.
-- **Sistema de Overlay visual**: Se agregó una segunda capa (`visualOverlay`) que permite superponer efectos visuales temporales (daño, buffs, etc.) sin alterar el mapa base.
-- **Funciones de gestión visual secundaria**: Nuevas funciones `setVisualOverlay` y `clearVisualOverlay` para manejar de forma modular los efectos en el overlay del mapa.
+- **Sprite Rendering Engine**: Replaced ASCII rendering with PNG sprite assets (player, enemies, traps, walls).
+- **Visual Overlay Layer**: Introduced `visualOverlay` layer handling transient particle effects (damage, status indicators) independent of underlying map tiles.
+- Added modular layer utilities: `setVisualOverlay()` and `clearVisualOverlay()`.
 
 ### Changed
-- **Refactor del renderer principal**: Se modificó la lógica de renderizado para desacoplar el contenido lógico (`map`) de la presentación (`visualOverlay` + íconos). Esto facilita la extensión futura con animaciones o efectos más complejos.
-- **Soporte completo de íconos como entidades visuales**: Las entidades ya no se renderizan por carácter (`<`, `>`, `f`, `p`...), sino que se vinculan directamente a sus respectivos sprites a través de un mapa de visualización.
-
-### Notes
-- Primer sistema visual jugable para terceros no-devs: si bien sigue siendo una versión temprana, permite interpretar el entorno sin necesidad de conocer el sistema interno.
-- Este sistema visual es funcional pero no definitivo; se espera una segunda iteración con animaciones avanzadas, transiciones y visual feedback más completo.
+- Decoupled state logic (`map`) from render tree execution (`visualOverlay` + sprites).
 
 ## [v0.0.94] - 2025-05-14
 
 ### Added
-- **Sistema de Gear Equipable**: Separación del inventario en dos categorías: `Inventory` (ítems consumibles) y `Equippeable` (ítems con durabilidad). Se implementó la lógica de auto-equipado de puños (`Fists`) al romperse el arma principal.
-- **Durabilidad de armas y lógica de rotura**: Las armas ahora pierden durabilidad al atacar enemigos. Esta se reduce según la `Toughness` (dureza) del enemigo. Si la durabilidad cae a 0 o menos, el arma se destruye.
-- **HotBar navegable**: Se agregó un sistema para cambiar el ítem equipado con las teclas de flecha (`ArrowLeft` / `ArrowRight`), facilitando la rotación entre armas disponibles.
-- **Logs visuales asincrónicos**: Implementado un sistema de consola en pantalla con logs estilizados, colores por tipo de evento, y gestión asincrónica para evitar repeticiones y errores de render.
-- **Inicio del sistema de estados alterados (DoT) en enemigos**: Se integró la lógica de daño por tiempo (`DoT`) en enemigos, reutilizando el sistema del jugador (veneno, quemadura, sangrado). Los logs reflejan estos eventos con tag e información contextual.
+- **Equipment System**: Split player storage into `Inventory` (consumables) and `Equippeable` (durability items). Added auto-equipping fists on weapon destruction.
+- **Weapon Durability**: Weapon attacks decrement durability based on enemy `Toughness`. Weapons break at 0 durability.
+- **Equipment HotBar**: Enabled quick weapon swapping using `ArrowLeft` and `ArrowRight`.
+- **Async Event Console**: On-screen logging system handling asynchronous event dispatches without state collisions.
+- **Enemy Status Engine**: Ported player DoT handlers (Poison, Burn, Bleed) onto enemy entity instances.
 
 ### Changed
-- **Refactor de `damageEnemy`**: Se dividió la lógica de daño y muerte en `damageEnemy` y `enemyDeath`, mejorando legibilidad y atomicidad del sistema de combate.
-- **Unificación de lógica `strikeEnemy`**: Ahora encapsula correctamente la secuencia ataque ➝ daño ➝ pérdida de durabilidad ➝ muerte ➝ drop ➝ log.
+- Refactored combat logic, decoupling `damageEnemy` from `enemyDeath` handling.
+- Encapsulated combat execution pipeline within `strikeEnemy()`.
 
 ### Fixed
-- **Problemas de asincronía en logs y daño doble**: Se solucionaron problemas causados por doble render en `StrictMode`, como la duplicación de eventos o la pérdida de estados intermedios.
-- **Aplicación de daño post-mortem**: Los efectos DoT ya no siguen afectando a enemigos muertos gracias al refactor del control de instancias dentro de `manageDotInstance` y `finishDoT`.
+- Resolved React `StrictMode` double-invocation side effects in logging and damage pipelines.
+- Stopped DoT timers from continuing execution post-entity death.
 
 ## [v0.0.93] - 2025-05-07
 
 ### Added
-- **finishBuff**: Implementada la función `finishBuff` que recibe una instancia de un "buff", busca sus intervalos y los elimina. Esta función también maneja la lógica de "combate", causando que el enemigo pierda vida hasta morir. En caso de que el enemigo tenga una `dropTable`, se tira un item según las probabilidades de su tabla de drops, en lugar de simplemente vaciar su espacio al morir.
-  
-- **Inventario y Efectos de Items**: Se implementó la mecánica de **agarrar un item**, **guardarlo en el inventario**, **transportarlo** por el mapa, **consumirlo** y **restarlo del inventario**. El efecto del item se aplica al consumirlo, utilizando la escalabilidad y flexibilidad del sistema de inventario y efectos ya establecido.
+- **Buff & DoT Cleanup Lifecycle**: Implemented `finishBuff()` handling interval disposal and death triggers. Integrated drop table evaluation (`dropTable`) spawning world loot on entity death.
+- **World Loot Engine**: Implemented world item pickup, inventory storage, usage, and cooldown execution.
 
 ### Changed
-- **Refactorización de lógica de combate y drops**: La refactorización de la lógica de combate ahora incluye la implementación de un sistema de drops en el que se generan ítems según las probabilidades definidas en la `dropTable` del enemigo al morir. Los ítems caídos se gestionan e interactúan directamente con el sistema de inventario.
-
-### Fixed
-- **Errores menores**: Se corrigieron algunos errores menores relacionados con la manipulación de objetos dentro del sistema de inventario y su integración con la mecánica de drops de enemigos.
+- Refactored combat logic to evaluate entity drop tables and spawn physical map items on death.
 
 ## [v0.0.92] - 2025-04-28
 
 ### Changed
-- Refactor completo del estado `player`: ahora incluye `hp`, `MaxHP`, `Coords`, `Inventory` y `Aliments`, permitiendo una gestión centralizada, consistente y escalable de la información del jugador.
-- Rediseñado el sistema de daño en el tiempo (DoT): encapsulado en la función `manageDotInstance()`, con soporte para agregar, remover y limpiar efectos individuales como `bleed`, `poison` y `burn`.
-- Separación clara entre flags (`Poisoned`, `Bleeding`, `Burning`) y sus instancias (`PoisonInstances`, etc.), manteniendo sincronía automática según el estado de cada efecto.
-- Eliminación de estructuras crudas (`number[]`) para representar posiciones residuales: reemplazadas por objetos estructurados con propiedades explícitas (`x`, `y`, `symbol`).
-- Refactor de las funciones `hurtPlayer()` y `cleanse()` para integrarse al nuevo sistema de `Aliments`, utilizando lógica unificada y helpers reutilizables.
+- Refactored `player` state model into a centralized interface (`hp`, `MaxHP`, `Coords`, `Inventory`, `Aliments`).
+- Encapsulated Status Effect handling within `manageDotInstance()` for modular application of `bleed`, `poison`, and `burn`.
+- Replaced primitive array coordinates with typed structural objects (`x`, `y`, `symbol`).
+- Refactored `hurtPlayer()` and `cleanse()` handlers to use `Aliments` helpers.
 
 ### Fixed
-- Eliminados `guard clauses` innecesarios que prevenían la ejecución esperada de funciones cuando se pasaban parámetros válidos en tiempo de uso lógico correcto.
-- Eliminado problema de residuales limitados al refactorizar `residual`.
-
-### Notes
-- Este parche representa un punto clave en la estandarización del código base: unificación de estados, encapsulamiento de lógica compartida y mayor claridad semántica.
-- Aunque funcional, el sistema de estados alterados y DoT sigue en fase de iteración. Se planea aplicar el mismo enfoque modular a nuevas mecánicas como curaciones progresivas (HoT), buffs temporales y otras alteraciones.
+- Cleaned up redundant guard clauses and residual tile mapping artifacts.
 
 ## [v0.0.91] - 2025-04-26
 
 ### Added
-- Implementado `stepOnItem()`: sistema de interacción al caminar sobre un ítem, recogiendo objetos si hay espacio en el inventario.
-- Implementado `addToInventory()`: gestión de almacenamiento de objetos recogidos, con control de cantidad y nuevos slots automáticos.
-- Implementado `consumeItem()`: sistema de consumo de ítems, chequeando disponibilidad en inventario, cantidad suficiente y cooldown individual.
-- Sistema de cooldown para ítems: los consumibles no pueden ser utilizados repetidamente hasta que su temporizador interno expire.
-- Tipado explícito de objetos `Item`, `InventoryItem` y `Inventory` para asegurar consistencia y escalabilidad futura.
-- Introducción de hotkeys `O` y `K` para consumo rápido de ítems (`Potion` para curación y `Bandages` para detener sangrado), con validaciones de inventario y cooldown.
-
-### Changed
-- Modificada la gestión de `handleMovement` para integrar eventos de consumo de ítems mediante teclado de manera fluida.
-- Ajustes menores en el renderizado: agregado sistema de visualización precario del inventario (`showInventory`) para debug y control rápido.
-
-### Notes
-- Este parche sienta las bases para el sistema de administración de recursos del jugador (inventario, cooldowns, consumo estratégico).
-- Se prevé que en futuras versiones se incorporen mejoras visuales en el inventario, ordenación de ítems y diferenciación de tipos de objetos (consumibles, equipables, utilizables en mundo).
-- El sistema actual es funcional y estable para testeo inicial, pero no representa aún la versión final de interacción jugador-ítems.
+- Implemented `stepOnItem()` tile collision handler for automatic item collection.
+- Added `addToInventory()` supporting item stacks and slot allocation.
+- Added `consumeItem()` handling usage constraints, item counts, and cooldown timers.
+- Added explicit type definitions (`Item`, `InventoryItem`, `Inventory`).
+- Bound hotkeys `O` (Potion) and `K` (Bandages) for quick consumable usage.
 
 ## [v0.0.9] - 2025-04-25
 
 ### Added
-- Función `cleanse()` creada: permite purgar efectos negativos activos (`bleeding`, `burning`, `poisoned`) de forma selectiva o total. Al remover un estado, detiene inmediatamente el daño asociado.
-- Implementado sistema de *totems*: objetos del mundo con efectos sobre el jugador. El primer prototipo ejecuta `cleanse()` al ser tocado.
-- Nuevas *hotkeys* para interacción rápida: tecla `K` activa `cleanse('bleed')`, tecla `O` activa `heal(3)`.
-- Primer prototipo de `heal()` implementado: restaura vida sin superar el máximo (`maxHp`). Diseñada para escalar en futuras versiones (curación en el tiempo, condiciones, etc.).
-
-### Changed
-- Refactorizadas las funciones `hurtPlayer()` y `handleMovement()` para integrar lógica de purga (`cleanse`) y curación (`heal`) sin interferir con el sistema de DoT existente.
-- Ajustes menores en el sistema de `useEffect` para reflejar correctamente el estado del jugador tras interacciones con totems o teclas.
-
-### Notes
-- Este parche sienta las bases del sistema de curación y purificación, piezas clave para el futuro balance de combate.
-- `heal()` y `cleanse()` están en estado **funcional pero no definitivo**, listos para ser iterados según el diseño del sistema de Lux y las condiciones mágicas del entorno.
-- Se recomienda testear intensivamente la interacción entre DoT stackeados y curación rápida para evitar exploits o loops desequilibrados.
-
----
+- Implemented `cleanse()` helper purging active negative status effects and stopping damage intervals.
+- World interactables (Totems) executing `cleanse()` on collision.
+- Bound hotkeys `K` (`cleanse('bleed')`) and `O` (`heal(3)`).
+- Added baseline `heal()` interface handling health recovery bounded by `maxHp`.
 
 ## [v0.0.8] - 2025-04-24
 
 ### Added
-- **Visualización de estados alterados (DoT)**: ahora se muestra una barra que refleja los efectos activos sobre el jugador (veneno, sangrado, quemadura). Estos estados se acumulan (stackean) correctamente y desaparecen una vez que el último efecto correspondiente se disipa.
-- Contadores específicos para cada tipo de estado alterado (`bleedTicks`, `poisonTicks`, `burnTicks`), permitiendo seguimiento independiente de duración y stackeo.
-- Estados locales (`bleeding`, `poisoned`, `burning`) que representan la activación de efectos persistentes en el jugador, usados tanto en la lógica de daño como en el render.
+- Active Status Effect HUD bar displaying poison, bleed, and burn stacks.
+- Tracked tick duration counters (`bleedTicks`, `poisonTicks`, `burnTicks`).
 
 ### Changed
-- Refactorizada la función `hurtPlayer()` para soportar múltiples efectos DoT simultáneos, con control de duración y aplicación individual.
-- Centralizada la lógica de estado alterado: se actualizan las cargas visuales y los efectos en tiempo real conforme cada DoT es aplicado o finalizado.
-
-### Notes
-- Los timers de cada DoT son independientes; no hay aún una gestión centralizada de todos los efectos activos.
-- No se implementó aún una función de purga (`cleansePlayer()`), pero se considera a futuro para control manual de estados.
-
----
+- Refactored `hurtPlayer()` to evaluate concurrent DoT stacks.
 
 ## [v0.0.7] - 2025-04-23
 
 ### Added
-- Sistema de *Daño en el Tiempo (DoT)* implementado: efectos persistentes de fuego, veneno y sangrado que impactan la vida del jugador de manera progresiva.
-Nuevos enemigos y trampas con efectos DoT:
-
-  - 'f': fuego que inflige daño inicial más DoT de quemadura al ser pisado. Incluye retroceso (knockback) de una celda.
-  - 't': trampa venenosa que aplica DoT de veneno.
-  - 'E': enemigo tipo "heavy" que causa sangrado al contacto.
-Efectos visuales y retroalimentación en pantalla para representar el tipo de daño recibido y su duración.
-
-
-### Changed
-- Refactorizada la función hurtPlayer() para contemplar tanto daño directo como acumulativo por DoT.
-- Separadas y mejoradas las funciones touchEnemy() y stepOnTrap() para diferenciar entre tipos de enemigos y trampas, aplicando efectos según corresponda.
-- Incorporada nueva función walkOntoFire(): gestiona la lógica de contacto con fuego, aplica daño inicial, retroceso y estado de DoT.
-
----
+- Implemented Damage over Time (DoT) system: Fire, Poison, and Bleed status effects.
+- Added DoT hazards and enemies:
+  - Fire (`f`): Initial impact damage, burn DoT, and 1-tile knockback.
+  - Poison Trap (`t`): Applies poison DoT.
+  - Heavy Enemy (`E`): Inflicts bleed status on contact.
 
 ## [v0.0.6] - 2025-04-22
 
 ### Added
-- Sistema de *enemigos básicos*: aparecen en el mapa y pueden bloquear el movimiento del jugador.
-- Implementadas *placas trampa* ('t'): activan efectos al ser pisadas, como pérdida de vida.
-- Mecánica de *vida y muerte del jugador*: si la vida llega a cero, se reinicia el juego (placeholder actual).
+- Base Enemy Entities blocking tile movement.
+- Trap Plates (`t`) triggering health damage on step.
+- Player death state triggers and reset handling.
 
 ### Changed
-- Refactorizada la función isAtSpecialTile(): fue eliminada y reemplazada por una validación directa más eficiente.
-Limpieza de funciones innecesarias y llamadas sin propósito detectadas durante revisión de código.
-
-- Reemplazo de valores hardcodeados para el tamaño del mapa (18) por una variable global mapSize para mejorar la escalabilidad.
-
----
+- Replaced `isAtSpecialTile()` with direct array lookup evaluations.
+- Replaced hardcoded map dimensions with global `mapSize` configuration constants.
 
 ## [v0.0.5] - 2025-04-21
 
 ### Added
-- Soporte para *teleportación de cajas*: ahora las cajas ('B') también pueden usar teleportadores si el destino está libre.
-- Implementado el concepto de *teleportador bloqueado*: si el punto de salida está ocupado (por una caja, jugador, muro, etc.), el TP se considera no disponible.
-- Ampliado el uso de residual para conservar el contenido anterior en celdas con teleportadores y cajas.
-Lógica para que el jugador no pueda tpear si la salida está bloqueada (mensajes de feedback incluidos).
-
-
-### Changed
-- Reorganizada la función handleTp() para contemplar objetos distintos al jugador y validar condiciones de uso.
-Separadas responsabilidades entre detección de colisiones, control de movimiento y efectos colaterales (como TP, empuje, etc.).
-
-
----
+- Box Teleportation: Pushable boxes (`B`) can now enter teleporters if exit points are clear.
+- Blocked Teleporters: TPs evaluate target tiles, preventing transport if occupied.
 
 ## [v0.0.4] - 2025-04-20
 
 ### Added
-- Sistema de *teleportadores* ('T') implementado: permite transportar al jugador entre dos puntos del mapa.
-- Hook useState para almacenar coordenadas de teleports y gestionar su comportamiento dinámico.
-- Función handleTp() para manejar lógica de activación y transporte.
-- Introducción del estado residual: conserva el contenido original de la celda anterior al movimiento del jugador (ej: T, trampas, placas, etc.).
-
-### Changed
-- Ajustada la lógica de movimiento sobre celdas vacías ('empty') para contemplar el uso de residual sin afectar el flujo base.
-
----
+- Teleporter Entities (`T`) handling spatial transportation between linked coordinate pairs.
+- Spatial state retention restoring original underlying tile symbols upon entity exit.
 
 ## [v0.0.3] - 2025-04-20
 
 ### Added
-- Mecánica de empuje de cajas ('B') implementada.
-Validación de colisión entre jugador, caja y espacio disponible.
-
-- Fallback inconsecuente() para manejar intentos de movimiento inválidos.
-- Modularización de lógica con funciones checkCollision() y pushBox().
-
-### Fixed
-- Error de referencia en eje de coordenadas (nextY → newY).
-
----
+- Box Pushing Mechanics (`B`) evaluating player push vectors and tile collisions.
+- Modularized collision pipeline (`checkCollision()`, `pushBox()`).
 
 ## [v0.0.2] - 2025-04-19
 
 ### Added
-Sistema de detección de colisiones basado en tipo de tile.
-
-- Control de movimiento con teclado (WASD).
-Renderizado dinámico del jugador y el mapa.
-
-
----
+- Tile-based collision detection system.
+- Keyboard movement handling (`WASD`).
+- Dynamic map rendering pipeline.
 
 ## [v0.0.1] - 2025-04-18
 
 ### Added
-Primer commit funcional del engine.
-Mapa estático con renderizado inicial.
-Movimiento básico del jugador.
+- Initial functional engine release.
+- Static map matrix rendering and basic player grid movement.
