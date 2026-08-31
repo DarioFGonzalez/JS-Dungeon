@@ -37,9 +37,9 @@ export const Sword1: Types.Gear =
     id: '',
     slot: 'weapon',
     style: 'melee',
-    desc: 'Sword used for practice fencing, pretty harmless.',
-    attackStats: { dmg: 1, DoT: 0, times: 0, aliment: 'none', cd: 2000 },
-    durability: 5,
+    desc: 'Sword used for fencing practice, pretty harmless.',
+    attackStats: { dmg: 100, DoT: 0, times: 0, aliment: 'none', cd: 1500 },
+    durability: 50,
     equippeable: true
 }
 
@@ -53,7 +53,7 @@ export const Bow1: Types.Gear =
     style: 'ranged',
     ammoType: 'Arrow',
     desc: 'An old bow, made out of wood and poor handicraft',
-    attackStats: { dmg: 1, range: 3, cd: 1000 },
+    attackStats: { dmg: 1, range: 3, cd: 1500 },
     durability: 8,
     equippeable: true
 }
@@ -91,11 +91,11 @@ export const Bow3: Types.Gear =
 export const Necklace1: Types.Gear =
 {
     type: 'Gear',
-    name: 'Amuleto escudo',
+    name: 'Amulet of protection',
     symbol: icons.necklaceImg,
     id: '',
     slot: 'charm',
-    desc: 'Protege del daño hasta romperse.',
+    desc: 'Protects for (💙) damage, then breaks.',
     durability: 5,
     equippeable: true
 }
@@ -127,7 +127,7 @@ export const CopperPickaxe: Types.Gear =
     symbol: icons.copperPickaxe,
     id: '',
     slot: 'tool',
-    desc: 'Necesario para picar minerales.',
+    desc: 'Basic tool for mining ore.',
     attackStats: { dmg: 1, cd: 1500 },
     durability: 10,
     equippeable: true

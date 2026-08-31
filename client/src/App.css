@@ -105,6 +105,21 @@ html, body {
   position: relative;
 }
 
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.columna-wrapper > div:nth-child(2) {
+  position: relative;
+  z-index: 2;
+}
+
 .visuals-layer {
   position: absolute;
   top: 0;
@@ -112,6 +127,7 @@ html, body {
   pointer-events: none;
   width: 100%;
   height: 100%;
+  z-index: 3;
 }
 
 .hearts-floating {

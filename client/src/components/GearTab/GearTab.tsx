@@ -116,7 +116,7 @@ const GearTab: React.FC<GearTabProps> = ({ player }) => {
 
     return (
       <div className={styles.ammoWrapper}>
-          <Tooltip content={equippedAmmo ? tooltipAmmoText(equippedAmmo.ammo) : 'Sin flechas'}>
+          <Tooltip content={equippedAmmo ? tooltipAmmoText(equippedAmmo.ammo) : 'No ammo'}>
             <div className={styles.ammoBg}></div>
               <div 
                 className={styles.ammoGradient}

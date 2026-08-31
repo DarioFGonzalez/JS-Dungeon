@@ -1,5 +1,75 @@
 # DevLog - Combat Diary
 
+## 🔹 Step 26: 
+
+🗓️ 2025-08-25
+
+`Tutorial map on the go! This is looking sooo cool... although... I could add this little bit here, that little bit over theeeere... aaaand I'm doing it again, am I not? ☕😅✨`
+
+Dario is deviating from the original plan? Who could have thought!
+
+To be honest, all those little tweaks and perks added WERE necessary and *dramatically* improve the game experience—like... adding those tutorial signs that show some text when you hover over them:
+
+![alt text](client/src/images/image-12.png)
+
+Or the fact that there is an actual KILLABLE mob now—a "tutorial" monster, if you'd like:
+
+![alt text](client/src/images/image-10.png)
+
+Not those absolute UNITS I was placing all over your first steps:
+
+![alt text](client/src/images/image-9.png)
+
+... Where was I again? Oh, yeah, tutorial. ☝👨‍💻✨
+
+I'm... somehow happy with the direction this first map is taking. You've got your fundamentals, a few "figure it out by yourself" moments—combat, weapons, ammo, crafting—all in a *"sorta optional / sorta not"* kind of way.
+
+# Coming right up!
+
+What SHOULD every tutorial have? That's right, a `BOSS`!
+
+Why? 'Cause I say so. 😈
+
+The only problem with that would be, well... creating it. 😅💦
+
+I can't just *use* a regular 1x1 mob with a lot of damage and a bunch of HP. It has to be ***special***.
+
+I'll have to work on some kind of 2x2 entity that works as one—same ID, same patrol pattern... Sounds easy enough, but it'll eat up time that I should be investing in tutorial-friendly stuff. 👾✨
+
+Also, some good floor textures, another visual layer to add a little more personality to this whole game—something without that "early-beta" kind of feel...
+
+# Update mid-update
+
+So—I was thinking about this Boss, right? How to implement it and such—when BOOM—it hit me. **`Arrow velocity`**. ☝😅💦
+
+Yeah, yeah. **I know **I** said **I** had to stick to the plan, but... it was RIGHT **THERE**. One simple change, a couple of lines of code, and the whole "should I use this ammo, or this one?" dilemma becomes relevant. Lovely!
+
+I decided that what I previously decided will wait. ☝🤓✨
+
+# Next update! (this time for real)
+
+Map, tutorial map's last details, and some real game mechanics and intent coming right up.
+
+---
+
+### 🛠️ Technical Changes:
+
+- Added help signs with on-hover text
+- Replaced veteran mobs with a more rookie-friendly one
+- Added arrow velocity factor, using different ammo has more depth other than damage.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Grab what i have and shape up this tutorial map, link it to the next one and let the game flow.
+
+Im not gonna give too much detail 'cause, well, i don't have any 😃❓
+
+Also, once Dario hears an idea- there's no stop to that ADHD hyperfocus... so, let's just let him work-- one goal at a time. 🤏😅💦
+
+---
+
 ## 🔹 Step 25: Teleporters Refactored 🌌😮✨
 
 🗓️ 2025-08-18
@@ -66,7 +136,7 @@ It was essentially an Excel spreadsheet with color-coded cells, where each color
 
 Found it!
 
-![JS-Map Creator original](image-2.png)
+![JS-Map Creator original](client/src/images/jsmap_creator.png)
 
 As you can see... yeah, not super scalable 😅💦 BUT! It totally saved my ass back when I had to manually check every single tile position one by one. It felt like playing Battleship against myself while mapping out levels. 🕹📃
 
@@ -74,7 +144,7 @@ With THAT concept in mind, I asked myself the million-dollar question: *How do I
 
 **Behold, the evolution of JS-Map Creator!** 🤓✨:
 
-![JS-Map Creator V2](image-3.png)
+![JS-Map Creator V2](client/src/images/jsmap_creator_2.png)
 
 ### Excel + Conditional Formatting.
 
@@ -133,7 +203,7 @@ Riding the wave of nostalgia from my endless gaming sessions playing Argentum, T
 
 I expanded the map dimensions, zoomed the camera in, and locked it to follow the player throughout their adventure.
 
-![alt text](image-1.png)
+![alt text](client/src/images/newCamera.png)
 
 Boom! Camera updated!
 

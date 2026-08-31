@@ -46,19 +46,21 @@ export class ArrowClass implements Types.Projectile {
     data: Types.locationData;
     symbol: string;
     attackStats: Types.attackStats;
+    projectileSpeed: number;
     toughness: number;
 
     constructor(
         ammo: Types.Ammo,
         direction: string,
         data: Types.locationData,
-        bowAttack: number
+        bowAttack: number,
         ) {
         this.name = ammo.name;
         this.symbol = arrowIcons[ammo.attackStats?.aliment||'none'][direction];
         this.data = data;
         this.attackStats = { ...ammo.attackStats, dmg: ammo.attackStats.dmg + bowAttack };
         this.toughness = ammo.toughness;
+        this.projectileSpeed = ammo.projectileSpeed;
     }
 };
 

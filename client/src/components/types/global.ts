@@ -181,6 +181,7 @@ export interface Ammo {
     name: string,
     symbol: string,
     attackStats: attackStats,
+    projectileSpeed: number,
     toughness: number,
     desc: string
 }
@@ -193,6 +194,7 @@ export interface Projectile
     data: locationData,
     symbol: string,
     attackStats: attackStats,
+    projectileSpeed: number,
     toughness: number
 }
 

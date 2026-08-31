@@ -84,10 +84,6 @@ export const poisonArrowRecipe: Recipe = {
         {
             material: CopperOre,
             quantity: 1
-        },
-        {
-            material: PoisonClaw,
-            quantity: 1
         }
     ],
     quantity: 3,
@@ -98,10 +94,10 @@ export const poisonArrowRecipe: Recipe = {
 
 export const fireArrowRecipe: Recipe = {
     item: fireArrow,
-    ingredients: [
+    ingredients:[
         {
             material: CopperOre,
-            quantity: 3
+            quantity: 1
         }
     ],
     quantity: 3,

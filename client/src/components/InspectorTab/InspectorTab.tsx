@@ -46,10 +46,10 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
   {
     let tooltipContent: Record<string, string> =
     {
-      'ARMADURA': 'Daño fijo bloqueado',
-      'DUREZA': 'Daño que recibe el arma',
-      'DAÑO': 'Daño causado por la criatura',
-      'ESTADO': 'Plaga recibida al ser golpeado'
+      'Armor': 'Fix damage blocked',
+      'Thoughness': 'Damage to your weapon',
+      'Damage': 'Damage creature makes per hit',
+      'Status': 'Status effect on impact'
     }
 
     return(
@@ -77,7 +77,7 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
         <img src={entity.symbol} className={styles.mainIcon} alt="" />
         <div className={styles.titleInfo}>
           <div className={styles.name}>{entity.name}</div>
-          <div className={styles.kills}>ELIMINADOS: {kills}💀</div>
+          <div className={styles.kills}>Killed: {kills}💀</div>
         </div>
       </div>
 
@@ -94,25 +94,25 @@ const InspectorTab: React.FC<InspectorTabProps> = ({ entity, bestiary, onClose }
         {('defense' in entity && entity.defense) && (<><StatCell
           unlocked={kills >= 1}
           required={1}
-          label="ARMADURA"
+          label="Armor"
           value={`🛡️${entity.defense.armor ?? 0}`}
         />
         <StatCell
           unlocked={kills >= 2}
           required={2}
-          label="DUREZA"
+          label="Thoughness"
           value={`🔨${entity.defense.toughness ?? 0}`}
         /></>)}
         <StatCell
           unlocked={enemy==='Trap' ? true : kills >= 2}
           required={2}
-          label="DAÑO"
+          label="Damage"
           value={`💥${entity.attack.Instant ?? 0}`}
         />
         <StatCell
           unlocked={enemy==='Trap' ? true : kills >= 1}
           required={1}
-          label="ESTADO"
+          label="Status"
           value={
             entity.attack.Aliment
               ? statusIcons[entity.attack.Aliment]

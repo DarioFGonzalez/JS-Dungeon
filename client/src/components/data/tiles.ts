@@ -9,6 +9,162 @@ export const basicWalls: Environment =
     symbol: Icons.wallImg
 };
 
+export const cavesF1: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor1
+}
+
+export const cavesF2: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor2
+}
+
+export const cavesF3: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor3
+}
+
+export const cavesF4: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor4
+}
+
+export const cavesF5: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor5
+}
+
+export const cavesF6: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor6
+}
+
+export const cavesF7: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor7
+}
+
+export const cavesF8: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor8
+}
+
+export const cavesF9: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor9
+}
+
+export const cavesF10: Environment = {
+    type: 'Background',
+    name: 'Caves floor',
+    symbol: Icons.cFloor10
+}
+
+export const dungeonF1: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor1
+}
+
+export const dungeonF2: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor2
+}
+
+export const dungeonF3: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor3
+}
+
+export const dungeonF4: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor4
+}
+
+export const dungeonF5: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor5
+}
+
+export const dungeonF6: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor6
+}
+
+export const dungeonF7: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor7
+}
+
+export const dungeonF8: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor8
+}
+
+export const dungeonF9: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor9
+}
+
+export const dungeonF10: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor10
+}
+
+export const dungeonF11: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor11
+}
+
+export const dungeonF12: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor12
+}
+
+export const dungeonF13: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor13
+}
+
+export const dungeonF14: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor14
+}
+
+export const dungeonF15: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor15
+}
+
+export const dungeonF16: Environment = {
+    type: 'Background',
+    name: 'Dungeon floor',
+    symbol: Icons.dFloor16
+}
+
 export const torchedWall: Environment =
 {
     type: 'Wall',
@@ -179,8 +335,20 @@ export const silverNode3: Node =
 export const allTiles:  Environment[] =
 [
     basicWalls, torchedWall,
+    cavesF1,
+    dungeonF1, dungeonF2, dungeonF3, dungeonF4, dungeonF5,
     rockyWall1, rockyWall2, rockyWall3
 ];
+
+export const dFloorTiles: Environment[] = [
+    dungeonF1, dungeonF2, dungeonF3, dungeonF4, dungeonF5, dungeonF6, dungeonF7, dungeonF8,
+    dungeonF9, dungeonF10, dungeonF11, dungeonF12, dungeonF13, dungeonF14, dungeonF15, dungeonF16
+]
+
+export const cFloorTiles: Environment[] = [
+    cavesF1, cavesF2, cavesF3, cavesF4, cavesF5,
+    cavesF6, cavesF7, cavesF8, cavesF9, cavesF10
+]
 
 export const allObjects:  Environment[] =
 [

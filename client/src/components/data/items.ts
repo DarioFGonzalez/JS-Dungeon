@@ -8,7 +8,7 @@ export const Aloe: Types.Item =
     name: 'Aloe leaf',
     symbol: icons.aloeImg,
     id: '',
-    desc:  'Corta la quemadura.',
+    desc:  'Stops [Burn] status effect.',
     cleanse: 'burn',
     cd: 4000
 }
@@ -19,7 +19,7 @@ export const Potion: Types.Item =
     name: 'Potion',
     symbol: icons.potionImg,
     id: '',
-    desc: 'Recupera 3 HP.',
+    desc: 'Heals 3 HP.',
     heal: 3,
     cd: 3000
 } 
@@ -30,7 +30,7 @@ export const Bandages: Types.Item =
     name: 'Bandages',
     symbol: icons.bandagesImg,
     id: '',
-    desc: 'Detiene el sangrado.',
+    desc: 'Stops [Bleed] status effect.',
     cleanse: 'bleed',
     cd: 5000
 }
@@ -41,7 +41,7 @@ export const Antidote: Types.Item =
     name: 'Antidote',
     symbol: icons.antidoteImg,
     id: '',
-    desc: 'Cura el envenenamiento.',
+    desc: 'Stops [Poison] status effect.',
     cleanse: 'poison',
     cd: 7500
 }
@@ -62,6 +62,7 @@ export const basicArrow: Types.Ammo = {
         aliment: 'none',
         cd: 0
     },
+    projectileSpeed: 50,
     toughness: 1,
     desc: 'Wooden arrow.'
 };
@@ -78,6 +79,7 @@ export const poisonArrow: Types.Ammo = {
         aliment: 'poison',
         cd: 0
     },
+    projectileSpeed: 75,
     toughness: 2,
     desc: 'Poison coated tip arrow.'
 };
@@ -94,6 +96,7 @@ export const fireArrow: Types.Ammo = {
         aliment: 'burn',
         cd: 0
     },
+    projectileSpeed: 85,
     toughness: 3,
     desc: 'Fire coated arrow.'
 }
@@ -110,6 +113,7 @@ export const explosiveArrow: Types.Ammo = {
         aliment: 'explosive',
         cd: 0
     },
+    projectileSpeed: 100,
     toughness: 0,
     desc: 'Explosive-coated tip arrow.'
 }

@@ -80,7 +80,7 @@ export const heavyEnemy: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Goblin veterano',
+    name: 'Veteran Goblin',
     hp: 11,
     maxHp: 11,
     symbol: icons.hGoblinImg,
@@ -100,9 +100,9 @@ export const agileEnemy: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Goblin veloz',
-    hp: 5,
-    maxHp: 5,
+    name: 'Hasty Goblin',
+    hp: 4,
+    maxHp: 4,
     symbol: icons.snsGoblinImg,
     data: { x: 0, y: 0 },
     aliments:
@@ -120,7 +120,7 @@ export const minerEnemy: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Goblin minero',
+    name: 'Miner Goblin',
     hp: 3,
     maxHp: 3,
     symbol: icons.minerGoblin,
@@ -160,7 +160,7 @@ export const vScorpion: Types.Enemy =
 {
     type: 'Enemy',
     id: '0',
-    name: 'Escorpión venenoso',
+    name: 'Scorpion',
     hp: 5,
     maxHp: 5,
     symbol: icons.pScorpion,

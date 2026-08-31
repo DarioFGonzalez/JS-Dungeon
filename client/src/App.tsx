@@ -43,6 +43,10 @@ const emptyVisualGrid = Array.from({ length: mapSize }, () =>
   Array.from(Array(mapSize), () => ""),
 );
 
+const emptyBackgroundGrid =  Array.from({ length: mapSize }, () =>
+  Array.from(Array(mapSize), () => Tiles.dungeonF1),
+);
+
 type CellContent =
   | Types.Player
   | Types.Enemy
@@ -83,6 +87,7 @@ type CellContent =
   const mapaRef = useRef(mapa);
   
   const [visuals, setVisuals] = useState<Types.VisualCell[][]>(emptyVisualGrid);
+  const [backgrounds, setBackgrounds] = useState<Types.Environment[][]>(emptyBackgroundGrid);
   const [recipes, setRecipes] = useState<Types.Recipe[]>( Object.values(Recipes) );
   
   // const [tps, setTps] = useState<Types.ArrayOfCoords>([]);
@@ -1639,6 +1644,19 @@ type CellContent =
       return { ...aux, quiver: newQuiver }; 
     } );
 
+    const aux = mapaRef.current.map((x) => [...x]);
+    const objective = aux[actualX]?.[actualY];
+    
+    if(objective.type==='Enemy') {
+      let thisMonster = objective as Types.Enemy;
+
+      const realDamage = dmg - thisMonster.defense.armor;
+
+      damageEnemy(objective.id as string , realDamage, DoT, times, aliment);
+
+      return;
+    }
+
     const projectileId = setInterval(() => {
       if (firstIteration) {
         thisProjectile.id = projectileId;
@@ -1666,6 +1684,17 @@ type CellContent =
           damageEnemy(objective.id as string , realDamage, DoT, times, aliment);
           return;
         }
+        case "Player": {
+          clearInterval(thisProjectile.id);
+          if (!firstIteration) {
+            aux[actualX - dx][actualY - dy] = emptyTile;
+          }
+
+          setMapa(aux);
+
+          hurtPlayer(dmg, DoT ?? 0, times ?? 0, aliment ?? 'none');
+          break;
+        }
         default:
           clearInterval(thisProjectile.id);
           break;
@@ -1690,9 +1719,9 @@ type CellContent =
           const aux = mapaRef.current.map((x) => [...x]);
           aux[thisProjectile.data.x][thisProjectile.data.y] = emptyTile;
           setMapa(aux);
-        }, 50);
+        }, thisProjectile.projectileSpeed);
       }
-    }, 50);
+    }, thisProjectile.projectileSpeed);
   };
 
   const handleInteraction = (): void => {
@@ -2707,11 +2736,12 @@ type CellContent =
     "s": () => randomNode('Silver'),
     "w1": () => createEntity("Equippable", "Wooden bow"),
     "w2": () => createEntity("Equippable", "Wooden sword"),
-    "e1": () => createEntity("Enemie", "Goblin minero"),
-    "e2": () => createEntity("Enemie", "Goblin veterano"),
-    "e3": () => createEntity("Enemie", "Escorpión venenoso"),
+    "e1": () => createEntity("Enemie", "Miner Goblin"),
+    "e2": () => createEntity("Enemie", "Veteran Goblin"),
+    "e3": () => createEntity("Enemie", "Scorpion"),
     "e4": () => createEntity("Enemie", "Goblin"),
     "e5": () => createEntity("Enemie", "Rookie Goblin"),
+    "e6": () => createEntity("Enemie", "Hasty Goblin"),
     "t": () => createEntity("Tool", "Copper Pickaxe"),
     "p": player,
     "tp": (args) => {
@@ -2736,7 +2766,34 @@ type CellContent =
         effect: (mapa) => addNodes(mapa, mineralsToAdd),
       };
     },
+    "background": (args) => {
+      console.log(args);
+      fillBackground(args[0]);
+      return emptyTile;
+    }
   };
+
+  const floorDictionary: Record<string, Types.Environment[]> = {
+    "dungeon": Tiles.dFloorTiles,
+    "caves": Tiles.cFloorTiles,
+  }
+
+  const floorBrightnessDictionary: Record<string, number> = {
+    "Dungeon floor": 0.3,
+    "Caves floor": 0.9
+  }
+
+  const addBackground = (type: string): Types.Environment => {
+    let randomIndex = Math.floor(Math.random() * floorDictionary[type].length);
+
+    return floorDictionary[type][randomIndex];
+  };
+
+  const fillBackground = ( style: string ) => {
+    setBackgrounds( Array.from({ length: mapSize }, (_, i) =>
+      Array.from({ length: mapSize }, () => addBackground(style) )
+    ) )
+  }
 
   const mapReader = async (mapName: string, firstSpawn: boolean = false): Promise<void> => {
     const mapInfo = await loadMap(mapName);
@@ -2898,6 +2955,12 @@ type CellContent =
 
     setMaps( [ { name: initialMapName, actual: true } ] )
 
+    setPlayer({
+      ...Entities.emptyPlayer,
+      hp: Entities.emptyPlayer.maxHp,
+      symbol: icons.heroFront,
+    });
+
     mapReader(initialMapName);
 
     setGame(true);
@@ -2911,7 +2974,7 @@ type CellContent =
     setTimeout(() => {
       cleanse("all");
     }, 50);
-    const auxiliar = mapa.map((fila) => [...fila]);
+    const auxiliar = mapaRef.current.map((fila) => [...fila]);
     auxiliar[player.data.x][player.data.y] = emptyTile;
     setMapa(auxiliar);
     setPlayer({
@@ -2995,28 +3058,51 @@ const readContent = (celda: CellContent): string => {
             {game && (
               <div className="map-appear-animation" style={{ height: "100%", width: "100%" }}>
                 <div className="columna-wrapper">
+                
+                  <div className="background-layer">
+                    {Array.from({ length: PoV }, (_, dx) => {
+                      const rowIndex = player.data.x - range + dx;
+                      return (
+                        <div key={dx} className="fila">
+                          {Array.from({ length: PoV }, (_, dy) => {
+                            const colIndex = player.data.y - range + dy;
+                            const celda = backgrounds[rowIndex]?.[colIndex];
+
+                            if (!celda) return <label key={dy} className="celda"></label>;
+
+                            const iconSrc = typeof celda === "string" ? celda : celda.symbol;
+
+                            return iconSrc ? (
+                              <img src={iconSrc} alt="bg" key={dy} className="celda" style={{ filter: `brightness(${floorBrightnessDictionary[celda.name]})` }} />
+                            ) : (
+                              <label key={dy} className="celda"></label>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  </div>
+
                   <div onKeyDown={handleMovement} ref={gridRef} tabIndex={0}>
                     {Array.from({ length: PoV }, (_, dx) => {
                       const rowIndex = player.data.x - range + dx;
                       return (
-                        <div key={dx} className="fila" >
+                        <div key={dx} className="fila">
                           {Array.from({ length: PoV }, (_, dy) => {
                             const colIndex = player.data.y - range + dy;
                             const celda = mapa[rowIndex]?.[colIndex];
                             if (!celda) return <label key={dy} className="celda"></label>;
                             return celda.symbol === "" ? (
                               <label key={dy} className="celda">{celda.symbol}</label>
-                            ) : celda.name==='Help sign'
-                            ? (
-                                <img
-                                    src={celda.symbol}
-                                    alt="main_map"
-                                    key={dy}
-                                    className="celda"
-                                    title={readContent(celda).replace(/\\r\\n|\\n/g, '\n')}
-                                  />
-                                )
-                            : (
+                            ) : celda.name === 'Help sign' ? (
+                              <img
+                                src={celda.symbol}
+                                alt="main_map"
+                                key={dy}
+                                className="celda"
+                                title={readContent(celda).replace(/\\r\\n|\\n/g, '\n')}
+                              />
+                            ) : (
                               <img
                                 src={celda.symbol}
                                 onClick={() => checkEntity(celda)}
@@ -3066,7 +3152,6 @@ const readContent = (celda: CellContent): string => {
                 <div className="hearts-floating">
                   {renderHp()} {renderAliments()}
                 </div>
-
               </div>
             )}
 
