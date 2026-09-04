@@ -57,6 +57,7 @@ export interface WithAliments
 
 export interface mineralsToAdd
 {
+    biome: string,
     node: string,
     quantity: number
 }
@@ -64,6 +65,7 @@ export interface mineralsToAdd
 export interface Environment
 {
     id?: string,
+    style?: string,
     type: string,
     name: string,
     symbol: string,
@@ -76,6 +78,7 @@ export interface Node
     id: string,
     type: 'Node',
     name: string,
+    biome: string,
     mineral: string,
     symbol: string,
     toughness: number,

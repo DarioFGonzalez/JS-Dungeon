@@ -12,9 +12,9 @@ import {
     allNodes,
     allObjects,
     allTiles,
-    copperNodes,
     rockyWalls,
-    silverNodes,
+    dungeonTorches,
+    dungeonWalls,
 } from "./components/data/tiles";
 
 import "./App.css";
@@ -44,7 +44,7 @@ const emptyVisualGrid = Array.from({ length: mapSize }, () =>
 );
 
 const emptyBackgroundGrid =  Array.from({ length: mapSize }, () =>
-  Array.from(Array(mapSize), () => Tiles.dungeonF1),
+  Array.from(Array(mapSize), () => Tiles.voidTile),
 );
 
 type CellContent =
@@ -77,6 +77,7 @@ type CellContent =
   interface listOfMaps {
     name: string;
     visitedMap?: CellContent[][];
+    biome: string;
     actual: boolean;
     visited?: boolean;
     timeoutId?: ReturnType<typeof setTimeout>;
@@ -1532,14 +1533,6 @@ type CellContent =
     manageVisualAnimation("visual", x, y, sparks[randomNumber], 900);
 
     if (thisOre.hp - damage <= 0) {
-      const randomValue = Math.floor(Math.random() * 3) + 1;
-
-      const availableTiles: Record<number, Types.Environment> = {
-        1: Tiles.rockyWall1,
-        2: Tiles.rockyWall2,
-        3: Tiles.rockyWall3,
-      };
-
       const drops = thisOre.drops
         .filter((drop) => rollDrop(drop.chance))
         .map((drop) => ({ item: drop.item, quantity: drop.quantity }));
@@ -1555,7 +1548,7 @@ type CellContent =
         ),
       );
 
-      aux[x][y] = availableTiles[randomValue];
+      aux[x][y] = addWall(thisOre.biome);
     } else {
       aux[x][y] = { ...thisOre, hp: thisOre.hp - damage };
     }
@@ -2533,15 +2526,35 @@ type CellContent =
     }
   };
 
-  const nodes: Record<string, Types.Node[]> = {
-    Copper: copperNodes,
-    Silver: silverNodes,
+  type nodeDictionary = Record<string, Types.Node[]>;
+
+  const rockyNodes: nodeDictionary = {
+    Copper: Tiles.caveCopper,
+    Silver: Tiles.caveSilver
   };
 
-  const randomNode = (type: string): Types.Node => {
-    const randomIndex = Math.floor(Math.random() * nodes[type].length);
+  const dungeonNodes: nodeDictionary = {
+    Copper: Tiles.dungeonCopper
+  };
 
-    return nodes[type][randomIndex];
+  const nodePerBiome: Record<string, nodeDictionary> = {
+    Rocky: rockyNodes,
+    Dungeon: dungeonNodes
+  };
+
+  // const nodes: Record<string, Types.Node[]> = {
+  //   Copper: copperNodes,
+  //   Silver: silverNodes,
+  // };
+
+  const randomNode = (type: string, biome: string): Types.Node => {
+    const biomeNodes = nodePerBiome[biome];
+    const typeNodes = biomeNodes[type];
+    const randomIndex = Math.floor(Math.random() * typeNodes.length);
+
+    const randomNode = typeNodes[randomIndex];
+
+    return randomNode;
   };
 
   const addNodes = (
@@ -2570,14 +2583,15 @@ type CellContent =
       for (let j = 0; j < minerals[i].quantity; j++) {
         let randomIndex = Math.floor(Math.random() * wallCoords.length);
         const { x, y } = wallCoords.splice(randomIndex, 1)[0];
-        mapa[y][x] = randomNode(minerals[i].node);
+        mapa[y][x] = randomNode(minerals[i].node, minerals[i].biome);
       }
     }
     return mapa;
   };
 
   const walls: Record<string, Types.Environment[]> = {
-    Basic: [Tiles.basicWalls],
+    Dungeon: dungeonWalls,
+    DTorch: dungeonTorches,
     Rocky: rockyWalls,
   };
 
@@ -2729,11 +2743,12 @@ type CellContent =
   type DictionaryHandler = (args: string[]) => CellContent | { isDeferred: true; effect: DeferredEffect };
 
   const dictionary: Record<string, DictionaryHandler | Types.Player> = {
-    "bw": () => addWall("Basic"),
-    "tw": () => Tiles.torchedWall,
+    "dw": () => addWall("Dungeon"),
+    "tw": () => addWall("DTorch"),
     "rw": () => addWall("Rocky"),
-    "c": () => randomNode('Copper'),
-    "s": () => randomNode('Silver'),
+    "cc": () => randomNode('Copper', 'Rocky'),
+    "cs": () => randomNode('Silver', 'Rocky'),
+    "dc": () => randomNode('Copper', 'Dungeon'),
     "w1": () => createEntity("Equippable", "Wooden bow"),
     "w2": () => createEntity("Equippable", "Wooden sword"),
     "e1": () => createEntity("Enemie", "Miner Goblin"),
@@ -2757,8 +2772,8 @@ type CellContent =
     "mob": (args) => rareMob(args[0]),
     "nodes": (args) => {
       const mineralsToAdd: Types.mineralsToAdd[] = args.map((arg) => {
-        const [node, qty] = arg.split('-');
-        return { node, quantity: Number(qty) || 1 };
+        const [biome, node, qty] = arg.split('-');
+        return { biome, node, quantity: Number(qty) || 1 };
       });
 
       return {
@@ -2767,7 +2782,6 @@ type CellContent =
       };
     },
     "background": (args) => {
-      console.log(args);
       fillBackground(args[0]);
       return emptyTile;
     }
@@ -2779,8 +2793,8 @@ type CellContent =
   }
 
   const floorBrightnessDictionary: Record<string, number> = {
-    "Dungeon floor": 0.3,
-    "Caves floor": 0.9
+    "Dungeon floor": 0.2,
+    "Caves floor": 0.5
   }
 
   const addBackground = (type: string): Types.Environment => {
@@ -2790,6 +2804,11 @@ type CellContent =
   };
 
   const fillBackground = ( style: string ) => {
+    setMaps( prev => {
+      const aux = prev.map( x => x.actual ? { ...x, biome: style } : x );
+      return aux;
+    });
+
     setBackgrounds( Array.from({ length: mapSize }, (_, i) =>
       Array.from({ length: mapSize }, () => addBackground(style) )
     ) )
@@ -2849,7 +2868,7 @@ type CellContent =
 
   const swapMap = async (mapName: string) => {
     const existingMap = maps.find((x: listOfMaps) => x.name === mapName);
-    let newMap = existingMap ?? { name: mapName, actual: true, visited: true };
+    let newMap = existingMap ?? { name: mapName, actual: true, visited: true, biome: 'none' };
 
     const actualMap = maps.find((x: listOfMaps) => x.actual);
     console.log("Todos los mapas cargados: ", maps, "\nMapa actual: ", actualMap);
@@ -2869,6 +2888,8 @@ type CellContent =
       if (!thisMap) {
         prevClone.push(newMap);
       }
+
+      fillBackground(thisMap?.biome||'caves');
 
       return prevClone.map((mapInfo: listOfMaps) => {
         if (mapInfo.name === actualMap.name) {
@@ -2953,7 +2974,7 @@ type CellContent =
   const startGame = async () => {
     const initialMapName = 'Mines4';
 
-    setMaps( [ { name: initialMapName, actual: true } ] )
+    setMaps( [ { name: initialMapName, actual: true, biome: 'none' } ] )
 
     setPlayer({
       ...Entities.emptyPlayer,
@@ -2976,7 +2997,10 @@ type CellContent =
     }, 50);
     const auxiliar = mapaRef.current.map((fila) => [...fila]);
     auxiliar[player.data.x][player.data.y] = emptyTile;
+
     setMapa(auxiliar);
+    setBackgrounds(emptyBackgroundGrid);
+
     setPlayer({
       ...Entities.emptyPlayer,
       hp: 0,

@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.1.6] - 2026-09-03
+
+### Added
+- **Tutorial Map Foundations (Step 26)**: Introduced a dedicated tutorial map with hover‑based help signs, a rookie‑friendly mob, and contextual onboarding mechanics to ease new players into combat, crafting, and resource systems.
+- **Arrow Velocity Mechanic (Step 26)**: Implemented projectile speed scaling based on ammo type, adding tactical depth to ranged combat beyond raw damage values.
+- **Biome Tile System (Step 27)**: Expanded visual assets with 11 floor tiles and 16 wall tiles per biome, alongside node dictionaries for scalable map generation and environmental diversity.
+
+### Changed
+- **Visual Coherence (Step 27)**: Updated tile rendering pipeline to improve pixel‑art consistency across maps, reducing early‑beta visual artifacts and preparing for future biome‑specific expansions.
+- **Map Creation Workflow (Step 27)**: Prioritized farming routes, battle maps, and scalable layouts over experimental boss mechanics, aligning development with K.I.S.S principles for maintainability.
+
+### Notes
+- These updates establish the groundwork for onboarding new players through a structured tutorial experience while simultaneously enhancing long‑term scalability via biome‑driven map creation.
+- Future iterations will focus on boss encounters, conditional mob spawns, and environmental hazards once the tutorial and farming maps reach stability.
+
 ## [0.1.5] - 2026-08-18
 
 ### Added

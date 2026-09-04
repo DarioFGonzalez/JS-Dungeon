@@ -1,351 +1,614 @@
-# DevLog - Diario de Combate
+# DevLog - Combat Diary
 
-## 🔹 Paso 23: Inspector de equipo 🔎🎒📖
+## 🔹 Step 27: What's cooking, good looking? 👌😏✨ 
+
+🗓️ 2026-09-03
+
+`Ok, ready to finish this tutorial map! First i should... ugh, this tile looks horrible. Fixed! All right, now i should... Eww, that tile is awefull too... Okay, okay, time out 🖐😅💦`
+
+Focused! Decided! Planing and scheming my next 10 moves or so! I was ready to finish tutorial map!
+
+...But those TILES, they make no sense! This one is pixel-art, that one looks too N64 likey- wha.. what are those floortiles!? No, I can `NOT` advance like this... I'm stressing out 😅💦
+
+From changing some cosmetic issues, to.. finding new ways to improve the game- make it bigger, more scalable, with future growth in mind and built on solid foundations. Just the way i like it! 👾✨
+
+- Updated tiles
+
+11 Floor tiles, 16 wall tiles and nodes per biome
+
+![alt text](client/src/images/new_tiles.png)
+
+---
+
+### 🛠️ Technical Changes:
+
+- Floor tiles, Wall tiles, Nodes and visual adjustements.
+- Added "biome" to the list of maps properties to use in future renders.
+- Added a few dictionaries to track different biome tile, biome nodes and scalability.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Now that i feel comfy with how the game looks, not *`fully`* but enough to keep moving, i can focus on either adding a **`BOSS MOB`** (3x3 mob, patroll mechanics, hp, loot, maybe skills or projectiles on it's own... crazy ideas under my sleeve 👏🤓✨) **OR** like, map creation- setting up farming routes/maps, creating rare mobs areas- maybe... conditional mobs spawns-- **mobs that spawn depending on some ITEM you should be carrying... `ENVIROMENTAL HAZZARD... MAYBE I COULD...!`**
+
+🛑🖐👮‍♂️❗
+
+# K.I.S.S (Keep It Simple, Stupid)
+
+Map creation ☝😅💦
+
+Imma focus on map creation, farming routes, battle maps, stuff like that-- stuff to do-- time for some coffee, lo-fi and creative focus ☕😌✨
+
+---
+
+## 🔹 Step 26: Miscellania ❓🏹🤖✨
+
+🗓️ 2026-08-25
+
+`Tutorial map on the go! This is looking sooo cool... although... I could add this little bit here, that little bit over theeeere... aaaand I'm doing it again, am I not? ☕😅✨`
+
+Dario is deviating from the original plan? Who could have thought!
+
+To be honest, all those little tweaks and perks added WERE necessary and *dramatically* improve the game experience—like... adding those tutorial signs that show some text when you hover over them:
+
+![alt text](client/src/images/image-12.png)
+
+Or the fact that there is an actual KILLABLE mob now—a "tutorial" monster, if you'd like:
+
+![alt text](client/src/images/image-10.png)
+
+Not those absolute UNITS I was placing all over your first steps:
+
+![alt text](client/src/images/image-9.png)
+
+... Where was I again? Oh, yeah, tutorial. ☝👨‍💻✨
+
+I'm... somehow happy with the direction this first map is taking. You've got your fundamentals, a few "figure it out by yourself" moments—combat, weapons, ammo, crafting—all in a *"sorta optional / sorta not"* kind of way.
+
+# Coming right up!
+
+What SHOULD every tutorial have? That's right, a `BOSS`!
+
+Why? 'Cause I say so. 😈
+
+The only problem with that would be, well... creating it. 😅💦
+
+I can't just *use* a regular 1x1 mob with a lot of damage and a bunch of HP. It has to be ***special***.
+
+I'll have to work on some kind of 2x2 entity that works as one—same ID, same patrol pattern... Sounds easy enough, but it'll eat up time that I should be investing in tutorial-friendly stuff. 👾✨
+
+Also, some good floor textures, another visual layer to add a little more personality to this whole game—something without that "early-beta" kind of feel...
+
+# Update mid-update
+
+So—I was thinking about this Boss, right? How to implement it and such—when BOOM—it hit me. **`Arrow velocity`**. ☝😅💦
+
+Yeah, yeah. **I know **I** said **I** had to stick to the plan, but... it was RIGHT **THERE**. One simple change, a couple of lines of code, and the whole "should I use this ammo, or this one?" dilemma becomes relevant. Lovely!
+
+I decided that what I previously decided will wait. ☝🤓✨
+
+# Next update! (this time for real)
+
+Map, tutorial map's last details, and some real game mechanics and intent coming right up.
+
+---
+
+### 🛠️ Technical Changes:
+
+- Added help signs with on-hover text
+- Replaced veteran mobs with a more rookie-friendly one
+- Added arrow velocity factor, using different ammo has more depth other than damage.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Grab what i have and shape up this tutorial map, link it to the next one and let the game flow.
+
+Im not gonna give too much detail 'cause, well, i don't have any 😃❓
+
+Also, once Dario hears an idea- there's no stop to that ADHD hyperfocus... so, let's just let him work-- one goal at a time. 🤏😅💦
+
+---
+
+## 🔹 Step 25: Teleporters Refactored 🌌😮✨
+
+🗓️ 2026-08-18
+
+`On paper, automating map rendering sounds amazing. Now I just need to... fix this right here... refactor that over there... wait, it's actually not that big of a deal ☝🤓✨`
+
+Thanks, past Darío!
+
+Ahhhh... clean, understandable code, robust types, logic you can follow end-to-end. God, I love being able to follow my own breadcrumbs back to the source, understand it, and refactor it *à la carte*. 👩‍🍳🤏✨
+
+But alright, enough self-praise haha. **TL;DR:** Refactored the TP (teleporter) logic.
+
+# In a MEGA nutshell
+
+`Before`, I had to "pre-load" all the maps we were going to use into a list:
+
+[ { map 1 }, { map 2 }, ... ])
+
+And that map *better* be in that list, because if not? 💥
+
+`Now`, the map list starts with only the initial map. After that, as long as the `.csv` file containing the map data physically exists in the `/public/maps` folder, the code dynamically reads the target map's name from the teleporter (i.e., where it’s supposed to take you) and fetches it. Found it? Awesome. It appends it to the map array and renders it on the fly.
+
+Obviously, there's a lot more going on under the hood: caching, TTL cache expiration, pausing/resuming enemy patrols, flags to track whether you've already visited that zone, etc., etc...
+
+But with this up and running and fully tested across a couple of maps—*Eureka!* haha 🌌🎶
+
+---
+
+### 🛠️ Technical Changes:
+
+- Refactored the `swapMap` function:
+  - Changed how available maps are tracked and resolved.
+  - Added an ID to the cache TTL to prevent edge-case state glitches.
+  - Trimmed down the code and added environment flags for production/development.
+  - Now we can endlessly add maps and seamlessly travel between them without a hitch.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+The game has been practically **`BEGGING`** me for a tutorial map for way too long haha 😅💦
+
+**Tutorial Map it is!** The next patch will focus entirely on crafting a proper tutorial level using everything built so far.
+
+...And maybe a few visual tweaks. ☝😅💦
+
+I'm still not 100% sold on the whole *"black floor"*, *"surrounded by the void"*, *"eh, it works, good enough"* look.
+
+Honestly, that was never the original plan... then again, a lot of things here weren't in the initial blueprint 🤓🎶 But I'm riding the wave of this project's organic growth, letting it guide me without dragging me down, just happy to see everything fall into place. *Sort of* (?
+
+---
+
+## 🔹 Step 25: Maps & Scaling 🆕🌎✨
+
+🗓️ 2025-08-12
+
+`It looks great! Now... how the hell do I fill a 24x24 grid without hand-crafting it cell by cell? 😅💦 What if...? ✨😏📃`
+
+For those with a short memory, a few steps back (Step 17, to be precise), I hacked together a prototype of today's solution:
+
+I called it **JS Map Creator!** 🤓✨
+
+It was essentially an Excel spreadsheet with color-coded cells, where each color represented a specific tile type. I think I still have the original screenshot floating around.
+
+Found it!
+
+![JS-Map Creator original](client/src/images/jsmap_creator.png)
+
+As you can see... yeah, not super scalable 😅💦 BUT! It totally saved my ass back when I had to manually check every single tile position one by one. It felt like playing Battleship against myself while mapping out levels. 🕹📃
+
+With THAT concept in mind, I asked myself the million-dollar question: *How do I automate this?*
+
+**Behold, the evolution of JS-Map Creator!** 🤓✨:
+
+![JS-Map Creator V2](client/src/images/jsmap_creator_2.png)
+
+### Excel + Conditional Formatting.
+
+**`Conditional Formatting`** for quick visual feedback while designing, and **`Excel`** so I can export it as a `.csv` file, rip the raw text, parse it in code into coordinate arrays, and *voilà*! We have an automated map engine. You go into Excel, paint some squares, export it, consume it, and the code goes *"Ahhh, gotcha, gotcha."*
+
+Now, the tricky part... apparently my codebase is way more complex than I remembered 😅💦 What do I mean by that? I have interval timings, patrol pauses, pre-loaded maps, portals, pathfinding, memory & cache storage... I'm doing *SIGNIFICANTLY* more heavy lifting under the hood than I recalled ☝🤓
+
+So right now:
+I'm re-reading my own code (which, thank goodness, is pretty well-structured 😅📃), re-understanding the *whys* and *hows*, respecting the architecture, and pushing forward. Currently wiring up the Teleporter integration and map saving state within this new workflow.
+
+Nothing overly miraculous—just good old office-style refactoring: analyzing the flow and adapting it to this new rendering engine. Desk-jockey work 🔎😃✨
+
+---
+
+### 🛠️ Technical Changes:
+
+- Swapped manual grid setup for an automated parser pipeline:
+  - Created a utility to convert `.csv` data directly into coordinate arrays.
+  - Built a dictionary mapping `.csv` array positions to renderable entities.
+  - Implemented `mapReader` to parse the array using the dictionary and trigger rendering.
+- Overcame a few hurdles involving duplicate entity IDs, ghost renders, and translation bugs, but everything is smooth sailing now.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Everything lined up for the near future is about stabilizing current state.
+
+Once I verify that the new workflow (rendering, maps, TPs, state persistence) is rock solid, *then* I can move forward.
+
+Assuming everything behaves—the absolute, non-negotiable next step is a **TUTORIAL MAP ASAP**. ☝😅💦
+
+---
+
+## 🔹 Step 24: Camera Rework 🎥👀
+
+🗓️ 2025-08-07
+
+`My game looks cool, but... I feel like we could give it way more personality... I KNOW! 😏✨`
+
+I've done a TON since the last log. The thing is, one major architectural change inevitably triggers another, and performance optimization kept me busy enough that I started getting "panic attacks" thinking about writing a massive wall of text to catch up ☝😅💦.
+
+The good news? Here's the **SUMMARY** 🤓✨
+
+The map and the camera:
+
+- The dynamic single-screen setup we had was super clean and stylish. But... managing everything inside a tight 12x12 grid was seriously clipping my wings.
+
+You can't fit much content in there; you can't really "explore" without constantly forcing map transitions.
+
+It felt cheap to give it that "mobile game" or old-school "MapleStory" vibe where taking three steps triggers a loading screen, change map, change map, change map haha. So I thought: *"Where have I seen a game in this style do this right?"* Easy. I've played it a million times ☝😏💡
+
+- `Tibia, RuneScape, ARGENTUM ONLINE` <-- That's where!
+
+Riding the wave of nostalgia from my endless gaming sessions playing Argentum, Tierras del Sur, Tierras Perdidas, and every indie server under the sun, I decided: *"Let's go with a formula that worked brilliantly and put my own personal twist on it."* **Argentum-style.**
+
+I expanded the map dimensions, zoomed the camera in, and locked it to follow the player throughout their adventure.
+
+![alt text](client/src/images/newCamera.png)
+
+Boom! Camera updated!
+
+That in itself was a minor nightmare—getting pixel alignment and scaling right. Once freed from the constraints of a 12x12 grid, a new realization hit me: *"Oh man... drawing these massive maps by hand is going to be an absolute NIGHTMARE."* But... I'm already rambling! I'll save that story for the NEXT devlog entry.
+
+---
+
+### 🛠️ Technical Changes:
+
+- Overhauled map rendering architecture:
+  - Adjusted cell sizing and scale metrics.
+  - Rebuilt tile rendering pipeline.
+  - Changed camera behavior (Static viewport ➔ Dynamic player tracking).
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+This entry covers the camera update. In the next one, I'll detail how I'm semi-solving the **MAP** creation nightmare—since larger maps present a massive challenge for manual generation and rendering.
+
+I can't just keep doing `temp[0][0] = empty`, `temp[0][1] = wall`, `temp[0][2] = empty`... I'd lose my damn mind, anyone trying to design a level tomorrow would lose their mind, and scaling would be a complete **NIGHTMARE**.
+
+So, after racking my brain, an idea struck. ☝😏💡
+
+---
+
+## 🔹 Step 23: Equipment Inspector 🔎🎒📖
 
 🗓️ 2025-07-16
 
-`Se está a-complejando el tema de equipo, armas, items... debería meter una manera mas [VISUAL] de ver las estadísticas de un item... ya se ☝🤓✨`
+`Equipment, weapons, items are getting more complex... I need a more [VISUAL] way to display item stats... I got it ☝🤓✨`
 
-Necesitabamos una manera de ver las estadísticas del equipo, armas, herramientas o cualquier cosa que termináse en nuestro inventario principal- pero el tamaño reducido del componente `GearTab.tsx` no daba, ehhhh, mucho espacio para la creatividad 😅✖
+We needed a way to inspect detailed stats for gear, weapons, tools, or anything landing in our primary inventory. But the tight constraints of the `<GearTab.tsx>` component didn't leave much room for creative UI layout 😅✖
 
-Peleando con pixeles, superposiciones y feng-shui de numeritos pensé: `"Esperá... ¿Qué no había ideado ya una solución a un problema parecido a este?"` 🤔❓
+While fighting with pixel padding, overlapping text, and the feng-shui of stat numbers, I paused: *"Wait... didn't I already design a fix for a problem just like this?"* 🤔❓
 
-Si, `[ InspectorTab.tsx ]`. 
+Yup: **`[ InspectorTab.tsx ]`**.
 
-La idea es la misma, la ejecución tenía que cambiar un poco. Consumir el item en vez de un monstruo, datos base del item en vez de un bestiario- sacar información oculta, quitar contador de kills, refactorización, toqueteo, testeo. 🔧💦
+Same concept, different execution. Inspect an item instead of a monster, display base item attributes instead of bestiary stats—reveal hidden data, strip out the kill counter, refactor, tweak, test. 🔧💦
 
-¡Y quedó! Mi creación estaba... ¡¡VIVA!! Ahora, cuando pasemos el mouse sobre un item en el inventario principal (GearTab.tsx) va a aparecer un pop-up con mas información acerca de dicho item. 🔎📃
+And it worked! IT'S ALIVE!! Now, hovering over any item in the main inventory (`GearTab.tsx`) pops up a clean card with extra context and stats. 🔎📃
 
 ![alt text](image.png)
 
-Obviamente está en desarrollo, la idea principal funciona- los espacios medio cierran y el concepto cammina. Ahora es ajustar que datos, de que forma, en que formato y demás detalles pero, hey, está vivo y hace el juego mas intuitivo- menos complejo de entender- mas 'sentate, tocá, aprendé sobre la marcha... jugá'. 🎮✨
+It's still work-in-progress, but the core mechanics are solid—layouts line up nicely, and the concept works smoothly. Now it's just a matter of fine-tuning what data to show, in what format, and wrapping up polish. But hey, it makes the game way more intuitive: less "read a manual", more "sit down, hover around, learn on the fly... play." 🎮✨
 
 ---
 
-### 🛠️ Cambios técnicos:
+### 🛠️ Technical Changes:
 
-- Agregamos el componente `GearInspectorTab.tsx`
-- Refactorizamos `GearTab` para activar `GearInspectorTab` onHover
-- Distingue entre armas a `distancia` y a `melee`.
-- Pendiente: Agregar especificaciones para el resto de objetos inspeccionables.
-
----
-
-### 👾 Futuro próximo / Ideas sueltas 🎯
-
-*En realidad.
-Escribo esta entrada del devlog.md medio tarde, porque-- sin darme cuenta-- ya estaba trabajando en la otra feature a implementar 😅💦 Entonces:
-
-- Freno. Analizo. Explico/Registro en devlog. Sigo.
-
-Ahora mismo estoy trabajando en un recetario dinámico, ya... casi lo tengo cocinado. ¿Qué es un recetario dinámico? Ahhh ☝😏✨
-
-En vez de mostrar **`TOOoodas`** las recetas que hay, mostramos solo las que podemos craftear con los materiales que tengamos encima. ¡Fácil!
-
-Agregué un lindo efecto scroll-down y estoy refactorizando el GearInspector para mostrar detalles de la receta pre-crear cosas para ver 'que són' jajaja.
-
-Eficiencia en loops, código más limpio, menos estresante para el overall, la rutina. 😃👾
+- Added `<GearInspectorTab.tsx>` component.
+- Refactored `GearTab` to trigger `GearInspectorTab` `onHover`.
+- Implemented conditional rendering for `ranged` vs `melee` weapon stats.
+- Pending: Add detailed inspector views for remaining consumable/interactive object types.
 
 ---
 
-## 🔹 Paso 22: Pro-yec-ti-les 🏹🤩
+### 👾 Near Future / Random Ideas 🎯
+
+*Real talk:*
+I'm writing this entry a bit late because—without realizing it—I was already knee-deep coding the *next* feature 😅💦 So:
+
+- Pause. Analyze. Document in DevLog. Resume coding.
+
+Right now I'm building a dynamic recipe book, and it's almost fully cooked. What's a dynamic recipe book? Ohhh ☝😏✨
+
+Instead of cluttering the UI with **`ALL`** game recipes at once, we only display recipes you can actually craft based on the materials currently in your inventory. Simple!
+
+Added a nice smooth scroll-down effect, and I'm refactoring the `GearInspector` to preview crafted item stats *before* you commit to crafting them.
+
+Fewer redundant loops, cleaner code, less headache for the overarching game cycle. 😃👾
+
+---
+
+## 🔹 Step 22: Pro-jec-tiles 🏹🤩
 
 🗓️ 2025-07-16
 
-`Tengo armas cuerpo a cuerpo, pero si me quedo ahí el juego va a ser muy simplón... tengo una idea 😏✨`
+`I have melee weapons, but if I stop there the combat is going to feel way too barebones... I have an idea 😏✨`
 
-Tenemos armas, tenemos creación de equipo, recolección... Necesitaba algo `consumible`, que se necesite en `cantidades` como para alguna forma de ***quemar*** materiales "con sentido" y de esa necesidad re básica para darle mas cuerpo al *chiste* de farmear salió:
+We have weapons, equipment crafting, resource gathering... What I needed was a **consumable** item—something required in **large quantities** to give players a meaningful reason to sink raw materials into farming. From that basic gameplay need, the spark ignited:
 
-*`... y si... ¿Tenés que farmear materiales para craftear FLECHAS?`*
+*`... what if... you have to farm materials to craft ARROWS?`*
 
 BOOM. 
 
-Cerebro a maquinar, me acordé que mi juego [Space-shooter](https://github.com/DarioFGonzalez/Space-Shooter) tenía una mecánica que podía reciclar, refactorizar y optimizar para crear el sistema de proyectiles. Así que tomando como base el sistema de ***'asteroides'***:
+Brain went straight into overdrive. I remembered my older project, Space-Shooter, had a bullet system I could recycle, refactor, and optimize for project entities. Taking that old ***asteroid/laser*** engine as a foundation:
 
-1. Creé mi primer flecha que avanzaba por el mapa
-2. Logré que impacte contra cosas (Paredes, items, `enemigos`...)
-3. Logré que meta efectos de estado, dañe y elimine enemigos.
+1. Created my first arrow projectile traveling across grid coordinates.
+2. Got collision detection working against environment objects (walls, items, `enemies`...).
+3. Hooked up status effects, damage calculation, and enemy elimination on impact.
 
-Ya con esas tres cosas (medio hardcodeadas) pero `FUNCIONALES` arranqué a optimizar y dejar lo más escalable posible.
+With those three core mechanics functional (if a bit hardcoded), I began optimizing for scalability.
 
-Dicho eso, dejé todo preparado para meter más tipos de munición. El arma tiene un *`"ammoType"`*, las municiones tienen esta propiedad también. Así que el día de mañana podemos, no se, crear:
+Everything is now decoupled: weapons hold an `ammoType` property, and ammo items hold a matching key. Tomorrow, if we want to add new weapons, it's as clean as:
 
 ```
-const newWeapon: Types.Gear =
-{
+const newWeapon: Types.Gear = {
   ... ,
-  slot: 'weapon',         // Un arma
-  style: 'ranged'.        // A distancia
-  ammoType: 'bullets',    // Que pida cualquier munición
+  slot: 'weapon',         // Weapon item
+  style: 'ranged',        // Ranged type
+  ammoType: 'bullets',    // Requires matching ammo key
   ...
-}
+};
 ```
+
 ```
-const newAmmo: Types.Ammo =
-{
-  type: 'Ammo',           // Y crear munición nueva
-  ammoType: 'bullets',    // Compatible con esa arma
-  attack: { ... } ,       // Y los efectos que querramos
+const newAmmo: Types.Ammo = {
+  type: 'Ammo',           // New ammo item
+  ammoType: 'bullets',    // Compatible with that weapon class
+  attack: { ... },        // Custom damage & status payloads
   ...
-}
+};
 ```
 
-Armas de fuego, **ballestas**, **`armas que disparen algún tipo de láser`**... la estructura está creada para que, cuando querramos, el único freno sea la imaginación y el tiempo disponible para balancearlo. 👌😏✨
+Firearms, **crossbows**, **`weapons firing plasma lasers`**... the architectural groundwork is set. From here on out, the only bottleneck is imagination and balancing time. 👌😏✨
 
-¡Tenemos sistema de proyectiles y armas a distancia!
-
----
-
-### 🛠️ Cambios técnicos:
-
-- Agregué un *`quiver`* que permite almacenar distintos tipos de municiones.
-- *`Recetas`* para craftear distintos tipos de municiones.
-- Tocamos la letra *`R`* para navegar entre las distintas municiones.
-- Al disparar, la munición del carcaj disminuye y el arco pierde durabilidad.
-  - 🏹 Distancia que recorre el proyectil depende del arma a distancia utilizada.
-  - 🎯 Daño que recibe el arma depende de la munición utilizada.
-- Arquitectura para meter de más armas a distancia y tipos de munición.
+Ranged combat & projectile engines are officially live!
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯
+### 🛠️ Technical Changes:
 
-Vamos con algo más sencillo, creé el sistema de proyectiles y armas a distancia- pero no tiene UX/UI 😅 Ahora mismo creás munición, pero no aparece en ningún lado. Podés cambiar entre la munición compatible para el arma equipada, pero no te das cuenta hasta que disparás. Así que:
-
-- Trabajar en el UX/UI del sistema de munición
-- Hacerlo entendible e intuitivo cosa que no necesitemos un tutorial
-
-Una vez el jugador `vea` la munición que tiene, `entienda` como cambiar de munición y pueda `usar` el sistema de armas a distancia sin problemas... creo que ahí estaría mi victoria para este objetivo. ✨😏🏹
+- Added a `quiver` state module to store active ammunition types.
+- Added crafting recipes for various arrow variants.
+- Mapped key `R` to cycle through available compatible ammunition.
+- Firing consumes quiver ammo and degrades bow durability.
+  - 🏹 Max projectile travel distance scales with equipped ranged weapon stats.
+  - 🎯 Durability loss per shot scales with ammo strain.
+- Flexible codebase architecture ready for future ranged weapons and custom ammo types.
 
 ---
 
-## 🔹 Paso 21: Jubilando la consola de eventos, por algo mucho mejor 😎👌✨
+### 👾 Near Future / Random Ideas 🎯
+
+Let's pivot to UI/UX polish: the ranged weapon engine works, but it currently lacks visual feedback 😅 You craft ammo, but it doesn't show up anywhere on the HUD. You can cycle compatible ammo types, but you won't know what's selected until you shoot. Next goals:
+
+- Build dedicated UI indicators for the ammo system.
+- Make it clean and self-explanatory so players don't need a manual.
+
+Once players can **see** their active ammo, **understand** how to switch types, and seamlessly **use** ranged weapons... that'll be a massive win for this sprint. ✨😏🏹
+
+---
+
+## 🔹 Step 21: Retiring the Event Log for Something Much Better 😎👌✨
 
 🗓️ 2025-03-14
 
-`Necesito que el juego sea mas intuitivo...`🤔⏳ `¡Ya sé!` 🤩✨
+`I need this game to be more intuitive...` 🤔⏳ `I got it!` 🤩✨
 
-Tratando de hacer el juego mas "jugar y entender", menos "tengo que leerme el tutorial o no entiendo nada" es que implementé el slideShow, que eran unas placas que pasaban cuando tocabas la *'H'*. También intenté con la consola de eventos `<ConsoleTab/>` diciendo que encontrabas del piso, cuando te hacían daño, que tipo de daño--- todos intentos por que al jugador se le haga mas entendible el mundo (Dícese, intuitivo).
+In my quest to make the game "pick up and play" without forcing players to read a massive manual, I tried adding help slide overlays (triggered with `'H'`). I also tried using the text event log (`<ConsoleTab/>`) to report ground loots, incoming damage types, and status ticks—all attempts to make the game world feel readable and intuitive.
 
-***Pegué volantazo*** 🛑✋
+***Hard pivot*** 🛑✋
 
-Saqué la consola de comandos, la reemplazé por una información mas visual:
+Scrapped the event console entirely and replaced it with clean visual UI feedback:
 
-**```[InspectorTab]```**
-Cuando clickeamos entidades del mapa, nos aparece información relevante de las mismas.
+**`[InspectorTab]`**
+Clicking any map entity brings up a contextual inspector card with stats and info.
 
 ![alt text](client/src/images/image-3.png)
 
-**``[ToolTip]``** Pasar el mouse muestra un pequeño texto descriptivo. ¡Cero adivinanzas!
+**`[ToolTip]`** Hovering over tiles or UI elements displays quick descriptive text. Zero guessing!
 
 ![alt text](client/src/images/image-4.png)
 
-**``[Desbloqueables]``** No toda la información está disponible ni bien entrás. Tenés que matar x cantidad de esa criatura para ir desbloqueando toda la información.
+**`[Unlockables]`** Information isn't fully handed to you on a silver platter. You have to kill $X$ amount of a specific creature type to progressively unlock full bestiary entries and drop tables.
 
 ![alt text](client/src/images/image-5.png)
 
-Los detalles de la consola de inspección estuvieron buenos. El blur cuando está bloqueado, los colores para el % de drop rate de los items, pensar el texto para explicar "armadura", "dureza", ... lindo viaje. 😃✨
+Fleshing out the inspection panel was super fun to build: Gaussian blur effects over locked entries, color-coded rarity percentages for item drop rates, writing clear descriptions for mechanics like "Armor" and "Toughness"... awesome dev journey. 😃✨
 
-¡Ah! Agregué mas detalle a las patrullas, ahora puedo hacer que caminen a la velocidad que quiera. 😁
+Oh! I also added extra granularity to enemy patrol logic—I can now assign custom movement tick speeds to individual entities. 😁
 
-Por eso el Goblin veloz se mueve muy rápido, aunque sea frágil- y el veterano muy lento, pero pega como tren sin frenos (+ sangrado).
+That's why a speedy Goblin moves fast despite being fragile, while a Goblin Veteran plods along slowly but hits like a runaway freight train (+ bleed stacks).
 
-Eso le agrega mas vida al juego, explorá buscando mas criaturas- farmealas para ver sus drops- ahora que sabés que tira, fijate rutas- recordá zonas- farmea materiales o utilizables. ¡Vida, aventura, dungeon crawler!. 🐱‍🐉🔥🎉
-
----
-
-### 🛠️ Cambios técnicos:
-
-- Agregué <InspectorTab>, <ToolTip> y <StatCell> para hacer la experiencia de juego mas intuitiva.
-
-- Configuré el estilado para los elementos bloqueados, el 'bestiary' para seguir las kills de monstruos y el comportamiento entre componentes.
-
-- El foco NO puede salir del contenedor principal (mapa grande) para evitar que el usuario, por clickear fuera del mapa, pierda control del tablero.
+It breathes so much life into the world. Explore, hunt creatures, farm them to uncover their drop tables, memorize high-value spawn routes, gather crafting reagents or consumables. Pure dungeon crawler adventure energy! 🐱‍🐉🔥🎉
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯
+### 🛠️ Technical Changes:
 
-Tengo un juego mas intuitivo, puedo craftear, puedo farmear drops de bichos- mhmmh...
-
-De meterle cosas, podría meterle infinidad de contenido extra: Magias, Armas a distancia, patrullas mas avanzadas, **Bosses**, bichos con habilidades--- UFF...
-
-Pero siendo `objetivo`, ahora que tengo un juego "jugable"- con todas las piezas sobre el tablero para armar algo... debería armar algo. ☝😅✨
-
-Supongo que el parche que viene sería de:
-
-- Balance de armas y amuletos.
-- Balance de drops y drop-chance.
-- Creación de nuevos mapas.
-- ...dije que no iba a agregar nada nuevo, pero... 👉👈
-
-En realidad me muero de ganas de implementar un sistema de mejoras para el equipo... 🤤✨
-
-[ Mazo ] ➡ [ Mazo +1 ] ➡ [ Mazo +2 ] ➡ [ Mazo ⭐ ]
-
-Ir usando gemas, catalizadores, cada vez mas probabilidades de fallas la mejora, crear un sistema simplejo para que el jugador **quiera** salir a farmear esas cosas ⭐✨
-
-Primero: balance. Después, quizás otro mapa. Recién ahí, experimentar con mejoras. Pero cada cosa en su momento, cuando tenga sentido y armonía con el resto."
+- Added `<InspectorTab/>`, `<ToolTip/>`, and `<StatCell/>` components for enhanced visual feedback.
+- Configured visual styling for locked entries, integrated bestiary kill trackers, and decoupled component interactions.
+- Locked mouse focus inside the primary map viewport container to prevent accidental defocusing during gameplay input.
 
 ---
 
-## 🔹 Paso 20: ¡CRAFTING! 💥🔨
+### 👾 Near Future / Random Ideas 🎯
 
-`Ok, tengo todos estos minerales... ¿Ahora qué?` 🤔❔ `¡CRAFTING!`🤩✨
+The game is intuitive, crafting works, mob drop farming is live... hmm...
 
-¡Una de las cosas que mas me tenía embobado! Después de pensar que poner o como contarlo, me di cuenta que me iría por el tecnisismo y la complejamente simple manera que encontré de hacer que esto funcione- pero eso no es divertido ni bitacora-likey. Así que va el resúmen: 👓📖
+I could go crazy adding endless content: spells, ranged options, advanced AI pathfinding, **Boss fights**, unique mob abilities—PHEW...
 
-Creé una especie de GearTab (inventario de equipo) secundario, hice que al tocar TAB cambies entre estos dos y las teclas que tocás respondan a cual está visible. 🏹🔁🔨
+But being **objective**: now that I have a rock-solid, fully playable game core with all pieces on the board... it's time to build a cohesive experience around it. ☝😅✨
 
-Las recetas se fijan tu inventario para ver que tenés encima y te muestran que podés crearte. Con la E, que antes equipabas/desequipabas cosas, ahora creás la receta que estás seleccionando. 🔪✅
+Next patch goals:
 
-Checkeo y descuento de materiales, agregar el item creado, actualizar el cue visual a ver si podés crearte algo con lo que te quedó. Todo funcional ✨🔨 
+- Rebalance weapon stats, trinkets, and amulets.
+- Rebalance mob drop rates and roll percentages.
+- Map design and level expansion.
+- ...I said I wouldn't add new features, but... 👉👈
+
+I'm dying to build an equipment upgrade system... 🤤✨
+
+[ Mace ] ➔ [ Mace +1 ] ➔ [ Mace +2 ] ➔ [ Mace ⭐ ]
+
+Gems, catalysts, scaling failure chances at higher tiers—a simple risk/reward loop to give players a real reason to farm rare materials ⭐✨
+
+First: balancing. Then: new maps. *Then*, gear upgrading experiments. One step at a time, keeping everything in harmony with the rest of the game systems.
+
+---
+
+## 🔹 Step 20: CRAFTING! 💥🔨
+
+`Okay, I have all these ores... Now what?` 🤔❔ `CRAFTING!` 🤩✨
+
+This was one of the features I was most hyped to build! I originally thought about writing a technical deep-dive on the underlying state management, but that's dry and boring for a log. So here's the fun summary: 👓📖
+
+I created a secondary `GearTab` (equipment inventory), set up `TAB` to toggle seamlessly between both views, and updated keybindings so inputs route cleanly to whichever tab is currently focused. 🏹🔁🔨
+
+Recipes read your current inventory, evaluate reagent quantities, and highlight what you can craft. Pressing `E` (previously used exclusively for equip/unequip actions) now crafts your currently selected recipe. 🔪✅
+
+Material validation and deduction, item output dispatching, and immediate UI updates to show remaining craftable recipes—all fully functional! ✨🔨
 
 ![alt text](client/src/images/image-6.png)
 
 ---
 
-### 🛠️ Cambios técnicos:
+### 🛠️ Technical Changes:
 
- ``<CraftingTab>``
+`<CraftingTab>`
 
-**Checkea lista de recetas y las muestra en esta pestaña.**
+**Parses recipe arrays and renders available crafting options.**
 
-Por ahora: **un array fijo con recetas**.
-Más adelante puedo hacer que interactúen de **otras maneras** con las recetas:
+Currently: **Static recipe registry**.
+Future hooks are ready for expanded crafting interactions:
 
--> Que tengas la receta aprendida.
+➔ Learnable recipe scrolls/schematics.
 
--> Que la receta sea un consumible. (x cantidad de usos)
+➔ Consumable single-use recipes.
 
--> Que tengas recetas depende tu clase, tus stats, tus... asdfasdfad 🤤✨ 
+➔ Class-specific, stat-locked, or level-gated recipes... 🤤✨
 
-***...eso que dije no tuvo nada que ver con 'Cambios técnicos'*** 😅💦
+*...okay, that last part was wild feature speculation, not technical changes* 😅💦
 
-- **Agregado** componente para mostrar las recetas
-- **Creadas** funciones para checkear materiales, compararlos con recetas disponibles, quitar materiales requeridos para la receta y entregar item.
-- Suena a poco, pero crear todo para que sea escalable a futuro lleva su tiempo 🤓✨
-
----
-
-### 👾 Futuro próximo / Ideas sueltas 🎯
-
-Parado donde estoy, entiendo todo. Sé que hace mi juego, como hacerlo, que tocar... pero creo que necesito hacerlo más `intuitivo`.
-
-El siguiente paso va a ser agregar mas cue visuales, mas datos fáciles de leer, una interfaz mas amigable- mas "probá, tocá, rompé, está todo ahí." 👾🔥
+- **Added** dedicated recipe rendering views.
+- **Implemented** ingredient validation utilities, material consumption handlers, and item yield dispatchers.
+- Sounds simple on paper, but engineering everything to scale cleanly takes serious dev time 🤓✨
 
 ---
 
-## 🔹 Paso 19: Parches necesarios 🚑👩‍💻
+### 👾 Near Future / Random Ideas 🎯
+
+Standing where I am now, everything makes sense. I know my codebase inside out, I know what to touch and where... but I need to make the user experience even **more intuitive**.
+
+Next step: add clearer visual cues, easily readable stat breakdowns, and a friendly UI that invites players to "click around, experiment, break stuff, learn by doing." 👾🔥
+
+---
+
+## 🔹 Step 19: Necessary Patches 🚑👩‍💻
 
 🗓️ 2025-01-20
 
-`¿Cómo que no funciona el demo jugable?` 👀
+`What do you mean the playable demo is broken?!` 👀
 
-**Resumen**: Refactoricé gran parte de mi código, saqué los errores esLint y mejoré las flags para diferenciar entre local y deploy. La demo funciona otra vez: minar, matar, equipar, DoT- todo al 100%.
+**Summary:** Refactored a large portion of the core codebase, cleared out all ESLint warnings, and fixed environment flags differentiating local dev from production builds. The online demo is fully operational again: mining, combat, gear equipping, DoTs—all 100% functional.
 
-[Link al Demo](https://js-dungeon.vercel.app/) 👾✨
+Live Demo Link: https://js-dungeon.vercel.app/ 👾✨
 
-Aproveché para ajustar tamaños mínimos y máximos de la consola, el equipo y los consumibles. Agregué el nombre y un hint a que hacen los items para que se expliquen solos- entre otras cosas para emparejar y emprolijar el proyecto.
-
----
-
-### 🛠️ Cambios técnicos:
-
--Refactoricé el código para que las flags detecten si están en deploy o localhost.
-
--Eliminé/corregí todos los warning esLint.
-
--Consumibles eliminables con 'backspace'.
-
--Consola/GearTab/ConsumablesTab con max-height cosa que todos entren en orden.
+Took the opportunity to tweak min/max sizing constraints across the event log, gear tab, and consumables panel. Added explicit item names and hint tooltips so items explain themselves.
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯
+### 🛠️ Technical Changes:
 
-Siempre me termino encontrando con algo que reparar/optimizar a mitad de camino de mi objetivo real. 😅✨
-
-Ahora que todo está estable, tengo antidotos- minería- combate- curación- drops y todo lo demás podría...
-
-- Darle un uso a los minerales.
-- Agregar otro mapa.
-- Meter items interactivos. <--
-
---> Dícese, estaba pensando hacer un ítem (consumible) que sea una `Bomba`💣. Como las de bomberman, que uno deja atras y al rato explota- suena exageradamente sencillo y de paso podría ponerle reglas raras como que:
-
-**`[Se puedan empujar]`** Eso reemplazaría las cajas, que están super olvidadas.
-
-**`[Exploten al contacto]`** Cuando un enemigo las toca explotan, cortar patrullas, preparar emboscadas... 🤤✨
-
-**`[Crear bombas con distintas cualidades]`** Bomba que ***congele***, bomba que ***envenene***, bomba ***incendiaria***...
+- Refactored build flags for seamless environment detection between `localhost` and `Vercel` deployments.
+- Cleaned up and resolved all ESLint warnings across the project.
+- Added keybinding support to drop/discard consumables with `Backspace`.
+- Enforced `max-height` constraints on `<ConsoleTab/>`, `<GearTab/>`, and `<ConsumablesTab/>` for clean UI alignment.
 
 ---
 
-## 🔹 Paso 18: Coherencia visual (user friendly). 🌈👾
+### 👾 Near Future / Random Ideas 🎯
 
-🗓️ *2025-01-11*
+I constantly run into optimization passes midway through my original goals 😅✨
 
-`Diseño, colores, espacios y bonitura.` ✨
+Now that everything is stable (antidotes, mining, combat, healing, loot tables...), I can:
 
-**¡Feliz año nuevo!** 🥳🎉
+- Give actual utility to mined ores.
+- Add new map layouts.
+- Introduce interactive world items. <--
 
-Okey, mi objetivo principal considerando que ya tengo un 'juego jugable' (Puedo pegar, puedo lootear, puedo farmear...) es tener un **'juego ENTENDIBLE'**.
+--> Specifically, I've been thinking about adding a consumable **Bomb** item 💣. Classic *Bomberman* style: drop it behind you, short fuse, then BOOM. Sounds hilarious to build, and opens up cool tactical rules like:
 
-Quiero que el jugador se siente, avance por el juego y vaya entendiendo sin yo tener que ponerle carteles, tutoriales, guías y textos que le corten la experiencia.
+**`[Pushable]`** Kick bombs around the grid (giving boxes a real gameplay purpose!).
 
-Con eso en mente, agregué mas vida al GearTab encargado de mostrar tu equipo disponible:
-- Ícono del objeto visible.
-- Colores para distinguir tipos de equipamiento. 
-- Cooldown con animación visual.
-- Durabilidad visible (barra de vida).
+**`[Contact Detonation]`** Explode on contact with patrolling enemies to interrupt paths or setup ambushes... 🤤✨
+
+**`[Elemental Bomb Variants]`** Freeze bombs, poison gas bombs, incendiary bombs...
+
+---
+
+## 🔹 Step 18: Visual Coherence & UX Polish 🌈👾
+
+🗓️ 2025-01-11
+
+`Design, color palettes, spacing, and visual crispness.` ✨
+
+**Happy New Year!** 🥳🎉
+
+Now that I have a "playable game" (slashing mobs, looting gear, farming resources...), my main focus is transforming it into an **"INTUITIVE game."**
+
+I want players to sit down, explore, and naturally figure out mechanics without needing pop-up walls of text, tedious tutorials, or immersion-breaking guides.
+
+With that in mind, I gave the `<GearTab/>` a major visual makeover:
+- Render actual item icons directly on gear slots.
+- Color-coded borders to quickly differentiate equipment types.
+- Visual cooldown animations for actions/swaps.
+- Clear durability status bars (like health bars for gear).
 
 <p align="center">
-  <img src="image-2.png" alt="GearTab looks" width="250" height='250' />
+  <img src="image-2.png" alt="GearTab looks" width="250" height="250" />
   <br />
-  <em>Nuevas visuales para el equipo.</em>
+  <em>New equipment UI visuals.</em>
 </p>
 
 ---
 
-### 🛠️ Cambios técnicos:
+### 🛠️ Technical Changes:
 
-Agregué un par de cambios visuales, nada de gameplay- funciones o referencias.
+Focused purely on visual upgrades and UX clarity—no core logic breaks:
 
-**GearTab.module.css** <- Convertí el css del GearTab en .module para no generar conflictos en caso que escale mas la aplicación.
-
-**Nuevos íconos** y **Nuevo enemigo** <- Agregué nuevos íconos, como el del ore - y un nuevo enemigo, el goblin minero, para que dropée de forma no tan inesperada 'Copper pickaxe'... no tenía mucho sentido que un goblin 'guerrero' dropée un pico de mineria.
-
-**DurabilityBar.tsx** <- Agregué la 'barra de vida' a modo de durabilidad para mayor claridad visual, es mas fácil de entender una barra de vida que un 10/10 y 'usá tu imaginación'.
+- **`GearTab.module.css`**: Converted legacy CSS into scoped CSS Modules to prevent style leaks as the application scales.
+- **New Icons & Enemy**: Added fresh sprite icons (like ore graphics) and introduced a new mob type: the *Goblin Miner*. Makes way more sense for a miner mob to drop a copper pickaxe instead of a regular warrior goblin dropping mining tools!
+- **`DurabilityBar.tsx`**: Replaced numeric `10/10` text with a visual health-bar-style durability indicator for instant readability.
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯
+### 👾 Near Future / Random Ideas 🎯
 
-Tengo queee... reparar mi intento de inventario- mas bien reposicionarlo- ahora mismo tocando la I se abre toda una interfaz que tengo planeada usar para crafting y demás-- con los items apretados en el fondo.
+I need to clean up my old inventory UI layout—currently, pressing `I` pops open a full panel originally intended for crafting, with items awkwardly squished at the bottom.
 
--Voy a poner los items de inventario siempre visibles en la parte inferior
--¡¡CRAFTING!! Quiero agregar Crafting, darle un uso a los minerales.
-- Quizá incluso un sistema de mejoras con joyas o items.
+- Move inventory items to a persistent, clean hotbar along the bottom of the screen.
+- **CRAFTING!!** Implement crafting systems and put mined ores to good use.
+- Maybe introduce a simple gem/socket upgrade system for equipment down the line.
 
 ---
 
-## 🔹 Paso 17: Re-definiendo la base.
+## 🔹 Step 17: Redefining the Foundation
 
-🗓️ *2025-12-26*
+🗓️ 2025-12-26
 
-`Mucho debugging, mucho re-thinking.`
+`Deep debugging, deep re-thinking.`
 
-Re-definí todo lo que tiene que ver con la lógica base del juego pensando **exclusivamente en escalabilidad**. Cambié avance inmediato por estabilidad futura y, aunque engorroso, era un paso inevitable.
+I completely rebuilt the core architectural logic with one single priority in mind: **Scalability**. I sacrificed short-term feature progress for long-term stability—a tedious detour, but an absolute necessity.
 
-**¡Sorpresa!** *[para mí]*
+**Surprise!** *[to myself]*
 
-Mientras reordenaba la base me di cuenta de algo:
-para avanzar de verdad no necesitaba un “motor de mapas”… necesitaba una herramienta práctica.
+While restructuring the foundation, it hit me: I didn't need a complex, bloatware "map engine"... I just needed a fast, practical tool.
 
-¡Contemplad **JS Map Creator**! 🤓✨
+Behold **JS Map Creator**! 🤓✨
 
-Excel, casillas perfectamente cuadradas, un mapa 18×18, leyendas a un costado y libertad total para experimentar ideas sin pelearme con el código base. Rústico, directo y absurdamente efectivo.
+Excel, perfectly square grid cells, an 18x18 layout, color legends on the side, and complete freedom to experiment with map designs without wrestling with React state. Rustic, raw, and absurdly effective.
 
 <p align="center">
   <img src="client/src/images/image.png" alt="JS Map Creator" width="480" />
@@ -353,232 +616,230 @@ Excel, casillas perfectamente cuadradas, un mapa 18×18, leyendas a un costado y
   <em>JS Map Creator (Excel-based, 18×18 grid)</em>
 </p>
 
-Después pienso traducir manualmente- usando ciclos for y esta referencia clara -fila por fila el mapa para que quede como quiero/necesito.
+I can quickly draft level layouts in Excel and parse them row-by-row into grid coordinates.
 
-Como creador solo necesito un fix básico para seguir avanzando, EXCEL tiene lo justo y necesario- del resto me encargo yo. 🎶
-
----
-
-### 🛠️ Cambios técnicos:
-
-- Cada fila dentro de la matriz ahora representa una entidad completa, no un ícono o dato aislado.
-- Las patrullas se manejan de forma individual, permitiendo cortar intervalos específicos *( clearInterval(id) )* sin efectos colaterales ni glitches.
-- Bug relacionado con muerte por DoT solucionado.
+As a solo dev, I just needed an efficient, low-friction solution. Excel provided the exact toolset required—my parser handles the rest. 🎶
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯
+### 🛠️ Technical Changes:
 
-Si todo marcha bien y logro mantener el foco, el próximo parche debería cerrar en una **demo jugable real**, con un objetivo claro y gameplay concreto.
-
-...Me muero de ganas por agregar armas a distancia... **magia... ¡AREA DE EFECTO!**. ¡Pero no!. Foco- foco- ¡FOCO! ¡Vamos bien! 👾✨
-
----
-
-## 🔹 Paso 16: Demo levantada en Vercel 🙂🚀✨
-
-🗓️ *2025-05-26*
-
-`Primer gran paso.`
-
-JS-Dungeon no está terminado, ni yendo totalmente en la dirección que pensaba en un principio- pero eso está perfecto. Mi idea original mutó y evolucionó, yo ya no dirijo la batuta, me dejo guiar por las ideas.
-
-Haber encontrado el tope técnico de `React` no pudiendo manejar ciertas cosas (como multiples layer visuales) me hizo entender que no puedo ***'crear un videojuego complejo'*** acá, pero igual le voy a sacar todo el provecho que pueda. 🔥🔨⚙
-
-Todavía faltan algunas slides de ayuda, explicando por ejemplo DoT- sangrado- veneno- fuego- como usar bien los accesorios o como quitarse los estados, pero no debería seguir pateando para adelante, como si tuviera miedo o verguenza de mi juego- este proyecto es la punta de todo lo que puedo hacer- mientras que me divierto en el proceso
+- Matrix data structures refactored: every row entry now represents a complete entity instance rather than isolated ASCII symbols or raw strings.
+- Patrol intervals decoupled: individual enemy patrol loops are tracked independently, allowing clean `clearInterval(id)` teardowns without unintended side effects or movement glitches.
+- Fixed a bug where DoT (Damage over Time) tick deaths caused state desyncs.
 
 ---
 
-### 🛠️ Cambios técnicos:
+### 👾 Near Future / Random Ideas 🎯
 
-- DOCS: Actualizado el README.md para tener link directo a la demo levantada en Vercel.
-- UI: Agregado cartel de "Apretá H para el tutorial".
-- Slide: Agregado slide con botón que redirije al repositorio.
+If everything stays on track and I maintain focus, the next patch should wrap into a **legitimate, playable demo** with clear objectives and solid core gameplay loops.
 
----
-
-### 👾 Futuro próximo / Ideas sueltas 🎯
-
-- ¡Seguimos! Pero ahora, en vivo y desplegados en Vercel. 🚀✨
+...I'm itching to build ranged weapons... **spells... AREA OF EFFECT ATTACKS!**. But no! Focus—focus—**FOCUS!** We're on the right track! 👾✨
 
 ---
 
-## 🔹 Paso 15: "Press H for HUH?!" ¡Slides de ayuda! 👌🧐✨
+## 🔹 Step 16: Demo Live on Vercel! 🙂🚀✨
 
-🗓️ *2025-05-26*
+🗓️ 2025-05-26
 
-Estoy cerrando conceptos visuales, redondeando ideas generales y pensando en levantar el proyecto online para que cualquiera pueda probarlo. En este contexto me pregunté: ¿Qué queda **críptico**? ¿Qué NO entendería alguien que entra sin contexto previo?
+`First major milestone.`
 
-Con esa mirada crítica sumé un sistema de **slides de ayuda**: presionando la tecla `'H'`, se abre una serie de imágenes que explican lo básico `(HUD, Gear, controles, etc)`. Para hacerlas:
-- Busqué, recorté y limpié los fondos de `cada` ícono.
-- Diseñé los slides `a mano` (250x350px) con íconos, textos y colores coherentes.
-- Organicé todo en una carpeta `Images/`, con su propio `index.ts` para facilitar las importaciones.
+*JS-Dungeon* isn't finished, nor is it going in the exact direction I originally envisioned—and that's totally fine. My initial idea evolved, and instead of forcing a rigid vision, I'm letting the best gameplay ideas guide the project.
 
-También agregué una **pantalla de muerte** (cuando el jugador llega a 0 HP) y reorganicé la interacción con la *hotbar*, que ahora se navega con ↑↓ en vez de ←→ para mantener coherencia con su disposición vertical.
+Hitting React's performance ceiling with complex visual layering made me realize I shouldn't try to build a bloated graphical engine here. Instead, I'm going to squeeze every bit of power out of React for what it *does* best. 🔥🔨⚙
 
----
-
-### 🛠️ Cambios técnicos:
-
-- **Hotbar**: La navegación pasó de horizontal (←→) a vertical (↑↓), alineándose con el diseño visual.
-- **Slides de ayuda**:
-  - Lógica de apertura/cierre mediante tecla `'H'`.
-  - Estructura de tipos e interfaces para manejar el sistema.
-  - Imágenes personalizadas diseñadas a mano y organizadas modularmente.
+There are still a few missing help slides (explaining status effects like DoT, bleed, poison, burn, accessory usage, and cleansing), but I shouldn't keep holding back deployment out of imposter syndrome. This project represents the peak of my current dev capabilities, and I'm having a blast building it.
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯
+### 🛠️ Technical Changes:
 
-- Mostrar información de enemigos al pasar el mouse por encima (vida, daño, armadura).
-- Mostrar tooltip con stats de los ítems al hacer hover.
-- Crear más mapas con objetivos reales: actualmente el juego es un *sandbox de funciones*. Quiero usar toda esta paleta y crear **algo jugable, con color y sentido**. 🎊✨
-
----
-
-## 🔹 Paso 14: Massive visual overhaul & modularization 💻🤓🔧
-
-🗓️ *2025-05-24*
-
-**`¡MODULARIZACIÓN!`**
-
-Estaba pensado como mi trump-card, dejar de ser el proyecto de las +2K lineas de código por algo modular y bonito- pero resultó ser inevitable: navegar entre miles de líneas de código desorganizado para mover interfaces, types o íconos era un caos. ¡Hora de la revolución! 💥
-
-Separé archivos específicos para: `types & interfaces`, `entities`, `items`, `gear` e `icons`, mejorando la organización y reutilización del código. Todo correctamente exportado/importado y modularizado. ¡Che bellezza! 🤏
-
-Como el objetivo era avanzar hacia una *demo jugable*, el desorden visual del HUD me hacía demasiado ruído. Este parche se enfocó en corregir el layout, mejorar la coherencia visual y pulir la UX/UI en general.
-
-Manejo de medidas, posiciones absolutas, padding, tamaños de fuente, cards de Gear, logs de consola, estado del jugador... Todo lo necesario para que el juego pase de adivinar que representa ese ASCII a algo más entendible y coherente. 
-
-Además, ahora el daño continuo (DoT) sobre enemigos se ve claramente con valores numéricos. GearCards es más explícito, los ítems tienen hotkeys y muchos otros detalles que, en conjunto, hacen al juego *presentable*... `jugable`. ✨
+- **DOCS**: Updated `README.md` with direct deployment links to the live Vercel showcase.
+- **UI**: Added a visible HUD prompt: *"Press H for Tutorial"*.
+- **Slides**: Added a final tutorial slide featuring a direct link button back to the GitHub repository.
 
 ---
 
-### 🛠️ Cambios técnicos:
+### 👾 Near Future / Random Ideas 🎯
 
-- Eliminé scrolls visuales innecesarios y establecí medidas fijas y responsivas para asegurar que todos los elementos encajen correctamente dentro de sus contenedores.
-- Se refactorizaron funciones clave (como `setPlayer`, `setEnemies`, etc.) para consolidar actualizaciones y reducir renderizados redundantes, optimizando el rendimiento.
-- Se mejoraron detalles visuales: daño visible en enemigos, texto más claro para status effects, hotkeys visibles en ítems (`Item.hotkey: string`), y más.
+- Full steam ahead—now running live and deployed on Vercel! 🚀✨
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯:
+## 🔹 Step 15: "Press H for HUH?!" Help Slides! 👌🧐✨
 
-Ahora sí: el proyecto está *presentable*. El siguiente objetivo será redondear un concepto jugable simple, sin añadir nuevas features complejas.
+🗓️ 2025-05-26
 
-- Evitar agregar nuevas mecánicas pesadas (como patrullas dinámicas, aunque me encantaría) que podrían sobrecargar el motor gráfico basado en React.
-- Considerar reemplazar los enemigos actuales por dummys o muñecos de práctica para mantener coherencia ya que- bueno- no se mueven.
-- Comenzar la modularización de funciones (hooks personalizados, lógica desacoplada) para continuar limpiando el proyecto a medida que vaya avanzando.
+I'm wrapping up UI concepts, polishing core flows, and preparing to host the game online for anyone to play. That got me thinking: *What feels cryptic? What would confuse a player jumping in with zero context?*
 
----
+With a critical eye, I built an overlay **help slide system**: pressing key `'H'` opens a clean carousel breaking down core mechanics `(HUD, Gear, Controls, etc.)`. To build it:
+- Sourced, cropped, and cleaned up background transparency for every sprite icon.
+- Hand-designed custom guide slides (250x350px) with consistent typography, iconography, and color palettes.
+- Organized assets neatly inside an `Images/` directory backed by a central `index.ts` export module for clean imports.
 
-🎮 *JS-Dungeon está cada vez más cerca de ser una demo sólida, jugable y con fundamentos técnicos bien plantados.* 👨‍💻✨
-
----
-
-## 🔹 Paso 13: Amuletos, y un traspié visual. 📿🧐/😨💻
-
-🗓️ *2025-05-20*
-
-¡Bueno! Tuve un pequeño percance 😅 Resulta que me emociono y dibujo en mi cabeza planes a futuro, digamos- **"creo el código de manera escalable"** -es decir que cada nueva pieza agregada está preparada para ampliarse- y extenderse- ¡Y conectarse con sus pares cosa de llegar a la complejidad que mi imaginación quiera! 🤪🎉
-
-**El problema: `REACT`** 🥶💻💥
-
-Nadando en mi cerebro escalable de **dev** tecleando lo que ama, me olvidé que, en la práctica, estoy construyendo una especie de motor visual personalizado desde cero, lo cual excede lo que React puede manejar eficientemente. 😅 ¡Ups!
-
-React no está ni por asomo preparado para tanto re-re-**RE**-renderizado, o manejar tantos estados funcionando a la vez- ni flags- o eventos- ¿¡Animaciones!? Nah React, con sus limitaciones estructurales para animaciones concurrentes, simplemente no está diseñado para este nivel de rendering intensivo.
-
-Por más que amaría terminar con un juego GIGANTE, como diría Howard Stark "Estoy limitado por la tecnología de mi época..." 😁
-
-`¡Mensaje recibido!`: Voy a dejar de implementar/agregar tantas cosas al proyecto y tratar de redondear con lo que tengo para dejar una demo jugable. En todo caso hago un mini-juego de farmeo, otro de combate, otro de.. no se, comercio. Tomé nota de estas ideas para potenciales mini-juegos independientes, pero voy a concentrarme en cerrar una demo jugable primero. ✨
+I also added a dedicated **Game Over Screen** (triggered when player HP drops to 0) and reworked hotbar navigation inputs—switching from ←→ to ↑↓ arrow keys to match the vertical hotbar layout.
 
 ---
 
-### 🛠️ Cambios técnicos:
+### 🛠️ Technical Changes:
 
-- ¡Tope técnico! Creé dos capas extra (con toda la lógica) para mostrar animaciones por separado tanto de curación, de daños y visuales en general.
-
-`PERO`... ¿A la hora de testearlo? 💥🔥💥🔥💥
-
-Debugging, testing, refactorizando, tocando y rompiendo dí con el problema. No era viable para el motor que estoy usando- así que tuve que deshacer los cambios y reestructurar la idea, ya que la performance no era viable con la arquitectura actual.
-
-- ¡Amuletos!
-`damageCharm();` para manejar el daño a los amuletos, refactorización de `hurtPlayer();` y agregado el ícono de `neckalceImg` entre otras cosas para la funcionalidad completa de amuletos de protección básicos.
+- **Hotbar**: Rebound hotbar cycling from horizontal (←→) to vertical (↑↓) key events, aligning controls with visual UI orientation.
+- **Help Slides Engine**:
+  - Implemented toggle state handlers bound to the `'H'` key event.
+  - Built typed interfaces to manage slide deck state.
+  - Assets custom-designed and modularly exported.
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯:
+### 👾 Near Future / Random Ideas 🎯
 
-Ahora que soy consciente del tope técnico:
-
-- Redondear una idea jugable con las herramientas que tengo.
-- Algún objetivo en concreto, mostrar `una` rama completa de ALGO: Armas, Estados de efecto, Items, Magias, etc.
-- Elegir mis herramientas, descartar las que no estén en sincronía con el objetivo elegido y refactorizar las que sí.
+- Display target mob information on hover (HP bar, attack power, defense stats).
+- Display stat comparison tooltips on gear hover.
+- Design structured level maps with actual objectives: right now the game is a fun *feature sandbox*. I want to take this toolset and build **a polished, complete gameplay loop**. 🎊✨
 
 ---
 
-## 🔹 Paso 12: ¡Adiós ASCII! Hola mundo entendible ✨😎🤙
+## 🔹 Step 14: Massive Visual Overhaul & Modularization 💻🤓🔧
 
-🗓️ *2025-05-15*
+🗓️ 2025-05-24
 
-Estaba avanzando en mecánicas core, refactorización, implementación- y me encontré pensando
+**`MODULARIZATION!`**
 
-"¿Cómo represento esto nuevo?.. ¿Con una `'q'`? ¿Con un `'#'`? ¿Con un...? Perá... ¿Por que sigo usando `ASCII`?"
+I originally kept modularization in my back pocket as a late-stage polish phase, but migrating away from a single +2K line monolith file became inevitable. Navigating thousands of lines of cluttered code just to tweak an interface or update an icon was a nightmare. Time for a refactoring revolution! 💥
 
-No puedo avanzar sabiendo que hay algo *"mal"* en mi código, seguir tapando funcionalidades con ASCII era darle más trabajo a mi yo del futuro jajaja así que: ¡`Visual overhaul`!.
+Decoupled core files into dedicated modules: `types & interfaces`, `entities`, `items`, `gear`, and `icons`. Everything cleanly imported/exported. *Che bellezza!* 🤏
 
-Ahora alguien que trate de probar mi juego va a ***teneeeer una idea general*** de que está pasando o que puede hacer. ¡Lo cuál es muchisimo! Puedo mostrar el juego sin tener que estar como voz en *off* explicando que es cada cosa. 🤣👌 
+Since the goal is a sleek playable demo, visual HUD clutter was bugging me. This patch focused heavily on fixing layout structure, establishing visual hierarchy, and polishing overall UX/UI.
 
----
+Fixed dimensions, absolute positioning cleanup, padding, typography scale, gear card layouts, console event formatting, player state bindings... everything needed to transform abstract ASCII visuals into an intuitive, readable game interface.
 
-### 🛠️ Cambios técnicos:
-
-- **Creación de mapa secundario OVERLAY**: `setVisuals` fue creado para manejar animaciones secundarias, bufos, daños, ataques y demás.
-- **Íconos, refactorización y handlers**: Funciones para manejar efectos básicos tanto **sobre** el jugador como en **coordenadas específicas**, íconos .PNG (y su tipado en TS) y refactorización general del código para aceptar estos cambios ( String > ÍCONO ).
+Furthermore, Damage Over Time (DoT) ticks on enemies now render floating combat text numbers. GearCards are far more explicit, items display keybinding shortcuts, and dozens of minor details now make the game feel *presentable*... *playable*. ✨
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯:
+### 🛠️ Technical Changes:
 
-(Claramente no seguí las ideas sueltas del parche pasado **jajajaj**)
-
-- Ahora que me saqué de encima la espina visual, puedo volver a mecánicas CORE como las planteadas en el parche anterior. Así que **retomando** objetivos pasados.
-- Principalmente:
--> HotBar navegable
--> Mas equipables
--> Amuletos, Boosters, ¿Trampas?. //Experimentar\\
+- Removed redundant CSS overflow scrollbars and established fixed, responsive dimensional constraints to keep UI modules cleanly docked.
+- Refactored core dispatchers (`setPlayer`, `setEnemies`, etc.) to batch state updates and eliminate redundant re-renders.
+- Polish pass: visible enemy damage indicators, improved status effect typography, explicit hotkey indicators on item slots (`Item.hotkey: string`), and cleaner layout alignment.
 
 ---
 
-## 🔹 Paso 11: Equipables, HotBar y durabilidad. 🗡💥✨
+### 👾 Near Future / Random Ideas 🎯
 
-🗓️ *2025-05-14*
+The project is officially *presentable*. The next milestone is locking down a simple, fun gameplay loop without bloating the codebase with overly complex systems.
 
-¡Durabilidad! ¡Equipables! ¡Clásico y obligatorio en un RPG!. Genial, ahora el jugador puede `equiparse` las armas que vaya encontrando, cambiando sus estadísticas a la hora de golpear enemigos ( Daño directo y DoT ).
-
-Los enemigos tienen distinta `dureza` (Toughness) que se traduce en daño a la durabilidad del arma, una vez esta llega a **cero** se **`ROMPE`**. Nada de "ah, si llega a cero la reparo" nonono- **Cero = PERDIDA del arma** 😈.
-
-Las armas aplican *`estados alterados`* en los enemigos (Veneno, Sangrado, Quemadura) tal y como se aplican a los jugadores. Planeo poner el tema de inmunidad a ciertos estados o resistencia a estos en próximos parches, consideré mas importante dejar la **BASE** sólida en este parche estable antes de incursionar en colores y detalles lindos como ese. ( % de chances de aplicar ciertos DoT según resistencias de las criaturas, inmunidad = 0% de chances de aplicar  el estado )
-
-El jugador tiene un feed visual inmediato en la consola de eventos cuando daña un enemigo, si le aplica estados alterados o si mató a la criatura. Colores, mensajes y prevención de doble-render (mas otros bugs cortesía de React y sus scope issues/asincronía) fueron añadidos para robustez y escalabilidad del código.
+- Hold off on heavy new mechanics (like dynamic AI pathfinding) that could bottleneck a React-driven DOM engine.
+- Replace current static enemies with target practice dummies to maintain thematic consistency since they don't roam yet.
+- Continue modularizing utility logic into custom hooks to keep components lean and maintainable.
 
 ---
 
-### 🛠️ Cambios técnicos:
-
-- **Refactorización**: `damageEnemy();`, `enemyDeath();`, `manageDotInstance();` y `cleanse();` fueron modificadas para utilizar la misma lógica de DoT, cleanse y muerte.
-
-- **Limpieza de bugs**: `manageDotInstance();` y `finishDoT();` fueron refactorizados para consumir **siempre** de la última versión disponible de datos y actualizar correctamente la información. Encontré puntos débiles en el código que no eran un problema presente pero a futuro podían traer complicaciones.
+🎮 *JS-Dungeon is getting closer to a rock-solid, fully playable demo backed by clean technical foundations.* 👨‍💻✨
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯:
+## 🔹 Step 13: Amulets & A Visual Speedbump 📿🧐/😨💻
 
-- Ahora que tengo DoT en los enemigos, lo próximo es trabajar **resistencias**- **inmunidades**... ¿Quizá incluso **AoE**? 💥🔥😱
+🗓️ 2025-05-20
 
-- Manejar de manera mas 'realista' los DoT- digamos que el daño de mi arma no pasa la armadura del enemigo (Armadura 1, daño de mi arma 1 = daño que entró **0**)- en este caso- no tendría sentido que la criatura termine **envenenada** o **sangrando**. ¡No hubo contacto físico! jajaj En caaaso de que por lo menos lo toquemos por **1** de daño ->*tendría sentido* que termine envenenado, no se si tanto como para **SANGRANDO** pero envenenado sí. Quizá poner un threshold de "Si el arma mete sangrado y le pegué por lo menos **[tanto]** = sangrado" o alguna cosita así. Tipo, la **[Quemadura]** tendría sentido que le entre sin contacto físico- jugar con esos límites. ✨🐱‍💻✨
+So... I ran into a minor reality check 😅 I tend to get super excited, brainstorming wild future mechanics and writing **highly scalable code**—making sure every new module is built to hook into complex game loops down the road! 🤪🎉
 
-- Aprovechando que este parche fue sobre Gear equipable y HotBar, podría ahondar en el asunto (preparandome para los próximo en mi lista de deseos) haciendo que no sea instantaneo el cambio de equipo, que uno pueda *`navegar`* por los items equipables, pararse sobre lo que uno quiere equipar/desequipar y con un botón **hacerlo** (como en Monster Hunter, navegar, quedarse sobre el ítem deseado, "usar").
+**The catch: `REACT`** 🥶💻💥
+
+Deep in full-stack dev mode, typing away at what I love, I momentarily forgot that I was essentially building a custom game engine inside DOM nodes—far exceeding what React is optimized to render efficiently. 😅 Oops!
+
+React isn't designed to handle endless re-renders, concurrent ticker states, dynamic collision flags, and complex multi-layer animations running simultaneously.
+
+As Howard Stark would put it: *"I'm limited by the technology of my time..."* 😁
+
+`Message received!`: I'm pausing massive new system implementations to focus on polishing a compact, highly responsive demo. Maybe I'll split future ideas into standalone minigames (a dedicated farming loop, a turn-based combat module, a trading sim). I'm logging these ideas for future standalone builds, but my immediate focus is shipping a clean, complete demo. ✨
+
+---
+
+### 🛠️ Technical Changes:
+
+- Hit a performance bottleneck! Built two dedicated visual overlay layers (complete with state logic) to render floating text and particle effects for damage and healing.
+
+`BUT`... during stress testing? 💥🔥💥🔥💥
+
+Frame drops and state desyncs galore. After profiling and debugging, the bottleneck was clear: running heavy animation ticks directly through React DOM renders wasn't performant. Rolled back the overlay layers and restructured the rendering flow for smooth 60fps execution.
+
+- **Amulets System Live!**
+  - Added `damageCharm()` state logic to handle trinket durability and damage mitigation.
+  - Refactored `hurtPlayer()` to process active warding calculations.
+  - Added `necklaceImg` assets and integrated protective amulets into gear slots.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Now that I'm fully aware of engine limits:
+
+- Scope down and polish a fun, responsive core loop using current tools.
+- Focus on showcasing *one* complete gameplay arc: Weapons, Status Effects, Items, or Spells.
+- Streamline existing architecture and trim unnecessary rendering overhead.
+
+---
+
+## 🔹 Step 12: Goodbye ASCII! Hello Readable World ✨😎🤙
+
+🗓️ 2025-05-15
+
+While working on core mechanics, refactoring loops, and building entity handlers, I caught myself asking:
+
+*"How should I represent this new item?.. With a `'q'`? A `'#'`? A...? Wait... why am I still using `ASCII`?"*
+
+I can't move forward knowing something in the project feels outdated. Band-aiding new features with raw ASCII characters was just creating tech debt for future-me haha. So: **Visual Overhaul time!**
+
+Now, anyone opening the demo gets an **instant, intuitive understanding** of what's happening on screen. That's a massive leap forward! I can showcase the project without having to act like a narrator explaining what every letter represents. 🤣👌
+
+---
+
+### 🛠️ Technical Changes:
+
+- **Secondary Overlay Map Engine**: Built `setVisuals` to handle secondary animations, buffs, damage numbers, and attack highlights.
+- **Icons, Refactoring & Event Handlers**: Added coordinate-based visual effect handlers for player/world interactions, integrated PNG sprite assets (with full TypeScript typings), and refactored underlying map state engines to support asset rendering (`String` ➔ `Sprite`).
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+(Obviously I didn't follow all the random ideas from last patch **hahaha**)
+
+- Now that the visual makeover is done, I can jump back into CORE mechanics planned earlier:
+➔ Selectable Hotbar navigation.
+➔ Expanded equipment items.
+➔ Amulets, Stat Boosters, Traps? //Experimenting\\
+
+---
+
+## 🔹 Step 11: Equipables, HotBar & Durability 🗡💥✨
+
+🗓️ 2025-05-14
+
+Durability! Equipable gear! Classic, essential RPG mechanics. Players can now **equip** weapons found while exploring, dynamically updating combat stats on hit (Direct Damage & DoT payloads).
+
+Enemies feature varying **Toughness** ratings, translating directly to durability wear-and-tear on equipped weapons. Once durability hits **zero**, the weapon **`BREAKS`**. None of that "repair it at 0 HP" nonsense—**Zero = PERMANENT LOSS** 😈.
+
+Weapons apply *status effects* on enemies (Poison, Bleed, Burn) matching player debuff logic. I plan to introduce mob resistances and immunities in upcoming passes, prioritizing a rock-solid foundation first before adding complex resistance matrices (% chance based on mob armor class, 0% on immune targets).
+
+Players get immediate visual feedback in the event log when striking enemies, inflicting debuffs, or scoring kills. Color-coded log messages, anti-flicker guards, and async React state race condition fixes were implemented to guarantee rock-solid code.
+
+---
+
+### 🛠️ Technical Changes:
+
+- **Refactoring Pass**: Standardized `damageEnemy()`, `enemyDeath()`, `manageDotInstance()`, and `cleanse()` to share a single unified DoT, cleanse, and kill engine.
+- **Bug Squashing**: Re-engineered `manageDotInstance()` and `finishDoT()` to consume fresh state references on every tick execution, eliminating stale closure bugs during fast-paced inputs.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+- With enemy DoTs operational, next comes **resistances**, **immunities**... maybe even **AoE attacks**? 💥🔥😱
+- Make status applications context-aware: if weapon damage fails to penetrate mob armor (Mob Armor 1, Weapon Damage 1 ➔ Net Damage 0), it makes no sense for the target to suffer **bleed** or **poison**. No physical contact = no blood! Haha. If net damage $\ge 1$, status application rolls make sense. Elemental effects like **Burn**, on the other hand, could bypass physical armor entirely. Fun edge cases to tune! ✨🐱‍💻✨
+- Rework equipment swapping mechanics: instead of instant hotbar swaps, let players **navigate** through equipped hotbar slots, highlight their desired item, and press an action key to activate/equip (Monster Hunter style menu navigation).
 
 🗡  - 🔪  - `(🪒)`
 
@@ -586,333 +847,339 @@ El jugador tiene un feed visual inmediato en la consola de eventos cuando daña 
 
 `(🗡)`  - 🔪  - 🪒
 
-- Si logro aplicar el HotBar seleccionable, agregar otro tipo de **`Gear equipable`**. Amuletos, escudos, no se, *`boosters`* de daño que duren por x golpes- **tantas posibilidades** gracias a la escalabilidad. ✨🐱‍💻💕
+- Once selectable hotbar navigation is working, introduce new **Gear categories**: Amulets, Shields, temporary damage boosters—so many cool possibilities thanks to scalable architecture. ✨🐱‍💻💕
 
 ---
 
-## 🔹 Paso 10: Sistema de farmeo y drops implementado 🌾🪓🧱
+## 🔹 Step 10: Gathering & Mob Drop Systems Live 🌾🪓🧱
 
-🗓️ *2025-05-07*
+🗓️ 2025-05-07
 
-Con este parche queda implementada la versión inicial del sistema de farmeo. Los enemigos ahora pueden morir y dropear ítems, y esta misma lógica se generaliza para otras entidades interactivas del juego.
+This patch introduces the initial version of our gathering and loot drop system. Enemies drop items on death, and this exact logic is generalized across all interactive world entities.
 
-Cualquier entidad destruible —como vetas de mineral, árboles, puertas, cajas, puentes o paredes ocultas— puede activar un evento de drop al ser "destruida". Esta estructura permite escalar fácilmente hacia nuevas mecánicas de recolección y exploración.
+Any destructible map tile—mineral veins, trees, doors, crates, bridges, hidden walls—triggers item drops upon destruction. This unified structure makes expanding gathering and exploration mechanics effortless.
 
-El sistema de movimiento y patrullaje de enemigos fue pospuesto para una futura iteración, una vez que el prototipo jugable alcance un estado más presentable.
-
----
-
-### 🛠️ Cambios técnicos:
-
-- **`finishBuff()`**: Finaliza un efecto activo del jugador, eliminando todos los intervalos asociados (HoT, buffs, escudos, etc.).
-- **`handleInteraction()`**: Gestiona la acción de interacción. Al presionar `[ENTER]`, ejecuta la acción contextual sobre la entidad frente al jugador.
-- **`damageEnemy()`**: Recibe las coordenadas del enemigo y el daño infligido. Aplica daño considerando defensas y escudos, y en caso de muerte, ejecuta la lógica de drop según su `dropTable`.
-- **Interfaces y tipos personalizados**: Se definieron estructuras específicas para enemigos, trampas e ítems. Esto permite que al detectar una entidad en el mapa, el sistema devuelva el objeto completo correspondiente (con stats, comportamiento y propiedades), facilitando el flujo general del juego.
+Dynamic enemy movement and patrol AI have been temporarily deferred until the playable prototype reaches a higher state of visual polish.
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯:
+### 🛠️ Technical Changes:
 
-- Algo que tenga que ver con equipo en sí. Ahora mismo, [ENTER] "ataca" lo que tenga el jugador delante suyo por `2` de daño. ¿Por qué 2 de daño? ¿Le está pegando con las manos?. Fácil, agregar armas con daño- durabilidad- eh- quizá efectos de estado.
-- Lo de efectos de estado también abre la ventana a aplicarle estos a enemigos, no solo que el jugador se pueda envenenar y demás.
-- Equipar item, perder durabilidad de las armas, al llegar a cero romperlas (No que quede en 0/100 como en otros juegos. Que se ROMPA.)
-- Lo cual *(jejejejeje)* me da otra idea, mejorar items- +1, +2, joyas- 'encantamientos' aaah- **tantas ideas locas**. 
-
----
-
-## 🔹 Paso 9: Refactorización, centralización, orden y coherencia. ☝🤓✨
-
-🗓️ *2025-04-30*
-
-Refactoricé GRAN parte de la lógica `CORE` del proyecto. Habían demasiados estados locales independientes uno del otro pero a la vez compartiendo la misma función: **Modificar valores correspondientes al jugador.** Eso decía "REFACTORIZAME POR FAVOR" por todos lados, así que accedí a sus demandas. 
-
-Residual, ticks de daño DoT, inventario, flags, **TODO** refactorizado línea por línea, como desarmando un reloj para ver por qué gira... y rearmándolo para que gire aún mejor. Fue un lindo baile, ahora siento que puedo caminar en el código sin tropezarme con un ejercito de estados independientes quizá rompiendose por **acá**- quizá rompiendose por **allá**.
-
-Además de tratar de romperlo a cada rato a ver si aguantaba, cosa que hace, en medio de la inspiración refactorizadora (?) me encontré teniendo varias ideas para implementar -PERO NO- Resistí la tentación de mezclar objetivos y meter cambios que no entraban en el objetivo general de este sprint: Refactorizar y ordenar. Así que ahí vá- todo refactorizado para encajar en el estado local player (.Aliments, .HP, .HpMax, .Data, etc.). 
+- **`finishBuff()`**: Teardown handler for active player buffs, cleanly wiping associated tick intervals (HoT, stat buffs, shield timers).
+- **`handleInteraction()`**: Contextual interaction dispatcher. Pressing `[ENTER]` triggers actions on the entity directly facing the player.
+- **`damageEnemy()`**: Processes target coordinates and raw damage values. Calculates net damage against defense/shield values and executes `dropTable` rolls on death.
+- **Typed Data Interfaces**: Defined explicit structures for enemies, traps, and items. Reading any coordinate tile returns a fully typed entity object (stats, behaviors, properties), streamlining map interactions.
 
 ---
 
-### 🛠️ A nivel técnico:
+### 👾 Near Future / Random Ideas 🎯
 
-- `residual()` refactorizado para poder albergar muchos símbolos a la cola de espera para reaparecer.
-- Lógica detras de `DoT` y `cleanse()` re-pensados para encajar con el nuevo modelo mas escalable girando entorno a Player.
-- Inventario, HP, coordenadas de usuario- todo lo que tenga que ver con la instancia "jugador" fue centralizado en un solo objeto (estado local).
-
----
-
-### 👾 Futuro próximo / Ideas sueltas 🎯:
-
-- Tengo que meter el concepto de corta-curas urgente o me va a estallar una vena creativa jajaja 😂✨
-- Enemigos que se muevan, primeramente.
-- Enemigos que lastimen al jugador al chocarlo.
-- Enemigos que reciban daño y puedan morir.
-
-Si me sobra tiempo:
-
-- Que el jugador tenga alguna clase de ataque.
-- DROP RATES [¿ALPHA?]
+- Gear implementation: Right now, pressing `[ENTER]` strikes whatever is in front of the player for 2 base damage. Why 2 damage? Is the player punching rocks with bare fists? Easy fix: add weapons with attack stats, durability ratings, and status payloads.
+- Status payloads on weapons open up debuff logic on enemies (poison, burn, bleed).
+- Durability loss on weapons—hitting zero completely destroys the item (no lingering at 0/100).
+- Which *(hehehe)* leads to another idea: weapon upgrades (+1, +2, gem sockets, enchantments)... so many fun mechanics to consider!
 
 ---
 
-## 🔹 Paso 8: Bases del inventario, consumir y recoger ítems 🎁💰✨
+## 🔹 Step 9: Core Refactoring, Centralization & Code Cleanliness ☝🤓✨
 
-🗓️ *2025-04-26*
+🗓️ 2025-04-30
 
-El paso anterior siempre me deja una ruta clara para el siguiente feature. Como ya creé sistemas de Curación y Cleanse de estados (sangrados y efectos), el siguiente paso lógico era permitir una interacción más estratégica con estos recursos: **inventario y hotkeys**. 💰✨
+Refactored a MAJOR portion of the project's `CORE` state logic. There were far too many isolated local states attempting to modify player properties independently. It was practically screaming *"REFACTOR ME PLEASE"* from every module. Request granted!
 
-Ahora `el jugador puede encontrar ítems tirados en el piso` y, al pisarlos (si tiene espacio en el inventario), `los recoge` automáticamente, apilándolos. También puede `consumirlos`, respetando el conteo de existencias y un sistema de *cooldown* que evita el uso indiscriminado (¡nada de "cura, cura, cura" como estrategia! 😄).
+Residual tiles, DoT status ticks, inventory state, trigger flags—**EVERYTHING** was refactored line by line, like taking apart a mechanical clock to see why it ticks... and rebuilding it to run even smoother. It was a great exercise, and now I can expand systems without tripping over a tangled web of independent local states.
 
-Refactoricé toda la lógica pertinente para asegurar que los cambios sean **escalables y estables** a futuro. El mundo ahora puede dañarnos, y tenemos formas de contrarrestarlo: manejo de recursos, farmeo de ítems, enemigos que podrán dropear loot... **¡Se abren muchas posibilidades!**
-
----
-
-### 🛠️ A nivel técnico:
-
-A nivel de implementación, los principales métodos nuevos son:
-
-- `stepOnItem()`: Verifica si hay espacio en el inventario y, de ser así, llama a `addToInventory()` para gestionar la recolección.
-- `addToInventory()`: Maneja el almacenamiento de objetos, stacking de ítems y control de cantidades.
-- `consumeItem()`: Se encarga de consumir ítems, validando requisitos de consumo y gestionando el cooldown posterior.
-- Sistema de **Cooldown** agregado.
-- Tipado explícito de objetos y funciones para garantizar consistencia y claridad futura.
-- Introducción de hotkeys para consumo rápido.
+Resisted the temptation to feature-creep midway through refactoring! Kept laser-focused on the primary goal of this sprint: clean, scalable state architecture centered around a unified `Player` state object (`.Aliments`, `.HP`, `.HpMax`, `.Data`, etc.).
 
 ---
 
-### 👾 Futuro próximo / Ideas sueltas 🎯:
+### 🛠️ Technical Details:
 
-Antes de seguir sumando nuevas funcionalidades, priorizaré una **etapa de refactorización profunda**. Aunque me encantaría seguir creando features sin freno, es importante ser mi propio Team Leader y garantizar que la base de código sea sólida, limpia y escalable.
-
-Si me llegara a sobrar tiempo después de refactorizar, planeo avanzar en:
-
-- Crear enemigos que patrullen áreas, con lógica de colisión con el entorno.
-- Integrar sistemas de interacción entre patrullas, jugadores, obstáculos y objetos del mundo.
-- Implementar **Drop Rates** para ítems, abriendo la puerta al loot farming.
+- Refactored `residual()` tile mechanics to queue multiple overlapping map symbols awaiting respawn/restore timers.
+- Overhauled `DoT` tick engines and `cleanse()` handlers to integrate cleanly into the unified Player state.
+- Centralized inventory arrays, HP pools, and coordinate tracking under a single, predictable state object.
 
 ---
 
-### 🔹 Paso 7: Cleanse, curación, "totems".
-_🩺 ¡Ayudas! 💉_
+### 👾 Near Future / Random Ideas 🎯
 
-🗓️ *2025-04-25*
+- Need to build a heal-reduction / anti-heal debuff mechanic ASAP! 😂✨
+- Roaming enemy patrol loops.
+- Enemy collision damage handlers.
+- Enemy health tracking and death dispatchers.
 
-Habiendo implementado el DoT en el parche pasado, lo más equilibrado para cerrar el ciclo es implementar lo opuesto. Curas, limpieza de estados alterados, Healing Over Time (**HoT**). Y eso es justamente lo que hice.
+If time permits:
 
-La `curación` y el **HoT** fueron mas sencillos de crear- tuve que refactorizar la función opuesta (hurtPlayer) para DAR vida en lugar de quitarla, mismo que el HoT- refactorizar DoT pero al revez.
-
-Ahora el `Cleanse();`, fue un desafío un poco mas rebuscado. Tuve que guardar los.. bueno, detalles técnicos aparte- tuve que repensar como guardaba, aplicaba y seguía todos los daños para poder cancelar eficientemente todo. **Hermoso**, amo los desafíos lógicos.
-
-Ahora tengo un mundo que puede equilibrarse solo: Dañar y curar- afectar y limpiar, poder tomar riesgos calculados sabiendo tomar contramedidas. *Complejidad*, ahhh- Herramientas para mañana.
-
----
-
-**🛠️ A nivel técnico:**
-
-- Creación de `cleanse()`: Recibe que estado, sino todos, deseas quitar- cancelando todo el daño que te faltaba recibir.
-- useEffects y funciones relevantes refactorizadas para adaptarse al cambio.
-- 'Totems' y hotKeys para limpiarse efectos negativos y curarse implementados.
+- Player attack actions.
+- Drop rate mechanics [Alpha stage].
 
 ---
 
-**👾 Futuro próximo / Ideas sueltas 🎯:**
+## 🔹 Step 8: Inventory Foundations, Item Consumption & Loot Pickup 🎁💰✨
 
-Mhmmh... Ahora que tengo Curaciones y Cleanse, podría incursionar en como equilibrar esto.
-- Corta-Curaciones: Enemigos, totems, areas, trampas, algo que haga que el `heal();` activo se **DETENGA**.
-- CD para curaciones: No poder darle al botón como metralleta para curarse infinitamente. Tampoco tirarse clean cada dos segundos, etc.
-- IN-VEN-TA-RIO: ¿Curarse? ¿Parar sangrado?... ¿Quitar veneno? Suena a que solo podrías hacer eso con... ***el item correspondiente en el inventario***. 😈
+🗓️ 2025-04-26
+
+Previous milestones always lay out a clear roadmap for what comes next. Having built Healing and Status Cleanse systems, the next logical step was giving players strategic access to these resources: **inventory management and hotkeys**. 💰✨
+
+Players can now find item pickups dropped across map tiles, automatically gathering and stacking them into available inventory slots upon stepping over them. Consumables feature stack management and action cooldowns to prevent spamming items mid-combat (no infinite instant-healing allowed! 😄).
+
+Refactored all relevant handlers to guarantee long-term stability and scalability. The world can hurt us, and now we have the tools to fight back: resource management, material farming, loot drops... endless new gameplay doors unlocked!
 
 ---
 
-### 🔹 Paso 6: StatusEffect, el inicio de los buff/debuffs. 😷✨💪 
+### 🛠️ Technical Details:
 
-🗓️ *2025-04-24*
+Key technical implementations include:
 
-Después de estancarme un poco con el tema de los corazones, la visual, lo responsive, asincronías de useState(); y dos o tres shutdowns porque *no soy exactamente *FANÁTICO* de crear detalles visuales* (👀🔪) me encontré escapando a un poco de **lógica pura y dura**. `StatusEffect` 👌💕
+- `stepOnItem()`: Evaluates inventory capacity and invokes `addToInventory()` on valid pickup events.
+- `addToInventory()`: Manages slot allocation, stack thresholds, and item counts.
+- `consumeItem()`: Validates item requirements, dispatches consumable effects, and triggers global action cooldowns.
+- Integrated global **Action Cooldown** state logic.
+- Applied explicit TypeScript types across item entities and helper functions.
+- Implemented quick-use hotkeys for inventory items.
 
-Cada nuevo DoT agrega un tick a la cola de estados alterados- pueden stackear todo lo que quieran y los metí en un label para darle mas estilo (barra de buffos) clásica de RPG.
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Before piling on new systems, I'm prioritizing a **deep refactoring sprint**. Even though I'd love to push new features non-stop, acting as my own Team Lead means ensuring the codebase remains rock-solid, readable, and scalable.
+
+Post-refactoring priorities:
+
+- Roaming enemy patrol paths with environmental collision detection.
+- Interaction handling between roaming mobs, players, grid obstacles, and world entities.
+- Implement variable **Drop Rates** for loot farming.
+
+---
+
+## 🔹 Step 7: Cleanse, Healing & Totems
+_🩺 Support & Recovery! 💉_
+
+🗓️ 2025-04-25
+
+Having implemented Damage over Time (DoT) last patch, the most balanced way to close the loop was building its direct counter: direct healing, status cleanses, and Healing over Time (**HoT**).
+
+Direct `healing` and **HoT** ticks were straightforward—refactored the damage calculator (`hurtPlayer`) to increment health pools instead of reducing them, applying the inverse logic for HoT ticks.
+
+`cleanse()` logic was a far more interesting puzzle. Tracking, applying, and cleanly canceling pending damage instances required rethinking state storage. Love a good logic challenge!
+
+Now the game world has balance: harm and heal, infect and cleanse—allowing players to take calculated risks knowing they have strategic countermeasures. Depth! Tools for tomorrow.
+
+---
+
+### 🛠️ Technical Details:
+
+- Created `cleanse()`: Accepts specific debuff types (or purges all active debuffs), instantly clearing pending damage queue ticks.
+- Refactored `useEffect` dependencies and action dispatchers to support instant status clearing.
+- Introduced map 'Totems' and quick-cleansing hotkeys.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Now that Healing and Cleansing exist, I need ways to counter them:
+
+- Anti-heal mechanics: Enemies, totems, or hazard zones that **FREEZE** active `heal()` ticks.
+- Global cooldowns on recovery items to prevent button-mashing heals.
+- **IN-VEN-TO-RY**: Purging poison or stopping bleeding should require holding the *matching consumable item* in your inventory 😈.
+
+---
+
+## 🔹 Step 6: Status Effects — Buffs & Debuffs 😷✨💪
+
+🗓️ 2025-04-24
+
+After getting stuck for a bit working on health heart displays, responsive layouts, async `useState()` synchronization, and taking a couple of breaks because *I am not exactly the biggest FAN of doing UI styling* (👀🔪), I retreated back into what I love most: **pure, unadulterated state logic**. `StatusEffect` engines! 👌💕
+
+Every applied DoT appends a tick instance to the active status queue, stacking seamlessly while rendering on a clean RPG-style status bar label:
+
 ```
-StatusEffect: [Burning 🔥] [Bleeding🩸] [Poisoned💚]
+StatusEffect: [Burning 🔥] [Bleeding 🩸] [Poisoned 💚]
 HP: 💖💖💖💖💖🖤
 ```
-Un paso en la dirección que originalmente apunté en el anterior devlog.md, pero que no es **exactamente** a lo que apunté en el anterior devlog.md por razones técnicas y de eficiencia. 
 
-``Nota al pie:`` Intenté rushear un sistema de `cleanse()` pero aunque no me da el tiempo jajaja ya tengo una idea de como implementarlo en el siguiente parche. 🐱‍💻👾
+A big step in the direction mapped out in the last devlog, achieved through clean state architecture.
 
----
-
-**🛠️ A nivel técnico:**
-
-- Refactorizado `hurtPlayer()` para seguir los ticks de DoT y sus finalizaciones.
-- Agregado label que refleje los estados alterados actuales (acumulados) activos.
-- Implementado sistema de ticks (cola) y estados (boolean) para saber que estado está activo y por cuanto tiempo más.
+`Footnote:` I tried to rush a `cleanse()` system into this build, but ran out of time haha. I already have the exact implementation mapped out for the next patch. 🐱‍💻👾
 
 ---
 
-**👾 Futuro próximo / Ideas sueltas 🎯:**
+### 🛠️ Technical Details:
 
-- `Cleanse();` Obviamente 😎🐱‍💻´
-- `Healing();` Alguna manera super [BETA] de curar al personaje.
-- `Buffs`: Quizá meter un escudito, bufito de algún tipo- para aprovechar el statusEffect.
-
----
-
-### 🔹 Paso 5: Sistema de Daño por Tiempo (DoT)
-_Tantas maneras de causar DOLOR_ 😈🔥
-
-🗓️ *2025-04-23*
-
-***¡Ahhhhh!...*** Al fin llegó el primer golpazo de dopamina real jajaj. Ver cómo el HP seguía bajando después del golpe fue... `perfecto 👨‍💻💕`.
-
-Con las funciones de DoT ahora refactorizadas y pensadas para escalar me siento como un nene al que le dieron un balde, una palita y lo dejaron en la playa 🧨✨.
-
-```¡Tanto RAW MATERIAL con el que Jugar!```
+- Refactored `hurtPlayer()` to track pending DoT ticks and teardown lifecycle events.
+- Added visual status labels to dynamically render active stacked debuffs.
+- Built a tick queue architecture with boolean flags to track status duration and expiration timers.
 
 ---
 
-**🛠️ A nivel técnico:**
+### 👾 Near Future / Random Ideas 🎯
 
-- Refactorizada la función de daño `hurtPlayer()` para aplicar DoT al jugador. 🩸💀
-- Agregada función `stepOntoFire()`: El fuego ahora daña, empuja y bloquea el paso. 🔥🚫
-- Refactorizado `touchEnemy()` y `stepOnTrap()` para diferenciar tipos de enemigos y tipos de daño. ⚔🗡
+- `cleanse()` mechanics, obviously! 😎🐱‍💻
+- `Healing()`: A simple [Beta] implementation for health recovery.
+- `Buffs`: Warding shields, attack buffs—taking full advantage of the new status system.
 
 ---
 
-**👾 Futuro próximo / Ideas sueltas 🎯:**
+## 🔹 Step 5: Damage Over Time (DoT) System
+_So many ways to inflict PAIN_ 😈🔥
 
-Quiero frenar un poco para pulir detalles visuales antes de seguir avanzando.
+🗓️ 2025-04-23
 
-### 📌  Indicadores visuales en los corazones según el tipo de daño pendiente (DoT):
+***Ahhhhh!...*** Finally hit that first real rush of developer dopamine haha. Watching the player's HP bar continue to drop *after* taking an initial hit was... `chef's kiss 👨‍💻💕`.
 
-- 💖 [ Sano ]
-- 💚 [ Envenenado ]
-- 💔 [ Sangrando ] 
-- 🖤 [ Vida perdida ]
+With DoT functions refactored and built for scale, I feel like a kid handed a bucket and spade at the beach 🧨✨.
 
-Ejemplo: si tenés 5 corazones y te aplican 2 de veneno:
+`So much RAW MATERIAL to play with!`
+
+---
+
+### 🛠️ Technical Details:
+
+- Overhauled damage dispatchers (`hurtPlayer()`) to handle DoT queues on the player 🩸💀.
+- Added `stepOntoFire()`: Environmental fire now deals damage, knocks the player back, and blocks passage 🔥🚫.
+- Refactored `touchEnemy()` and `stepOnTrap()` to handle distinct mob categories and damage types ⚔🗡.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+I want to pause briefly and polish heart icon UI feedback before building new systems.
+
+### 📌 Dynamic Heart Indicators based on active pending DoT queues:
+
+- 💖 [ Healthy ]
+- 💚 [ Poisoned ]
+- 💔 [ Bleeding ] 
+- 🖤 [ Lost Health ]
+
+Example: If you have 5 hearts and take 2 ticks of pending poison damage:
 
 - 💖💖💖💚💚
 - 💖💖💖💚🖤
 - 💖💖💖🖤🖤
 
-Y si se combinan distintos estados:
+If multiple status debuffs overlap:
 
 - 💖💔💔💚💚
 - 💖💔💚🖤🖤
 - 💖🖤🖤🖤🖤
 
-Esto suma **claridad visual**, **urgencia estratégica** y un plus de **inmersión** 🧠💡. Si ves [💔💚💚💚💚], sabés que curar el veneno es prioridad máxima.
+This adds **instant visual clarity**, **tactical urgency**, and a huge boost to **immersion** 🧠💡. Seeing `[💔💚💚💚💚]` tells you that curing poison is your top priority right now.
 
-### 🎨 Junto con otros update visuales que vaya encontrando. ✨
-- Enemigos ( F por 🔥 );
-- Trampas ( 't' por 🔳, 'p' por 🔲 );
-- Ambiente ( T por 🌀, B por 🟦)
-
----
-
-### 🔹 Paso 4: "Enemigos", placas trampa y lógica vidas/muerte. 💖💖🖤🖤
-
-🗓️ *2025-04-22*
-
-Mundo estático, quieto, vacío, ``sin peligros``. Eso es lo que estuve creando hasta ahora. Podría haber seguido para el lado temático o de interacciones con el mundo per-sé, pero preferí darle peligro- empezar a pensar antes de mandarse corriendo... darle `CONSECUENCIAS` 💀🗡.
-
-**Enemigos**: Por más que sean un 'totem' mirandote feo- **ESTÁN AHÍ**, bloqueandote, *pegándote*, forzándote a cambiar de ruta.
-
-**¡Placas trampa!**: Ahora mismo, se ven, porque -obvio- estilo ASCII 💽 Pero cuando el mapa evolucione podría, no se, hacerlas invisibles- o 'deducibles', tipo: en esta parte del camino no hay vegetación, normalmente aparecen trampas random en zonas así- mejor evito. ¡Lore! ¡Preparación! ¡Conocimiento! ¿Y si no? `¡Consecuencias!`.
-
-Básicamente eso es este paso, como todo lo anterior y todo lo que va a venir es el primer pincelazo apuntando hacia-algo. Hacia→ mas mecánicas. Hacia→ nuevas interacciones. Hacia→ un mundo que reaccione, cambie y cobre vida con cada línea que agrego.
+### 🎨 Plus additional sprite & tile art updates:
+- Enemies ( `F` ➔ 🔥 )
+- Traps ( `'t'` ➔ 🔳, `'p'` ➔ 🔲 )
+- Hazards ( `T` ➔ 🌀, `B` ➔ 🟦 )
 
 ---
 
-**🛠️ A nivel técnico:**
-- Funciones `touchEnemy()`, `stepOnTrap()` y `hurtPlayer()` agregadas.
-- Refactorización del sistema `residual`, haciendolo mas legible y escalable.
-- Eliminé `isAtSpecialTile()`: Al buscar siempre la manera más eficiente de escribir mi código, me dí cuenta que podía quitar toda esta función y reemplazarla por un &&. Lo bello de vivir tratando de romper tu propio código. ♪ ♫
+## 🔹 Step 4: Enemies, Trap Plates & Health/Death Logic 💖💖🖤🖤
+
+🗓️ 2025-04-22
+
+Static, quiet, empty worlds with `zero danger`—that's what I had been building up until now. I could have continued building environmental interactions, but I wanted to add real danger—forcing players to think before mindlessly sprinting forward... giving actions real **CONSEQUENCES** 💀🗡.
+
+**Enemies**: Even as static ASCII sprites staring ominously—**THEY ARE THERE**, blocking paths, *striking back*, forcing players to reroute.
+
+**Pressure Traps!**: Right now they're visible because of ASCII graphics 💽, but as map art evolves, I can make them hidden or contextual—e.g., clear dirt paths devoid of vegetation indicating high trap probability! Lore! Preparation! Map awareness! And if you ignore the signs? **Consequences!**
+
+That's the core of this step: like everything before and after it, laying down foundational bricks for future mechanics, new interactions, and a reactive world that comes alive with every line of code I write.
 
 ---
 
-**👾 Futuro próximo / Ideas sueltas 🎯:**
+### 🛠️ Technical Details:
 
-🤔 Mhmmh... ya sé, ahora que tengo **placas trampa** y **enemigos** que hacen daño **`DIRECTO`**... 😈
-
-- 🔥 Fuego (Daño por quemadura), 💚 Trampas venenosas (Daño por veneno), 🩸 Enemigos con armas cortantes (Daño por sangrado).
-
-*Agregar los primeros `DOT` (Damage Over Time) y su lógica suena al próximo paso lógico- y **lógico** me emociona porque suena divertido. 🐱‍💻👾*
-
-- Quizá incursionar en un enemigo que... ¡¿se **MUEVA**?! 😨⚡.
+- Added `touchEnemy()`, `stepOnTrap()`, and `hurtPlayer()` event handlers.
+- Refactored `residual` tile tracking to be far more readable and scalable.
+- Eliminated `isAtSpecialTile()`: While refactoring for cleaner code, I realized I could replace the whole function with simple `&&` condition chains. Love finding ways to trim unnecessary code! ♪ ♫
 
 ---
 
-### 🔹 Paso 3: TPEAR CAJAS, BLOQUEAR PORTALES.
+### 👾 Near Future / Random Ideas 🎯
 
-1. 👉📦🌀 ~~~~~~ 🌀 [habilitado]
-2. 👉🌀❌ ~~~~~~ 📦 [bloqueado]
+🤔 Hmm... now that I have **pressure plates** and **enemies** dealing **`DIRECT`** damage... 😈
 
-🗓️ *2025-04-21*
+- 🔥 Fire (Burn DoT), 💚 Poison Traps (Poison DoT), 🩸 Slash Enemies (Bleed DoT).
 
-Primera pensada real que tuve que hacer en el proyecto. Hubo un par de bugs, un par de "¿Eh?... Ahhh".
-Empieza a tomar forma, aunque **obviamente** está en SUPER pañales todo.
+*Building the first **DoT** (Damage Over Time) engine feels like the next logical step—and logical mechanics are fun to build. 🐱‍💻👾*
 
-Los `Teleporters` aceptan transportar cajas ahora, pero el TP queda **bloqueado** hasta que saques la caja del otro lado, junto con toda la lógica interna y un `residual` que queda esperando a que el jugador libere el camino para volver a funcionar.
-
-Esta adición me abrió los ojos a futuras optimizaciones, refactorizaciones y temas de escalabilidad que el proyecto va a necesitar sí o sí.
-Divertido, satisfactorio. El progreso se siente placentero ♪
+- Maybe experiment with an enemy that... actually **MOVES**?! 😨⚡
 
 ---
 
-**🛠️ A nivel técnico:**
-- Se creó la función `isAtSpecialTile` para detectar si el jugador está parado sobre un tile especial (TP, trampa, fuego, etc.), importante para el sistema de `residual`.
-- Se refactorizó `handleTp` para permitir tpear tanto al jugador como a cualquier otro objeto (enemigos, flechas, bombas, etc. 😈).
-- Se agregó el case `'teleport'` dentro de `pushBox()` para incluir esta nueva posibilidad.
+## 🔹 Step 3: Teleporting Boxes & Blocking Portals
+
+1. 👉📦🌀 ~~~~~~ 🌀 [Active]
+2. 👉🌀❌ ~~~~~~ 📦 [Blocked]
+
+🗓️ 2025-04-21
+
+First real logic puzzle I had to solve on this project. Ran into a few bugs, a few *"Wait, why is it doing that?... Ahhhh!"* moments.
+The game is taking shape, even though it's obviously in its absolute infancy.
+
+`Teleporters` now accept boxes pushed into them, but the destination portal remains **blocked** until you push the box off the receiving end—backed by internal state queues and a `residual` tile memory waiting for the path to clear before restoring portal functionality.
+
+Building this opened my eyes to crucial optimization and scaling needs down the road.
+Fun, satisfying work. Progress feels great! ♪
 
 ---
 
-**👾 Futuro próximo / Ideas sueltas 🎯:**
-- Debería... **debería** empezar a optimizar mi código, o en unos 6–7 parches va a ser un cableado injunable y poco disfrutable de trabajar.
-- TP de cajas y bloqueo: LISTO ✅
-  ¿Siguiente? Si agrego fuego, enemigos o trampas, voy a tener que meter el factor `HP`. Mhmmh... Ya sé.
-- Sistema de **vidas**: 3 hits. ¿Cae a 0? GAME OVER → Se bloquea el juego, se resetea el mapa y arranca la partida de nuevo.
-- Pulirlo bonito y crear un enemigo estático que al tocarlo quite una vida y empuje un casillero para atrás—algo simple por ahora.
+### 🛠️ Technical Details:
+
+- Built `isAtSpecialTile` to evaluate whether the player is standing on special tile entities (TPs, traps, hazard fire), which is vital for `residual` tile memory restoration.
+- Refactored `handleTp` to handle spatial teleportation for both the player and pushable world entities (mobs, arrows, bombs... 😈).
+- Added a `'teleport'` case inside `pushBox()` to handle box-portal physics.
 
 ---
 
-### 🔹 Paso 2: TELEPORT 👉🌀 `~~~~~~` 🌀👉
-🗓️ *2025-04-20*
+### 👾 Near Future / Random Ideas 🎯
 
-Tras mi primera victoria en forma de cajas, sentí la necesidad de implementar algo más "divertido" como siguiente meta —o iba a terminar mandando CVs a McDonald's (¿?).
-
-`Teletransportarse` es una de esas mecánicas que pueden agregar muchísima complejidad: interacciones, lógica oculta, mecánicas avanzadas y más cositas. Así que decidí crear la **base funcional** de la misma y dejarla quietita en este push, para poder adelante hacerla `*explotar por los aires*` con experimentos locos y delirios místicos sin miedo a quedar en la lona 💥.
-
-(Traducción: voy a testear/romper todo hasta que quede algo copado, o tenga que volver a esta versión en plan "retirada estratégica").
-
-**🛠️ A nivel técnico**:
-- Se creó la función `handleTp` con la lógica principal de teletransportación.
-- Se introdujo el estado `residual` para recordar qué tile había bajo el jugador antes de moverse, y restaurarlo al abandonar la casilla.
-- Se refactorizó `movePlayer` para integrar esta nueva lógica sin romper otras colisiones.
-
-**👾 Futuro próximo / Ideas sueltas 🎯**:
-- Permitir que las cajas (`B`) pasen por teletransportadores (`T`). *(Combinación de mecánicas anteriores)*
-- Bloquear `T` con una `B`, abriendo camino a mecánicas estratégicas (bloquear enemigos, trampas, emboscadas).
-- Usar `residual` para empezar a experimentar con tiles peligrosos (🔥fuego, 💀trampas, 🩸estados negativos).
+- Need to... **really should** start optimizing my state code soon, or in 6–7 patches this is going to turn into unmaintainable spaghetti code.
+- Box teleports & portal blocking: DONE ✅
+  Next? If I add fire hazards, enemies, or traps, I'll need a proper **HP** system. Hmm... got it!
+- **Life System**: 3 hits. Hit 0? **GAME OVER** ➔ Lock inputs, reset map state, restart run.
+- Keep it clean and build a simple static mob that deals damage and knocks the player back 1 tile on contact.
 
 ---
 
-### 🔹 Paso 1: CAJAS 👉📦
-🗓️ *2025-04-20*
+## 🔹 Step 2: TELEPORT 👉🌀 `~~~~~~` 🌀👉
 
-Terminé con la lógica para que el personaje se mueva, que no pueda caminar más allá de los límites del mundo *y* que se detenga antes de dársela contra una pared (ojalá yo tuviera ese script, vivo llevándome cosas por delante).
+🗓️ 2025-04-20
 
-Con el patio de juegos limpio y muchas ideas alborotándose en mi cabeza, decidí arrancar por algo simple: colisionar con un objeto movible y sus posibles consecuencias (bloquear salidas, pisar cosas, apretar botones, tapar pozos — *UFF, ideas, ¡IDEAS!*).
+After my first victory getting pushable boxes to work, I felt the urge to tackle something more "fun" for the next milestone—otherwise I'd end up filling out job applications at McDonald's (?!).
 
-**🛠️ A nivel técnico**:
-- Se creó la función `checkCollision()` para determinar con qué tile se encuentra el jugador al intentar moverse.
-- Se implementó `pushBox()` con la lógica de empuje condicional (requiere espacio libre).
-- Se introdujo la función `inconsecuente()` para movimientos sin efecto, evitando duplicar lógica innecesaria en múltiples ramas condicionales.
-- Se refactorizó código general para modularizar mejor comportamientos repetitivos y simplificar el flujo de `movePlayer()`.
+`Teleportation` is one of those mechanics that introduces tons of fun emergent complexity: entity interactions, hidden triggers, and advanced puzzle mechanics. So I decided to lock down a **functional baseline** first, keeping it safe in this commit before blowing things up with wild experimental features 💥.
 
-**👾 Futuro próximo / Ideas sueltas 🎯**:
-- Agregar teleports (`T`) para que el jugador pase de punto A al punto B de inmediato.
-- Agregar puertas (`D`) y su lógica base (Activada = pasa, Desactivada = `inconsecuente()`).
-- Crear interruptores (`S`) básicos (Activar/Desactivar algo cercano).
-- Crear interacción entre *cajas* y *teleports* (bloquear, activar).
+(Translation: I'm going to test and break everything until it feels awesome, or make a strategic retreat back to this commit if things explode).
+
+### 🛠️ Technical Details:
+- Built `handleTp` housing core teleportation spatial dispatchers.
+- Introduced `residual` tile memory state to cache whatever tile occupied a coordinate prior to entity movement, restoring it seamlessly upon exit.
+- Refactored `movePlayer` to integrate portal checks without breaking environmental collision bounds.
+
+### 👾 Near Future / Random Ideas 🎯:
+- Enable pushable boxes (`B`) to pass through teleporters (`T`). *(Combining mechanics!)*
+- Block portals (`T`) by parking a box (`B`) on top, creating strategic puzzle mechanics (blocking roaming mobs, deactivating traps, setting up ambushes).
+- Utilize `residual` tile tracking to start testing environmental hazard tiles (🔥 Fire, 💀 Traps, 🩸 Debuff tiles).
 
 ---
+
+### 🔹 Step 1: PUSHABLE BOXES 👉📦
+
+🗓️ 2025-04-20
+
+Wrapped up core movement logic: keeping the player within world boundaries and stopping them cold before they run face-first into walls (wish I had a script for that in real life, I'm always bumping into stuff).
+
+With a clean playground and ideas bouncing around my head, I started with a classic mechanic: colliding with pushable objects and handling their environment interactions (blocking exits, triggering buttons, filling pits—*OOH, IDEAS!*).
+
+### 🛠️ Technical Details:
+- Created `checkCollision()` to evaluate target tile properties upon movement inputs.
+- Implemented `pushBox()` handling conditional push physics (requiring empty target tiles ahead).
+- Added `inconsecuente()` helper for null-op movements, avoiding duplicate branch logic across conditional chains.
+- Refactored general movement handlers to modularize repetitive checks and clean up `movePlayer()` flow.
+
+### 👾 Near Future / Random Ideas 🎯:
+- Add Teleporters (`T`) to instantly move entities from Point A to Point B.
+- Add Doors (`D`) and state logic (Unlocked = pass, Locked = `inconsecuente()`).
+- Build environmental Switches (`S`) to toggle nearby world states.
+- Intersect *Boxes* and *Teleporters* (portal blocking, puzzle triggers).

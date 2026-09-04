@@ -1,23 +1,23 @@
 ﻿rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw
-c;;;sign(Movement:\n\t[ W ]\n  [ A ] [ S ] [ D ]);rw;rw;;;sign(Action/Attack:\n     [ ENTER ]);rw;rw;;sign(When in doubt: CLICK or HOVER OVER them!\n[ Click ] enemies/gear to inspect them\n[ Hover over ] Ammo and stats to know more about them);rw;;;sign(Navigate menus:\n      [ ↑ ]   [ ↓ ]\n   Equip/Craft:\n\t[ E ]);rw;c;;;;w1;rw
-rw;;p;;;;;;;c;rw;;;e5;;;tp(1-21);rw;rw;rw;;;;rw
-rw;;;;;rw;;;;rw;;;;rw;;;;rw;rw;sign(ㅤ\t\t\t\tCrafting menu:\t[ TAB ]\nRecipes only appear when you have all the materials needed to craft them);;;;rw
-rw;rw;;rw;rw;rw;rw;rw;t;;;rw;w2;rw;rw;;;rw;rw;rw;;rw;rw;rw
-rw;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;c;rw;rw;rw;rw;rw;rw;rw;;rw;rw;rw
-rw;rw;;;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;;c
+rw;background(caves);;sign(Movement:\n\t[ W ]\n  [ A ] [ S ] [ D ]);rw;rw;;;sign(Action/Attack:\n     [ ENTER ]);rw;rw;;sign(When in doubt: CLICK or HOVER OVER them!\n[ click ] enemies/gear to inspect them\n[ Hover over ] Ammo and statcs to know more about them);rw;;;csign(Navigate menucs:\n      [ ↑ ]   [ ↓ ]\n   Equip/ccraft:\n\t[ E ]);rw;cc;;;;w1;rw
+rw;;p;;;;;;;cc;rw;;;e5;;;tp(1-21);rw;rw;rw;;;;rw
+rw;;;;;rw;;;;rw;;;;rw;;;;rw;rw;sign(ㅤ\t\t\t\tcrafting menu:\t[ TAB ]\nRecipes only appear when you have all the materials needed to craft them);;;;rw
+rw;rw;rw;rw;rw;rw;rw;rw;t;;;rw;w2;rw;rw;;;rw;rw;rw;;rw;rw;rw
+rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;rw;rw;rw;rw;;rw;rw;rw
+rw;rw;;;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;;;;cc
 rw;rw;;;;;;;;;;;rw;rw;;;;;rw;rw;;rw;rw;rw
 rw;;;;;;;;;;;;;rw;wr;;;;rw;rw;;;rw;rw
 rw;;;;;;;;;;e6;;rw;rw;rw;;;;rw;rw;;e4;;rw
 rw;;;;;;;;;;;;rw;rw;;;;;rw;rw;;;;rw
-bw;;;;e6;;;;;;;;;rw;rw;;;;rw;rw;rw;rw;;c
-tw;;;;;;;;;e6;;;;;rw;;;;rw;rw;s;rw;;rw
-mapTp(dungeonTp, Mines2);;;;;;e6;;;;;;;;;;;;rw;c;;rw;;rw
+dw;;;;e6;;;;;;;;;rw;rw;;;;rw;rw;rw;rw;;cc
+tw;;;;;;;;;e6;;;;;rw;;;;rw;rw;cs;rw;;rw
+mapTp(dungeonTp, Mines2);;;;;;e6;;;;;;;;;;;;rw;cc;;rw;;rw
 tw;;;;;;;;;;;;;;rw;;;;rw;rw;e5;rw;;rw
-bw;;;;;;;;;;;;;rw;rw;rw;;;rw;rw;;rw;;rw
+dw;;;;;;;;;;;;;rw;rw;rw;;;rw;rw;;rw;;rw
 rw;;;;;;;;;;;e6;rw;rw;rw;;;;rw;rw;;rw;e5;rw
 rw;;e6;;;;;;;;;;rw;rw;rw;;;;rw;rw;;;;rw
 rw;;;;;;;;;;;;;;rw;rw;;;rw;rw;;;rw;rw
-rw;rw;;;;;rw;;;;;;rw;rw;rw;rw;;;rw;rw;;rw;;s
+rw;rw;;;;;rw;;;;;;rw;rw;rw;rw;;;rw;rw;;rw;;cs
 rw;rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;rw;;;e5;rw
 rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;rw;rw;;;rw
 rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;rw;rw;tp(16-16);background(caves);rw

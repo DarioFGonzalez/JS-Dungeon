@@ -1,5 +1,114 @@
 # DevLog - Diario de Combate
 
+## 🔹 Step 27: Apa... ¿Y esas nuevas pintas? 👌😏✨  
+
+🗓️ 2026-09-03  
+
+`Ok, ¡Listo para terminar este mapa tutorial! Primero debería... ugh, este tile se ve horrible. ¡Arreglado! Bueno, ahora debería... Eww, ese tile también es espantoso... Ok, ok, frená un segundo 🖐😅💦`  
+
+¡Enfocado! ¡Decidido! Planeando y maquinando mis próximos 10 movimientos. Estaba listo para terminar el mapa tutorial.  
+
+...Pero esos TILES, ¡No tienen sentido! Este parece pixel‑art, aquel parece sacado de N64... ¿¡Qué son esos floortiles!? No, así no puedo avanzar que me estreso 😅💦
+
+Arreglando detalles cosméticos terminé encontrando nuevas formas de mejorar el juego: hacerlo más grande, más escalable, con crecimiento futuro en mente y sobre bases sólidas. Justo como me gusta 👾✨  
+
+- Tiles actualizados  
+11 tiles de piso, 16 tiles de pared y nodos por bioma  
+
+![alt text](client/src/images/new_tiles.png)  
+
+---
+
+### 🛠️ Cambios Técnicos:
+- Tiles de piso, tiles de pared, nodos y ajustes visuales.  
+- Se agregó “bioma” a la lista de propiedades de los mapas para futuros renders.  
+- Se añadieron diccionarios para trackear tiles y nodos por bioma, pensando en escalabilidad.  
+
+---
+
+### 👾 Futuro Cercano / Ideas Random 🎯
+Ahora que me siento cómodo con cómo se ve el juego (no *del todo*, pero lo suficiente para seguir), puedo enfocarme en dos caminos:  
+- Agregar un **`BOSS MOB`** (mob 3x3, patrullas, HP, loot, quizá skills o proyectiles propios... ideas locas bajo la manga 👏🤓✨).  
+- O bien, creación de mapas: rutas de farmeo, áreas con mobs raros, spawns condicionales — mobs que aparecen dependiendo de algún ITEM que lleves encima... **PELIGROS AMBIENTALES... ¡INCLUSO PODRÍA...!** ✨🤩✨
+
+🛑🖐👮‍♂️❗  
+
+# K.I.S.S (Keep It Simple, Stupid)  
+
+Creación de mapas ☝😅💦  
+
+Me voy a enfocar en eso: farming routes, battle maps, cosas para hacer- contenido jugable, cortito y al pie. Hora de poner la pava, hacer café - poner una radio y foco creativo ☕😌✨  
+
+---
+
+## 🔹 Step 26: Miscellania ❓🏹🤖✨  
+
+🗓️ 2026-08-25  
+
+`¡Mapa tutorial marchando! Todo va quedando tan genial... aunque... podría agregar este detalle acá, cambiar aquel detalle allá... yyyyy estoy divagando otra vez, ¿No? ☕😅✨`  
+
+¿Darío desviándose del plan original? ¡Quién lo hubiera dicho!  
+
+La verdad, todos esos pequeños ajustes y perks eran necesarios y *mejoran dramáticamente* la experiencia de juego — como agregar esos carteles tutoriales que muestran texto al pasar el mouse:  
+
+![alt text](client/src/images/image-12.png)  
+
+O el hecho de que ahora hay un mob MATABLE en el tutorial— llamemosle un “monstruo tutorial”:  
+
+![alt text](client/src/images/image-10.png)  
+
+Y no esas BESTIAS COME NOVATOS que estaba poniendo a dos pasos del spawn:  
+
+![alt text](client/src/images/image-9.png)  
+
+...¿Dónde estaba? Ah, sí, tutorial ☝👨‍💻✨  
+
+Estoy... bastante contento con la dirección que está tomando este primer mapa. Tenés tus fundamentos, algunos momentos de "No se, deducilo” — combate, armas, munición, crafting — todo en un estilo *“medio opcional / medio no”*.  
+
+# ¡Lo que viene!  
+
+¿Qué debería tener todo tutorial? Exacto: un `BOSS`.  
+
+¿Por qué? Porque yo lo digo 😈  
+
+El único problema sería, bueno... crearlo 😅💦  
+
+No puedo simplemente usar un mob 1x1 y cuadruplicarle el daño/hp. Tiene que ser algo... ***especial***.  
+
+Voy a tener que trabajar en alguna entidad 2x2 que funcione como una sola — mismo ID, mismo patrón de patrulla... Suena fácil, pero me va a comer tiempo que debería invertir en cosas más amigables para el tutorial 👾✨  
+
+Además, buenos tiles de piso, otra capa visual para darle más personalidad al juego — algo que no tenga ese aire de “early‑beta”...
+
+# Update en medio del update  
+
+Estaba pensando en el Boss, cómo implementarlo y tal — cuando BOOM — se me ocurrió: **`Velocidad de flechas`** ☝😅💦  
+
+Sí, sí. **Sé** que dije que tenía que comprometerme al plan, pero... estaba JUSTO **AHÍ**. Un cambio simple, un par de líneas de código, y de repente el dilema “¿Uso esta munición o esta otra?” se vuelve relevante. Hermoso.  
+
+Decidí que lo que había decidido antes va a esperar ☝🤓✨  
+
+# Próxima actualización (esta vez en serio)  
+
+Mapa, últimos detalles del tutorial, y mecánicas reales de juego con intención.  
+
+---
+
+### 🛠️ Cambios Técnicos:
+- Agregados carteles de ayuda con texto al pasar el mouse.  
+- Reemplazados mobs veteranos por uno más amigable para principiantes.  
+- Añadido factor de velocidad de flechas: usar distinta munición ahora aporta más profundidad que solo daño.  
+
+---
+
+### 👾 Futuro Cercano / Ideas Random 🎯
+Tomar lo que ya tengo y darle forma al mapa tutorial, enlazarlo con el siguiente y dejar que el juego fluya.  
+
+No voy a dar demasiado detalle porque, bueno, no tengo ninguno 😃❓  
+
+Además, cuando Darío escucha una idea... no hay quien frene ese hiperfoco ADHD. Así que mejor dejarlo trabajar — un objetivo a la vez 🤏😅💦  
+
+---
+
 ## 🔹 Paso 25: Teleporters refactorizados 🌌😮✨
 
 🗓️ 2025-08-18

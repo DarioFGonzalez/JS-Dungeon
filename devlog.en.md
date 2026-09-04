@@ -1,8 +1,50 @@
 # DevLog - Combat Diary
 
-## 🔹 Step 26: 
+## 🔹 Step 27: What's cooking, good looking? 👌😏✨ 
 
-🗓️ 2025-08-25
+🗓️ 2026-09-03
+
+`Ok, ready to finish this tutorial map! First i should... ugh, this tile looks horrible. Fixed! All right, now i should... Eww, that tile is awefull too... Okay, okay, time out 🖐😅💦`
+
+Focused! Decided! Planing and scheming my next 10 moves or so! I was ready to finish tutorial map!
+
+...But those TILES, they make no sense! This one is pixel-art, that one looks too N64 likey- wha.. what are those floortiles!? No, I can `NOT` advance like this... I'm stressing out 😅💦
+
+From changing some cosmetic issues, to.. finding new ways to improve the game- make it bigger, more scalable, with future growth in mind and built on solid foundations. Just the way i like it! 👾✨
+
+- Updated tiles
+
+11 Floor tiles, 16 wall tiles and nodes per biome
+
+![alt text](client/src/images/new_tiles.png)
+
+---
+
+### 🛠️ Technical Changes:
+
+- Floor tiles, Wall tiles, Nodes and visual adjustements.
+- Added "biome" to the list of maps properties to use in future renders.
+- Added a few dictionaries to track different biome tile, biome nodes and scalability.
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Now that i feel comfy with how the game looks, not *`fully`* but enough to keep moving, i can focus on either adding a **`BOSS MOB`** (3x3 mob, patroll mechanics, hp, loot, maybe skills or projectiles on it's own... crazy ideas under my sleeve 👏🤓✨) **OR** like, map creation- setting up farming routes/maps, creating rare mobs areas- maybe... conditional mobs spawns-- **mobs that spawn depending on some ITEM you should be carrying... `ENVIROMENTAL HAZZARD... MAYBE I COULD...!`**
+
+🛑🖐👮‍♂️❗
+
+# K.I.S.S (Keep It Simple, Stupid)
+
+Map creation ☝😅💦
+
+Imma focus on map creation, farming routes, battle maps, stuff like that-- stuff to do-- time for some coffee, lo-fi and creative focus ☕😌✨
+
+---
+
+## 🔹 Step 26: Miscellania ❓🏹🤖✨
+
+🗓️ 2026-08-25
 
 `Tutorial map on the go! This is looking sooo cool... although... I could add this little bit here, that little bit over theeeere... aaaand I'm doing it again, am I not? ☕😅✨`
 
@@ -72,7 +114,7 @@ Also, once Dario hears an idea- there's no stop to that ADHD hyperfocus... so, l
 
 ## 🔹 Step 25: Teleporters Refactored 🌌😮✨
 
-🗓️ 2025-08-18
+🗓️ 2026-08-18
 
 `On paper, automating map rendering sounds amazing. Now I just need to... fix this right here... refactor that over there... wait, it's actually not that big of a deal ☝🤓✨`
 

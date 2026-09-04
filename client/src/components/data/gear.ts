@@ -38,8 +38,8 @@ export const Sword1: Types.Gear =
     slot: 'weapon',
     style: 'melee',
     desc: 'Sword used for fencing practice, pretty harmless.',
-    attackStats: { dmg: 100, DoT: 0, times: 0, aliment: 'none', cd: 1500 },
-    durability: 50,
+    attackStats: { dmg: 1, DoT: 0, times: 0, aliment: 'none', cd: 1500 },
+    durability: 5,
     equippeable: true
 }
 
