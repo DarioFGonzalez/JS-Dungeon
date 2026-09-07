@@ -2823,6 +2823,8 @@ type CellContent =
 
     const deferredQueue: DeferredEffect[] = [];
 
+    let playerDrawn = false;
+
     for (let i = 0; i < mapInfo.length; i++) {
       for (let j = 0; j < mapInfo[i].length; j++) {
         const rawCode = mapInfo[i][j];
@@ -2854,9 +2856,14 @@ type CellContent =
           if(command==='p') {
             setPlayer( (x: Types.Player) => ({...x, data: { x: i, y: j }}) )
           }
+          playerDrawn = true;
           auxiliar[i][j] = entry;
         }
       }
+    }
+
+    if(!playerDrawn) {
+      auxiliar[playerRef.current.data.x][playerRef.current.data.y] = player;
     }
 
     deferredQueue.forEach((effect) => {

@@ -1,8 +1,8 @@
-﻿rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;mapTp(dungeonTp, Mines2);rw
-rw;sign(MOVE!\n   W\nA S D);background(caves);;;cc;rw;rw;rw;cs;;;rw;rw;rw;rw;e3;;tp(3-3);rw;rw;cc;;rw
-rw;;p;w1;;rw;rw;rw;rw;rw;;;;rw;rw;;;;;rw;rw;rw;mob(Miner Goblin-35);rw
-rw;;;;tp(2-10);rw;rw;rw;rw;rw;rw;;;;;;;rw;;;rw;cc;;rw
-rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;;e2;;;rw;rw;;;;rw;;rw
+﻿rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;dw;mapTp(dungeonTp, Mines2);dw;rw
+rw;sign(MOVE!\n   W\nA S D);background(caves);;;cc;rw;rw;rw;cs;;;rw;rw;rw;rw;e3;;tp(3-3);rw;rw;;cc;rw
+rw;;;w1;;rw;rw;rw;rw;rw;;;;rw;rw;;;;;rw;rw;;rw;rw
+rw;;;;tp(2-10);rw;rw;rw;rw;rw;rw;;;;;;;rw;;;rw;;cc;rw
+rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;;e2;;;rw;rw;;;;;rw;rw
 rw;;;;rw;rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;;;;rw
 rw;;;;rw;rw;;;;cc;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;;rw;rw
 rw;;;;rw;rw;;;;rw;rw;mob(Scorpion-75);;;;;;;;;;;rw;rw
