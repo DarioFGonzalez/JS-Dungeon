@@ -1,5 +1,5 @@
 ﻿dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;mapTp(dungeonTp,Mines1);dw;dw
-dw;background(dungeon);;;;dw;dw;dw;dw;dc;;;dw;dw;dw;dw;e3;;;dw;tw;;tw;dw
+dw;background(simple-dungeon);;;;dw;dw;dw;dw;dc;;;dw;dw;dw;dw;e3;;;dw;tw;;tw;dw
 dw;;;;;dw;dw;dw;dw;dw;;;;dw;dw;;;;;dw;dw;;dw;dw
 dw;;;;;dw;dw;dw;dw;dw;dw;;;;;;;dw;;;dw;;dc;dw
 dw;dw;;;dw;dw;dw;dw;dw;dw;dw;dw;;e2;;;dw;dw;;;;;dw;dw
@@ -10,7 +10,7 @@ dw;;;;;;;;;dw;dw;;;;;;;;;;;;dw;dw
 dw;;;;;;;;;dw;dw;dw;dw;dw;dw;tw;;;;;dw;;dw;dw
 dw;;;;tw;;;;;dw;dw;;;;;;;;;;dw;;;dw
 dw;;;;dw;;;;;dc;dw;;;;;;;;;;dw;;;dw
-tw;;;;dw;dw;dw;dw;dw;dw;dw;dw;dw;tw;;;;;;;dw;;;dw
+tw;;;tp(2-18);dw;dw;dw;dw;dw;dw;dw;dw;dw;tw;;;;;;;dw;;;dw
 mapTp(dungeonTp, Mines4);;;;dw;dw;dw;dw;dw;dw;dw;;;;;;;;;;dw;dw;;dw
 tw;;;;dw;t;;;;dw;;;;;;;;tw;;;dw;dw;;dc
 dw;;;;dw;;;e1;;;;;;;tw;;;dw;;;dw;dw;;dw
@@ -20,5 +20,5 @@ dw;;;;;;;;;dw;dw;dw;dw;;;;;dw;;;dw;;;dw
 dw;;;;;;dw;dw;dw;dw;dw;dw;dw;;;;;tw;;;dw;;;dw
 dw;;tw;;dw;dw;dw;;;;;dc;dw;;;;;;;;dw;;e3;dw
 dw;;;;;;;;e3;;;dw;dw;;;;;;;;;;;dw
-dw;;;;;;;;;;;dw;dw;;;;;;;;;;background(dungeon);dw
+dw;;;;;;;;;;;dw;dw;;;;;;;;;;;dw
 dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw

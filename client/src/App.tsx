@@ -74,10 +74,12 @@ type CellContent =
 
   const [mapa, setMapa] = useState<CellContent[][]>(emptyGrid);
 
+  type backgroundInfo = { style: string; content: string; }
+
   interface listOfMaps {
     name: string;
     visitedMap?: CellContent[][];
-    biome: string;
+    backGround?: backgroundInfo;
     actual: boolean;
     visited?: boolean;
     timeoutId?: ReturnType<typeof setTimeout>;
@@ -2765,7 +2767,6 @@ type CellContent =
     },
     "mapTp": (args) => {
       const [style, destination] = args;
-      console.log("Estilo de swapper: ", style, "\nVamos hacia: ", destination);
       return createEntity("Teleporter", style, [destination])
     },
     "sign": (args) => createEntity("Object", "Help sign", [args[0]]),
@@ -2782,19 +2783,36 @@ type CellContent =
       };
     },
     "background": (args) => {
-      fillBackground(args[0]);
+      const [ style = 'simple', content = 'caves' ] = args[0].split('-');
+
+      setMaps( prev => {
+        const aux = prev.map( x => x.actual ? { ...x, backGround: { style , content } } : x );
+        return aux;
+      });
+
+      switch(style) {
+        case 'simple': {
+          fillBackground(content);
+          break;
+        }
+        case 'complex': {
+          backgroundReader(content);
+          break;
+        }
+      }
+      
       return emptyTile;
     }
   };
 
-  const floorDictionary: Record<string, Types.Environment[]> = {
-    "dungeon": Tiles.dFloorTiles,
-    "caves": Tiles.cFloorTiles,
-  }
-
   const floorBrightnessDictionary: Record<string, number> = {
     "Dungeon floor": 0.2,
     "Caves floor": 0.5
+  }
+
+  const floorDictionary: Record<string, Types.Environment[]> = {
+    "dungeon": Tiles.dFloorTiles,
+    "caves": Tiles.cFloorTiles,
   }
 
   const addBackground = (type: string): Types.Environment => {
@@ -2803,12 +2821,12 @@ type CellContent =
     return floorDictionary[type][randomIndex];
   };
 
-  const fillBackground = ( style: string ) => {
-    setMaps( prev => {
-      const aux = prev.map( x => x.actual ? { ...x, biome: style } : x );
-      return aux;
-    });
+  const bgDictionary: Record<string, () => Types.Environment> = {
+    "df": () => addBackground('dungeon'),
+    "cf": () => addBackground('caves')
+  }
 
+  const fillBackground = ( style: string ) => {
     setBackgrounds( Array.from({ length: mapSize }, (_, i) =>
       Array.from({ length: mapSize }, () => addBackground(style) )
     ) )
@@ -2816,6 +2834,8 @@ type CellContent =
 
   const mapReader = async (mapName: string, firstSpawn: boolean = false): Promise<void> => {
     const mapInfo = await loadMap(mapName);
+
+    setMaps( (prev: listOfMaps[]) => ([ ...prev, { name: mapName, actual: true } ]) );
 
     let auxiliar: CellContent[][] = Array.from({ length: mapInfo.length }, (_, i) =>
       Array.from({ length: mapInfo[i].length }, () => emptyTile)
@@ -2873,12 +2893,40 @@ type CellContent =
     setMapa(auxiliar);
   };
 
+  const backgroundReader = async (mapName: string): Promise<void> => {
+    const bgInfo = await loadMap(mapName);
+
+    let auxiliar: Types.Environment[][] = Array.from({ length: bgInfo.length }, (_, i) =>
+      Array.from({ length: bgInfo[i].length }, () => Tiles.voidTile)
+    );
+
+    for (let i = 0; i < bgInfo.length; i++) {
+      for (let j = 0; j < bgInfo[i].length; j++) {
+        const rawCode = bgInfo[i][j];
+        if (!rawCode) continue;
+
+        const { command } = parseCode(rawCode);
+        const entry = bgDictionary[command];
+
+        if (!entry) {
+          auxiliar[i][j] = Tiles.voidTile;
+        } else {
+          auxiliar[i][j] = entry();
+        }
+      }
+    }
+
+    setBackgrounds(auxiliar);
+  };
+
   const swapMap = async (mapName: string) => {
     const existingMap = maps.find((x: listOfMaps) => x.name === mapName);
-    let newMap = existingMap ?? { name: mapName, actual: true, visited: true, biome: 'none' };
+    let newMap: listOfMaps = existingMap ?? { name: mapName, actual: true, visited: true, backGround: { style: 'simple', content: 'caves' } };
+
+    console.log("newMap: ", newMap, "maps: ", maps);
 
     const actualMap = maps.find((x: listOfMaps) => x.actual);
-    console.log("Todos los mapas cargados: ", maps, "\nMapa actual: ", actualMap);
+    console.log("actualMap: ", actualMap);
     if (!actualMap) return setMapa(mapaRef.current);
 
     let flag = true;
@@ -2893,10 +2941,11 @@ type CellContent =
       const thisMap = prevClone.find((map: listOfMaps) => map.name === newMap.name);
 
       if (!thisMap) {
+        console.log("No hay un thisMap, push");
         prevClone.push(newMap);
       }
 
-      fillBackground(thisMap?.biome||'caves');
+      // fillBackground(thisMap?.backGround.content||'caves');
 
       return prevClone.map((mapInfo: listOfMaps) => {
         if (mapInfo.name === actualMap.name) {
@@ -2972,16 +3021,31 @@ type CellContent =
         }),
       );
 
+      if(existingMap.backGround) {
+        const { style='simple', content='caves' } = existingMap.backGround;
+  
+        switch(style) {
+          case 'simple': {
+            fillBackground(content);
+            break;
+          }
+          case 'complex': {
+            backgroundReader(content);
+            break;
+          }
+        }
+      }
+
+
       return setMapa(patrolsOn);
     }
 
+    console.log(`hacer un mapReader${mapName}`);
     return await mapReader(mapName);
   };
 
   const startGame = async () => {
     const initialMapName = 'Mines4';
-
-    setMaps( [ { name: initialMapName, actual: true, biome: 'none' } ] )
 
     setPlayer({
       ...Entities.emptyPlayer,
