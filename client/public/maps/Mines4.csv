@@ -11,7 +11,7 @@ rw;;;;;;;;;;e6;;rw;rw;rw;;;;rw;rw;;e4;;rw
 rw;;;;;;;;;;;;rw;rw;;;;;rw;rw;;;;rw
 dw;;;;e6;;;;;;;;;rw;rw;;;;rw;rw;rw;rw;;cc
 tw;dw;;;;;;;;e6;;;;;rw;;;;rw;rw;cs;rw;;rw
-mapTp(dungeonTp, Mines2);;;;;;e6;;;;;;;;;;;;rw;cc;;rw;;rw
+mapTp(dungeonTp, Mines2,13,22);;;;;;e6;;;;;;;;;;;;rw;cc;;rw;;rw
 tw;;;;;;;;;;;;;;rw;;;;rw;rw;e5;rw;;rw
 dw;;;;;;;;;;;;;rw;rw;rw;;;rw;rw;;rw;;rw
 rw;;;;;;;;;;;e6;rw;rw;rw;;;;rw;rw;;rw;e5;rw

@@ -1414,6 +1414,7 @@ type CellContent =
         }
         case "Teleporter": {
           if ("content" in tile) {
+            console.log("Tile: ", tile)
             swapMap(tile.content);
           }
           break;
@@ -2653,7 +2654,8 @@ type CellContent =
 
     if (type === "Teleporter") {
       if (loot !== undefined) {
-        return { ...thisEntity, content: loot[0] ?? "" } as Types.Environment;
+        console.log("thisEntity: ", thisEntity, "\nloot: ", loot)
+        return { ...thisEntity, content: loot[0] } as Types.Environment;
       }
     }
 
@@ -2766,8 +2768,9 @@ type CellContent =
       return createEntity("Object", "Teleport", [x, y]); 
     },
     "mapTp": (args) => {
-      const [style, destination] = args;
-      return createEntity("Teleporter", style, [destination])
+      const [style, mapName, x, y] = args;
+      console.log("Argumentos: ", args, "style: ", style, " mapName: ", mapName, " x: ", x, " y: ", y)
+      return createEntity("Teleporter", style, [{mapName, x, y}])
     },
     "sign": (args) => createEntity("Object", "Help sign", [args[0]]),
     "mob": (args) => rareMob(args[0]),
@@ -2919,14 +2922,16 @@ type CellContent =
     setBackgrounds(auxiliar);
   };
 
-  const swapMap = async (mapName: string) => {
+  type mapTpInfo = { mapName: string, x: number, y: number };
+
+  const swapMap = async (content: mapTpInfo) => {
+    const { mapName, x, y } = content;
+    console.log(mapName, x, y, content)
+
     const existingMap = maps.find((x: listOfMaps) => x.name === mapName);
     let newMap: listOfMaps = existingMap ?? { name: mapName, actual: true, visited: true, backGround: { style: 'simple', content: 'caves' } };
 
-    console.log("newMap: ", newMap, "maps: ", maps);
-
     const actualMap = maps.find((x: listOfMaps) => x.actual);
-    console.log("actualMap: ", actualMap);
     if (!actualMap) return setMapa(mapaRef.current);
 
     let flag = true;
@@ -2941,11 +2946,8 @@ type CellContent =
       const thisMap = prevClone.find((map: listOfMaps) => map.name === newMap.name);
 
       if (!thisMap) {
-        console.log("No hay un thisMap, push");
         prevClone.push(newMap);
       }
-
-      // fillBackground(thisMap?.backGround.content||'caves');
 
       return prevClone.map((mapInfo: listOfMaps) => {
         if (mapInfo.name === actualMap.name) {
@@ -3003,7 +3005,7 @@ type CellContent =
       if (oldPlayer && "data" in oldPlayer) {
         setPlayer((prev: Types.Player) => ({
           ...prev,
-          data: { x: oldPlayer.data.x, y: oldPlayer.data.y },
+          data: { x, y },
         }));
       }
 
@@ -3040,7 +3042,8 @@ type CellContent =
       return setMapa(patrolsOn);
     }
 
-    console.log(`hacer un mapReader${mapName}`);
+    setPlayer( (playerInfo: Types.Player) => ( { ...playerInfo, data: { x, y } } ) );
+
     return await mapReader(mapName);
   };
 
