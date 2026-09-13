@@ -1,6 +1,6 @@
 ﻿rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;cs;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw
-rw;nodes(Rocky-Copper-10,Rocky-Silver-10);rw;background(simlpe-caves);;rw;rw;rw;rw;rw;;;rw;rw;rw;rw;;;;rw;rw;cc;;rw
-rw;;e2;e2;;rw;rw;rw;rw;rw;;;;rw;rw;;;;;rw;rw;rw;;rw
+rw;nodes(Rocky-Copper-10,Rocky-Silver-10);rw;;;rw;rw;rw;rw;rw;;;rw;rw;rw;rw;;;;rw;rw;cc;;rw
+rw;;e2;e2;cc;rw;rw;rw;rw;rw;;;;rw;rw;;;;;rw;rw;rw;;rw
 rw;;;;;w;rw;rw;rw;rw;rw;;;;;;;rw;;;rw;cc;;rw
 rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;;t;;;rw;rw;;;;rw;;rw
 rw;;;;rw;rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;;;;rw
@@ -20,5 +20,5 @@ rw;;;;;;;;;rw;rw;rw;rw;;;;;rw;;;rw;;;rw
 rw;;;;;;rw;rw;rw;rw;rw;rw;rw;;;;;rw;;;rw;;;rw
 rw;;rw;;rw;rw;rw;;;;;cc;rw;;;;;;;;rw;;e3;rw
 rw;;;;;;;;e3;;;rw;rw;;;;;;;;;;;rw
-rw;;;;;;;;;;;rw;rw;;;;;;;;;;;rw
+rw;;;;;;;;;;;rw;rw;;;;;;;;;;background(simple-caves);rw
 rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;mapTp(dungeonTp,Mines1);rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw

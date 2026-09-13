@@ -1,0 +1,24 @@
+dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw
+dw;dw;df;dw;df;df;df;df;df;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+mapTp(dungeonTp,Mines3,3,3);df;df;p;df;w2;w3;dw;df;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;dw;df;dw;df;df;df;df;df;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;dw;dw;tw;dw;dw;df;dw;dw;tw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;mob(Chest-100);df;dw;df;df;df;df;df;mob(Veteran Goblin-100);cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;df;df;df;df;df;df;df;df;mob(Veteran Goblin-100);cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cc
+dw;df;df;df;df;df;dw;df;df;tw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;df;df;dw;df;df;dw;df;df;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;df;df;dw;df;df;df;df;df;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;df;df;dw;df;df;df;df;df;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+dw;dw;dw;tw;mob(Goblin-100);mob(Goblin-100);tw;dw;dw;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cc
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cs
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
+rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;background(complex-mapAbg);rw
+rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw

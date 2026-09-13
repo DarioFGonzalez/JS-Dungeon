@@ -56,6 +56,26 @@ export const allTraps: Types.Trap[] = [
     trap, poisonTrap
 ]
 
+export const chest1: Types.Enemy =
+{
+    type: 'Enemy',
+    id: '0',
+    name: 'Chest',
+    hp: 3,
+    maxHp: 3,
+    symbol: icons.chest,
+    data: { x: 0, y: 0 },
+    aliments:
+    {
+        flags: { Poisoned: false, Bleeding: false, Burning: false },
+        instances: { PoisonInstances: [], BleedInstances: [], BurnInstances: [] }
+    },
+    attack: { Instant: 0, DoT: 0, Times: 0, Aliment: 'none' },
+    defense: { armor: 0, toughness: 1, immunity: 'bleed' },
+    patrol: { pattern: 'none', moveSpeed: 0 },
+    drops: [ { item: Items.Potion, chance: 100, quantity: 1 } ]
+}
+
 export const enemy: Types.Enemy =
 {
     type: 'Enemy',
@@ -177,5 +197,5 @@ export const vScorpion: Types.Enemy =
 };
 
 export const allEnemies: Types.Enemy[] = [
-    enemy, weakEnemy, heavyEnemy, agileEnemy, minerEnemy, vScorpion
+    enemy, weakEnemy, heavyEnemy, agileEnemy, minerEnemy, vScorpion, chest1
 ];

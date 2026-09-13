@@ -9,12 +9,12 @@ import * as Items from "./components/data/items";
 import * as Recipes from "./components/data/recipes";
 import * as Tiles from "./components/data/tiles";
 import {
-    allNodes,
-    allObjects,
-    allTiles,
-    rockyWalls,
-    dungeonTorches,
-    dungeonWalls,
+  allNodes,
+  allObjects,
+  allTiles,
+  dungeonTorches,
+  dungeonWalls,
+  rockyWalls,
 } from "./components/data/tiles";
 
 import "./App.css";
@@ -24,8 +24,8 @@ import ConsumablesTab from "./components/ConsumablesTab/ConsumablesTab";
 import CraftingTab from "./components/CraftingTab/CraftingTab";
 import GearTab from "./components/GearTab/GearTab";
 import InspectorTab from "./components/InspectorTab/InspectorTab";
-import { ArrowClass } from "./components/data/projectiles";
 import { loadMap } from "./components/data/maps/maps";
+import { ArrowClass } from "./components/data/projectiles";
 
 const allIcons = Object.values(icons);
 
@@ -1414,7 +1414,6 @@ type CellContent =
         }
         case "Teleporter": {
           if ("content" in tile) {
-            console.log("Tile: ", tile)
             swapMap(tile.content);
           }
           break;
@@ -2654,7 +2653,6 @@ type CellContent =
 
     if (type === "Teleporter") {
       if (loot !== undefined) {
-        console.log("thisEntity: ", thisEntity, "\nloot: ", loot)
         return { ...thisEntity, content: loot[0] } as Types.Environment;
       }
     }
@@ -2769,7 +2767,6 @@ type CellContent =
     },
     "mapTp": (args) => {
       const [style, mapName, x, y] = args;
-      console.log("Argumentos: ", args, "style: ", style, " mapName: ", mapName, " x: ", x, " y: ", y)
       return createEntity("Teleporter", style, [{mapName, x, y}])
     },
     "sign": (args) => createEntity("Object", "Help sign", [args[0]]),
@@ -2793,12 +2790,16 @@ type CellContent =
         return aux;
       });
 
+      console.log("Dentro de background, style: ", style, " content: ", content);
+
       switch(style) {
         case 'simple': {
+          console.log("Switch de simple, contenido: ", content);
           fillBackground(content);
           break;
         }
         case 'complex': {
+          console.log("Swtitch de complex, contenido: ", content);
           backgroundReader(content);
           break;
         }
@@ -2820,8 +2821,9 @@ type CellContent =
 
   const addBackground = (type: string): Types.Environment => {
     let randomIndex = Math.floor(Math.random() * floorDictionary[type].length);
+    let randomTile = floorDictionary[type][randomIndex];
 
-    return floorDictionary[type][randomIndex];
+    return randomTile;
   };
 
   const bgDictionary: Record<string, () => Types.Environment> = {
@@ -2830,6 +2832,7 @@ type CellContent =
   }
 
   const fillBackground = ( style: string ) => {
+    console.log("Dentro de fillBackground, style: ", style);
     setBackgrounds( Array.from({ length: mapSize }, (_, i) =>
       Array.from({ length: mapSize }, () => addBackground(style) )
     ) )
@@ -2926,7 +2929,6 @@ type CellContent =
 
   const swapMap = async (content: mapTpInfo) => {
     const { mapName, x, y } = content;
-    console.log(mapName, x, y, content)
 
     const existingMap = maps.find((x: listOfMaps) => x.name === mapName);
     let newMap: listOfMaps = existingMap ?? { name: mapName, actual: true, visited: true, backGround: { style: 'simple', content: 'caves' } };
@@ -3048,7 +3050,7 @@ type CellContent =
   };
 
   const startGame = async () => {
-    const initialMapName = 'Mines4';
+    const initialMapName = 'mapA';
 
     setPlayer({
       ...Entities.emptyPlayer,
