@@ -2594,7 +2594,7 @@ type CellContent =
   const walls: Record<string, Types.Environment[]> = {
     Dungeon: dungeonWalls,
     DTorch: dungeonTorches,
-    Rocky: rockyWalls,
+    Rocky: rockyWalls
   };
 
   const addWall = (type: string): Types.Environment => {
@@ -2790,16 +2790,12 @@ type CellContent =
         return aux;
       });
 
-      console.log("Dentro de background, style: ", style, " content: ", content);
-
       switch(style) {
         case 'simple': {
-          console.log("Switch de simple, contenido: ", content);
           fillBackground(content);
           break;
         }
         case 'complex': {
-          console.log("Swtitch de complex, contenido: ", content);
           backgroundReader(content);
           break;
         }
@@ -2832,7 +2828,6 @@ type CellContent =
   }
 
   const fillBackground = ( style: string ) => {
-    console.log("Dentro de fillBackground, style: ", style);
     setBackgrounds( Array.from({ length: mapSize }, (_, i) =>
       Array.from({ length: mapSize }, () => addBackground(style) )
     ) )
@@ -2856,7 +2851,7 @@ type CellContent =
         const rawCode = mapInfo[i][j];
         if (!rawCode) continue;
 
-        const { command, args } = parseCode(rawCode);
+        let { command, args } = parseCode(rawCode);
 
         if (command === 'p') {
           setPlayer((prev) => ({
@@ -2866,6 +2861,26 @@ type CellContent =
         }
 
         const entry = dictionary[command];
+
+        if(command === 'mapTp') {
+          let [style, mapName, x, y] = args;
+          
+          if(x==='mirror') {
+            if(i-1<0) {
+              x = (mapInfo.length-2).toString();
+            } else if(i+1>=mapInfo.length) {
+               x = '1';
+            } else { x = i.toString(); }
+
+            if(j-1<0) {
+              y = (mapInfo[i].length-2).toString();
+            } else if(j+1>=mapInfo[i].length) {
+               y = '1';
+            } else { y = j.toString(); }
+
+            args = [style, mapName, x, y];
+          }
+        }
 
         if (!entry) {
           auxiliar[i][j] = emptyTile;
@@ -3119,7 +3134,6 @@ type CellContent =
   };
 
   // const checkEntity = (entity: any): void => {
-  //   console.log(entity);
   //   if (
   //     "type" in entity &&
   //     (entity.type === "Enemy" || entity.type === "Trap")

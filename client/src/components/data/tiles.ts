@@ -1,6 +1,6 @@
 import * as Icons from '../../Icons/index';
-import * as Material from './materials'
 import { Environment, Node } from '../types/global';
+import * as Material from './materials';
 
 export const voidTile: Environment = {
     type: 'Backgound',
@@ -164,6 +164,41 @@ export const dungeonTp: Environment =
     type: 'Teleporter',
     name: 'dungeonTp',
     symbol: Icons.dungeonTp,
+};
+
+export const dDoor1_left: Environment =
+{
+    type: 'Teleporter',
+    name: 'dDoor1_left',
+    symbol: Icons.dDoor1_left
+};
+
+export const dDoor1_right: Environment =
+{
+    type: 'Teleporter',
+    name: 'dDoor1_right',
+    symbol: Icons.dDoor1_right
+};
+
+export const dDoor2_left: Environment =
+{
+    type: 'Teleporter',
+    name: 'dDoor2_left',
+    symbol: Icons.dDoor2_left
+};
+
+export const dDoor2_right: Environment =
+{
+    type: 'Teleporter',
+    name: 'dDoor2_right',
+    symbol: Icons.dDoor2_right
+};
+
+export const transparentWall: Environment =
+{
+    type: 'Teleporter',
+    name: 'transparentWall',
+    symbol: Icons.transparentWall
 };
 
 const rockyWall1: Environment =
@@ -595,7 +630,7 @@ export const allObjects:  Environment[] =
 
 export const allTeleporters: Environment[] =
 [
-    dungeonTp
+    dungeonTp, dDoor1_left, dDoor1_right, dDoor2_left, dDoor2_right, transparentWall
 ];
 
 export const allNodes: Node[] =
