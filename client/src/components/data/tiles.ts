@@ -152,47 +152,137 @@ export const dFloorTiles: Environment[] = [
     dungeonF9, dungeonF10, dungeonF11, dungeonF12, dungeonF13, dungeonF14, dungeonF15, dungeonF16
 ]
 
-export const torchedWall: Environment =
+const forestF1: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor1
+};
+const forestF2: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor2
+};
+const forestF3: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor3
+};
+const forestF4: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor4
+};
+const forestF5: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor5
+};
+const forestF6:Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor6
+};
+const forestF7: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor7
+};
+const forestF8: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor8
+};
+const forestF9: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor9
+};
+const forestF10: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor10
+};
+const forestF11: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor11
+};
+const forestF12: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor12
+};
+const forestF13: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor13
+};
+const forestF14: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor14
+};
+const forestF15: Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor15
+};
+const forestF16:Environment = {
+    type: 'Background',
+    name: 'Forest floor',
+    symbol: Icons.fFloor16
+};
+
+export const fFloorTiles: Environment[] = [
+    forestF1, forestF2, forestF3, forestF4, forestF5, forestF6, forestF7, forestF8,
+    forestF9, forestF10, forestF11, forestF12, forestF13, forestF14, forestF15, forestF16
+];
+
+const torchedWall: Environment =
 {
     type: 'Wall',
     name: 'Torched Wall',
     symbol: Icons.torchdWallImg
 };
 
-export const dungeonTp: Environment =
+const dungeonTp: Environment =
 {
     type: 'Teleporter',
     name: 'dungeonTp',
     symbol: Icons.dungeonTp,
 };
 
-export const dDoor1_left: Environment =
+const dDoor1_left: Environment =
 {
     type: 'Teleporter',
     name: 'dDoor1_left',
     symbol: Icons.dDoor1_left
 };
 
-export const dDoor1_right: Environment =
+const dDoor1_right: Environment =
 {
     type: 'Teleporter',
     name: 'dDoor1_right',
     symbol: Icons.dDoor1_right
 };
 
-export const dDoor2_left: Environment =
+const dDoor2_left: Environment =
 {
     type: 'Teleporter',
     name: 'dDoor2_left',
     symbol: Icons.dDoor2_left
 };
 
-export const dDoor2_right: Environment =
+const dDoor2_right: Environment =
 {
     type: 'Teleporter',
     name: 'dDoor2_right',
     symbol: Icons.dDoor2_right
 };
+
+export const allDoors: Environment[] = [
+    dDoor1_left, dDoor1_right, dDoor2_left, dDoor2_right
+];
 
 export const transparentWall: Environment =
 {

@@ -1,24 +1,24 @@
-﻿rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;dw;mapTp(dungeonTp, Mines2);dw;rw
-rw;sign(MOVE!\n   W\nA S D);background(simple-caves);;;cc;rw;rw;rw;cs;;;rw;rw;rw;rw;e3;;tp(3-3);rw;tw;;dc;rw
-rw;;;w1;;rw;rw;rw;rw;rw;;;;rw;rw;;;;;rw;rw;;rw;rw
-rw;;;;tp(2-10);rw;rw;rw;rw;rw;rw;;;;;;;rw;;;rw;;cc;rw
-rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;;e2;;;rw;rw;;;;;rw;rw
-rw;;;;rw;rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;;;;rw
-rw;;;;rw;rw;;;;cc;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;;rw;rw
-rw;;;;rw;rw;;;;rw;rw;mob(Scorpion-75);;;;;;;;;;;rw;rw
-rw;;;;;;;;;rw;rw;;;;;;;;;;;;rw;rw
-rw;;;;;;;;;rw;rw;rw;rw;rw;rw;rw;;;;;rw;;rw;rw
-rw;;;;rw;;;;;rw;rw;;;;;;;;;;rw;;;rw
-rw;;;;rw;;;;;rw;rw;;;;;;;;;;rw;;;rw
-rw;;;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;;;;;rw;;;rw
-rw;;;;rw;rw;rw;rw;rw;rw;rw;;;;;;;;;;rw;;;rw
-rw;;;;rw;t;;;;rw;;;;;;;;rw;;;rw;;;rw
-rw;;;;rw;;;mob(Miner Goblin-75);;;;;;;rw;;;rw;;;rw;;;rw
-rw;;;;rw;rw;rw;rw;;;;;;;rw;;;rw;;;rw;;;rw
-rw;;;;;;;;;;;;rw;rw;rw;rw;rw;rw;;;rw;;;rw
-rw;;;;;;;;;rw;rw;rw;rw;;;;;rw;;;rw;;;rw
-rw;;;;;;rw;rw;rw;rw;rw;rw;rw;;;;;rw;;;rw;;;rw
-rw;;rw;;rw;rw;rw;;;;mob(Miner Goblin-55);cc;rw;;;;;;;;rw;;mob(Scorpion-45);rw
-rw;;;;;;;;mob(Scorpion-45);;;rw;rw;;;;;;;;;;;rw
-rw;;;;;;;;;;;rw;rw;;;;;;;;;;nodes(Rocky-Copper-3,Rocky-Silver-1);rw
-rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;mapTp(dungeonTp, Mines3);rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw
+dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;tw;mapTp(transparentWall,Outside1,mirror);mapTp(transparentWall,Outside1,mirror);tw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw
+dw;background(simple-dungeon);df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;tw;df;df;tw;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;mapTp(dDoor1_left,mapA,mirror);mapTp(dDoor1_right,mapA,mirror);dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw

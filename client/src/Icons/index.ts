@@ -63,6 +63,23 @@ import cFloor7 from './cFloor_7.jpg';
 import cFloor8 from './cFloor_8.jpg';
 import cFloor9 from './cFloor_9.jpg';
 
+import fFloor1 from './fFloor_1.jpg';
+import fFloor10 from './fFloor_10.jpg';
+import fFloor11 from './fFloor_11.jpg';
+import fFloor12 from './fFloor_12.jpg';
+import fFloor13 from './fFloor_13.jpg';
+import fFloor14 from './fFloor_14.jpg';
+import fFloor15 from './fFloor_15.jpg';
+import fFloor16 from './fFloor_16.jpg';
+import fFloor2 from './fFloor_2.jpg';
+import fFloor3 from './fFloor_3.jpg';
+import fFloor4 from './fFloor_4.jpg';
+import fFloor5 from './fFloor_5.jpg';
+import fFloor6 from './fFloor_6.jpg';
+import fFloor7 from './fFloor_7.jpg';
+import fFloor8 from './fFloor_8.jpg';
+import fFloor9 from './fFloor_9.jpg';
+
 /* Walls */
 
 import rockyWall1 from './rockyWall1.jpg';
@@ -156,7 +173,7 @@ export {
     aloeImg, antidoteImg, bagImg, bandagesImg, basicBow, boxImg, caveCopper1, caveCopper2, caveCopper3, caveCopper4, caveCopper5, caveSilver1, caveSilver2, caveSilver3, caveSilver4, caveSilver5, cFloor1, cFloor2, cFloor3, cFloor4, cFloor5, cFloor6, cFloor7, cFloor8,
     cFloor9, chest, clawHit, copperOre, copperPickaxe, dagger1Img, dDoor1_left, dDoor1_right, dDoor2_left, dDoor2_right, dFloor1, dFloor10, dFloor11, dFloor12, dFloor13, dFloor14, dFloor15, dFloor16, dFloor2, dFloor3, dFloor4, dFloor5, dFloor6, dFloor7, dFloor8,
     dFloor9, dungeonCopper1, dungeonCopper2, dungeonTorch1, dungeonTorch2, dungeonTorch3, dungeonTorch4, dungeonTp, dungeonWall1, dungeonWall10, dungeonWall11, dungeonWall12, dungeonWall2, dungeonWall3, dungeonWall4, dungeonWall5, dungeonWall6,
-    dungeonWall7, dungeonWall8, dungeonWall9, fireImg, fountainImg, goblinImg, healing, heavyBow, heroBack, heroFront, heroLeft, heroRight, hGoblinImg, longBow, minerGoblin, necklaceImg, pDummy, potionImg, pScorpion, pTrapImg, redClawHit, rockyWall1, rockyWall10, rockyWall11, rockyWall12, rockyWall2, rockyWall3, rockyWall4, rockyWall5, rockyWall6,
+    dungeonWall7, dungeonWall8, dungeonWall9, fFloor1, fFloor10, fFloor11, fFloor12, fFloor13, fFloor14, fFloor15, fFloor16, fFloor2, fFloor3, fFloor4, fFloor5, fFloor6, fFloor7, fFloor8, fFloor9, fireImg, fountainImg, goblinImg, healing, heavyBow, heroBack, heroFront, heroLeft, heroRight, hGoblinImg, longBow, minerGoblin, necklaceImg, pDummy, potionImg, pScorpion, pTrapImg, redClawHit, rockyWall1, rockyWall10, rockyWall11, rockyWall12, rockyWall2, rockyWall3, rockyWall4, rockyWall5, rockyWall6,
     rockyWall7, rockyWall8, rockyWall9, scorpionClaw, sign, silverOre, snsGoblinImg, sparks1, sparks2, sparks3, sword1Img, tile1,
     torchdWallImg, tpImg, transparentWall, trapImg, voidTile, wallImg
 };

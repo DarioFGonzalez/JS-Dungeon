@@ -2597,6 +2597,14 @@ type CellContent =
     Rocky: rockyWalls
   };
 
+  const addDoor = (type: string): Types.Environment => {
+    const thisDoor = Tiles.allDoors.find((door) => door.name === type)
+
+    if (!thisDoor) throw new Error(`No se encontró la puerta ${type}`);
+
+    return thisDoor;
+  }
+
   const addWall = (type: string): Types.Environment => {
     let randomIndex = Math.floor(Math.random() * walls[type].length);
 
@@ -2761,6 +2769,7 @@ type CellContent =
     "e6": () => createEntity("Enemie", "Hasty Goblin"),
     "t": () => createEntity("Tool", "Copper Pickaxe"),
     "p": player,
+    "d": (args) => addDoor(args[0]),
     "tp": (args) => {
       const [x, y] = args[0].split('-');
       return createEntity("Object", "Teleport", [x, y]); 
@@ -2807,12 +2816,14 @@ type CellContent =
 
   const floorBrightnessDictionary: Record<string, number> = {
     "Dungeon floor": 0.2,
-    "Caves floor": 0.5
+    "Caves floor": 0.5,
+    "Forest floor": .9
   }
 
   const floorDictionary: Record<string, Types.Environment[]> = {
     "dungeon": Tiles.dFloorTiles,
     "caves": Tiles.cFloorTiles,
+    "forest": Tiles.fFloorTiles
   }
 
   const addBackground = (type: string): Types.Environment => {
@@ -2824,7 +2835,8 @@ type CellContent =
 
   const bgDictionary: Record<string, () => Types.Environment> = {
     "df": () => addBackground('dungeon'),
-    "cf": () => addBackground('caves')
+    "cf": () => addBackground('caves'),
+    "ff": () => addBackground('forest')
   }
 
   const fillBackground = ( style: string ) => {
@@ -3034,11 +3046,15 @@ type CellContent =
             !entidad.activePatrol
           ) {
             return { ...entidad, activePatrol: true };
+          } else if (entidad.type === "Player") {
+            return emptyTile;
           } else {
             return entidad;
           }
         }),
       );
+
+      patrolsOn[x][y] = player;
 
       if(existingMap.backGround) {
         const { style='simple', content='caves' } = existingMap.backGround;
@@ -3065,7 +3081,7 @@ type CellContent =
   };
 
   const startGame = async () => {
-    const initialMapName = 'mapA';
+    const initialMapName = 'Mines4';
 
     setPlayer({
       ...Entities.emptyPlayer,

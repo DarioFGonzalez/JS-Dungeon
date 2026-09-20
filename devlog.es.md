@@ -1,8 +1,174 @@
 # DevLog - Diario de Combate
 
-## 🔹 Step 27: Apa... ¿Y esas nuevas pintas? 👌😏✨  
+## 🔹 Paso 28: Preparativos, preparativos ♪ ♫
 
-🗓️ 2026-09-03  
+🗓️ 2026-09-17
+
+`Mhmm... no importa cuánto mejore o agregue, estamos hablando de Dungeons y Cuevas, nada más. No hay mucho que pueda crear con solo DOS biomas... 🤔 A menos que... 😏✨`
+
+¡Lo hice!
+
+¿Vieron esos juegos del pasado donde tenías, tipo, pasabas de un mapa a otro sin darte cuenta? ¿Como Argentum o Tibia?
+*\[Dos de las mayores inspiraciones detrás de JS-Dungeon\]*
+
+Bueno.
+
+Quería agregar algunos mapas nuevos, algo más que "Una cueva que te lleva a un dungeon" y "Ahora un dungeon que te lleva a una cueva". Necesito bosques,
+mares, desiertos, lugares enormes para explorar y hacer que el juego se
+sienta diferente- menos claustrofóbico- si se quiere.
+
+¿El problema con ese enfoque?
+
+Solo tengo UNA forma de hacer TP entre zonas: MapTeleports, que son
+tiles con un ícono, el nombre del mapa al que nos dirigimos y las
+coordenadas donde aterrizar.
+
+![alt text](image-1.png)
+
+No podía tirar uno de esos rodeando un bosque, quedaría horrible.
+
+O...
+
+Rodear mis bosques con arbustos que te obliguen a mantenerte en el
+camino Y uno de esos como "vení por acá si o si".
+
+¡HORRIBLE!
+
+A pensar-.
+
+Paso uno: Hacer los mapTp invisibles, para conseguir esa
+sensación de:
+
+"Che, el mapa se está terminando..."
+
+"¿Eh?"
+
+"¿Me teletransporté a otra zona?"
+
+"Qué copado."
+
+![alt text](image-2.png)
+
+Paso 2: Hacer que tenga sentido.
+
+Voy a necesitar una cantidad épica de estos rodeando mi 'mundo abierto'.
+No puedo simplemente ir tp por tp especificando las coordenadas donde quiero que aterrice el jugador, NO-PUEDO crear algo tan poco escalable jajaja.
+
+![alt text](image-3.png)
+
+Encontré la manera de, basado donde está el tp, devolver al jugador a una posición 'espejo' pero en el siguiente mapa.
+
+Digamos que tocás un mapTp hacia la derecha. Bueno, aparecés en el
+siguiente mapa desde la izquierda.
+
+¡Espejo!
+
+No hace falta seguir diciéndole a cada mapTp adónde ir.
+
+Algo así:
+
+`mapTp(transparentWall, objectiveMap, mirror)`
+
+¡Y listo!
+
+¿Fue fácil?
+
+Bueno, no exactamente.
+
+Tuve que refactorizar un montón de cosas.
+
+Por suerte para mí, conozco cada linea de mi código. Refactorizar y
+reestructurar lo necesario para este cambio fue bas-tante sencillo de entender.
+
+Sencillo pero... bastante tardado, porque... bueno, programar
+consume bastante tiempo. 😅
+
+De repente, los mapas dejaron de sentirse como habitaciones aisladas y
+empezaron a sentirse como partes de un mundo mucho más grande.
+
+También agregué suelo de bosque, ¡ahora puedo crear mis propios bosques!
+
+**¡Árboles!**
+
+`¡Criaturas del bosque!`
+
+¡Tantas posibilidades! ♪
+
+------------------------------------------------------------------------
+
+### 🛠️ Cambios Técnicos:
+
+-   Agregar mapTp con configuración mirror
+
+-   Agregar transparentWall para cambiar de mapa sin interrupciones
+
+-   Agregar puertas, no solo como mapTps sino también como tiles de
+    decoración/pared
+
+-   Agregar suelo de bosque
+
+------------------------------------------------------------------------
+
+### 👾 Futuro Cercano / Ideas Aleatorias 🎯
+
+-   Necesito árboles
+
+También necesito una playa, porque-- No, no, esperá - sé lo que estás
+pensando- dejame hablar un segundo ✋😅💦
+
+`Pero Daro, te estás desviando de tus objetivos OTRA VEZ`
+
+¡Sé que parece excusa! Pero escuchame ☝😅💦
+
+Tenemos Dungeons, tenemos Cuevas- ¿Muy claustrofobico?, okay, agregamos
+bosques-- ahora tenemos potencial para un mundo abierto.
+
+¿El problema que este avance conlleva? Bueno. ¿Cómo hacemos para...
+encerrar un mundo abierto? 🤔❓
+
+No hay forma de "rodear" un bosque con... paredes de dungeon- o paredes
+de cueva... no hay una forma natural de cortar tu mundo abierto a menos
+que tengas algún tipo de `delimitación natural`, algún tipo de `barrera`
+para tu exploración terrestre, algo como...
+
+`🥁✨`
+
+`🌊¡UNA PLAYA, UN RÍO, EL MAR, AGUA!⛵`
+
+Podría presentarlo como algo...
+
+![alt text](image-5.png)
+
+¡Ciudades portuarias! **¡Dungeons difíciles de alcanzar!**
+`¡Rutas largas para grandes recompensas!`
+**¡`¡Entradas ocultas para encuentros raros! ¡Ahh-- incluso podría poner algunos mapTps "raros" que...!`**
+✨🤩🎉✨
+
+... Me volví a dejar llevar, ¿no? 🙏😅💦
+
+Bueno, la idea se entiende. Cambios de mapa invisibles, nuevo
+bioma, playas como siguiente bioma a agregar- árboles- arena, mobs, mobs de bosque,
+nuevos drops-- hay un montón de cartas para agarrar y seguir-- voy a...
+estabilizar lo que tengo y avanzar una vez que termine.
+
+Nota para mí mismo: Ya no estamos en 2001, esos largos trechos vacíos-
+esas memorables caminatas interminables del punto A al punto B, el bucle
+infinito de "caminar 15 minutos para llegar a la próxima ciudad/POI" que
+tenía todo MMORPG de Cyber. No vamos a traer nada de eso acá 🤓🚩
+
+Los mapas van a tener un motivo.
+
+Un objetivo.
+
+Una meta.
+
+Al menos, esa es `mi` meta. ☕😄
+
+------------------------------------------------------------------------
+
+## 🔹 Step 27: Apa... ¿Y ese look nuevo? 👌😏✨
+
+🗓️ 2026-09-03
 
 `Ok, ¡Listo para terminar este mapa tutorial! Primero debería... ugh, este tile se ve horrible. ¡Arreglado! Bueno, ahora debería... Eww, ese tile también es espantoso... Ok, ok, frená un segundo 🖐😅💦`  
 
@@ -10,19 +176,19 @@
 
 ...Pero esos TILES, ¡No tienen sentido! Este parece pixel‑art, aquel parece sacado de N64... ¿¡Qué son esos floortiles!? No, así no puedo avanzar que me estreso 😅💦
 
-Arreglando detalles cosméticos terminé encontrando nuevas formas de mejorar el juego: hacerlo más grande, más escalable, con crecimiento futuro en mente y sobre bases sólidas. Justo como me gusta 👾✨  
+Arreglando detalles cosméticos terminé encontrando nuevas formas de mejorar el juego: hacerlo más grande, más escalable, con crecimiento futuro en mente y sobre bases sólidas. Justo como me gusta 👾✨
 
-- Tiles actualizados  
-11 tiles de piso, 16 tiles de pared y nodos por bioma  
+- Tiles actualizados
+11 tiles de piso, 16 tiles de pared y nodos por bioma
 
-![alt text](client/src/images/new_tiles.png)  
+![alt text](client/src/images/new_tiles.png)
 
 ---
 
 ### 🛠️ Cambios Técnicos:
-- Tiles de piso, tiles de pared, nodos y ajustes visuales.  
-- Se agregó “bioma” a la lista de propiedades de los mapas para futuros renders.  
-- Se añadieron diccionarios para trackear tiles y nodos por bioma, pensando en escalabilidad.  
+- Tiles de piso, tiles de pared, nodos y ajustes visuales.
+- Se agregó “bioma” a la lista de propiedades de los mapas para futuros renders.
+- Se añadieron diccionarios para trackear tiles y nodos por bioma, pensando en escalabilidad.
 
 ---
 
@@ -31,23 +197,23 @@ Ahora que me siento cómodo con cómo se ve el juego (no *del todo*, pero lo suf
 - Agregar un **`BOSS MOB`** (mob 3x3, patrullas, HP, loot, quizá skills o proyectiles propios... ideas locas bajo la manga 👏🤓✨).  
 - O bien, creación de mapas: rutas de farmeo, áreas con mobs raros, spawns condicionales — mobs que aparecen dependiendo de algún ITEM que lleves encima... **PELIGROS AMBIENTALES... ¡INCLUSO PODRÍA...!** ✨🤩✨
 
-🛑🖐👮‍♂️❗  
+🛑🖐👮‍♂️❗
 
-# K.I.S.S (Keep It Simple, Stupid)  
+# K.I.S.S (Keep It Simple, Stupid)
 
-Creación de mapas ☝😅💦  
+Creación de mapas ☝😅💦
 
-Me voy a enfocar en eso: farming routes, battle maps, cosas para hacer- contenido jugable, cortito y al pie. Hora de poner la pava, hacer café - poner una radio y foco creativo ☕😌✨  
+Me voy a enfocar en eso: farming routes, battle maps, cosas para hacer- contenido jugable, cortito y al pie. Hora de poner la pava, hacer café - poner una radio y foco creativo ☕😌✨
 
 ---
 
-## 🔹 Step 26: Miscellania ❓🏹🤖✨  
+## 🔹 Step 26: Miscellania ❓🏹🤖✨
 
-🗓️ 2026-08-25  
+🗓️ 2026-08-25
 
-`¡Mapa tutorial marchando! Todo va quedando tan genial... aunque... podría agregar este detalle acá, cambiar aquel detalle allá... yyyyy estoy divagando otra vez, ¿No? ☕😅✨`  
+`¡Mapa tutorial marchando! Todo va quedando tan genial... aunque... podría agregar este detalle acá, cambiar aquel detalle allá... yyyyy estoy divagando otra vez, ¿No? ☕😅✨`
 
-¿Darío desviándose del plan original? ¡Quién lo hubiera dicho!  
+¿Darío desviándose del plan original? ¡Quién lo hubiera dicho!
 
 La verdad, todos esos pequeños ajustes y perks eran necesarios y *mejoran dramáticamente* la experiencia de juego — como agregar esos carteles tutoriales que muestran texto al pasar el mouse:  
 

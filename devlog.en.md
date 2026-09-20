@@ -1,6 +1,143 @@
 # DevLog - Combat Diary
 
-## 🔹 Step 27: What's cooking, good looking? 👌😏✨ 
+## 🔹 Step 28: Preparations, preparations ♪ ♫
+
+🗓️ 2026-09-17
+
+`I... no matter how much I improve or add here, we're talking about Dungeons and Caves, nothing more. There's not much I can create with only TWO biomes... 🤔 wait ... 😏✨`
+
+I've made it!
+
+Remember those old games where you had, like, a giant rectangle with seamless map transitions? Like Argentum or Tibia? *[Two of the biggest inspirations behind JS-Dungeon by the way]*
+
+Well.
+
+I wanted to add some new maps, something more than "cave that goes to dungeon" and "dungeon that leads you to a cave". I need forests, seas, deserts, boundless places to explore and make the game feel a little different, a little less claustrophobic, if you'd like.
+
+Problem with said approach?
+
+I have only ONE way to TP between zones: MapTeleports, which are tiles with an icon, the name of the map we're heading to, and some coordinates where to land.
+
+![alt text](image-1.png)
+
+I couldn't have those out in the open, they'd look horrible.
+
+Or...
+
+Surround my forests with bushes that force you to stay on track.
+
+HORRIBLE!
+
+Okay.
+
+Step one: Make those tiles invisible, to get that feeling of:
+
+"Oh, the map continues..."
+
+"Oh?"
+
+"I got teleported to a new zone?"
+
+"Neat."
+
+![alt text](image-2.png)
+
+Step 2: Make it make sense.
+
+You'll have to set a whole bunch of these surrounding your "open world". You simply CAN'T keep specifying every single tile destination with your old coordinate system.
+
+![alt text](image-3.png)
+
+I figured a way to calculate where you're at and "mirror" it.
+
+Let's say you touch a mapTp over to the right. Well, you show up on the next map from the left.
+
+Mirror!
+
+No need to keep telling every mapTp where to go.
+
+Something like this:
+
+`mapTp(transparentWall, objectiveMap, mirror)`
+
+And that's it!
+
+Was it easy?
+
+Well, not exactly.
+
+Had to refactor a whole lot.
+
+Lucky for me, I know every step of this craft. Re-thinking and re-shaping some of it was a piece of cake!
+
+One that took a lil' longer than expected, cause... well, coding takes time. 😅
+
+Suddenly, maps stopped feeling like isolated rooms and started feeling like pieces of a bigger world.
+
+Also added forest floor, now I can create my own forests!
+
+**Trees!**
+
+`Forest creatures!`
+
+Oh boy!
+
+So many possibilities! ♪
+
+---
+
+### 🛠️ Technical Changes:
+
+- Add mapTp with mirror setting
+- Add transparentWall to swap maps seamingless
+- Add doors, not only as mapTps but decoration/wall tiles
+- Add forest floor
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+- I need trees
+
+Also, I need a beach, cause-- No, no, wait - I know what you're thinking- hear me out ✋😅💦
+
+`But Daro, you're deviating from your objectives yet-AGAIN`
+
+I know it may look that way! But hear me out ☝😅💦
+
+We have Dungeons, we have Caves- Claustrophobic, okay, we add some forests-- now we have some open world potential right here.
+
+Problem that we're facing? Well. How do we... enclose an open world? 🤔❓
+
+There's no way to "surround" a forest with... dungeon walls- or cave walls.. there's no natural way to cut your open world unless you face some kind of `natural delimitation`, some kind of `stop` to your land exploration, something like...
+
+`🥁✨`
+
+`🌊A BEACH, A RIVER, THE SEA, WATER!⛵`
+
+We could do something like
+
+![alt text](image-5.png)
+
+City ports! **Hard to reach dungeons!** `Long routes for Big rewards!` **`Hidden entrances for rare encounters! Oh-- I could even put some "rare" mapTps that...!`** ✨🤩🎉✨
+
+... I'm doing it again, am I not? 🙏😅💦
+
+All right, you get the idea. Seamless map swaps, new biome, new biome to come- trees- sand mobs, forest mobs, new drops-- there's a lot of cards on that deck-- I'll... stabilize what I have and move forward once i'm done.
+
+Note to self: We're not in 2001 anymore, those long stretches of nothingness- those memorable long walks from point A to point B, the infinite loop of "walk 15 mins to reach the next city/POI" that every MMORPG had. We ain't getting any of those back 🤓🚩
+
+Maps will have a reason.
+
+An objective.
+
+A goal.
+
+At least, that's `my` goal. ☕😄
+
+---
+
+## 🔹 Step 27: What's cooking, good looking? 👌😏✨
 
 🗓️ 2026-09-03
 
