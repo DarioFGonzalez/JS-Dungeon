@@ -9,9 +9,11 @@ import * as Items from "./components/data/items";
 import * as Recipes from "./components/data/recipes";
 import * as Tiles from "./components/data/tiles";
 import {
+  allBDoors,
   allNodes,
   allObjects,
   allTiles,
+  brokenDwalls,
   dungeonTorches,
   dungeonWalls,
   rockyWalls,
@@ -1736,7 +1738,58 @@ type CellContent =
         }
         break;
       case 'melee':
-        if(objective.type ==='Enemy') strikeEnemy( x, y );
+        console.log("Usar arma a melee, en cd: ", equippedWeapon.onCd)
+        if(objective.type ==='Enemy') {
+          strikeEnemy( x, y );
+        } else {
+          console.log('No hay enemigo frente a ti para atacar');
+          if(equippedWeapon.onCd) {
+            console.log("Arma en cd");
+          } else {
+            console.log("Arma lista");
+            let flag = true;
+            setPlayer((playerInfo) => {
+              if (flag && isDev) {
+                flag = false;
+                return playerInfo;
+              }
+              const aux = { ...playerRef.current };
+              manageVisualAnimation(
+                "visual",
+                x,
+                y,
+                icons.sparks3,
+                200,
+              );
+  
+              setTimeout(() => {
+                setPlayer((all) => {
+                  const stillThere = all.hotBar.Equippeable.find(
+                    (w) => w.id === equippedWeapon?.id,
+                  );
+                  if (stillThere) {
+                    return {
+                      ...all,
+                      hotBar: {
+                        ...all.hotBar,
+                        Equippeable: all.hotBar.Equippeable.map((item) =>
+                          item.id === stillThere.id
+                            ? { ...stillThere, onCd: false }
+                            : item,
+                        ),
+                      },
+                    };
+                  }
+                  return all;
+                });
+              }, equippedWeapon.item.attackStats?.cd);
+  
+              return { ...aux, hotBar: { ...aux.hotBar, Equippeable: aux.hotBar.Equippeable.map( (slot: Types.InventoryGear) =>
+                slot.id === equippedWeapon?.id ? { ...slot, onCd: true } : slot,
+              ) } };
+            });
+          }
+        }
         break;
       default:
         break;
@@ -2594,7 +2647,9 @@ type CellContent =
   const walls: Record<string, Types.Environment[]> = {
     Dungeon: dungeonWalls,
     DTorch: dungeonTorches,
-    Rocky: rockyWalls
+    Rocky: rockyWalls,
+    BrokenDwall: brokenDwalls,
+    BrokenDDoor: allBDoors,
   };
 
   const addDoor = (type: string): Types.Environment => {
@@ -2610,6 +2665,14 @@ type CellContent =
 
     return walls[type][randomIndex];
   };
+
+  const addTile = (type: string, name: string): Types.Environment => {
+    const thisType = walls[type];
+    const thisTile = thisType.find((tile) => tile.name === name);
+
+    if (!thisTile) throw new Error(`No se encontró el tile ${name} en ${type}`);
+    return thisTile;
+  }
 
   const createEntity = (
     type:
@@ -2756,6 +2819,10 @@ type CellContent =
     "dw": () => addWall("Dungeon"),
     "tw": () => addWall("DTorch"),
     "rw": () => addWall("Rocky"),
+    "wall": (args) => {
+      const [style, name] = args;
+      return addTile(style, name);
+    },
     "cc": () => randomNode('Copper', 'Rocky'),
     "cs": () => randomNode('Silver', 'Rocky'),
     "dc": () => randomNode('Copper', 'Dungeon'),
@@ -2770,6 +2837,11 @@ type CellContent =
     "t": () => createEntity("Tool", "Copper Pickaxe"),
     "p": player,
     "d": (args) => addDoor(args[0]),
+    "gear": (args) => createEntity("Equippable", args[0]),
+    "tool": (args) => createEntity("Tool", args[0]),
+    "consumable": (args) => createEntity("Consumable", args[0]),
+    "object": (args) => createEntity("Object", args[0], args.slice(1)),
+    "mob": (args) => rareMob(args[0]),
     "tp": (args) => {
       const [x, y] = args[0].split('-');
       return createEntity("Object", "Teleport", [x, y]); 
@@ -2779,7 +2851,6 @@ type CellContent =
       return createEntity("Teleporter", style, [{mapName, x, y}])
     },
     "sign": (args) => createEntity("Object", "Help sign", [args[0]]),
-    "mob": (args) => rareMob(args[0]),
     "nodes": (args) => {
       const mineralsToAdd: Types.mineralsToAdd[] = args.map((arg) => {
         const [biome, node, qty] = arg.split('-');
@@ -3081,7 +3152,7 @@ type CellContent =
   };
 
   const startGame = async () => {
-    const initialMapName = 'Mines4';
+    const initialMapName = 'Mines1';
 
     setPlayer({
       ...Entities.emptyPlayer,

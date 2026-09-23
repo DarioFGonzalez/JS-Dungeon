@@ -284,6 +284,59 @@ export const allDoors: Environment[] = [
     dDoor1_left, dDoor1_right, dDoor2_left, dDoor2_right
 ];
 
+const brokenD1: Environment =
+{
+    type: 'Wall',
+    name: 'brokenDDoor_1',
+    symbol: Icons.brokenDD1
+};
+
+const brokenD2: Environment =
+{
+    type: 'Wall',
+    name: 'brokenDDoor_2',
+    symbol: Icons.brokenDD2
+};
+
+const brokenD3: Environment =
+{
+    type: 'Wall',
+    name: 'brokenDDoor_3',
+    symbol: Icons.brokenDD3
+};
+
+const brokenD4: Environment =
+{
+    type: 'Wall',
+    name: 'brokenDDoor_4',
+    symbol: Icons.brokenDD4
+};
+
+const brokenD5: Environment =
+{
+    type: 'Wall',
+    name: 'brokenDDoor_5',
+    symbol: Icons.brokenDD5
+};
+
+const brokenD6: Environment =
+{
+    type: 'Wall',
+    name: 'brokenDDoor_6',
+    symbol: Icons.brokenDD6
+};
+
+const brokenD7: Environment =
+{
+    type: 'Wall',
+    name: 'brokenDDoor_7',
+    symbol: Icons.brokenDD7
+};
+
+export const allBDoors: Environment[] = [
+    brokenD1, brokenD2, brokenD3, brokenD4, brokenD5, brokenD6, brokenD7
+];
+
 export const transparentWall: Environment =
 {
     type: 'Teleporter',
@@ -456,7 +509,23 @@ const dungeonWall12: Environment = {
 export const dungeonWalls = [
     dungeonWall1, dungeonWall2, dungeonWall3, dungeonWall4, dungeonWall5, dungeonWall6,
     dungeonWall7, dungeonWall8, dungeonWall9, dungeonWall10, dungeonWall11, dungeonWall12
-]
+];
+
+export const brokenDwall1: Environment = {
+    type: 'Wall',
+    name: 'brokenDWall_1',
+    symbol: Icons.brokenDwall1
+};
+
+export const brokenDwall2: Environment = {
+    type: 'Wall',
+    name: 'brokenDWall_2',
+    symbol: Icons.brokenDwall2
+};
+
+export const brokenDwalls: Environment[] = [
+    brokenDwall1, brokenDwall2
+];
 
 const dungeonTorch1: Environment = {
     type: 'Wall',

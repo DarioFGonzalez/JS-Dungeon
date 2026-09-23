@@ -112,6 +112,9 @@ import dungeonWall7 from './dungeonWall7.jpg';
 import dungeonWall8 from './dungeonWall8.jpg';
 import dungeonWall9 from './dungeonWall9.jpg';
 
+import brokenDwall1 from './brokenWall1.jpg';
+import brokenDwall2 from './brokenWall2.jpg';
+
 import dungeonTorch1 from './dungeonTorch1.jpg';
 import dungeonTorch2 from './dungeonTorch2.jpg';
 import dungeonTorch3 from './dungeonTorch3.jpg';
@@ -123,6 +126,14 @@ import dDoor2_left from './doubleDoor_2_left.jpg';
 import dDoor2_right from './doubleDoor_2_right.jpg';
 import dDoor1_left from './doubleDoor_left.jpg';
 import dDoor1_right from './doubleDoor_right.jpg';
+
+import brokenDD1 from './brokenDDoor1.jpg';
+import brokenDD2 from './brokenDDoor2.jpg';
+import brokenDD3 from './brokenDDoor3.jpg';
+import brokenDD4 from './brokenDDoor4.jpg';
+import brokenDD5 from './brokenDDoor5.jpg';
+import brokenDD6 from './brokenDDoor6.jpg';
+import brokenDD7 from './brokenDDoor7.jpg';
 
 /* Nodes */
 // Cave nodes
@@ -170,7 +181,7 @@ import heroLeft from './heroLeft.png';
 import heroRight from './heroRight.png';
 
 export {
-    aloeImg, antidoteImg, bagImg, bandagesImg, basicBow, boxImg, caveCopper1, caveCopper2, caveCopper3, caveCopper4, caveCopper5, caveSilver1, caveSilver2, caveSilver3, caveSilver4, caveSilver5, cFloor1, cFloor2, cFloor3, cFloor4, cFloor5, cFloor6, cFloor7, cFloor8,
+    aloeImg, antidoteImg, bagImg, bandagesImg, basicBow, boxImg, brokenDD1, brokenDD2, brokenDD3, brokenDD4, brokenDD5, brokenDD6, brokenDD7, brokenDwall1, brokenDwall2, caveCopper1, caveCopper2, caveCopper3, caveCopper4, caveCopper5, caveSilver1, caveSilver2, caveSilver3, caveSilver4, caveSilver5, cFloor1, cFloor2, cFloor3, cFloor4, cFloor5, cFloor6, cFloor7, cFloor8,
     cFloor9, chest, clawHit, copperOre, copperPickaxe, dagger1Img, dDoor1_left, dDoor1_right, dDoor2_left, dDoor2_right, dFloor1, dFloor10, dFloor11, dFloor12, dFloor13, dFloor14, dFloor15, dFloor16, dFloor2, dFloor3, dFloor4, dFloor5, dFloor6, dFloor7, dFloor8,
     dFloor9, dungeonCopper1, dungeonCopper2, dungeonTorch1, dungeonTorch2, dungeonTorch3, dungeonTorch4, dungeonTp, dungeonWall1, dungeonWall10, dungeonWall11, dungeonWall12, dungeonWall2, dungeonWall3, dungeonWall4, dungeonWall5, dungeonWall6,
     dungeonWall7, dungeonWall8, dungeonWall9, fFloor1, fFloor10, fFloor11, fFloor12, fFloor13, fFloor14, fFloor15, fFloor16, fFloor2, fFloor3, fFloor4, fFloor5, fFloor6, fFloor7, fFloor8, fFloor9, fireImg, fountainImg, goblinImg, healing, heavyBow, heroBack, heroFront, heroLeft, heroRight, hGoblinImg, longBow, minerGoblin, necklaceImg, pDummy, potionImg, pScorpion, pTrapImg, redClawHit, rockyWall1, rockyWall10, rockyWall11, rockyWall12, rockyWall2, rockyWall3, rockyWall4, rockyWall5, rockyWall6,
