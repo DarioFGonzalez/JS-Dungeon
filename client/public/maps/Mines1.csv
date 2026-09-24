@@ -1,12 +1,12 @@
 dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;tw;mapTp(transparentWall,Outside1,mirror);mapTp(transparentWall,Outside1,mirror);tw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw
-dw;background(simple-dungeon);df;df;df;df;df;df;df;dw;df;df;df;df;dw;dw;df;df;df;dw;df;df;df;dw
+dw;background(simple-dungeon);df;df;df;df;df;df;df;dw;df;df;df;df;dw;dc;df;df;df;dw;df;df;df;dw
 dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;dw;df;df;df;df;df;df;df;dw
 dw;df;df;tw;dw;dw;dw;df;df;dw;df;df;df;df;dw;dw;df;df;df;wall(BrokenDwall,brokenDWall_2);df;df;df;dw
-dw;df;df;dw;df;df;dw;df;df;dw;df;df;df;df;dw;dw;dw;wall(BrokenDDoor,brokenDDoor_6);dw;dw;wall(BrokenDwall,brokenDWall_2);df;dw;dw
-dw;df;df;dw;df;df;dw;df;df;dw;df;df;df;df;dw;tw;df;df;df;df;df;df;df;dw
+dw;df;df;dw;mob(Chest-100);ws;dw;df;df;dw;df;df;df;df;dw;dw;dw;wall(BrokenDDoor,brokenDDoor_6);dw;dw;wall(BrokenDwall,brokenDWall_2);df;dw;dw
+dw;df;df;dw;mob(Hasty Goblin-100);ws;dw;df;df;dw;df;df;df;df;dw;tw;df;df;df;df;df;df;df;dw
 dw;df;df;df;df;df;dw;df;df;dw;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
-dw;df;df;df;df;df;dw;df;df;dw;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
-dw;df;df;dw;df;df;dw;df;df;dw;df;df;df;df;dw;tw;df;df;df;df;df;df;df;dw
+dw;df;mob(Hasty Goblin-100);df;df;df;dw;df;df;dw;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
+dw;df;df;wall(BrokenDwall,brokenDWall_1);df;ws;dw;df;df;dw;df;df;df;df;dw;tw;df;df;df;df;df;df;df;dw
 dw;df;df;dw;df;df;dw;df;df;df;df;df;df;df;dw;dw;dw;wall(BrokenDDoor,brokenDDoor_6);dw;dw;dw;wall(BrokenDDoor,brokenDDoor_6);dw;dw
 dw;df;df;tw;dw;dw;dw;df;df;df;df;df;df;df;dw;dw;df;df;df;dw;df;df;df;dw
 dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;dw;df;df;df;dw;df;df;df;dw
@@ -15,10 +15,10 @@ dw;dw;dw;dw;dw;df;df;dw;dw;dw;df;df;df;df;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw
 dw;dw;dw;dw;dw;df;df;dw;df;df;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
 dw;df;df;df;dw;df;df;tw;df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
 dw;df;df;df;df;df;df;wall(BrokenDDoor,brokenDDoor_6);df;df;df;df;df;df;df;df;df;df;df;df;df;df;df;dw
-dw;df;df;df;tw;df;df;dw;df;df;df;gear(Wooden sword,100);df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;df;df;df;tw;df;df;dw;df;df;df;df;df;df;dw;df;lib;lib;lib;lib;df;df;df;dw
 dw;wall(BrokenDwall,brokenDWall_2);mob(Veteran Goblin-100);wall(BrokenDwall,brokenDWall_1);dw;df;df;dw;df;df;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
-dw;dw;df;dw;dw;wall(BrokenDDoor,brokenDDoor_7);tw;dw;dw;dw;tw;df;df;tw;dw;df;df;df;df;df;df;df;df;dw
-dw;dw;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
-dw;dw;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
-dw;dw;df;df;df;mob(Chest-100);df;df;df;dw;df;p;df;df;dw;df;df;df;df;df;df;df;df;dw
-dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;mapTp(dDoor1_left,mapA,mirror);mapTp(dDoor1_right,mapA,mirror);dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw
+dw;dw;df;dw;dw;wall(BrokenDDoor,brokenDDoor_7);tw;dw;dw;dw;tw;df;df;tw;dw;df;lib;lib;lib;lib;df;df;df;dw
+dw;dw;df;df;df;df;df;df;df;dw;mob(Goblin-100);df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;dw;df;df;df;df;df;df;df;dw;df;df;df;df;dw;df;lib;lib;lib;lib;df;df;df;dw
+dw;dw;df;df;df;mob(Chest-100);df;df;df;dw;df;df;df;df;dw;df;df;df;df;df;df;df;df;dw
+dw;dw;dw;dw;dw;dc;dw;dw;dw;dw;dw;mapTp(dDoor1_left,mapA,mirror);mapTp(dDoor1_right,mapA,mirror);dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw

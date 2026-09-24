@@ -552,11 +552,122 @@ export const dungeonTorches = [
     dungeonTorch1, dungeonTorch2, dungeonTorch3, dungeonTorch4
 ]
 
+const library1: Environment = {
+    type: 'Wall',
+    name: 'Library1',
+    symbol: Icons.library1
+};
+const library2: Environment = {
+    type: 'Wall',
+    name: 'Library2',
+    symbol: Icons.library2
+};
+const library3: Environment = {
+    type: 'Wall',
+    name: 'Library3',
+    symbol: Icons.library3
+};
+const library4: Environment = {
+    type: 'Wall',
+    name: 'Library4',
+    symbol: Icons.library4
+};
+const library5: Environment = {
+    type: 'Wall',
+    name: 'Library5',
+    symbol: Icons.library5
+};
+const library6: Environment = {
+    type: 'Wall',
+    name: 'Library6',
+    symbol: Icons.library6
+};
+const library7: Environment = {
+    type: 'Wall',
+    name: 'Library7',
+    symbol: Icons.library7
+};
+const library8: Environment = {
+    type: 'Wall',
+    name: 'Library8',
+    symbol: Icons.library8
+};
+const library9: Environment = {
+    type: 'Wall',
+    name: 'Library9',
+    symbol: Icons.library9
+};
+const library10: Environment = {
+    type: 'Wall',
+    name: 'Library10',
+    symbol: Icons.library10
+};
+const library11: Environment = {
+    type: 'Wall',
+    name: 'Library11',
+    symbol: Icons.library11
+};
+const library12: Environment = {
+    type: 'Wall',
+    name: 'Library12',
+    symbol: Icons.library12
+};
+const library13: Environment = {
+    type: 'Wall',
+    name: 'Library13',
+    symbol: Icons.library13
+};
+const library14: Environment = {
+    type: 'Wall',
+    name: 'Library14',
+    symbol: Icons.library14
+};
+const library15: Environment = {
+    type: 'Wall',
+    name: 'Library15',
+    symbol: Icons.library15
+};
+const library16: Environment = {
+   type: 'Wall',
+   name: 'Library16',
+   symbol: Icons.library16
+};
+
+export const allLibraryWalls: Environment[] = [
+    library1, library2, library3, library4, library5, library6, library7, library8,
+    library9, library10, library11, library12, library13, library14, library15, library16
+];
+
+const weaponShack1: Environment = {
+    type: 'Wall',
+    name: 'WeaponShack1',
+    symbol: Icons.weaponShack1
+};
+const weaponShack2: Environment = {
+    type: 'Wall',
+    name: 'WeaponShack2',
+    symbol: Icons.weaponShack2
+};
+const weaponShack3: Environment = {
+    type: 'Wall',
+    name: 'WeaponShack3',
+    symbol: Icons.weaponShack3
+};
+const weaponShack4: Environment = {
+    type: 'Wall',
+    name: 'WeaponShack4',
+    symbol: Icons.weaponShack4
+};
+
+export const allWeaponShacks: Environment[] = [
+    weaponShack1, weaponShack2, weaponShack3, weaponShack4
+];
+
 export const box: Environment =
 {
-    type: 'Object',
-    name: 'Box',
-    symbol: Icons.boxImg
+   type: 'Object',
+   name: 'Box',
+   symbol: Icons.boxImg
 };
 
 export const fire: Environment =

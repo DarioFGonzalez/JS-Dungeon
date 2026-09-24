@@ -10,8 +10,8 @@ rw;cf;cf;dw;cf;cf;dw;df;df;df;df;df;df;df;df;df;df;dw;cf;cf;dw;cf;cf;rw
 rw;cf;rw;dw;cf;cf;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;cf;cf;dw;cf;cf;rw
 rw;cf;rw;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;dw;cf;cf;rw
 rw;cf;dw;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;dw;dw;cf;rw
-rw;cf;dw;tw;dw;dw;dw;dw;dw;dw;tw;mob(Goblin-100);d(dDoor1_right);dw;dw;dw;dw;dw;dw;dw;tw;dw;cf;rw
-rw;cf;dw;dw;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;dw;dw;dw;cf;mapTp(transparentWall, Mines4,13,1)
+rw;cf;dw;df;dw;dw;dw;dw;dw;dw;tw;mob(Goblin-100);d(dDoor1_right);dw;dw;dw;dw;dw;dw;dw;df;dw;cf;rw
+rw;cf;tw;dw;dw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;dw;dw;tw;cf;mapTp(transparentWall, Mines4,mirror)
 rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
 rw;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;cf;rw
 rw;cf;cf;cf;cf;cf;cf;cf;cf;rw;cf;cf;cf;cf;rw;cf;cf;cf;cf;cf;cf;cf;cf;rw

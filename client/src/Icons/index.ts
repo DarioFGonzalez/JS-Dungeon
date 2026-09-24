@@ -1,6 +1,7 @@
 import clawHit from './claws.PNG';
 import redClawHit from './clawsRed.png';
 import healing from './heal.png';
+import hit from './hit.png';
 
 import sparks1 from './sparks1.png';
 import sparks2 from './sparks2.png';
@@ -120,6 +121,31 @@ import dungeonTorch2 from './dungeonTorch2.jpg';
 import dungeonTorch3 from './dungeonTorch3.jpg';
 import dungeonTorch4 from './dungeonTorch4.jpg';
 
+/* decor */
+
+import library1 from './library1.jpg';
+import library10 from './library10.jpg';
+import library11 from './library11.jpg';
+import library12 from './library12.jpg';
+import library13 from './library13.jpg';
+import library14 from './library14.jpg';
+import library15 from './library15.jpg';
+import library16 from './library16.jpg';
+import library2 from './library2.jpg';
+import library3 from './library3.jpg';
+import library4 from './library4.jpg';
+import library5 from './library5.jpg';
+import library6 from './library6.jpg';
+import library7 from './library7.jpg';
+import library8 from './library8.jpg';
+import library9 from './library9.jpg';
+
+import weaponShack1 from './weaponShack1.jpg';
+import weaponShack2 from './weaponShack2.jpg';
+import weaponShack3 from './weaponShack3.jpg';
+import weaponShack4 from './weaponShack4.jpg';
+
+
 /*Doors*/
 
 import dDoor2_left from './doubleDoor_2_left.jpg';
@@ -136,6 +162,7 @@ import brokenDD6 from './brokenDDoor6.jpg';
 import brokenDD7 from './brokenDDoor7.jpg';
 
 /* Nodes */
+
 // Cave nodes
 import caveCopper1 from './caveCopper1.jpg';
 import caveCopper2 from './caveCopper2.jpg';
@@ -184,8 +211,8 @@ export {
     aloeImg, antidoteImg, bagImg, bandagesImg, basicBow, boxImg, brokenDD1, brokenDD2, brokenDD3, brokenDD4, brokenDD5, brokenDD6, brokenDD7, brokenDwall1, brokenDwall2, caveCopper1, caveCopper2, caveCopper3, caveCopper4, caveCopper5, caveSilver1, caveSilver2, caveSilver3, caveSilver4, caveSilver5, cFloor1, cFloor2, cFloor3, cFloor4, cFloor5, cFloor6, cFloor7, cFloor8,
     cFloor9, chest, clawHit, copperOre, copperPickaxe, dagger1Img, dDoor1_left, dDoor1_right, dDoor2_left, dDoor2_right, dFloor1, dFloor10, dFloor11, dFloor12, dFloor13, dFloor14, dFloor15, dFloor16, dFloor2, dFloor3, dFloor4, dFloor5, dFloor6, dFloor7, dFloor8,
     dFloor9, dungeonCopper1, dungeonCopper2, dungeonTorch1, dungeonTorch2, dungeonTorch3, dungeonTorch4, dungeonTp, dungeonWall1, dungeonWall10, dungeonWall11, dungeonWall12, dungeonWall2, dungeonWall3, dungeonWall4, dungeonWall5, dungeonWall6,
-    dungeonWall7, dungeonWall8, dungeonWall9, fFloor1, fFloor10, fFloor11, fFloor12, fFloor13, fFloor14, fFloor15, fFloor16, fFloor2, fFloor3, fFloor4, fFloor5, fFloor6, fFloor7, fFloor8, fFloor9, fireImg, fountainImg, goblinImg, healing, heavyBow, heroBack, heroFront, heroLeft, heroRight, hGoblinImg, longBow, minerGoblin, necklaceImg, pDummy, potionImg, pScorpion, pTrapImg, redClawHit, rockyWall1, rockyWall10, rockyWall11, rockyWall12, rockyWall2, rockyWall3, rockyWall4, rockyWall5, rockyWall6,
+    dungeonWall7, dungeonWall8, dungeonWall9, fFloor1, fFloor10, fFloor11, fFloor12, fFloor13, fFloor14, fFloor15, fFloor16, fFloor2, fFloor3, fFloor4, fFloor5, fFloor6, fFloor7, fFloor8, fFloor9, fireImg, fountainImg, goblinImg, healing, heavyBow, heroBack, heroFront, heroLeft, heroRight, hGoblinImg, hit, library1, library10, library11, library12, library13, library14, library15, library16, library2, library3, library4, library5, library6, library7, library8, library9, longBow, minerGoblin, necklaceImg, pDummy, potionImg, pScorpion, pTrapImg, redClawHit, rockyWall1, rockyWall10, rockyWall11, rockyWall12, rockyWall2, rockyWall3, rockyWall4, rockyWall5, rockyWall6,
     rockyWall7, rockyWall8, rockyWall9, scorpionClaw, sign, silverOre, snsGoblinImg, sparks1, sparks2, sparks3, sword1Img, tile1,
-    torchdWallImg, tpImg, transparentWall, trapImg, voidTile, wallImg
+    torchdWallImg, tpImg, transparentWall, trapImg, voidTile, wallImg, weaponShack1, weaponShack2, weaponShack3, weaponShack4
 };
 

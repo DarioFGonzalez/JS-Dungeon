@@ -10,13 +10,15 @@ import * as Recipes from "./components/data/recipes";
 import * as Tiles from "./components/data/tiles";
 import {
   allBDoors,
+  allLibraryWalls,
   allNodes,
   allObjects,
   allTiles,
+  allWeaponShacks,
   brokenDwalls,
   dungeonTorches,
   dungeonWalls,
-  rockyWalls,
+  rockyWalls
 } from "./components/data/tiles";
 
 import "./App.css";
@@ -262,85 +264,6 @@ type CellContent =
     return undefined;
   };
 
-  // const handleTp = (
-  //   x: number,
-  //   y: number,
-  //   symbol: string,
-  //   other: string,
-  // ): void => {
-  //   const auxiliar = mapa.map((fila) => [...fila]);
-
-  //   const { x: pX, y: pY } = player.data;
-  //   const newX = pX + x;
-  //   const newY = pY + y;
-  //   const [tp1X, tp1Y] = tps[0];
-  //   const [tp2X, tp2Y] = tps[1];
-
-  //   if (
-  //     auxiliar[tp1X][tp1Y].name === "Teleport" &&
-  //     auxiliar[tp2X][tp2Y].name === "Teleport"
-  //   ) {
-  //     switch (other) {
-  //       case icons.boxImg: {
-  //         auxiliar[pX][pY] = emptyTile;
-  //         auxiliar[newX][newY] = player;
-  //         setPlayer((prev) => ({
-  //           ...prev,
-  //           symbol,
-  //           data: { x: newX, y: newY },
-  //         }));
-  //         if (tp1X === newX + x && tp1Y === newY + y) {
-  //           setResidual((prev) => [
-  //             ...prev,
-  //             { entity: Tiles.teleport, coords: [tp2X, tp2Y] },
-  //           ]);
-  //           auxiliar[tp2X][tp2Y] = Tiles.box;
-  //         } else {
-  //           setResidual((prev) => [
-  //             ...prev,
-  //             { entity: Tiles.teleport, coords: [tp1X, tp1Y] },
-  //           ]);
-  //           auxiliar[tp1X][tp1Y] = Tiles.box;
-  //         }
-  //         setMapa(auxiliar);
-  //         break;
-  //       }
-  //       case "": {
-  //         if (tp1X === newX && tp1Y === newY) {
-  //           setResidual((prev) => [
-  //             ...prev,
-  //             { entity: Tiles.teleport, coords: [tp2X, tp2Y] },
-  //           ]);
-  //           auxiliar[pX][pY] = emptyTile;
-  //           auxiliar[tp2X][tp2Y] = player;
-  //           setPlayer((prev) => ({
-  //             ...prev,
-  //             symbol,
-  //             data: { x: tp2X, y: tp2Y },
-  //           }));
-  //           setMapa(auxiliar);
-  //         } else {
-  //           setResidual((prev) => [
-  //             ...prev,
-  //             { entity: Tiles.teleport, coords: [tp1X, tp1Y] },
-  //           ]);
-  //           auxiliar[pX][pY] = emptyTile;
-  //           auxiliar[tp1X][tp1Y] = player;
-  //           setPlayer((prev) => ({
-  //             ...prev,
-  //             symbol,
-  //             data: { x: tp1X, y: tp1Y },
-  //           }));
-  //           setMapa(auxiliar);
-  //         }
-  //         break;
-  //       }
-  //     }
-  //   } else {
-  //     inconsecuente(symbol);
-  //   }
-  // };
-
   const pushBox = (x: number, y: number, symbol: string): void => {
     const newX = player.data.x + x;
     const newY = player.data.y + y;
@@ -537,7 +460,7 @@ type CellContent =
       attk?.times,
       attk?.aliment,
     );
-    manageVisualAnimation("visual", x, y, icons.redClawHit, 200);
+    manageVisualAnimation("visual", x, y, icons.hit, 200);
     thisWeapon !== Gear.emptyHanded &&
     damageWeapon(thisEnemy.defense.toughness, thisWeapon);
 
@@ -1738,15 +1661,10 @@ type CellContent =
         }
         break;
       case 'melee':
-        console.log("Usar arma a melee, en cd: ", equippedWeapon.onCd)
         if(objective.type ==='Enemy') {
           strikeEnemy( x, y );
         } else {
-          console.log('No hay enemigo frente a ti para atacar');
-          if(equippedWeapon.onCd) {
-            console.log("Arma en cd");
-          } else {
-            console.log("Arma lista");
+          if(!equippedWeapon.onCd && objective.type!=='Node') {
             let flag = true;
             setPlayer((playerInfo) => {
               if (flag && isDev) {
@@ -2215,7 +2133,6 @@ type CellContent =
             default:
               break;
           }
-
           break;
 
         case "arrowleft":
@@ -2650,6 +2567,8 @@ type CellContent =
     Rocky: rockyWalls,
     BrokenDwall: brokenDwalls,
     BrokenDDoor: allBDoors,
+    Library: allLibraryWalls,
+    WeaponShack: allWeaponShacks,
   };
 
   const addDoor = (type: string): Types.Environment => {
@@ -2819,6 +2738,8 @@ type CellContent =
     "dw": () => addWall("Dungeon"),
     "tw": () => addWall("DTorch"),
     "rw": () => addWall("Rocky"),
+    "lib": () => addWall("Library"),
+    "ws": () => addWall("WeaponShack"),
     "wall": (args) => {
       const [style, name] = args;
       return addTile(style, name);
@@ -3152,7 +3073,7 @@ type CellContent =
   };
 
   const startGame = async () => {
-    const initialMapName = 'Mines1';
+    const initialMapName = 'Mines4';
 
     setPlayer({
       ...Entities.emptyPlayer,

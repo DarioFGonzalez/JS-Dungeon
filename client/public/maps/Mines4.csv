@@ -2,8 +2,8 @@ rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw
 rw;;;sign(Movement:\n\t[ W ]\n  [ A ] [ S ] [ D ]);rw;rw;;;sign(Action/Attack:\n     [ ENTER ]);rw;rw;;sign(When in doubt: CLICK or HOVER OVER them!\n[ click ] enemies/gear to inspect them\n[ Hover over ] Ammo and statcs to know more about them);rw;;;csign(Navigate menucs:\n      [ ? ]   [ ? ]\n   Equip/ccraft:\n\t[ E ]);rw;cc;;;;w1;rw
 rw;;p;;;;;;;cc;rw;;;e5;;;tp(1-21);rw;rw;rw;;;;rw
 rw;;;;;rw;;;;rw;;;;rw;;;;rw;rw;sign(?\t\t\t\tcrafting menu:\t[ TAB ]\nRecipes only appear when you have all the materials needed to craft them);;;;rw
-rw;rw;;rw;rw;rw;rw;rw;t;;;rw;w2;rw;rw;;;rw;rw;rw;;rw;rw;rw
-rw;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;rw;rw;rw;rw;;rw;rw;rw
+rw;rw;rw;rw;rw;rw;rw;rw;t;;;rw;w2;rw;rw;;;rw;rw;rw;;rw;rw;rw
+rw;rw;w;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;rw;rw;rw;rw;;rw;rw;rw
 rw;rw;;;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;;;;cc
 rw;rw;;;;;;;;;;;rw;rw;;;;;rw;rw;;rw;rw;rw
 rw;;;;;;;;;;;;;rw;wr;;;;rw;rw;;;rw;rw
