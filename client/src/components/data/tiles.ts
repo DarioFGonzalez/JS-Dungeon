@@ -719,6 +719,7 @@ const caveCopper1: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Copper',
     biome: 'Rocky',
     name: 'Copper Node 1',
@@ -732,6 +733,7 @@ const caveCopper2: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Copper',
     biome: 'Rocky',
     name: 'Copper Node 2',
@@ -745,6 +747,7 @@ const caveCopper3: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Copper',
     biome: 'Rocky',
     name: 'Copper Node 3',
@@ -758,6 +761,7 @@ const caveCopper4: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Copper',
     biome: 'Rocky',
     name: 'Copper Node 4',
@@ -771,6 +775,7 @@ const caveCopper5: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Copper',
     biome: 'Rocky',
     name: 'Copper Node 5',
@@ -787,6 +792,7 @@ const dungeonCopper1: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Copper',
     biome: 'Dungeon',
     name: 'Dungeon Copper Node 1',
@@ -800,6 +806,7 @@ const dungeonCopper2: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Copper',
     biome: 'Dungeon',
     name: 'Dungeon Copper Node 2',
@@ -816,6 +823,7 @@ const caveSilver1: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Silver',
     biome: 'Rocky',
     name: 'Silver Node 1',
@@ -829,6 +837,7 @@ const caveSilver2: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Silver',
     biome: 'Rocky',
     name: 'Silver Node 2',
@@ -842,6 +851,7 @@ const caveSilver3: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Silver',
     biome: 'Rocky',
     name: 'Silver Node 3',
@@ -855,6 +865,7 @@ const caveSilver4: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Silver',
     biome: 'Rocky',
     name: 'Silver Node 4',
@@ -868,6 +879,7 @@ const caveSilver5: Node =
 {
     id: '',
     type: 'Node',
+    resourceType: 'Ore',
     mineral: 'Silver',
     biome: 'Rocky',
     name: 'Silver Node 5',
@@ -879,6 +891,92 @@ const caveSilver5: Node =
 };
 
 export const caveSilver: Node[] = [ caveSilver1, caveSilver2, caveSilver3, caveSilver4, caveSilver5 ];
+
+const forestTree1: Node =
+{
+    id: '',
+    type: 'Node',
+    resourceType: 'Wood',
+    mineral: 'Forest Wood',
+    biome: 'Forest',
+    name: 'Forest tree 1',
+    symbol: '',
+    symbols: [ Icons.fTree1_top, Icons.fTree1_bot, "fTree1_stomp" ] ,
+    toughness: 1,
+    maxHp: 2,
+    hp: 2,
+    drops: [ { item: Material.wood1, chance: 90, quantity: 1 } ]
+};
+
+const forestTree1_stomp: Environment = {
+    type: 'Wall',
+    name: 'fTree1_stomp',
+    symbol: Icons.fTree1_stomp
+};
+
+const forestTree2: Node =
+{
+    id: '',
+    type: 'Node',
+    resourceType: 'Wood',
+    mineral: 'Forest Wood',
+    biome: 'Forest',
+    name: 'Forest tree 2',
+    symbol: '',
+    symbols: [ Icons.fTree2_top, Icons.fTree2_bot, "fTree2_stomp" ] ,
+    toughness: 1,
+    maxHp: 2,
+    hp: 2,
+    drops: [ { item: Material.wood1, chance: 90, quantity: 1 } ]
+};
+
+const forestTree2_stomp: Environment = {
+    type: 'Wall',
+    name: 'fTree2_stomp',
+    symbol: Icons.fTree2_stomp
+};
+
+export const allTreeStomps: Environment[] = [
+    forestTree1_stomp, forestTree2_stomp
+]
+
+export const allForestTrees: Node[] = [ forestTree1, forestTree2 ];
+
+const bigCaveSilver1: Node =
+{
+    id: '',
+    type: 'Node',
+    resourceType: 'Ore',
+    mineral: '',
+    biome: 'Rocky',
+    name: 'Big cave silver 1',
+    symbols: [Icons.bigCaveSilver1, Icons.bigCaveSilver2, Icons.bigCaveSilver3, Icons.bigCaveSilver4],
+    symbol: '',
+    toughness: 1,
+    maxHp: 2,
+    hp: 2,
+    drops: [ { item: Material.SilverOre, chance: 90, quantity: 7 } ]
+};
+
+const bigCaveCopper1: Node =
+{
+    id: '',
+    type: 'Node',
+    resourceType: 'Ore',
+    mineral: '',
+    biome: 'Rocky',
+    name: 'Big cave copper 1',
+    symbols: [Icons.bigCaveSilver1, Icons.bigCaveSilver2, Icons.bigCaveSilver3, Icons.bigCaveSilver4],
+    symbol: '',
+    toughness: 1,
+    maxHp: 2,
+    hp: 2,
+    drops: [ { item: Material.SilverOre, chance: 90, quantity: 7 } ]
+};
+
+export const allBigSilverNodes: Node[] = [  bigCaveSilver1 ];
+
+export const allBigCopperNodes: Node[] = [ bigCaveCopper1 ];
 
 export const allTiles:  Environment[] =
 [
@@ -906,5 +1004,5 @@ export const allTeleporters: Environment[] =
 export const allNodes: Node[] =
 [
     caveSilver1, caveSilver2, caveSilver3, caveSilver4, caveSilver5,
-    caveCopper1, caveCopper2, caveCopper3, caveCopper4, caveCopper5,
+    caveCopper1, caveCopper2, caveCopper3, caveCopper4, caveCopper5
 ];

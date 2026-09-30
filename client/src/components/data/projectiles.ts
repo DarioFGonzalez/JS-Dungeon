@@ -4,28 +4,35 @@ import * as Types from '../types/global';
 type ArrowDirection = 'up' | 'down' | 'left' | 'right';
 type ArrowIconSet = Record<ArrowDirection, string>;
 
-const basicArrowIcon: ArrowIconSet = {
-    up: icons.arrowUp,
-    down: icons.arrowDown,
-    left: icons.arrowLeft,
-    right: icons.arrowRight
+const woodenArrowIcons: ArrowIconSet = {
+    up: icons.woodenArrowUp,
+    down: icons.woodenArrowDown,
+    left: icons.woodenArrowLeft,
+    right: icons.woodenArrowRight
 }
 
-const fireArrowIcon: ArrowIconSet = {
+const copperArrowIcons: ArrowIconSet = {
+    up: icons.copperArrowUp,
+    down: icons.copperArrowDown,
+    left: icons.copperArrowLeft,
+    right: icons.copperArrowRight
+}
+
+const fireArrowIcons: ArrowIconSet = {
     up: icons.fireArrowUp,
     down: icons.fireArrowDown,
     left: icons.fireArrowLeft,
     right: icons.fireArrowRight
 }
 
-const poisonArrowIcon: ArrowIconSet = {
+const poisonArrowIcons: ArrowIconSet = {
     up: icons.poisonArrowUp,
     down: icons.poisonArrowDown,
     left: icons.poisonArrowLeft,
     right: icons.poisonArrowRight
 }
 
-const explosiveArrowIcon: ArrowIconSet = {
+const explosiveArrowIcons: ArrowIconSet = {
     up: icons.explosiveArrowUp,
     down: icons.explosiveArrowDown,
     left: icons.explosiveArrowLeft,
@@ -33,10 +40,11 @@ const explosiveArrowIcon: ArrowIconSet = {
 }
 
 const arrowIcons: Record<string, Record<string, string>> = {
-    none: basicArrowIcon,
-    poison: poisonArrowIcon,
-    burn: fireArrowIcon,
-    explosive: explosiveArrowIcon,
+    'Wooden arrow': woodenArrowIcons,
+    'Copper arrow': copperArrowIcons,
+    'Poison arrow': poisonArrowIcons,
+    'Fire Arrow': fireArrowIcons,
+    'Explisove Arrow': explosiveArrowIcons,
 }
 
 export class ArrowClass implements Types.Projectile {
@@ -56,7 +64,7 @@ export class ArrowClass implements Types.Projectile {
         bowAttack: number,
         ) {
         this.name = ammo.name;
-        this.symbol = arrowIcons[ammo.attackStats?.aliment||'none'][direction];
+        this.symbol = arrowIcons[ammo.name][direction];
         this.data = data;
         this.attackStats = { ...ammo.attackStats, dmg: ammo.attackStats.dmg + bowAttack };
         this.toughness = ammo.toughness;

@@ -3,19 +3,19 @@ rw;;;sign(Movement:\n\t[ W ]\n  [ A ] [ S ] [ D ]);rw;rw;;;sign(Action/Attack:\n
 rw;;p;;;;;;;cc;rw;;;e5;;;tp(1-21);rw;rw;rw;;;;rw
 rw;;;;;rw;;;;rw;;;;rw;;;;rw;rw;sign(?\t\t\t\tcrafting menu:\t[ TAB ]\nRecipes only appear when you have all the materials needed to craft them);;;;rw
 rw;rw;rw;rw;rw;rw;rw;rw;t;;;rw;w2;rw;rw;;;rw;rw;rw;;rw;rw;rw
-rw;rw;w;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;rw;rw;rw;rw;;rw;rw;rw
+rw;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;rw;rw;rw;rw;;rw;rw;rw
 rw;rw;;;rw;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;cc;rw;rw;rw;;;;cc
 rw;rw;;;;;;;;;;;rw;rw;;;;;rw;rw;;rw;rw;rw
 rw;;;;;;;;;;;;;rw;wr;;;;rw;rw;;;rw;rw
 rw;;;;;;;;;;e6;;rw;rw;rw;;;;rw;rw;;e4;;rw
 rw;;;;;;;;;;;;rw;rw;;;;;rw;rw;;;;rw
-rw;;;;e6;;;;;;;;;rw;rw;;;;rw;rw;rw;rw;;cc
-rw;rw;;;;;;;;e6;;;;;rw;;;;rw;rw;cs;rw;;rw
-mapTp(transparentWall, mapA,13,22);;;;;;e6;;;;;;;;;;;;rw;cc;;rw;;rw
+rw;;;;mob(Miner Goblin-100);;;;;;;;;rw;rw;;;;rw;rw;rw;rw;;cc
+rw;rw;;;;;;;;mob(Miner Goblin-100);;;;;rw;;;;rw;rw;cs;rw;;rw
+mapTp(transparentWall, mapA,mirror);;;;;;mob(Miner Goblin-100);;;;;;;;;;;;rw;cc;;rw;;rw
 rw;;;;;;;;;;;;;;rw;;;;rw;rw;e5;rw;;rw
 rw;rw;rw;;;;;;;;;;;rw;rw;rw;;;rw;rw;;rw;;rw
 rw;rw;;;;;;;;;;e6;rw;rw;rw;;;;rw;rw;;rw;e5;rw
-rw;;e6;;;;;;;;;;rw;rw;rw;;;;rw;rw;;;;rw
+rw;;mob(Miner Goblin-100);;;;;;;;;;rw;rw;rw;;;;rw;rw;;;;rw
 rw;;;;;;;;;;;;;;rw;rw;;;rw;rw;;;rw;rw
 rw;rw;;;;;rw;;;;;;rw;rw;rw;rw;;;rw;rw;;rw;;cs
 rw;rw;rw;;;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;;;rw;rw;;;e5;rw

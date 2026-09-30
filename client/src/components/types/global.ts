@@ -1,5 +1,4 @@
 import * as images from '../../images/index';
-import { Consumables } from '../data/items';
 
 export type VisualCell = string | {
   text: string;
@@ -76,10 +75,12 @@ export interface Environment
 export interface Node
 {
     id: string,
-    type: 'Node',
+    type: string,
+    resourceType: string,
     name: string,
     biome: string,
     mineral: string,
+    symbols?: string[],
     symbol: string,
     toughness: number,
     maxHp: number,
@@ -105,6 +106,7 @@ export interface Gear
     name: string,
     symbol: string,
     id: string,
+    gathers?: string,
     slot?: string,
     style?: string,
     ammoType?: string,

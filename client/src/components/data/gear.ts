@@ -54,7 +54,7 @@ export const Bow1: Types.Gear =
     ammoType: 'Arrow',
     desc: 'An old bow, made out of wood and poor handicraft',
     attackStats: { dmg: 1, range: 3, cd: 1500 },
-    durability: 8,
+    durability: 12,
     equippeable: true
 }
 
@@ -125,6 +125,21 @@ export const CopperPickaxe: Types.Gear =
     type: 'Tool',
     name: 'Copper Pickaxe',
     symbol: icons.copperPickaxe,
+    gathers: 'Ore',
+    id: '',
+    slot: 'tool',
+    desc: 'Basic tool for mining ore.',
+    attackStats: { dmg: 1, cd: 1500 },
+    durability: 10,
+    equippeable: true
+}
+
+export const WoodenLumberjack: Types.Gear =
+{
+    type: 'Tool',
+    name: 'Wooden Lumberjack',
+    symbol: icons.woodenLumberjack,
+    gathers: 'Wood',
     id: '',
     slot: 'tool',
     desc: 'Basic tool for mining ore.',
@@ -134,4 +149,4 @@ export const CopperPickaxe: Types.Gear =
 }
 
 export const allTools: Types.Gear[] =
-[ CopperPickaxe ]
+[ CopperPickaxe, WoodenLumberjack ]

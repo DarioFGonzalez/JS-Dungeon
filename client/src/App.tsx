@@ -1431,19 +1431,35 @@ type CellContent =
     }, time);
   };
 
+  const findThisId = (id: string): { x: number, y: number }[] => {
+    const aux = mapaRef.current.map((x) => [...x]);
+    const instances = [];
+
+    for (let i = 0; i < aux.length; i++) {
+      for (let j = 0; j < aux[i].length; j++) {
+        let cell = aux[i][j];
+        if (typeof cell === "object" && cell !== null && "id" in cell && cell.id === id) {
+          instances.push({ x: i, y: j});
+        }
+      }
+    };
+
+    return instances;
+  };
+
   const hitOre = (x: number, y: number): void => {
     const thisTool = player.hotBar.Equippeable.find(
       (item) => item.item.type === "Tool" && item.equiped,
     );
     if (!thisTool) return;
 
-    if (thisTool.onCd) return;
-
     let aux = mapaRef.current.map((x) => [...x]);
 
     const thisOre = aux[x][y] as Types.Node;
 
     if (!thisOre) return;
+
+    if (thisTool.onCd || thisOre.resourceType!==thisTool.item.gathers) return;
 
     const attk = thisTool.item.attackStats;
     if (!attk) return;
@@ -1458,6 +1474,8 @@ type CellContent =
     const randomNumber = Math.floor(Math.random() * 3);
 
     manageVisualAnimation("visual", x, y, sparks[randomNumber], 900);
+
+    const thisOreInstances = findThisId(thisOre.id);
 
     if (thisOre.hp - damage <= 0) {
       const drops = thisOre.drops
@@ -1475,9 +1493,31 @@ type CellContent =
         ),
       );
 
-      aux[x][y] = addWall(thisOre.biome);
+      switch(thisOre.resourceType) {
+        case 'Ore': {
+          thisOreInstances.forEach( (instance) => {
+            aux[instance.x][instance.y] = addWall(thisOre.biome);
+          });
+
+          break;
+        }
+        case 'Wood': {
+          const topTile = Math.max(...thisOreInstances.map(obj => obj.x));
+          const thisOreSymbols = thisOre.symbols || [];
+          const thisStump = Tiles.allTreeStomps.find( x => x.name === thisOreSymbols[thisOreSymbols.length-1]) || emptyTile;
+
+          aux[topTile-1][thisOreInstances[0].y] = emptyTile;
+          aux[topTile][thisOreInstances[0].y] = thisStump;
+
+          break;
+        }
+      }
     } else {
-      aux[x][y] = { ...thisOre, hp: thisOre.hp - damage };
+
+      thisOreInstances.forEach( (instance) => {
+        let thisInstance = aux[instance.x][instance.y];
+        aux[instance.x][instance.y] = { ...thisInstance, hp: thisOre.hp - damage };
+      });
     }
 
     setMapa(aux);
@@ -2502,31 +2542,34 @@ type CellContent =
 
   const rockyNodes: nodeDictionary = {
     Copper: Tiles.caveCopper,
-    Silver: Tiles.caveSilver
+    Silver: Tiles.caveSilver,
+    BigSilver: Tiles.allBigSilverNodes
   };
 
   const dungeonNodes: nodeDictionary = {
     Copper: Tiles.dungeonCopper
   };
 
+  const forestNodes: nodeDictionary = {
+    Wood: Tiles.allForestTrees
+  }
+
   const nodePerBiome: Record<string, nodeDictionary> = {
     Rocky: rockyNodes,
-    Dungeon: dungeonNodes
+    Dungeon: dungeonNodes,
+    Forest: forestNodes,
   };
-
-  // const nodes: Record<string, Types.Node[]> = {
-  //   Copper: copperNodes,
-  //   Silver: silverNodes,
-  // };
 
   const randomNode = (type: string, biome: string): Types.Node => {
     const biomeNodes = nodePerBiome[biome];
     const typeNodes = biomeNodes[type];
     const randomIndex = Math.floor(Math.random() * typeNodes.length);
 
+    const id = crypto.randomUUID();
+
     const randomNode = typeNodes[randomIndex];
 
-    return randomNode;
+    return {...randomNode, id};
   };
 
   const addNodes = (
@@ -2639,6 +2682,12 @@ type CellContent =
     if (!thisEntity)
       throw new Error(`No se encontró la entidad ${entityName} en ${type}`);
 
+    const id = crypto.randomUUID();
+
+    if("id" in thisEntity) {
+      thisEntity.id = id;
+    }
+
     if (entityName === "Bag") (thisEntity as Types.Environment).content = loot;
 
     if (type === "Teleporter") {
@@ -2666,6 +2715,8 @@ type CellContent =
     if (type === "Object" || type === "Tile")
       return thisEntity as Types.Environment;
 
+    if (type === "Node") console.log("Creamos un node: ", thisEntity);
+
     if (type === "Node") return thisEntity as Types.Node;
 
     if (
@@ -2673,7 +2724,6 @@ type CellContent =
       "patrol" in thisEntity &&
       (thisEntity.patrol.pattern !== "none" || undefined)
     ) {
-      const id = crypto.randomUUID();
 
       const patrolId = setInterval(() => {
         let flag = true;
@@ -2717,6 +2767,35 @@ type CellContent =
     }
 
     return emptyTile;
+  };
+
+  const addBigNodes = ( map: CellContent[][], type: string, biome: string, x: string, y: string ): CellContent[][] => {
+    const bigNode = randomNode(type, biome);
+    
+    let X = Number(x);
+    let Y = Number(y);
+
+    const id = crypto.randomUUID();
+
+    const symbols = bigNode.symbols || [];
+
+    switch(bigNode.resourceType) {
+      case 'Ore':
+        map[X][Y] = { ...bigNode, id, symbol: symbols[0] };
+        map[X+1][Y] = { ...bigNode, id, symbol: symbols[2] };
+        map[X][Y+1] = { ...bigNode, id, symbol: symbols[1] };
+        map[X+1][Y+1] = { ...bigNode, id, symbol: symbols[3] };
+        break;
+      case 'Wood':
+        map[X][Y] = { ...bigNode, id, symbol: symbols[0] };
+        map[X+1][Y] = { ...bigNode, id, symbol: symbols[1] };
+        break;
+      default:
+        break;
+    }
+
+
+    return map;
   }
 
   const parseCode = (rawCode: string): { command: string; args: string[] } => {
@@ -2772,6 +2851,14 @@ type CellContent =
       return createEntity("Teleporter", style, [{mapName, x, y}])
     },
     "sign": (args) => createEntity("Object", "Help sign", [args[0]]),
+    "bigNode": (args) => {
+      const [biome, node, x, y] = args;
+
+      return {
+        isDeferred: true,
+        effect: (mapa) => addBigNodes(mapa, biome, node, x, y),
+      };
+    },
     "nodes": (args) => {
       const mineralsToAdd: Types.mineralsToAdd[] = args.map((arg) => {
         const [biome, node, qty] = arg.split('-');
@@ -2809,7 +2896,7 @@ type CellContent =
   const floorBrightnessDictionary: Record<string, number> = {
     "Dungeon floor": 0.2,
     "Caves floor": 0.5,
-    "Forest floor": .9
+    "Forest floor": .7
   }
 
   const floorDictionary: Record<string, Types.Environment[]> = {
@@ -2885,12 +2972,15 @@ type CellContent =
             args = [style, mapName, x, y];
           }
         }
+        if(command === 'bigNode') {
+          args = [...args, i.toString(), j.toString()];
+        }
 
         if (!entry) {
           auxiliar[i][j] = emptyTile;
         } else if (typeof entry === "function") {
           const result = entry(args);
-
+          
           if (typeof result === "object" && result !== null && "isDeferred" in result) {
             deferredQueue.push(result.effect);
             auxiliar[i][j] = emptyTile;

@@ -50,11 +50,11 @@ export const Consumables: Types.Item[] = [
     Potion, Bandages, Aloe, Antidote
 ];
 
-export const basicArrow: Types.Ammo = {
+export const woodenArrow: Types.Ammo = {
     type: 'Ammo',
     ammoType: 'Arrow',
-    name: 'Basic arrow',
-    symbol: arrows.basicArrow,
+    name: 'Wooden arrow',
+    symbol: arrows.woodenArrow,
     attackStats: {
         dmg: 1,
         DoT: 0,
@@ -64,6 +64,23 @@ export const basicArrow: Types.Ammo = {
     },
     projectileSpeed: 50,
     toughness: 1,
+    desc: 'Wooden arrow.'
+};
+
+export const copperArrow: Types.Ammo = {
+    type: 'Ammo',
+    ammoType: 'Arrow',
+    name: 'Copper arrow',
+    symbol: arrows.copperArrow,
+    attackStats: {
+        dmg: 2,
+        DoT: 0,
+        times: 0,
+        aliment: 'none',
+        cd: 0
+    },
+    projectileSpeed: 45,
+    toughness: 2,
     desc: 'Wooden arrow.'
 };
 

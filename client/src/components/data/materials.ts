@@ -1,6 +1,16 @@
 import * as icons from '../../Icons/index';
 import * as Types from '../types/global';
 
+export const wood1: Types.Gear =
+{
+    type: 'Ore',
+    name: 'Wood',
+    symbol: icons.wood1,
+    slot: 'Ore',
+    id: '',
+    desc: 'Wood logs',
+}
+
 export const CopperOre: Types.Gear =
 {
     type: 'Ore',
@@ -21,7 +31,7 @@ export const SilverOre: Types.Gear =
     desc: 'Raw silver ore',
 }
 
-export const allOres: Types.Gear[] = [ CopperOre, SilverOre ];
+export const allOres: Types.Gear[] = [ CopperOre, SilverOre, wood1 ];
 
 export const PoisonClaw: Types.Gear =
 {
