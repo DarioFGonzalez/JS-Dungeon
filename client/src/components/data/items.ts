@@ -134,3 +134,7 @@ export const explosiveArrow: Types.Ammo = {
     toughness: 0,
     desc: 'Explosive-coated tip arrow.'
 }
+
+export const allArrows: Types.Ammo[] = [
+    copperArrow, woodenArrow, poisonArrow, fireArrow, explosiveArrow
+];

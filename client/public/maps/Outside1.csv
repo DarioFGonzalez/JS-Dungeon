@@ -1,10 +1,10 @@
 rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw;rw
 rw;background(complex-Outside1bg);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
-rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;rw
+rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
 rw;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
-rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;rw
+rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;bigNode(Wood,Forest);rw
 rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
 rw;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
@@ -15,9 +15,9 @@ rw;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Woo
 rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;rw
-rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
+rw;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;rw
-rw;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;rw
+rw;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;ff;bigNode(Wood,Forest);ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;ff;ff;dw;df;dw;dw;df;dw;ff;ff;ff;ff;ff;ff;ff;ff;rw
 rw;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;ff;dw;df;df;df;df;dw;ff;ff;ff;bigNode(Wood,Forest);ff;ff;ff;ff;rw
 rw;ff;ff;ff;ff;ff;ff;ff;ff;dw;df;df;df;tool(Wooden Lumberjack);dw;ff;ff;ff;ff;ff;ff;ff;ff;rw

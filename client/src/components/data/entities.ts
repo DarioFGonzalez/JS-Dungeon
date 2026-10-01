@@ -73,7 +73,7 @@ export const chest1: Types.Enemy =
     attack: { Instant: 0, DoT: 0, Times: 0, Aliment: 'none' },
     defense: { armor: 0, toughness: 1, immunity: 'bleed' },
     patrol: { pattern: 'none', moveSpeed: 0 },
-    drops: [ { item: Items.Potion, chance: 100, quantity: 1 } ]
+    drops: [ ]
 }
 
 export const enemy: Types.Enemy =
@@ -161,8 +161,8 @@ export const weakEnemy: Types.Enemy =
     type: 'Enemy',
     id: '0',
     name: 'Rookie Goblin',
-    hp: 4,
-    maxHp: 4,
+    hp: 3,
+    maxHp: 3,
     symbol: icons.pDummy,
     data: { x: 0, y: 0 },
     aliments:

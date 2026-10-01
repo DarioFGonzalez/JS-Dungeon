@@ -1255,6 +1255,9 @@ type CellContent =
           undefined,
           true,
         );
+        if(drop.item.type==="Ammo") {
+          addToQuiver(drop.item as Types.Ammo, drop.quantity);
+        }
     });
     // handleEventLogs(`La bolsa contenía:`, 'orange')
   };
@@ -2649,7 +2652,7 @@ type CellContent =
       | "Node",
     entityName: string,
     loot?: any[],
-  ): Types.Gear | Types.Enemy | Types.Item | Types.Environment => {
+  ): Types.Gear | Types.Enemy | Types.Item | Types.Environment | Types.Ammo => {
     const typeContainer = {
       Equippable: Gear.Equippables,
       Tool: Gear.allTools,
@@ -2660,6 +2663,7 @@ type CellContent =
       Teleporter: Tiles.allTeleporters,
       Tile: allTiles,
       Node: allNodes,
+      Looteables: [ ...Gear.Equippables, ...Gear.allTools, ...Items.Consumables, ...Items.allArrows ],
     };
 
     const container = typeContainer[type] as Array<
@@ -2690,6 +2694,16 @@ type CellContent =
 
     if (entityName === "Bag") (thisEntity as Types.Environment).content = loot;
 
+    if (entityName === "Chest") {
+      const finalLoot = loot?.map( lootItem => {
+        const thisItem = typeContainer['Looteables'].find( ( containerItem: Types.Ammo | Types.Gear | Types.Item  ) =>
+            containerItem.name === lootItem.item );
+
+        return { ...lootItem, item: thisItem };
+      } );
+      (thisEntity as Types.Enemy).drops = finalLoot || [];
+    }
+
     if (type === "Teleporter") {
       if (loot !== undefined) {
         return { ...thisEntity, content: loot[0] } as Types.Environment;
@@ -2714,8 +2728,6 @@ type CellContent =
 
     if (type === "Object" || type === "Tile")
       return thisEntity as Types.Environment;
-
-    if (type === "Node") console.log("Creamos un node: ", thisEntity);
 
     if (type === "Node") return thisEntity as Types.Node;
 
@@ -2842,6 +2854,14 @@ type CellContent =
     "consumable": (args) => createEntity("Consumable", args[0]),
     "object": (args) => createEntity("Object", args[0], args.slice(1)),
     "mob": (args) => rareMob(args[0]),
+    "chest": (args) => {
+      let loot = args.map( x => {
+        let aux = x.split('-');
+        return { item: aux[0], chance: aux[1], quantity: aux[2] };
+      } );
+
+      return createEntity("Enemie", "Chest", loot);
+    },
     "tp": (args) => {
       const [x, y] = args[0].split('-');
       return createEntity("Object", "Teleport", [x, y]); 
@@ -3245,14 +3265,14 @@ type CellContent =
     return (celda as Types.Environment).content !== undefined;
   }
 
-const readContent = (celda: CellContent): string => {
-  if (isEnvironment(celda)) {
-    return celda.content
-      .replace(/\\r\\n|\\n/g, '\n')
-      .replace(/\\t/g, '\t');
-  }
-  return "";
-};
+  const readContent = (celda: CellContent): string => {
+    if (isEnvironment(celda)) {
+      return celda.content
+        .replace(/\\r\\n|\\n/g, '\n')
+        .replace(/\\t/g, '\t');
+    }
+    return "";
+  };
 
   return (
     <div className="game-container">

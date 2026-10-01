@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Recipe, Player, InventoryGear } from '../types/global';
+import React, { useEffect, useRef, useState } from 'react';
+import { InventoryGear, Player, Recipe } from '../types/global';
 import styles from './CraftingTab.module.css';
 
 interface CraftingTabProps {
@@ -38,7 +38,6 @@ const CraftingTab: React.FC<CraftingTabProps> = ({ recipes, player }) => {
               itemRefs.current[index] = el;
             }}
             key={index}
-            onClick={() => console.log(recipe)}
             className={`
               ${styles.gearCard}
               ${recipe.selected ? styles.selected : ''}

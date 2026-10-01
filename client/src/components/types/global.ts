@@ -35,7 +35,7 @@ export type attackInfo = { Instant: number, DoT: number, Times: number, Aliment:
 export type deffenseInfo = { armor: number, toughness: number, immunity?: string };
 export type dropInfo = { item: Item | Gear | Material, chance: number, quantity: number };
 
-export type lootBagItem = { item: Item | Gear, quantity: number };
+export type lootBagItem = { item: Item | Gear | Ammo, quantity: number };
 
 export type eventLog = { message: string, color: string };
 

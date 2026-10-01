@@ -39,7 +39,7 @@ export const Sword1: Types.Gear =
     style: 'melee',
     desc: 'Sword used for fencing practice, pretty harmless.',
     attackStats: { dmg: 1, DoT: 0, times: 0, aliment: 'none', cd: 1500 },
-    durability: 5,
+    durability: 6,
     equippeable: true
 }
 
