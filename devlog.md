@@ -1,5 +1,88 @@
 # DevLog - Combat Diary
 
+## 🔹 Step 29: More ores! MORE ORES! ✨🤩🎉
+
+🗓️ 2026-10-01
+
+`This... forest. This forest needs those trees, how hard could it be to add them?` **`[Realization]`** `OH- 😨... CHALLENGE ACCEPTED 😈🔥`
+
+Trees! Simple, right? We have Nodes already, Ore nodes, i just need to re-name thoooose, change their icons to a tree aaand add some wood to that drops list... Right? 👀
+
+```
+- TypeScript: Nope...
+- Game engine: Negative
+- Visual aspect: Over my dead body
+```
+
+**`All right!`** **All right**... everybody calm down 😅
+
+### First things first: The visual aspect 🌲
+
+We can't create a `one-tile` tree, that'd be like... a "human-sized" tree? That's awefull, visually awefull. Meaning? My very first `TWO-TILE` entity! Yay! 🎉
+
+### Second: Creating my first multi-tiled entity 💞
+
+Of course, while creating i try first to refactor-- or... more like "recycle" whatever i already invented to speed up the process. Grabbed my ore nodes, gave them all one singular ID whenever i wanted to create a multi-tiled entity and Voilá! Once one of those ID's morphed, every entity sharing that ID felt it aswell-
+
+[ Ore1, ID: 1], [ Ore2, ID: 1]
+
+[ Ore3, ID: 1], [ Ore4, ID: 1]
+
+Easy! There are a lot of tiny details that I'm not gonna, like, explain here 'cause this is supposed to be the "share a summary" not "explain your every step to this process" ☝😅💦
+
+### Third: Make it dissapear smoothly ☁
+
+`Smooth operator ♪ ♫... Smoooooooth operator ♫ ♪`
+
+'Kay, `Ore node` dissapears- all of his entities get replaced by a biome wall- easy job.
+
+`Wood node` dissapears... oh, we need a stump, and the top tile should fully dissapear... All right, time to work!
+
+Had to touch the mapReader function a lil' bit, some deferred functions and a bit of magic all around until it worked- we track coordinates, we hide all required icons as properties on those big nodes - Done!
+
+### Obviously, the visual aspect took some time ⏳
+
+Creating assests, converting them to PNG, JPG- cutting, moving, adjusting, trashing, re-doing, rinse and repeat hahaha Lots of work there! ♪
+
+# Big nodes!
+
+![Two-tiled entities!](image-7.png)
+
+**You and I both know what this means...** 😏👉
+
+`It's... inevitable` 😈✨
+
+**`I need Boss monsters`** 👿🔥
+
+---
+
+### 🛠️ Technical Changes:
+
+- Added Big Nodes
+- Added a lot of visual assets
+- Added wood, trees, new recipes, adjusted old ones, arrows...
+- Oh, i also added a way to spawn chests with whatever you want them to drop- so.. that's that 😅💦
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Hmm...
+
+Now that I've finally unraveled multi-tiled entities secrets, monster bosses sounds like the next step to take. Hmm...
+
+- Mob bosses
+- Beach map
+- Improve crafting system/recipes
+
+Once i have Beaches, i'd have enough pieces to play around creating maps that don't feel `"Forced to end"`.
+
+Once i have Mob bosses, i'd be able to add some "Yea, we need `x` but there's a `mob boss` guarding it" or "I need to kill `mob boss` for that juicy drop" type deal. Wich  LOVE.
+
+Improving my recipes will add this little "I need X, I need Y" that sorta pushes you to go out there and `walk- explore- kill- didn't get it? well, go for this next mob i need and wait for this one to respawn`. Wich, again, I LOVE.
+
+---
+
 ## 🔹 Step 28: Preparations, preparations ♪ ♫
 
 🗓️ 2026-09-17

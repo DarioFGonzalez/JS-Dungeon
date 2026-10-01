@@ -1,5 +1,93 @@
 # DevLog - Diario de Combate
 
+## 🔹 Step 29: Más materiales! MÁS VETAS! ✨🤩🎉
+
+🗓️ 2026-10-01
+
+`Este bosque... necesita Árboles. ¿Qué tan difícil puede ser agregarlos?`
+**`[Se da cuenta que tán complejito va a ser]`**
+`Apa- 😨... Más motivo para hacerlo 😈🔥`
+
+¡Árboles! Simple, ¿No?. Ya tenemos nodos metidos en el juego, nodos de mineral, lo único que tendría que hacer es cambiarles el nombre, cambiarles el ícono y--- hacer que tiren madera en vez de mineral... ¿No? 👀
+
+```
+- TypeScript: Nope...
+- Motor del videojuego: Negativo
+- Apecto visual: Ni en un millón de años
+```
+
+**`¡Okay!`** **Okay**... Ya entendí, cálmense 😅
+
+### Primer asunto: El aspecto visual 🌲
+
+No podemos crear un Árbol de `un casillero` de altura, eso sería como... ¿Un Árbol del tamaño de una persona? Horrible-- visualmente horrible. ¿Qué hacemos entonces? Mi primera entidad de `DOS CASILLEROS` ¡WOOOH! 🎉
+
+### Segundo: Crear mi primera entidad multi-casilleros 💞
+
+Obviamente, cuando tengo que crear algo nuevo prefiero ver algo que yo ya tenga y refactorizarlo-- o más bien, 'reciclarlo' para acelerar el proceso.
+
+Agarré mis nodos de mineral viejos, les dí un ID único a todas las entidades de esta multi-veta y ¡Vualá!
+
+Cuando alguno de estos IDs muta, busco todas las entidades con el mismo ID y replico la mutación.
+
+[ Ore1, ID: 1], [ Ore2, ID: 1]
+
+[ Ore3, ID: 1], [ Ore4, ID: 1]
+
+¡Facilito! Obviaemnte estoy dejando mucho detalle técnico fuera de esta conversación pero, este es el "resumen de que pasó" no el "acá te explico las 500 lineas de código que metí una por una" ☝😅💦
+
+### Tercero: Hacerlo desaparecer sutilmente ☁
+
+`Smooth operator ♪ ♫... Smoooooooth operator ♫ ♪`
+
+Okey, `Nodo de mineral` desapareciendo: Reemplazo todos estos ID con una pared del bioma y listo, fácil.
+
+`Nodo de madera` desapareciendo: ...eh, okay, necesitamos un tronco cortado y que la mitad de arriba... quede en blanco. Okay, hay que trabajar con esto.
+
+Tuve que tocar la función mapReader que lée el CSV, agregar algunas funciones con retraso (deferred) y un poquito de mágia por acá y por allá--- seguir coordenadas, esconder íconos en las propiedades del nodo madre- y listo!
+
+### Obviamente, el aspecto visual me consumió bastante tiempo ⏳
+
+Crear assets, convertirlos a PNG ó JPG, cortar- mover- ajustar- tirar todo a la basura porque no me gustó como quedó jajajaj y volver a empezar. Consume bastante tiempo esa parte ♫
+
+# Nodos grandes!
+
+![Two-tiled entities!](image-7.png)
+
+**Vos y yo sabemos que significa esto...** 😏👉
+
+`Tan inevitable como Thanos...` 😈✨
+
+**`Necesito monstruos JEFES`** 👿🔥
+
+---
+
+### 🛠️ Technical Changes:
+
+- Agregué, de manera escalable y reutilizable, el concepto de nodos grandes/multi-casilla.
+- Agregué bastantes assests visuales para árboles, tocos y demás.
+- Agregué madera como material, árboles, nuevas recetas y ajustes- flechas, ...
+
+---
+
+### 👾 Near Future / Random Ideas 🎯
+
+Hmm...
+
+Ahora que alfín desenmarañé los secretos de las entidades multi-casillero, los monstruos nivel JEFE deberían ser el próximo paso lógico, Mhmm...
+
+- Bosses JEFE
+- Mapa de playa/costa
+- Mejorar/Modificar recetas de crafteo
+
+Una vez tenga playas/costa- voy a poder jugar con la creación de un mundo que no se sienta `"Forzado a terminar"` con barreras tontas, ilógicas o que se sientan fuera de lugar
+
+Una vez tenga los monstruos JEFE- voy a poder meter esa sensación de "Quiero lootear el cofre que sé que está al final de esta mazmorra, pero... está el bicho jefe ahí" ó "Tengo que ir hasta el fondo de este laberinto para matar el bicho jefe raro de ahí, necesito algunas cositas que dropéa" y ME ENCANTA eso.
+
+Mejorando mis recetas va a agregarle profundidad al "Necesito X material, también necesito Y material" que va a empujar a los jugadores a `salir, caminar, explorar, probar, tocar- ROMPER- INTENTAR OTRA VEZ` y eso, otra vez, ME ENCANTA. ♪
+
+---
+
 ## 🔹 Paso 28: Preparativos, preparativos ♪ ♫
 
 🗓️ 2026-09-17
