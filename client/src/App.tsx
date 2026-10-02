@@ -29,6 +29,7 @@ import CraftingTab from "./components/CraftingTab/CraftingTab";
 import GearTab from "./components/GearTab/GearTab";
 import InspectorTab from "./components/InspectorTab/InspectorTab";
 import { loadMap } from "./components/data/maps/maps";
+import { allOres } from "./components/data/materials";
 import { ArrowClass } from "./components/data/projectiles";
 
 const allIcons = Object.values(icons);
@@ -1001,7 +1002,7 @@ type CellContent =
     lootBag?: boolean,
     quantity?: number,
   ): void => {
-    if (player.hotBar.Equippeable.length >= 6) {
+    if (player.hotBar.Equippeable.length >= 5) {
       if (
         !lootBag &&
         x !== undefined &&
@@ -1988,9 +1989,11 @@ type CellContent =
         return found && (found.quantity ?? 0) >= ingredient.quantity;
       });
 
+      if((selectedRecipe.item.type==='Gear' || selectedRecipe.item.type==='Tool') && deepCopy.hotBar.Equippeable.length >= 5) {
+        return deepCopy;
+      }
+
       if (canCraft) {
-        if (deepCopy.hotBar.Equippeable.length < 5) {
-          
           switch(selectedRecipe.item.type) {
             case 'Item':
               addToInventory(selectedRecipe.item as Types.Item,selectedRecipe.quantity || 1)
@@ -2048,11 +2051,7 @@ type CellContent =
               slot.item.equippeable ||
               (slot.quantity !== undefined && slot.quantity > 0),
           );
-
           return deepCopy;
-        }
-
-        return prevInfo;
       }
 
       setRecipes((oldData: Types.Recipe[]) => {
@@ -2663,7 +2662,7 @@ type CellContent =
       Teleporter: Tiles.allTeleporters,
       Tile: allTiles,
       Node: allNodes,
-      Looteables: [ ...Gear.Equippables, ...Gear.allTools, ...Items.Consumables, ...Items.allArrows ],
+      Looteables: [ ...Gear.Equippables, ...Gear.allTools, ...Items.Consumables, ...Items.allArrows, ...allOres ],
     };
 
     const container = typeContainer[type] as Array<
