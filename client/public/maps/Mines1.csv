@@ -1,5 +1,5 @@
 dw;dw;dw;dw;dw;dw;dw;dw;dw;dw;tw;mapTp(transparentWall,Outside1,mirror);mapTp(transparentWall,Outside1,mirror);tw;dw;dw;dw;dw;dw;dw;dw;dw;dw;dw
-dw;background(simple-dungeon);df;df;df;df;df;df;df;dw;df;df;df;df;dw;dc;df;df;df;dw;df;df;df;dw
+dw;background(simple-dungeon);df;df;df;df;df;df;df;dw;df;df;df;df;dw;dc;mob(Scorpion-100);df;df;dw;df;df;df;dw
 dw;df;df;df;df;df;df;df;df;dw;df;df;df;df;dw;dw;df;df;df;df;df;df;df;dw
 dw;df;df;tw;dw;dw;dw;df;df;dw;df;df;df;df;dw;dw;df;df;df;wall(BrokenDwall,brokenDWall_2);df;df;df;dw
 dw;df;df;dw;mob(Chest-100);ws;dw;df;df;dw;df;df;df;df;dw;dw;dw;wall(BrokenDDoor,brokenDDoor_6);dw;dw;wall(BrokenDwall,brokenDWall_2);df;dw;dw
