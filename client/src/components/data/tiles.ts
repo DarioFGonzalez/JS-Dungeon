@@ -727,7 +727,7 @@ const caveCopper1: Node =
     toughness: 1,
     maxHp: 2,
     hp: 2,
-    drops: [ { item: Material.CopperOre, chance: 90, quantity: 1 } ]
+    drops: [ { item: Material.CopperOre, chance: 90, quantity: 9 } ]
 };
 const caveCopper2: Node =
 {
@@ -741,7 +741,7 @@ const caveCopper2: Node =
     toughness: 1,
     maxHp: 2,
     hp: 2,
-    drops: [ { item: Material.CopperOre, chance: 90, quantity: 1 } ]
+    drops: [ { item: Material.CopperOre, chance: 90, quantity: 9 } ]
 };
 const caveCopper3: Node =
 {
@@ -755,7 +755,7 @@ const caveCopper3: Node =
     toughness: 1,
     maxHp: 2,
     hp: 2,
-    drops: [ { item: Material.CopperOre, chance: 65, quantity: 2 } ]
+    drops: [ { item: Material.CopperOre, chance: 65, quantity: 9 } ]
 };
 const caveCopper4: Node =
 {
@@ -769,7 +769,7 @@ const caveCopper4: Node =
     toughness: 1,
     maxHp: 2,
     hp: 2,
-    drops: [ { item: Material.CopperOre, chance: 90, quantity: 1 } ]
+    drops: [ { item: Material.CopperOre, chance: 90, quantity: 9 } ]
 };
 const caveCopper5: Node =
 {
@@ -783,7 +783,7 @@ const caveCopper5: Node =
     toughness: 1,
     maxHp: 2,
     hp: 2,
-    drops: [ { item: Material.CopperOre, chance: 50, quantity: 3 } ]
+    drops: [ { item: Material.CopperOre, chance: 50, quantity: 9 } ]
 };
 
 export const caveCopper: Node[] = [ caveCopper1, caveCopper2, caveCopper3, caveCopper4, caveCopper5 ];
@@ -905,7 +905,7 @@ const forestTree1: Node =
     toughness: 1,
     maxHp: 2,
     hp: 2,
-    drops: [ { item: Material.wood1, chance: 90, quantity: 1 } ]
+    drops: [ { item: Material.wood1, chance: 100, quantity: 1 } ]
 };
 
 const forestTree1_stomp: Environment = {
@@ -927,7 +927,7 @@ const forestTree2: Node =
     toughness: 1,
     maxHp: 2,
     hp: 2,
-    drops: [ { item: Material.wood1, chance: 90, quantity: 1 } ]
+    drops: [ { item: Material.wood1, chance: 100, quantity: 1 } ]
 };
 
 const forestTree2_stomp: Environment = {

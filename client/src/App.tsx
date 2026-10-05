@@ -1014,12 +1014,8 @@ type CellContent =
       }
       return;
     }
-    if (
-      !lootBag &&
-      x !== undefined &&
-      y !== undefined &&
-      symbol !== undefined
-    ) {
+
+    if ( !lootBag && x !== undefined && y !== undefined && symbol !== undefined ) {
       moveHere(x, y, symbol, true);
     }
 
@@ -1061,7 +1057,7 @@ type CellContent =
     lootBag: boolean,
     quantity?: number,
   ): void => {
-    if (!lootBag) queueLog(`${gear.name} agregado a la mochila.`, "orange");
+    // if (!lootBag) queueLog(`${gear.name} agregado a la mochila.`, "orange");
 
     let item: any;
 
@@ -1084,7 +1080,7 @@ type CellContent =
         if (ownedMaterial && ownedMaterial.quantity) {
           item = {
             ...ownedMaterial,
-            quantity: ownedMaterial.quantity + quantity,
+            quantity: Number(ownedMaterial.quantity) + Number(quantity),
           };
 
           setPlayer((playerInfo) => ({
@@ -1487,15 +1483,21 @@ type CellContent =
         .map((drop) => ({ item: drop.item, quantity: drop.quantity }));
 
       drops.forEach((x) =>
-        stepOnGear(
+        addToEquippeable(
           x.item as Types.Gear,
-          undefined,
-          undefined,
-          undefined,
-          true,
-          x.quantity,
+          false,
+          Number(x.quantity),
         ),
       );
+      //   stepOnGear(
+      //     x.item as Types.Gear,
+      //     undefined,
+      //     undefined,
+      //     undefined,
+      //     true,
+      //     x.quantity,
+      //   ),
+      // );
 
       switch(thisOre.resourceType) {
         case 'Ore': {
