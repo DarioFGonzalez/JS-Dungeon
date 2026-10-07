@@ -4,6 +4,63 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.1.8] - 2026-10-01
+
+### Added
+- **Big Nodes System (Step 29)**: Introduced multi-tile world entities capable of sharing state through a unified entity ID.
+- **Tree Nodes**: Added harvestable tree entities with dedicated wood drops and biome integration.
+- **Stump System**: Destroyed tree nodes now leave behind environmental remnants instead of disappearing instantly.
+- **Wood Resource Chain**:
+  - Added wood gathering.
+  - Added wood-related crafting recipes.
+  - Added new crafting dependencies utilizing harvested wood.
+- **Forest Environment Assets**:
+  - Added tree sprites.
+  - Added stump sprites.
+  - Added supporting environmental visual assets.
+
+### Changed
+- **Node Architecture Refactor**:
+  - Refactored world nodes to support future multi-tile gatherables.
+  - Expanded internal node handling beyond mineral-only gathering.
+- **Map Reader Improvements**:
+  - Updated entity rendering pipeline to correctly handle multi-tile structures.
+  - Added coordinate tracking for node destruction and replacement logic.
+- **Crafting Progression**:
+  - Rebalanced several existing recipes around wood gathering and bow-related progression.
+
+### Notes
+- This update marks the introduction of the project's first true multi-tile entities.
+- The underlying architecture is now capable of supporting future boss monsters and larger world objects with shared state.
+
+---
+
+## [0.1.7] - 2026-09-17
+
+### Added
+- **Mirror Teleportation System (Step 28)**:
+  - Added seamless map transitions using mirrored coordinates.
+  - Crossing map borders now preserves relative player positioning automatically.
+- **Transparent Map Boundaries**:
+  - Added invisible transition tiles allowing worlds to feel continuous.
+- **Open World Foundations**:
+  - Introduced infrastructure for large interconnected overworld-style maps.
+- **Forest Floor Tiles**:
+  - Added biome-specific forest flooring assets and rendering support.
+
+### Changed
+- **MapTeleporter Refactor**:
+  - Removed reliance on manually configured destination coordinates for border transitions.
+  - Transition logic now supports coordinate mirroring between connected maps.
+- **World Layout Philosophy**:
+  - Shifted away from isolated room-like map structures toward larger interconnected regions.
+- **Map Generation Workflow**:
+  - Updated biome tooling to support future forests, beaches and large outdoor environments.
+
+### Notes
+- This patch introduced the technical groundwork required for seamless exploration between large-scale maps.
+- It represents the project's transition from a dungeon-only structure toward broader world exploration systems.
+
 ## [0.1.6] - 2026-09-03
 
 ### Added
